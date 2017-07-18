@@ -20,7 +20,7 @@ $TopicColumnName[1]  = "Posts";
 $TopicColumnRange[1] = "25 100";
 $TopicColumnFlags[1] = "numeric center";
 $TopicColumnCount++;
-$TopicColumnName[2]  = "Posted By";
+$TopicColumnName[2]  = "Last Poster";
 $TopicColumnRange[2] = "50 300";
 $TopicColumnCount++;
 $TopicColumnName[3]  = "Last Post Date";
@@ -74,6 +74,8 @@ if(!isObject(ForumsMessageVector))
 //-----------------------------------------------------------------------------
 function isModerator()
 {
+   if(!$GuidTribes)
+   	$GuidTribes = getRecords(WonGetAuthInfo(),1);
    %result = 0;
    for(%checkID=0;%checkID<getField(getRecord($GuidTribes,0),0);%checkID++)
    {
@@ -86,6 +88,8 @@ function isModerator()
 //-----------------------------------------------------------------------------
 function isT2Admin()
 {
+	if(!$GuidTribes)
+		$GuidTribes = getRecords(wonGetAuthinfo(),1);
    %result = 0;
    for(%checkID=0;%checkID<getField(getRecord($GuidTribes,0),0);%checkID++)
    {
@@ -244,7 +248,7 @@ function CacheForumTopic()
        ForumsMessageList.highestUpdate = 0;
 
    %newGroup = TopicsListGroup.getObject(ForumsTopicsList.getSelectedRow());
-   ForumsMessageList.lastID = %newGroup.updateid;
+   ForumsMessageList.lastID = %newGroup.updateid-1;
    %latest = GetField(ForumsTopicsList.getRowTextbyID(ForumsTopicsList.getSelectedID()),3);
 	ForumsMessageVector.dump( $ForumCachePath @ "tpc" @ ForumsMessageVector.tid , ForumsMessageList.lastID TAB $ForumCacheVersion TAB %allRead TAB %latest);
 }
@@ -812,7 +816,7 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
       		%name = getField(%row, 8);
 	   		%hasDeletes = getField(%row,12);
            %slevel = getField(%row,13);
-           %maxUpdateId = getField(%row,14);
+           %maxUpdateId = getField(%row,14)-1;
            ForumsTopicsList.addTopic( %id, %topic, %date, %maxUpdateID, %slevel, %row);
  			ForumsTopicsList.addRow( %id, %topic TAB %postCount TAB %name TAB %date TAB %hasDeletes);
  			if ( %isLastRow ) //is last line
@@ -869,7 +873,7 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 				{
                    ForumsMessageVector.tid = ForumsTopicsList.getSelectedID();
 	                ForumsTopicsList.thread = TopicsListGroup.getObject(ForumsTopicsList.getSelectedRow());
-                   ForumsTopicsList.thread.updateID = %high;
+                   ForumsTopicsList.thread.updateID = %high-1;
 				    CacheForumTopic();
 					ForumsMessageList.loadCache(ForumsTopicsList.getSelectedID());
 				}
@@ -998,7 +1002,7 @@ function ForumsTopicsList::AddTopic(%this, %id, %topicname, %date, %mid, %slevel
       Id = %id;
       name = %topicname;
       date = %date;
-      updateid = %mid;
+      updateid = %mid-1;
       slevel = %slevel;
 	   rcvrec = %vline;
    };
@@ -1043,10 +1047,11 @@ function TopicsPopupDlg::onWake( %this )
    if(isModerator())
       TopicsPopupMenu.add(%line,-1);
       TopicsPopupMenu.add("Request Admin Review", 3);   
-//      TopicsPopupMenu.add("Unlock Topic", 5);   
       if(isT2Admin())
       {
          TopicsPopupMenu.add("Lock Topic", 4);   
+         TopicsPopupMenu.add("Unlock Topic", 5);   
+	  	 TopicsPopupMenu.add("Move Topic",6);
          TopicsPopupMenu.add("Remove Topic", 10);   
       }
             
@@ -1159,14 +1164,15 @@ function TopicsPopupMenu::onSelect( %this, %id, %text )
                databaseQuery(60, %fieldData, TopicsPopupDlg, TopicsPopupDlg.key);
 
        case 4: //Lock Thread
-               TopicsPopupDlg.key = LaunchGui.key++;
-               TopicsPopupDlg.state = "lockTopic";
-               %fieldData = TopicsPopupMenu.topic.id TAB "Locked at Admin Request";
-               DatabaseQuery(66,%fieldData,topicsPopupDlg,topicsPopupDlg.key);
+				LockTopicReason.setText("Locked at Admin Request");
+				Canvas.pushDialog("GenDialog");
        case 5: //Unlock Thread
-              MessageBoxOK("NOTICE","Feature Not Yet Implemented");
-       case 6: //Not Implemented
-              MessageBoxOK("NOTICE","Feature Not Yet Implemented");
+				TopicsPopupDlg.key = LaunchGui.key++;
+    			TopicsPopupDlg.state = "unlockTopic";
+				%fieldData = TopicsPopupMenu.topic.id;
+			    DatabaseQuery(67,%fieldData,topicsPopupDlg,topicsPopupDlg.key);
+       case 6: //Move Thread
+				Canvas.pushDialog("MoveThreadDlg");
        case 7: //Not Implemented
               MessageBoxOK("NOTICE","Feature Not Yet Implemented");
        case 8: //Not Implemented
@@ -1181,6 +1187,34 @@ function TopicsPopupMenu::onSelect( %this, %id, %text )
                databaseQuery(62, %fieldData, TopicsPopupDlg, TopicsPopupDlg.key);
    }           
    canvas.popDialog(TopicsPopupDlg);
+}
+//-----------------------------------------------------------------------------
+function MoveThreadDlg::onWake(%this)
+{
+	MoveToForumList.clear();
+	for(%i=0;%i<ForumsList.rowCount();%i++)
+	{
+		MoveToForumList.add(getField(ForumsList.getRowText(%i),0),ForumsList.getRowid(%i));
+	}
+}
+//-----------------------------------------------------------------------------
+function TopicsPopupMenu::ExecuteLock(%this)
+{
+	Canvas.popDialog("GenDialog");
+    %fieldData = TopicsPopupMenu.topic.id TAB LockTopicReason.getText();
+	TopicsPopupDlg.key = LaunchGui.key++;
+    TopicsPopupDlg.state = "lockTopic";
+    DatabaseQuery(66,%fieldData,topicsPopupDlg,topicsPopupDlg.key);
+}
+//-----------------------------------------------------------------------------
+function TopicsPopupMenu::ExecuteMove(%this)
+{
+    %fieldData = TopicsPopupMenu.topic.id TAB MoveToForumList.getSelected() TAB MoveToForumList.getText();
+	error("MOVE: " @ %fieldData);
+	Canvas.popDialog("MoveThreadDlg");
+	TopicsPopupDlg.key = LaunchGui.key++;
+    TopicsPopupDlg.state = "moveTopic";
+    DatabaseQuery(68,%fieldData,topicsPopupDlg,topicsPopupDlg.key);
 }
 //-----------------------------------------------------------------------------
 function TopicsPopupDlg::onSleep(%this)
@@ -1214,11 +1248,18 @@ function TopicsPopupDlg::onDatabaseQueryResult(%this,%status,%recordCount,%key)
        }
        else
        {
-           if(%this.state $= "lockTopic")
-           {
+			switch$(%this.state)
+			{
+				case "lockTopic":
                      ForumsTopicsList.setRowStyle( getField(%recordCount,0), 3 );
-           }
-           MessageBoxOK("NOTICE",getField(%status,1));
+           			 MessageBoxOK("NOTICE",getField(%status,1));
+				case "unlockTopic":
+                     ForumsTopicsList.setRowStyle( getField(%recordCount,0), 1 );
+           			 MessageBoxOK("NOTICE",getField(%status,1));
+				case "moveTopic":
+                     ForumsTopicsList.setRowStyle( getField(%recordCount,0), 3 );
+           			 MessageBoxOK("NOTICE",getField(%status,1));
+			}
        }
    else
        messageBoxOK("ERROR",getField(%status,1));
@@ -1271,7 +1312,7 @@ function ForumsTopicsList::updateReadStatus( %this )
       {
          %header = %file.readLine();
          %topicDate = getField( %this.getRowText( %row ), 3 );
-         %updateID = getField(%header,0);
+         %updateID = getField(%header,0)-1;
          if ( getField( %header, 1 ) == $ForumCacheVersion        // Must have same cache version
               && getField( %header, 2 ) == 1                         // "all read" flag must be set
               && strcmp( getField( %header, 3 ), %topicDate ) >= 0
@@ -1337,7 +1378,7 @@ function ForumsMessageList::AddPost(%this, %id, %postname, %authorID, %authorNam
       author = %authorName;
       authorID = %authorID;
       date = %date;
-      updateid = %mid;
+      updateid = %mid-1;
       slevel = %slevel;
 	   rcvrec = %vline;
    };
@@ -1607,9 +1648,9 @@ function ForumsMessagelist::onDatabaseQueryResult(%this,%status,%resultString,%k
 			case "editPost":
                %this.state = "done";
           		%postId = getField( %status, 2 );
-           	%index = ForumsMessageVector.getLineIndexByTag( %postId );
-           	%text = ForumsMessageVector.getLineTextByTag( %postId );
-           	%parent = getRecord( %text, 2 );
+           		%index = ForumsMessageVector.getLineIndexByTag( %postId );
+	           	%text = ForumsMessageVector.getLineTextByTag( %postId );
+    	       	%parent = getRecord( %text, 2 );
           	    ForumsMessageVector.deleteLine( %index );
                %text = setRecord(%text,0,"1");
                ForumsMessageVector.pushBackLine(%text, %postID);
@@ -1618,9 +1659,9 @@ function ForumsMessagelist::onDatabaseQueryResult(%this,%status,%resultString,%k
 			case "deletePost":
 				%this.state = "done";
           		%postId = getField( %status, 2 );
-           	%index = ForumsMessageVector.getLineIndexByTag( %postId );
-           	%text = ForumsMessageVector.getLineTextByTag( %postId );
-           	%parent = getRecord( %text, 2 );
+	           	%index = ForumsMessageVector.getLineIndexByTag( %postId );
+    	       	%text = ForumsMessageVector.getLineTextByTag( %postId );
+        	   	%parent = getRecord( %text, 2 );
  		    	ForumsTopicsList.refreshFlag = true;
           	    ForumsMessageVector.deleteLine( %index );
       		    CacheForumTopic();
@@ -1653,4 +1694,31 @@ function ForumsMessagelist::onDatabaseQueryResult(%this,%status,%resultString,%k
 		MessageBoxOK("ERROR",getFields(%status,1));
 	}
    canvas.SetCursor(DefaultCursor);
+}
+//-----------------------------------------------------------------------------
+function ForumsComposeDlg::onWake( %this )
+{
+   // Get the window pos and extent from prefs:
+   %res = getResolution();
+   %resW = firstWord( %res );
+   %resH = getWord( %res, 1 );
+   %w = firstWord( $pref::Forum::PostWindowExtent );
+   if ( %w > %resW )
+      %w = %resW;
+   %h = getWord( $pref::Forum::PostWindowExtent, 1 );
+   if ( %h > %resH )
+      %h = %resH;
+   %x = firstWord( $pref::Forum::PostWindowPos );
+   if ( %x > %resW - %w )
+      %x = %resW - %w;
+   %y = getWord( $pref::Forum::PostWindowPos, 1 );
+   if ( %y > %resH - %h )
+      %y = %resH - %h;
+   FC_Window.resize( %x, %y, %w, %h );
+}
+//-----------------------------------------------------------------------------
+function ForumsComposeDlg::onSleep( %this )
+{
+   $pref::Forum::PostWindowPos = FC_Window.getPosition();
+   $pref::Forum::PostWindowExtent = FC_Window.getExtent();
 }

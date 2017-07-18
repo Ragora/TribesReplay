@@ -13,10 +13,10 @@
 
 //--- OBJECT WRITE BEGIN ---
 new SimGroup(MissionGroup) {
-		musicTrack = "volcanic";
-		CnH_timeLimit = "25";
-		cdTrack = "3";
 		powerCount = "0";
+		CnH_timeLimit = "25";
+		musicTrack = "volcanic";
+		cdTrack = "3";
 
 	new MissionArea(MissionArea) {
 		area = "-600 -448 1072 1168";
@@ -41,23 +41,23 @@ new SimGroup(MissionGroup) {
 		squareSize = "8";
 		emptySquares = "250";
 			visibleDistance = "1200";
-			hazeDistance = "250";
 			locked = "true";
 			position = "-1024 -1024 0";
+			hazeDistance = "250";
 	};
 	new NavigationGraph(NavGraph) {
 		conjoinAngleDev = "70";
 		cullDensity = "0.3";
 		customArea = "0 0 0 0";
+			YDimOverSize = "0";
 			rotation = "0 0 0 0";
 			XDimOverSize = "0";
-			scale = "1 1 1";
-			locked = "true";
-			conjoinBowlDev = "20";
 			GraphFile = "Flashpoint.nav";
-			position = "0 0 0 1";
+			scale = "1 1 1";
+			conjoinBowlDev = "20";
 			coverage = "0";
-			YDimOverSize = "0";
+			locked = "true";
+			position = "0 0 0 1";
 	};
 	new Sky(Sky) {
 		position = "-1024 -1024 0";
@@ -69,10 +69,11 @@ new SimGroup(MissionGroup) {
 		cloudSpeed1 = "0.0001";
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
-		visibleDistance = "400";
+		visibleDistance = "350";
 		useSkyTextures = "0";
+		renderBottomTexture = "0";
 		SkySolidColor = "0.450000 0.300000 0.250000 1.000000";
-		fogDistance = "125";
+		fogDistance = "100";
 		fogColor = "0.450000 0.300000 0.250000 1.000000";
 		fogVolume1 = "0 0 0";
 		fogVolume2 = "0 0 0";
@@ -83,8 +84,8 @@ new SimGroup(MissionGroup) {
 		fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
 		fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000000";
 		fogVolumeColor3 = "128.000000 128.000000 128.000000 0.000000";
-			locked = "true";
 			cloudSpeed0 = "0.000000 0.000000";
+			locked = "true";
 	};
 	new SimGroup(Lava) {
 	};
@@ -197,7 +198,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "SensorLargePulse";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "33";
 						locked = "true";
 				};
 				new StaticShape(Team0flipflop1) {
@@ -208,8 +208,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						name = "Center Stronghold";
-						Projector = "3304";
-						Target = "34";
 						locked = "true";
 				};
 				new StaticShape(Team0generatorLarge1) {
@@ -220,7 +218,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "GeneratorLarge";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "35";
 						locked = "true";
 				};
 				new StaticShape(Team0StationInventory1) {
@@ -231,7 +228,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "36";
 						locked = "true";
 				};
 				new StaticShape(Team0StationInventory2) {
@@ -242,7 +238,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "37";
 						locked = "true";
 				};
 				new StaticShape(Team0StationInventory3) {
@@ -253,7 +248,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "38";
 						locked = "true";
 				};
 				new StaticShape(Team0StationInventory4) {
@@ -264,7 +258,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "39";
 						locked = "true";
 				};
 				new WayPoint() {
@@ -282,7 +275,7 @@ new SimGroup(MissionGroup) {
 					position = "-161.533 -52.577 121.054";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
-					interiorFile = "dplat3.dif";
+					interiorFile = "dplat1.dif";
 					showTerrainInside = "0";
 						locked = "true";
 				};
@@ -298,7 +291,7 @@ new SimGroup(MissionGroup) {
 					position = "-36.516 78.04 120.967";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
-					interiorFile = "dplat3.dif";
+					interiorFile = "dplat1.dif";
 					showTerrainInside = "0";
 						locked = "true";
 				};
@@ -311,15 +304,13 @@ new SimGroup(MissionGroup) {
 						locked = "true";
 				};
 				new StaticShape() {
-					position = "-98.521 22.97 199.379";
+					position = "-98.521 22.97 198.9";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "LogoProjector";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "-1";
 						locked = "true";
-						holo = "0";
 				};
 				new TSStatic() {
 					position = "-91.995 69.78 143.41";
@@ -418,9 +409,7 @@ new SimGroup(MissionGroup) {
 					dataBlock = "LogoProjector";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "-1";
 						locked = "true";
-						holo = "0";
 				};
 				new WayPoint() {
 					position = "-422.852 -262.799 60.7275";
@@ -442,8 +431,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						name = "SW Tower";
-						Projector = "3318";
-						Target = "40";
 						locked = "true";
 				};
 				new StaticShape(Team0StationInventory5) {
@@ -454,7 +441,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "41";
 						locked = "true";
 				};
 				new StaticShape(Team0StationInventory6) {
@@ -465,7 +451,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "42";
 						locked = "true";
 				};
 				new Item() {
@@ -478,7 +463,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new SimGroup(ffield) {
@@ -488,8 +472,9 @@ new SimGroup(MissionGroup) {
 						rotation = "0.0399823 0.0187772 0.999024 129.73";
 						scale = "1 8.27421 6.59044";
 						dataBlock = "defaultAllSlowFieldBare";
+						lockCount = "0";
+						homingCount = "0";
 							color = "0.500000 0.500000 1.000000 1.000000";
-							Target = "43";
 							locked = "true";
 					};
 				};
@@ -517,7 +502,8 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationVehiclePad";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "-1";
+						Ready = "1";
+						station = "3539";
 						locked = "true";
 				};
 				new InteriorInstance() {
@@ -548,8 +534,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						name = "NW Tower";
-						Projector = "3352";
-						Target = "45";
 						locked = "true";
 				};
 				new Item() {
@@ -562,7 +546,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -575,7 +558,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -588,7 +570,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -601,7 +582,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -614,7 +594,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -627,20 +606,18 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
 					position = "-352.965 365.238 135.869";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
-					dataBlock = "Grenade";
+					dataBlock = "grenade";
 					lockCount = "0";
 					homingCount = "0";
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Turret(Team0TurretBaseLarge1) {
@@ -652,7 +629,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 					initialBarrel = "MissileBarrelLarge";
-						Target = "46";
 						locked = "true";
 				};
 				new Turret(Team0TurretBaseLarge2) {
@@ -664,7 +640,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 					initialBarrel = "MissileBarrelLarge";
-						Target = "47";
 						locked = "true";
 				};
 				new StaticShape(Team0generatorLarge3) {
@@ -675,7 +650,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "GeneratorLarge";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "48";
 						locked = "true";
 				};
 				new WayPoint() {
@@ -712,9 +686,7 @@ new SimGroup(MissionGroup) {
 					dataBlock = "LogoProjector";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "-1";
 						locked = "true";
-						holo = "0";
 				};
 			};
 			new SimGroup(Tower4) {
@@ -751,9 +723,7 @@ new SimGroup(MissionGroup) {
 					dataBlock = "LogoProjector";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "-1";
 						locked = "true";
-						holo = "0";
 				};
 				new StaticShape() {
 					position = "227.909 456.691 53.8";
@@ -763,7 +733,8 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationVehiclePad";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "-1";
+						Ready = "1";
+						station = "3564";
 						locked = "true";
 				};
 				new InteriorInstance() {
@@ -782,8 +753,9 @@ new SimGroup(MissionGroup) {
 						rotation = "0 0 1 130.677";
 						scale = "1 8.27421 6.59044";
 						dataBlock = "defaultAllSlowFieldBare";
+						lockCount = "0";
+						homingCount = "0";
 							color = "0.500000 0.500000 1.000000 1.000000";
-							Target = "50";
 							triggerCount = "0";
 							locked = "true";
 					};
@@ -798,7 +770,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new StaticShape(Team0StationInventory7) {
@@ -809,7 +780,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "51";
 						locked = "true";
 				};
 				new StaticShape(Team0StationInventory8) {
@@ -820,7 +790,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "52";
 						locked = "true";
 				};
 				new StaticShape(Team0flipflop4) {
@@ -832,8 +801,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						name = "NE Tower";
-						Projector = "3356";
-						Target = "53";
 						locked = "true";
 				};
 				new InteriorInstance() {
@@ -855,8 +822,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						name = "SE Tower";
-						Projector = "3387";
-						Target = "54";
 						locked = "true";
 				};
 				new InteriorInstance() {
@@ -877,7 +842,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -890,7 +854,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -903,7 +866,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -916,7 +878,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -929,7 +890,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
@@ -942,20 +902,18 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Item() {
 					position = "249.5 -193.952 134.386";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
-					dataBlock = "Grenade";
+					dataBlock = "grenade";
 					lockCount = "0";
 					homingCount = "0";
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new Turret(Team0TurretBaseLarge3) {
@@ -967,7 +925,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 					initialBarrel = "MissileBarrelLarge";
-						Target = "55";
 						locked = "true";
 				};
 				new Turret(Team0TurretBaseLarge4) {
@@ -979,7 +936,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 					initialBarrel = "MissileBarrelLarge";
-						Target = "56";
 						locked = "true";
 				};
 				new StaticShape(Team0generatorLarge5) {
@@ -990,7 +946,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "GeneratorLarge";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "57";
 						locked = "true";
 				};
 				new WayPoint() {
@@ -1027,31 +982,13 @@ new SimGroup(MissionGroup) {
 					dataBlock = "LogoProjector";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "-1";
 						locked = "true";
-						holo = "0";
 				};
 			};
 		};
 	};
 	new SimGroup(Ambiance) {
 
-		new ParticleEmissionDummy() {
-			position = "-200.388 -69.3782 53.3559";
-			rotation = "-0.870674 0.486579 0.0718842 16.5162";
-			scale = "1 1 1";
-			dataBlock = "defaultEmissionDummy";
-			emitter = "HeavyDamageSmoke";
-			velocity = "1";
-				locked = "true";
-		};
-		new TSStatic() {
-			position = "-201.47 -66.557 50.2098";
-			rotation = "-0.455902 -0.353976 -0.816612 22.4156";
-			scale = "1 1 1";
-			shapeName = "vehicle_land_assault_wreck.dts";
-				locked = "true";
-		};
 		new AudioEmitter() {
 			position = "-243.602 -14.58 50.3803";
 			rotation = "1 0 0 0";
@@ -1074,28 +1011,10 @@ new SimGroup(MissionGroup) {
 			type = "EffectAudioType";
 				locked = "true";
 		};
-		new ParticleEmissionDummy() {
-			position = "-96.4604 -7.40853 138.913";
-			rotation = "1 0 0 179.909";
-			scale = "1 1 1";
-			dataBlock = "halftimeEmissionDummy";
-			emitter = "PlasmaExplosionEmitter";
-			velocity = "1";
-				locked = "true";
-		};
-		new ParticleEmissionDummy() {
-			position = "-96.4693 62.0943 139.032";
-			rotation = "1 0 0 179.909";
-			scale = "1 1 1";
-			dataBlock = "halftimeEmissionDummy";
-			emitter = "PlasmaExplosionEmitter";
-			velocity = "1";
-				locked = "true";
-		};
 		new WaterBlock() {
 			position = "-200 -136 34.9178";
 			rotation = "1 0 0 0";
-			scale = "192 288 9.27051";
+			scale = "160 160 9.27051";
 			liquidType = "CrustyLava";
 			density = "1";
 			viscosity = "15";
@@ -1104,10 +1023,10 @@ new SimGroup(MissionGroup) {
 			surfaceOpacity = "1";
 			envMapTexture = "desert/skies/d_n_move1";
 			envMapIntensity = "0.5";
-	      submergeTexture[0] = "special/lavadeath_1";
-	      submergeTexture[1] = "special/lavadeath_2";
+			submergeTexture[0] = "special/lavadeath_1";
+			submergeTexture[1] = "special/lavadeath_2";
 			removeWetEdges = "1";
-				locked = "true";
+				locked = "false";
 		};
 	};
 };

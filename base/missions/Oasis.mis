@@ -11,10 +11,10 @@
 
 //--- OBJECT WRITE BEGIN ---
 new SimGroup(MissionGroup) {
-		DM_scoreLimit = "25";
-		musicTrack = "desert";
 		powerCount = "0";
+		DM_scoreLimit = "25";
 		cdTrack = "6";
+		musicTrack = "desert";
 		DM_timeLimit = "25";
 
 	new MissionArea(MissionArea) {
@@ -27,10 +27,10 @@ new SimGroup(MissionGroup) {
 		direction = "0.57735 0.57735 -0.57735";
 		color = "0.600000 0.600000 0.600000 1.000000";
 		ambient = "0.200000 0.200000 0.200000 1.000000";
-			locked = "true";
-			scale = "1 1 1";
 			position = "-1680 -1880 0";
 			rotation = "1 0 0 0";
+			locked = "true";
+			scale = "1 1 1";
 	};
 	new TerrainBlock(Terrain) {
 		rotation = "1 0 0 0";
@@ -39,24 +39,24 @@ new SimGroup(MissionGroup) {
 		terrainFile = "Oasis.ter";
 		squareSize = "8";
 		emptySquares = "359010";
-			hazeDistance = "250";
-			locked = "true";
 			position = "-1024 -1024 0";
+			locked = "true";
 			visibleDistance = "1200";
+			hazeDistance = "250";
 	};
 	new NavigationGraph(NavGraph) {
 		conjoinAngleDev = "45";
 		cullDensity = "0.3";
 		customArea = "0 0 0 0";
-			XDimOverSize = "0";
-			locked = "true";
-			scale = "1 1 1";
-			GraphFile = "Oasis.nav";
-			YDimOverSize = "0";
-			conjoinBowlDev = "20";
 			position = "0 0 0 1";
 			coverage = "0";
+			XDimOverSize = "0";
 			rotation = "0 0 0 0";
+			YDimOverSize = "0";
+			locked = "true";
+			scale = "1 1 1";
+			conjoinBowlDev = "20";
+			GraphFile = "Oasis.nav";
 	};
 	new Sky(Sky) {
 		position = "-1680 -1880 0";
@@ -68,11 +68,11 @@ new SimGroup(MissionGroup) {
 		cloudSpeed1 = "0.0001";
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
-		visibleDistance = "900";
+		visibleDistance = "500";
 		useSkyTextures = "1";
 		renderBottomTexture = "0";
 		SkySolidColor = "0.390000 0.390000 0.390000 0.000000";
-		fogDistance = "600";
+		fogDistance = "275";
 		fogColor = "0.500000 0.500000 0.500000 1.000000";
 		fogVolume1 = "120 0 100";
 		fogVolume2 = "0 0 0";
@@ -83,8 +83,8 @@ new SimGroup(MissionGroup) {
 		fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
 		fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000000";
 		fogVolumeColor3 = "128.000000 128.000000 128.000000 0.000000";
-			locked = "true";
 			cloudSpeed0 = "0.000000 0.000000";
+			locked = "true";
 	};
 	new WaterBlock() {
 		position = "-128 -96 90";
@@ -102,41 +102,19 @@ new SimGroup(MissionGroup) {
 			locked = "true";
 	};
 	new SimGroup(environment) {
-			powerCount = "0";
 
-		new TSStatic() {
-			position = "-99.589 -115.88 125.815";
-			rotation = "0 0 -1 55.0039";
-			scale = "1 1 1";
-			shapeName = "borg19.dts";
-				locked = "true";
-		};
-		new TSStatic() {
-			position = "-55.6873 14.5 124.435";
-			rotation = "0 0 1 123.186";
-			scale = "1 1 1";
-			shapeName = "borg18.dts";
-				locked = "true";
-		};
-		new TSStatic() {
-			position = "-103.306 -39.641 104.528";
-			rotation = "0 0 -1 12.605";
-			scale = "1 1 1";
-			shapeName = "borg16.dts";
-				locked = "true";
-		};
-		new TSStatic() {
-			position = "-122.789 -30.4939 104.096";
-			rotation = "0 0 1 63.5983";
-			scale = "1 1 1";
-			shapeName = "borg17.dts";
-				locked = "true";
-		};
 		new TSStatic() {
 			position = "-46.068 -90.5109 114.357";
 			rotation = "0 0 -1 32.0856";
 			scale = "1 1 1";
 			shapeName = "borg17.dts";
+				locked = "true";
+		};
+		new TSStatic() {
+			position = "-117.452 -39.1965 105.735";
+			rotation = "1 0 0 0";
+			scale = "1 1 1";
+			shapeName = "borg34.dts";
 				locked = "true";
 		};
 		new TSStatic() {
@@ -147,15 +125,14 @@ new SimGroup(MissionGroup) {
 				locked = "true";
 		};
 		new TSStatic() {
-			position = "-117.452 -39.1965 105.735";
-			rotation = "1 0 0 0";
+			position = "-122.789 -30.4939 104.096";
+			rotation = "0 0 1 63.5983";
 			scale = "1 1 1";
-			shapeName = "borg34.dts";
+			shapeName = "borg17.dts";
 				locked = "true";
 		};
 	};
 	new SimGroup(ObserverDropPoints) {
-			powerCount = "0";
 
 		new Camera() {
 			position = "-52.1118 -103.14 180.539";
@@ -195,13 +172,10 @@ new SimGroup(MissionGroup) {
 		};
 	};
 	new SimGroup(Teams) {
-			powerCount = "0";
 
 		new SimGroup(Team0) {
-				powerCount = "0";
 
 			new SimGroup(Base0) {
-					powerCount = "3";
 
 				new StaticShape() {
 					position = "-202.863 -44.7028 122.075";
@@ -212,9 +186,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
-						Target = "33";
-						Trigger = "3361";
-						team = "0";
 				};
 				new StaticShape() {
 					position = "-207.1 -40.064 97.59";
@@ -225,9 +196,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
-						Target = "34";
-						Trigger = "3363";
-						team = "0";
 				};
 				new InteriorInstance() {
 					position = "-202.509 -44.8018 107.6";
@@ -237,7 +205,6 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_3";
 						locked = "true";
-						team = "0";
 				};
 				new InteriorInstance() {
 					position = "-102.796 21.1962 139.043";
@@ -247,7 +214,6 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
-						team = "0";
 				};
 				new InteriorInstance() {
 					position = "-58.1054 -111.149 132.645";
@@ -257,7 +223,6 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
-						team = "0";
 				};
 				new Item() {
 					position = "-209.9 -44.7356 105.823";
@@ -270,8 +235,6 @@ new SimGroup(MissionGroup) {
 					static = "1";
 					rotate = "0";
 						locked = "true";
-						Target = "-1";
-						team = "0";
 				};
 				new StaticShape() {
 					position = "-208.747 -50.5824 97.59";
@@ -282,8 +245,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
-						Target = "35";
-						team = "0";
 				};
 				new StaticShape() {
 					position = "-70.6533 -106.666 126.66";
@@ -294,9 +255,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
-						Target = "36";
-						Trigger = "3370";
-						team = "0";
 				};
 				new StaticShape() {
 					position = "-101.038 26.3027 142.92";
@@ -307,8 +265,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
-						Target = "37";
-						team = "0";
 				};
 				new StaticShape() {
 					position = "-115.116 27.4632 132.54";
@@ -319,9 +275,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
-						Target = "38";
-						Trigger = "3373";
-						team = "0";
 				};
 				new StaticShape() {
 					position = "-90.4074 27.4432 132.54";
@@ -332,9 +285,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
-						Target = "39";
-						Trigger = "3375";
-						team = "0";
 				};
 				new StaticShape() {
 					position = "-60.196 -115.78 126.66";
@@ -345,9 +295,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
-						Target = "40";
-						Trigger = "3377";
-						team = "0";
 				};
 				new StaticShape() {
 					position = "-64.0443 -106.333 135.48";
@@ -358,16 +305,12 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
-						Target = "41";
-						team = "0";
 				};
 			};
 		};
 		new SimGroup(team1) {
-				powerCount = "0";
 
 			new SimGroup(spawnspheres) {
-					powerCount = "0";
 
 				new SpawnSphere() {
 					position = "-70.435 -46.3061 116.136";
@@ -397,10 +340,8 @@ new SimGroup(MissionGroup) {
 		};
 	};
 	new SimGroup(RandomOrganics) {
-			powerCount = "0";
 
 		new SimGroup(Addition4BEPlant1) {
-				powerCount = "0";
 
 			new TSStatic() {
 				position = "-105 -82 103.342";
@@ -446,11 +387,10 @@ new SimGroup(MissionGroup) {
 				locked = "true";
 		};
 		new SimGroup(Addition5PhoenixPlant1) {
-				powerCount = "0";
 
 			new TSStatic() {
-				position = "-113 46 132.148";
-				rotation = "0 0 1 129";
+				position = "-41 206 179.164";
+				rotation = "0 0 1 6.00018";
 				scale = "1 1 1";
 				shapeName = "porg1.dts";
 					locked = "true";
@@ -574,16 +514,8 @@ new SimGroup(MissionGroup) {
 				shapeName = "porg1.dts";
 					locked = "true";
 			};
-			new TSStatic() {
-				position = "-41 206 179.164";
-				rotation = "0 0 1 6.00018";
-				scale = "1 1 1";
-				shapeName = "porg1.dts";
-					locked = "true";
-			};
 		};
 		new SimGroup(Addition6PhoenixPlant2) {
-				powerCount = "0";
 
 			new TSStatic() {
 				position = "-137 102 168.824";
@@ -685,7 +617,7 @@ new SimGroup(MissionGroup) {
 			};
 			new TSStatic() {
 				position = "-17 166 166.719";
-				rotation = "0 0 1 240";
+				rotation = "0 0 -1 120";
 				scale = "1 1 1";
 				shapeName = "porg2.dts";
 					locked = "true";
@@ -705,13 +637,6 @@ new SimGroup(MissionGroup) {
 					locked = "true";
 			};
 			new TSStatic() {
-				position = "-121 30 131.816";
-				rotation = "0 0 1 196";
-				scale = "1 1 1";
-				shapeName = "porg2.dts";
-					locked = "true";
-			};
-			new TSStatic() {
 				position = "-25 70 142";
 				rotation = "0 0 1 239";
 				scale = "1 1 1";
@@ -720,26 +645,11 @@ new SimGroup(MissionGroup) {
 			};
 		};
 		new SimGroup(Addition1BELgTree18) {
-				powerCount = "0";
 
 			new TSStatic() {
-				position = "-121 14 128.484";
-				rotation = "0 0 -1 102";
-				scale = "0.9 0.9 0.9";
-				shapeName = "borg18.dts";
-					locked = "true";
-			};
-			new TSStatic() {
-				position = "-49 6 119.805";
-				rotation = "0 0 1 57.9999";
-				scale = "1.4 1.4 1.4";
-				shapeName = "borg18.dts";
-					locked = "true";
-			};
-			new TSStatic() {
-				position = "-105 -18 99.633";
-				rotation = "0 0 1 169";
-				scale = "0.8 0.8 0.8";
+				position = "-97.206 -50.249 101.355";
+				rotation = "0 0 1 58.9997";
+				scale = "1.2 1.2 1.2";
 				shapeName = "borg18.dts";
 					locked = "true";
 			};
@@ -750,24 +660,9 @@ new SimGroup(MissionGroup) {
 				shapeName = "borg18.dts";
 					locked = "true";
 			};
-			new TSStatic() {
-				position = "-97.206 -50.249 101.355";
-				rotation = "0 0 1 58.9997";
-				scale = "1.2 1.2 1.2";
-				shapeName = "borg18.dts";
-					locked = "true";
-			};
-			new TSStatic() {
-				position = "-121 -74 104.211";
-				rotation = "0 0 -1 79";
-				scale = "1.1 1.1 1.1";
-				shapeName = "borg18.dts";
-					locked = "true";
-			};
 		};
 	};
 	new SimGroup(Ambiance) {
-			powerCount = "0";
 
 		new AudioEmitter() {
 			position = "-60.3481 -42.8411 108.656";

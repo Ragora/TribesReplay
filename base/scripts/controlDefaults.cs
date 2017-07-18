@@ -1330,4 +1330,5 @@ function cycleDebugRenderMode()
 }
 
 // Since the toggle console key is remappable, put it here:
-GlobalActionMap.bind(keyboard, "grave", toggleConsole);
+if (!isDemo())
+   GlobalActionMap.bind(keyboard, "grave", toggleConsole);

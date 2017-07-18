@@ -50,9 +50,9 @@ function clientCmdPickTeamMenu( %teamA, %teamB )
 
 function clientCmdProcessPickTeam( %option )
 {
-   if( %option <= 4 )
+   if( %option !$= "" && %option <= 4 )
       CommandToServer( 'clientPickedTeam', %option );
-   else if( %option == 5 )     
+   else if( %option !$= "" && %option == 5 )     
       disconnect();
    
    Canvas.popDialog( PickTeamDlg );
@@ -64,16 +64,13 @@ $LastHudTarget = 0;
 
 function addMessageHudLine(%text)
 {
-   //first, see if we're "scrolled up"...
-   %textHeight = chatHud.profile.fontSize;
-   if (%textHeight <= 0)
-      %textHeight = 12;
-   %chatScrollHeight = getWord(chatHud.getGroup().getGroup().extent, 1);
-   %chatPosition = getWord(chatHud.extent, 1) - %chatScrollHeight + getWord(chatHud.position, 1);
-   %linesToScroll = mFloor((%chatPosition / %textHeight) + 0.5);
-   if (%linesToScroll > 0)
+   %adjustPos = false;
+   if( chatPageDown.isVisible() )
+   {
+      %adjustPos = true;
       %origPosition = chatHud.position;
-      
+   }
+   
    //add the message...
    while( !chatPageDown.isVisible() && HudMessageVector.getNumLines() && (HudMessageVector.getNumLines() >= $pref::HudMessageLogSize))
    {
@@ -86,7 +83,7 @@ function addMessageHudLine(%text)
    $LastHudTarget = 0;
 
    //now that we've added the message, see if we need to reset the position
-   if (%linesToScroll > 0)
+   if ( %adjustPos )
    {
       chatPageDown.setVisible(true);
       ChatPageDown.position = ( firstWord( outerChatHud.extent ) - 20 ) @ " " @ ( $chatScrollLenY[$Pref::chatHudLength] - 6 );
@@ -466,8 +463,8 @@ function clientCmdToggleDashHud(%val)
       if(isObject(turreteerHud))
          turreteerHud.delete();
       // reset in case of vehicle-specific reticle
-      reticleHud.setBitmap("");
-      reticleFrameHud.setVisible(false);
+      //reticleHud.setBitmap("");
+      //reticleFrameHud.setVisible(false);
    }
    dashboardHud.setVisible(%val);
 }

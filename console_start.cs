@@ -31,6 +31,7 @@ function cleanupAudio()
    AudioGui.delete();
    sButtonDown.delete();
    sButtonOver.delete();
+	InputDeniedSound.delete();
 }
 
 function startAudio()
@@ -55,6 +56,13 @@ function startAudio()
    new AudioProfile(sButtonOver)
    {
       filename = "gui/buttonOver.wav";
+      description = "audioGui";
+      preload = true;
+   };
+
+   new AudioProfile(InputDeniedSound)
+   {
+      filename = "fx/misc/diagnostic_beep.wav";
       description = "audioGui";
       preload = true;
    };
@@ -110,158 +118,189 @@ function resetCanvas()
 }
 
 //------------------------------------------------------------------------------
-for($i = 1; $i < $Game::argc ; $i++)
+if ( isDemo() )
 {
-   $arg = $Game::argv[$i];
-   $nextArg = $Game::argv[$i+1];
-   $nextArg2 = $Game::argv[$i+2];
-   $hasNextArg = $Game::argc - $i > 1;
-   $has2NextArgs = $Game::argc - $i > 2;
-   
-   if (!stricmp(fileExt($arg), ".dif"))
-   {
-      $LaunchMode = "InteriorView";
-      //$SkipLogin = true;
-      $TestObjectFileName = $arg;
-      echo($TestObjectFileName);
-   }
-   else if(!stricmp(fileExt($arg), ".dif\""))
-   {
-      $LaunchMode = "InteriorView";
-      //$SkipLogin = true;
-      $TestObjectFileName = getSubStr($arg,1, strlen($arg) - 2);
-   }
-   else if ( $arg $= "-mod" && $hasNextArg )
-   {
-      setModPaths( $nextArg );
-      $i += 2;
-   }
-   else if($arg $= "-dedicated")
-   {
-      $LaunchMode = "DedicatedServer";
-   }
-   else if($arg $= "-clientprefs" && $hasNextArg)
-   {
-      $i++;
-      $clientprefs = $nextArg;
-   }
-   else if($arg $= "-serverprefs" && $hasNextArg)
-   {
-      $i++;
-      $serverprefs = $nextArg;
-   }
-   else if($arg $= "-host")
-   {
-      $LaunchMode = "HostGame";
-   }
-   else if($arg $= "-mission" && $has2NextArgs)
-   {
-      $i += 2;
-      $mission = $nextArg;
-      $missionType = $nextArg2;
-   }
-   else if($arg $= "-connect" && $hasNextArg)
-   {
-      $i++;
-      $LaunchMode = "Connect";
-      $JoinGameAddress = $nextArg;
-   }
-   else if($arg $= "-jload" && $hasNextArg)
-   {
-      $i++;
-      $JournalFile = $nextArg;
-      $JournalMode = "LoadJournal";
-   }
-   else if($arg $= "-jsave" && $hasNextArg)
-   {                     
-      $i++;
-      $JournalFile = $nextArg;
-      $JournalMode = "SaveJournal";
-   }
-   else if($arg $= "-jplay" && $hasNextArg)
-   {
-      $i++;
-      $JournalFile = $nextArg;
-      $journalMode = "PlayJournal";
-   }
-   else if($arg $= "-navBuild" && $has2NextArgs)
-   {
-      $i += 2;
-      $LaunchMode = "NavBuild";
-      $mission = $nextArg;
-      $missionType = $nextArg2;
-   }
-   else if($arg $= "-spnBuild" && $has2NextArgs)
-   {
-      $i += 2;
-      $LaunchMode = "SpnBuild";
-      $mission = $nextArg;
-      $missionType = $nextArg2;
-   }
-   else if($arg $= "-demo")
-   {
-      $LaunchMode = "Demo";
-   }
-   else if($arg $= "-login" && $has2NextArgs)
-   {
-      $i += 2;
-      $Login = true;
-      $LoginName = $nextArg;
-      $LoginPassword = $nextArg2;
-   }
-   else if($arg $= "-show")
-   {
-      $LaunchMode = "TSShow";
-   }
-   else if($arg $= "-con")
-   {
-      $LaunchMode = "Console";
-   }
-   else if ($arg $= "-bot" && $hasNextArg)
-   {
-      $i++;
-      $CmdLineBotCount = $nextArg;
-   }
-   else if ($arg $= "-light" && $hasNextArg)
-   {
-      $LaunchMode = "SceneLight";
-      $mission = $nextArg;
-   }
-   else if ($arg $= "-prepbuild")
-   {
-      enableWinConsole(true);
-      prepBuild();
-      setLogMode(1);
-      setEchoFileLoads(true);
-   }
-   else if($arg $= "-quit")
-   {
-      quit();
-      return;
-   }
-   else if ($arg $= "-nologin")
-   {
-      $SkipLogin = true;
-      if ($LaunchMode !$= "DedicatedServer")
-         $LaunchMode = "Offline";
-   }
-   else if ( $arg $= "-online" )
-      $fromLauncher = true;
+	$SkipLogin = true;
+	$LaunchMode = "Offline";
+
+   new GuiChunkedBitmapCtrl(DemoSplashGui) {
+	   profile = "GuiContentProfile";
+	   bitmap = "gui/bg_DemoSplash.png";
+	   horizSizing = "right";
+	   vertSizing = "bottom";
+	   position = "0 0";
+	   extent = "640 480";
+	   minExtent = "8 8";
+	   visible = "1";
+	   helpTag = "0";
+	   useVariable = "0";
+	   hideCursor = "1";
+	   qLineCount = "0";
+   };
+
+	$DemoMasterAddress = "IP:64.94.105.141:27999";
+   $ShellBackground = "gui/bg_Demo.png";
 }
-
-// load autoexec once for command-line overrides:
-exec("autoexec.cs", true); 
-
-switch$( $JournalMode )
+else
 {
-   case "LoadJournal":
-      echo("Loading event log from journal: " @ $JournalFile);
-      loadJournal($JournalFile);
-   case "SaveJournal":
-      echo("Saving event log to journal: " @ $JournalFile);
-      saveJournal($JournalFile);
-   case "PlayJournal":
-      playJournal($JournalFile);
+	for($i = 1; $i < $Game::argc ; $i++)
+	{
+	   $arg = $Game::argv[$i];
+	   $nextArg = $Game::argv[$i+1];
+	   $nextArg2 = $Game::argv[$i+2];
+	   $hasNextArg = $Game::argc - $i > 1;
+	   $has2NextArgs = $Game::argc - $i > 2;
+	   
+	   if (!stricmp(fileExt($arg), ".dif"))
+	   {
+	      $LaunchMode = "InteriorView";
+	      //$SkipLogin = true;
+	      $TestObjectFileName = $arg;
+	      echo($TestObjectFileName);
+	   }
+	   else if(!stricmp(fileExt($arg), ".dif\""))
+	   {
+	      $LaunchMode = "InteriorView";
+	      //$SkipLogin = true;
+	      $TestObjectFileName = getSubStr($arg,1, strlen($arg) - 2);
+	   }
+	   else if ( $arg $= "-mod" && $hasNextArg )
+	   {
+	      setModPaths( $nextArg );
+	      $i += 2;
+	   }
+	   else if($arg $= "-dedicated")
+	   {
+	      $LaunchMode = "DedicatedServer";
+	   }
+	   else if($arg $= "-clientprefs" && $hasNextArg)
+	   {
+	      $i++;
+	      $clientprefs = $nextArg;
+	   }
+	   else if($arg $= "-serverprefs" && $hasNextArg)
+	   {
+	      $i++;
+	      $serverprefs = $nextArg;
+	   }
+	   else if($arg $= "-host")
+	   {
+	      $LaunchMode = "HostGame";
+	   }
+	   else if($arg $= "-mission" && $has2NextArgs)
+	   {
+	      $i += 2;
+	      $mission = $nextArg;
+	      $missionType = $nextArg2;
+	   }
+	   else if($arg $= "-connect" && $hasNextArg)
+	   {
+	      $i++;
+	      $LaunchMode = "Connect";
+	      $JoinGameAddress = $nextArg;
+	   }
+	   else if($arg $= "-password" && $hasNextArg)
+	   {
+	      $i++;
+	      $JoinGamePassword = $nextArg;
+	   }
+	   else if($arg $= "-jload" && $hasNextArg)
+	   {
+	      $i++;
+	      $JournalFile = $nextArg;
+	      $JournalMode = "LoadJournal";
+	   }
+	   else if($arg $= "-jsave" && $hasNextArg)
+	   {                     
+	      $i++;
+	      $JournalFile = $nextArg;
+	      $JournalMode = "SaveJournal";
+	   }
+	   else if($arg $= "-jplay" && $hasNextArg)
+	   {
+	      $i++;
+	      $JournalFile = $nextArg;
+	      $journalMode = "PlayJournal";
+	   }
+	   else if($arg $= "-navBuild" && $has2NextArgs)
+	   {
+	      $i += 2;
+	      $LaunchMode = "NavBuild";
+	      $mission = $nextArg;
+	      $missionType = $nextArg2;
+	   }
+	   else if($arg $= "-spnBuild" && $has2NextArgs)
+	   {
+	      $i += 2;
+	      $LaunchMode = "SpnBuild";
+	      $mission = $nextArg;
+	      $missionType = $nextArg2;
+	   }
+	   else if($arg $= "-demo")
+	   {
+	      $LaunchMode = "Demo";
+	   }
+	   else if($arg $= "-login" && $has2NextArgs)
+	   {
+	      $i += 2;
+	      $Login = true;
+	      $LoginName = $nextArg;
+	      $LoginPassword = $nextArg2;
+	   }
+	   else if($arg $= "-show")
+	   {
+	      $LaunchMode = "TSShow";
+	   }
+	   else if($arg $= "-con")
+	   {
+	      $LaunchMode = "Console";
+	   }
+	   else if ($arg $= "-bot" && $hasNextArg)
+	   {
+	      $i++;
+	      $CmdLineBotCount = $nextArg;
+	   }
+	   else if ($arg $= "-light" && $hasNextArg)
+	   {
+	      $LaunchMode = "SceneLight";
+	      $mission = $nextArg;
+	   }
+	   else if ($arg $= "-prepbuild")
+	   {
+	      enableWinConsole(true);
+	      prepBuild();
+	      setLogMode(1);
+	      setEchoFileLoads(true);
+	   }
+	   else if($arg $= "-quit")
+	   {
+	      quit();
+	      return;
+	   }
+	   else if ($arg $= "-nologin")
+	   {
+	      $SkipLogin = true;
+	      if ($LaunchMode !$= "DedicatedServer")
+	         $LaunchMode = "Offline";
+	   }
+	   else if ( $arg $= "-online" )
+	      $fromLauncher = true;
+	}
+
+	// load autoexec once for command-line overrides:
+	exec("autoexec.cs", true); 
+
+	switch$( $JournalMode )
+	{
+	   case "LoadJournal":
+	      echo("Loading event log from journal: " @ $JournalFile);
+	      loadJournal($JournalFile);
+	   case "SaveJournal":
+	      echo("Saving event log to journal: " @ $JournalFile);
+	      saveJournal($JournalFile);
+	   case "PlayJournal":
+	      playJournal($JournalFile);
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -318,20 +357,23 @@ if( $Pref::useImmersion )
 
 $showImmersionDialog = $Pref::useImmersion && $ImmEnabled;
 
-switch( $pref::Shell::lastBackground )
+if (!isDemo())
 {
-   case 0:
-      $ShellBackground = "gui/bg_Hammers.png";
-   case 1:
-      $ShellBackground = "gui/bg_BloodEagle.png";
-   case 2:
-      $ShellBackground = "gui/bg_DiamondSword.png";
-   case 3:
-      $ShellBackground = "gui/bg_Starwolf.png";
-   case 4:
-      $ShellBackground = "gui/bg_Harbingers.png";
-   default:
-      $ShellBackground = "gui/bg_Bioderm.png";
+   switch( $pref::Shell::lastBackground )
+   {
+      case 0:
+         $ShellBackground = "gui/bg_Hammers.png";
+      case 1:
+         $ShellBackground = "gui/bg_BloodEagle.png";
+      case 2:
+         $ShellBackground = "gui/bg_DiamondSword.png";
+      case 3:
+         $ShellBackground = "gui/bg_Starwolf.png";
+      case 4:
+         $ShellBackground = "gui/bg_Harbingers.png";
+      default:
+         $ShellBackground = "gui/bg_Bioderm.png";
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -485,7 +527,7 @@ function EditAccountDlg::onDontUpdate(%this)
    schedule(0,0,LoginDone);
 }
 
-function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
+function StartupGui::checkLoginDone( %this, %editAcct, %emailCheck )
 {
    %result = WONLoginResult();
    %code = getField( %result, 1 );
@@ -496,7 +538,7 @@ function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
    if ( %status $= "Waiting" )
    {
       LoginMessagePopupText.setValue( "<just:center>" @ %code );
-      %this.loginSchedule = %this.schedule( 1000, checkLoginDone, %editAcct );
+      %this.loginSchedule = %this.schedule( 1000, checkLoginDone, %editAcct, %emailCheck );
    }
    else if ( %status !$= "OK" )
    {
@@ -540,10 +582,14 @@ function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
          default:
             if(%code <= -2900 && %code >= -2999)
             {				
-			   if(%code == -2902)
-					%msg = "Account has already been created - Please login." @ %code;
-			   else
-               		%msg = "Account Creation Failed - That warrior name is already in use.  Please choose another warrior name and try again. Code = " @ %code;
+			      if(%code == -2902)
+					   %msg = "Account has already been created - Please login." @ %code;
+			      else
+                  %msg = "Account Creation Failed - That warrior name is already in use.  Please choose another warrior name and try again. Code = " @ %code;
+            }
+            else if ( %code == -2809 )
+            {
+               %msg = "Email check failed - You can not request more than one account info email per every 24-hour period.";
             }
             else if(%errorString !$= "")
             {
@@ -555,6 +601,8 @@ function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
       Canvas.popDialog( LoginMessagePopupDlg );
       if(StartupGui.updatingAccount)
          LoginMessageBox( "UPDATE FAILED", %msg, "OK", "schedule(0,0,LoginDone);" );
+      else if ( %emailCheck )
+         LoginMessageBox( "FETCH FAILED", %msg, "OK", "StartupGui::dumbFunction();" );
       else
          LoginMessageBox( "LOGIN FAILED", %msg, "OK", "StartupGui::dumbFunction();" );
    }
@@ -718,6 +766,50 @@ function updateSubmitButton()
 }
 
 //------------------------------------------------------------------------------
+function PickLoginInfoDlg::onWake( %this )
+{
+   FetchLoginNameEntry.setValue( $LoginName );
+   FetchLoginNameRdo.setValue( true );
+}
+
+//------------------------------------------------------------------------------
+function FetchLoginNameRdo::onAction( %this )
+{
+   FetchPasswordRdo.resize( 29, 144, 240, 30 );
+   FetchLoginNamePane.setVisible( true );
+   FetchPasswordPane.setVisible( false );
+   FetchEmailAddress.makeFirstResponder( true );
+}
+
+//------------------------------------------------------------------------------
+function FetchPasswordRdo::onAction( %this )
+{
+   FetchPasswordRdo.resize( 29, 65, 240, 30 );
+   FetchLoginNamePane.setVisible( false );
+   FetchPasswordPane.setVisible( true );
+   FetchLoginNameEntry.makeFirstResponder( true );
+}
+
+//------------------------------------------------------------------------------
+function FetchLoginInfo()
+{
+   Canvas.popDialog( PickLoginInfoDlg );
+
+   if ( FetchLoginNameRdo.getValue() )
+   {
+      LoginMessagePopup( "PLEASE WAIT", "Attempting to email you your login name..." );
+      WONStartLoginInfoFetch( FetchEmailAddress.getValue() );
+      StartupGui.loginSchedule = StartupGui.schedule( 1000, checkLoginDone, false, true );
+   }
+   else
+   {
+      LoginMessagePopup( "PLEASE WAIT", "Attempting to email you your login password..." );
+      WONStartEmailFetch( FetchLoginNameEntry.getValue() );
+      StartupGui.loginSchedule = StartupGui.schedule( 1000, checkLoginDone, false, true );
+   }
+}
+
+//------------------------------------------------------------------------------
 function CleanUpAndGo()
 {
    Canvas.popDialog( LoginMessagePopupDlg );
@@ -744,6 +836,9 @@ function CleanUpAndGo()
       ShellTextRightProfile.delete();
    }
    StartupGui.delete();
+
+   if (isDemo())
+      DemoSplashGui.delete();
 
    DefaultCursor.delete();
    DlgBackProfile.delete();
@@ -866,10 +961,18 @@ function StartLoginProcess()
    else
    {
       $PlayingOnline = false;
-      LoginMessagePopup( "INITIALIZING", "Please wait..." );
-      Canvas.repaint();
-
-      CleanUpAndGo();
+      if (!isDemo())
+      {
+         LoginMessagePopup( "INITIALIZING", "Please wait..." );
+         Canvas.repaint();
+         CleanUpAndGo();
+      }
+      else
+      {
+         Canvas.setContent(DemoSplashGui);
+         Canvas.repaint();
+         schedule(5000, 0, CleanUpAndGo);
+      }
    }
 }
 
@@ -888,19 +991,16 @@ if ($LaunchMode $= "DedicatedServer" ||
       $PlayingOnline = true;
       LoginProcess();
    }
+   else if($SkipLogin)
+   {
+      $PlayingOnline = false;
+      exec("console_end.cs");
+   }
    else
    {
-      if($SkipLogin)
-      {
-         $PlayingOnline = false;
-         exec("console_end.cs");
-      }
-      else
-      {
-         $PlayingOnline = true;
-         WONServerLogin();
-         schedule(1000, 0, dedCheckLoginDone);
-      }
+      $PlayingOnline = true;
+      WONServerLogin();
+      schedule(1000, 0, dedCheckLoginDone);
    }
 }
 else
@@ -1496,9 +1596,9 @@ else
 			      extent = "180 38";
 			      minExtent = "32 38";
 			      visible = "1";
-			      command = "PasswordProcess(true);";
+			      command = "Canvas.pushDialog( PickLoginInfoDlg );";
 			      helpTag = "0";
-			      text = "EMAIL ME MY PASSWORD";
+			      text = "EMAIL ME MY LOGIN INFO";
 			      simpleStyle = "0";
 		      };
 	      };
@@ -1952,6 +2052,192 @@ else
             };
          };
       };
+
+      //------------------------------
+      // Pick Login Info dialog:
+      new GuiControl(PickLoginInfoDlg) {
+	      profile = "DlgBackProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = "0 0";
+	      extent = "640 480";
+	      minExtent = "8 8";
+	      visible = "1";
+	      hideCursor = "0";
+	      bypassHideCursor = "0";
+	      helpTag = "0";
+
+	      new ShellPaneCtrl() {
+		      profile = "ShellDlgPaneProfile";
+		      horizSizing = "center";
+		      vertSizing = "center";
+		      position = "120 126";
+		      extent = "400 228";
+		      minExtent = "48 92";
+		      visible = "1";
+		      hideCursor = "0";
+		      bypassHideCursor = "0";
+		      helpTag = "0";
+		      text = "SELECT LOGIN INFO";
+		      maxLength = "255";
+		      noTitleBar = "0";
+
+		      new ShellFieldCtrl(FetchLoginNamePane) {
+			      profile = "ShellFieldProfile";
+			      horizSizing = "width";
+			      vertSizing = "bottom";
+			      position = "55 68";
+			      extent = "310 70";
+			      minExtent = "16 18";
+			      visible = "0";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      helpTag = "0";
+
+			      new GuiTextCtrl() {
+				      profile = "ShellTextRightProfile";
+				      horizSizing = "right";
+				      vertSizing = "bottom";
+				      position = "9 7";
+				      extent = "130 22";
+				      minExtent = "8 8";
+				      visible = "1";
+				      hideCursor = "0";
+				      bypassHideCursor = "0";
+				      helpTag = "0";
+				      text = "Enter Your Email Address:";
+				      maxLength = "255";
+			      };
+			      new ShellTextEditCtrl(FetchEmailAddress) {
+				      profile = "NewTextEditProfile";
+				      horizSizing = "right";
+				      vertSizing = "bottom";
+				      position = "10 26";
+				      extent = "269 38";
+				      minExtent = "32 38";
+				      visible = "1";
+				      altCommand = "FetchLoginInfo();";
+				      hideCursor = "0";
+				      bypassHideCursor = "0";
+				      helpTag = "0";
+				      maxLength = "128";
+				      historySize = "0";
+				      password = "0";
+				      tabComplete = "0";
+				      deniedSound = "InputDeniedSound";
+				      glowOffset = "9 9";
+			      };
+		      };
+		      new ShellRadioButton(FetchPasswordRdo) {
+			      profile = "ShellRadioProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "29 144";
+			      extent = "240 30";
+			      minExtent = "26 27";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      helpTag = "0";
+			      text = "FETCH PASSWORD BY LOGIN NAME";
+			      maxLength = "255";
+			      groupNum = "1";
+		      };
+		      new ShellFieldCtrl(FetchPasswordPane) {
+			      profile = "ShellFieldProfile";
+			      horizSizing = "width";
+			      vertSizing = "bottom";
+			      position = "55 98";
+			      extent = "310 70";
+			      minExtent = "16 18";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      helpTag = "0";
+
+			      new GuiTextCtrl() {
+				      profile = "ShellTextRightProfile";
+				      horizSizing = "right";
+				      vertSizing = "bottom";
+				      position = "9 7";
+				      extent = "117 22";
+				      minExtent = "8 8";
+				      visible = "1";
+				      hideCursor = "0";
+				      bypassHideCursor = "0";
+				      helpTag = "0";
+				      text = "Enter Your Login Name:";
+				      maxLength = "255";
+			      };
+			      new ShellTextEditCtrl(FetchLoginNameEntry) {
+				      profile = "NewTextEditProfile";
+				      horizSizing = "right";
+				      vertSizing = "bottom";
+				      position = "55 26";
+				      extent = "200 38";
+				      minExtent = "32 38";
+				      visible = "1";
+                  altCommand = "FetchLoginInfo();";
+				      hideCursor = "0";
+				      bypassHideCursor = "0";
+				      helpTag = "0";
+				      maxLength = "255";
+				      historySize = "0";
+				      password = "0";
+				      tabComplete = "0";
+				      deniedSound = "InputDeniedSound";
+				      glowOffset = "9 9";
+			      };
+		      };
+		      new ShellRadioButton(FetchLoginNameRdo) {
+			      profile = "ShellRadioProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "29 35";
+			      extent = "240 30";
+			      minExtent = "26 27";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      helpTag = "0";
+			      text = "FETCH LOGIN INFO BY EMAIL ADDRESS";
+			      maxLength = "255";
+			      groupNum = "1";
+		      };
+		      new ShellBitmapButton() {
+			      profile = "ShellButtonProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "67 173";
+			      extent = "100 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      command = "Canvas.popDialog( PickLoginInfoDlg );";
+			      helpTag = "0";
+			      text = "CANCEL";
+			      simpleStyle = "0";
+		      };
+		      new ShellBitmapButton() {
+			      profile = "ShellButtonProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "233 173";
+			      extent = "100 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      command = "FetchLoginInfo();";
+			      helpTag = "0";
+			      text = "SUBMIT";
+			      simpleStyle = "0";
+		      };
+	      };
+      };
+      // End Fetch Login Name dialog
+      //------------------------------
 
       if($Login == false)
          $LoginName = $pref::LastLoginName;

@@ -118,8 +118,11 @@ datablock TurretData(TurretDeployedOutdoor) : TurretDamageProfile
    maxDamage = 0.80;
    destroyedLevel = 0.80;
    disabledLevel = 0.35;
+   explosion      = HandGrenadeExplosion;
+      expDmgRadius = 5.0;
+      expDamage = 0.3;
+      expImpulse = 500.0;
    repairRate = 0;
-   explosion = HandGrenadeExplosion;
 	
 	deployedObject = true;
 

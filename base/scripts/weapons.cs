@@ -224,7 +224,7 @@ function HandInventory::onUse(%data, %obj)
       serverPlay3D(GrenadeThrowSound, %pos);
       %obj.lastThrowTime[%data] = getSimTime();
 
-      %thrownItem.getDataBlock().onThrow(%thrownItem);
+      %thrownItem.getDataBlock().onThrow(%thrownItem, %obj);
       %obj.throwStrength = 0;
    }
 }

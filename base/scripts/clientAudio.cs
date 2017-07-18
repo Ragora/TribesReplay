@@ -89,6 +89,18 @@ function initAudio()
    alxSetChannelVolume( $RadioAudioType, $pref::Audio::radioVolume );
 
    alxSetCaptureGainScale( $pref::Audio::captureGainScale );
+   
+   // cap the codec levels
+   if( $platform $= "linux" )
+   {
+      $pref::Audio::encodingLevel = -1;
+      $pref::Audio::decodingMask = 0;
+   }
+
+   if( $pref::Audio::encodingLevel > 2)
+      $pref::Audio::encodingLevel = 2;
+
+   $pref::Audio::decodingMask &= 7;
 }
 
 if($Audio::initialized)

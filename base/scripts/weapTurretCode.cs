@@ -741,19 +741,20 @@ function detonateFlashGrenade(%hg)
 // ----------------------------------------------
 
 
-function MineDeployed::onThrow(%this, %mine)
+function MineDeployed::onThrow(%this, %mine, %thrower)
 {
    %mine.armed = false;
    %mine.damaged = 0;
    %mine.detonated = false;
    %mine.depCount = 0;
-   schedule(1500, %mine, "deployMineCheck", %mine);
+   schedule(1500, %mine, "deployMineCheck", %mine, %thrower);
 }
 
-function deployMineCheck(%mineObj)
+function deployMineCheck(%mineObj, %player)
 {
    if(%mineObj.depCount > %mineObj.getDatablock().maxDepCount)
       explodeMine(%mineObj, true);
+   
    // wait until the mine comes to rest
    if(%mineObj.getVelocity() $= "0 0 0")
    {
@@ -779,7 +780,10 @@ function deployMineCheck(%mineObj)
       %mineTeam = %mineObj.sourceObject.team;
       $TeamDeployedCount[%mineTeam, MineDeployed]++;
       if($TeamDeployedCount[%mineTeam, MineDeployed] > $TeamDeployableMax[MineDeployed])
+      {   
+         messageClient( %player.client, '', 'Maximum allowable mines deployed.' );
          schedule(100, %mineObj, "explodeMine", %mineObj, true);
+      }
       else
       {
          //start the thread that keeps checking for objects near the mine...
@@ -796,7 +800,7 @@ function deployMineCheck(%mineObj)
    {
       //schedule this deploy check again a little later
       %mineObj.depCount++;
-      schedule(500, %mineObj, "deployMineCheck", %mineObj);
+      schedule(500, %mineObj, "deployMineCheck", %mineObj, %player);
    }
 }
 

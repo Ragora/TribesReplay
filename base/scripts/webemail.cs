@@ -439,6 +439,34 @@ function EmailBlockRemove()
    }
 }
 //-- EMailComposeDlg ----------------------------------------------------------------
+function EmailComposeDlg::onWake( %this )
+{
+   // Get the compose dialog position and size from the prefs:
+   %res = getResolution();
+   %resW = firstWord( %res );
+   %resH = getWord( %res, 1 );
+   %w = firstWord( $pref::Email::ComposeWindowExtent );
+   if ( %w > %resW )
+      %w = %resW;
+   %h = getWord( $pref::Email::ComposeWindowExtent, 1 );
+   if ( %h > %resH )
+      %h = %resH;
+   %x = firstWord( $pref::Email::ComposeWindowPos );
+   if ( %x > %resW - %w )
+      %x = %resW - %w;
+   %y = getWord( $pref::Email::ComposeWindowPos, 1 );
+   if ( %y > %resH - %h )
+      %y = %resH - %h;
+
+   EmailComposeWindow.resize( %x, %y, %w, %h );
+}
+//-----------------------------------------------------------------------------
+function EmailComposeDlg::onSleep( %this )
+{
+   $pref::Email::ComposeWindowPos = EmailComposeWindow.getPosition();
+   $pref::Email::ComposeWindowExtent = EmailComposeWindow.getExtent();
+}
+//-----------------------------------------------------------------------------
 function EMailComposeDlg::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
 {
 	if(%this.key != %key)
@@ -950,13 +978,13 @@ function AddressDlg::onWake(%this)
 	LC_Search.clear();
 	StrToList(LC_ToList,$EmailToAddress,",");
 	StrToList(LC_CCList,$EmailCCAddress,",");
-    %info = WONGetAuthInfo();
-    %tribeCount = getField( getRecord( %info, 1 ), 0 ); //%cert
-    for ( %i = 0; %i < %tribeCount; %i++ )
-    {
-	    %tribe = getField( getRecord( %info, %i + 2 ), 0 ); //%cert
-		LC_ListBox.add(%tribe,%i);
-    }
+   %info = WONGetAuthInfo();
+   %tribeCount = getField( getRecord( %info, 1 ), 0 ); //%cert
+   for ( %i = 0; %i < %tribeCount; %i++ )
+   {
+	   %tribe = getField( getRecord( %info, %i + 2 ), 0 ); //%cert
+	   LC_ListBox.add(%tribe,%i);
+   }
 }
 //-- EMailGui ----------------------------------------------------------------
 function EmailGui::onWake(%this)

@@ -222,7 +222,7 @@ new GuiControlProfile ("LaunchTabProfile")
    fontSize = $ShellButtonFontSize;
    fontColor = "60 140 140";
    fontColorHL = "6 245 215";
-   fontColorNA = "5 5 5";
+   fontColorNA = "64 64 64";
    fontColorSEL = "6 245 215";
    fixedExtent = true;
    bitmapBase = "gui/lnch_tab";

@@ -201,8 +201,8 @@ datablock HoverVehicleData(AssaultVehicle) : TankDamageProfile
    speedDamageScale = 0.060;
 
    // Object Impact Damage (uses DamageType::Impact)
-   collDamageThresholdVel = 17;
-   collDamageMultiplier   = 0.070;
+   collDamageThresholdVel = 18;
+   collDamageMultiplier   = 0.045;
 
    dragForce            = 40 / 20;
    vertFactor           = 0.0;
@@ -211,7 +211,7 @@ datablock HoverVehicleData(AssaultVehicle) : TankDamageProfile
    mainThrustForce    = 50;
    reverseThrustForce = 40;
    strafeThrustForce  = 40;
-   turboFactor        = 1.5;
+   turboFactor        = 1.25;
 
    brakingForce = 25;
    brakingActivationSpeed = 4;
@@ -276,18 +276,17 @@ datablock HoverVehicleData(AssaultVehicle) : TankDamageProfile
    cmdIcon = CMDGroundTankIcon;
    cmdMiniIconName = "commander/MiniIcons/com_tank_grey";
    targetNameTag = 'Beowulf';
-   targetTypeTag = 'Assault Vehicle';
+   targetTypeTag = 'Assault Tank';
    sensorData = VehiclePulseSensor;
    
    checkRadius = 5.5535;
    observeParameters = "1 10 10";
-
    runningLight[0] = TankLight1;
    runningLight[1] = TankLight2;
    runningLight[2] = TankLight3;
    runningLight[3] = TankLight4;
-
    shieldEffectScale = "0.9 1.0 0.6";
+   showPilotInfo = 1;
 };
 
 //**************************************************************

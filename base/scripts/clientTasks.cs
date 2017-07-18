@@ -336,4 +336,7 @@ function TaskHudDlg::onSleep(%this)
    TaskHudMap.pop();
    TaskList.setVisible(false);
    TaskList.updateSelected(false);
+
+   //make sure the action maps are still pushed in the correct order...
+   updateActionMaps();
 }

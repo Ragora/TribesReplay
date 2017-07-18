@@ -1,67 +1,80 @@
 //--- OBJECT WRITE BEGIN ---
 new GuiControl(ForumsComposeDlg) {
-	profile = "DlgBackProfile";
+	profile = "GuiModelessDialogProfile";
 	horizSizing = "right";
 	vertSizing = "bottom";
 	position = "0 0";
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	helpTag = "0";
-		action = "Reply";
-		parentPost = "18598";
-		forum = "58";
-		post = "12846";
-		topic = "3822";
 
-	new ShellPaneCtrl() {
-		profile = "ShellDlgPaneProfile";
-		horizSizing = "center";
-		vertSizing = "center";
-		position = "70 36";
+	new ShellWindowCtrl(FC_Window) {
+		profile = "ShellWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "69 32";
 		extent = "500 408";
-		minExtent = "48 92";
+		minExtent = "412 176";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
 		text = "FORUMS POST";
 		maxLength = "255";
-		noTitleBar = "0";
+		frameBase = "gui/window";
+		borderWidth = "2";
+		resizeWidth = "1";
+		resizeHeight = "1";
+		canMove = "1";
+		canClose = "1";
+		closeCommand = "Canvas.popDialog(ForumsComposeDlg);";
 
 		new GuiTextCtrl() {
 			profile = "ShellTextRightProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			position = "22 37";
+			position = "8 37";
 			extent = "47 22";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			text = "Subject:";
 			maxLength = "255";
 		};
 		new ShellTextEditCtrl(FP_SubjectEdit) {
 			profile = "NewTextEditProfile";
-			horizSizing = "right";
+			horizSizing = "width";
 			vertSizing = "bottom";
-			position = "65 29";
-			extent = "360 38";
+			position = "51 29";
+			extent = "443 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			variable = "$ForumsSubject";
 			helpTag = "0";
 			maxLength = "255";
 			historySize = "0";
 			password = "0";
+			tabComplete = "0";
+			deniedSound = "InputDeniedSound";
 			glowOffset = "9 9";
 		};
 		new ShellScrollCtrl() {
 			profile = "NewScrollCtrlProfile";
 			horizSizing = "width";
 			vertSizing = "height";
-			position = "27 63";
-			extent = "448 298";
+			position = "11 63";
+			extent = "478 304";
 			minExtent = "24 52";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			willFirstRespond = "1";
 			hScrollBar = "alwaysOff";
@@ -73,37 +86,44 @@ new GuiControl(ForumsComposeDlg) {
 
 			new GuiScrollContentCtrl() {
 				profile = "GuiDefaultProfile";
-				horizSizing = "right";
-				vertSizing = "bottom";
+				horizSizing = "width";
+				vertSizing = "height";
 				position = "7 7";
-				extent = "418 284";
+				extent = "448 290";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new GuiMLTextEditCtrl(ForumsBodyText) {
 					profile = "ShellMessageTextProfile";
 					horizSizing = "width";
 					vertSizing = "height";
-					position = "0 -130";
-					extent = "418 414";
+					position = "0 0";
+					extent = "448 290";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					lineSpacing = "2";
 					allowColorChars = "1";
 					maxChars = "3600";
+					deniedSound = "InputDeniedSound";
 				};
 			};
 		};
 		new ShellBitmapButton() {
 			profile = "ShellButtonProfile";
-			horizSizing = "right";
+			horizSizing = "left";
 			vertSizing = "top";
-			position = "239 358";
-			extent = "128 38";
+			position = "274 368";
+			extent = "100 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "Canvas.popDialog(ForumsComposeDlg);";
 			helpTag = "0";
 			text = "CANCEL";
@@ -111,12 +131,14 @@ new GuiControl(ForumsComposeDlg) {
 		};
 		new ShellBitmapButton() {
 			profile = "ShellButtonProfile";
-			horizSizing = "right";
+			horizSizing = "left";
 			vertSizing = "top";
-			position = "351 358";
-			extent = "128 38";
+			position = "366 368";
+			extent = "100 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "ForumsPost();";
 			helpTag = "0";
 			text = "POST";
@@ -125,11 +147,13 @@ new GuiControl(ForumsComposeDlg) {
 		new ShellBitmapButton(QuoteBtn) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
-			vertSizing = "bottom";
-			position = "22 357";
+			vertSizing = "top";
+			position = "21 368";
 			extent = "172 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "GetQuotedText();";
 			helpTag = "0";
 			text = "INCLUDE TOPIC POST TEXT";

@@ -944,14 +944,6 @@ new SimGroup(MissionGroup) {
 				locked = "true";
 		};
 		new InteriorInstance() {
-			position = "-362.627 208.53 118.664";
-			rotation = "0 0 -1 40.68";
-			scale = "1 1 1";
-			interiorFile = "bbunkc.dif";
-			showTerrainInside = "0";
-				locked = "true";
-		};
-		new InteriorInstance() {
 			position = "-741.056 50.94 127.615";
 			rotation = "0 0 1 89.9544";
 			scale = "1 1 1";

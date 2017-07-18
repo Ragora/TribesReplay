@@ -252,6 +252,7 @@ function TrainingGui::startTraining( %this )
 {
    MessagePopup( "STARTING MISSION", "Initializing, please wait..." );
    Canvas.repaint();
+   cancelServerQuery();
    %file = getField( TrainingMissionList.getValue(), 1 );
 	$ServerName = "Single Player Training";
    $HostGameType = "SinglePlayer";

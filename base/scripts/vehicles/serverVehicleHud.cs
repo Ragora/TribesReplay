@@ -126,7 +126,6 @@ function createVehicle(%client, %station, %blockName, %team , %pos, %rot, %angle
          %station.station.teleporter.MPB = %obj;
          %obj.teleporter = %station.station.teleporter;
       }
-
       %station.ready = false;
       %obj.team = %team;
       %obj.useCreateHeight(true);
@@ -169,12 +168,22 @@ function createVehicle(%client, %station, %blockName, %team , %pos, %rot, %angle
          stationObject = %station;
       };
 
+      %obj.getDataBlock().schedule(5000, "mountDriver", %obj, %client.player);
    }
    if(%obj.getTarget() != -1)
       setTargetSensorGroup(%obj.getTarget(), %client.getSensorGroup());
    // We are now closing the vehicle hud when you buy a vehicle, making the following call
    // unnecessary (and it breaks stuff, too!)
    //VehicleHud.updateHud(%client, 'vehicleHud');
+}
+
+//------------------------------------------------------------------------------
+function VehicleData::mountDriver(%data, %obj, %player)
+{
+   %player.startFade(1000, 0, true);
+ 
+   %player.getDataBlock().schedule(1000,"onCollision",%player, %obj, 0);
+   %player.schedule(1500,"startFade",1000, 0, false);
 }
 
 //------------------------------------------------------------------------------
@@ -226,31 +235,37 @@ function VehicleHud::updateHud( %obj, %client, %tag )
    if ( %station.vehicle[scoutVehicle] )
    {
       messageClient( %client, 'SetLineHud', "", %tag, %count, "GRAV CYCLE", "", ScoutVehicle, $VehicleMax[ScoutVehicle] - $VehicleTotalCount[%team, ScoutVehicle] );
+//new      messageClient( %client, 'SetLineHud', "", %tag, %count, 'ScoutVehicle', $VehicleMax[ScoutVehicle] - $VehicleTotalCount[%team, ScoutVehicle], '', "GRAV CYCLE" );
       %count++;
    }
    if ( %station.vehicle[AssaultVehicle] )
    {
       messageClient( %client, 'SetLineHud', "", %tag, %count, "ASSAULT TANK", "", AssaultVehicle, $VehicleMax[AssaultVehicle] - $VehicleTotalCount[%team, AssaultVehicle] );
+//new      messageClient( %client, 'SetLineHud', "", %tag, %count, 'AssaultVehicle', $VehicleMax[AssaultVehicle] - $VehicleTotalCount[%team, AssaultVehicle], '', "ASSAULT TANK");
       %count++;
    }
    if ( %station.vehicle[mobileBaseVehicle] )
    {
       messageClient( %client, 'SetLineHud', "", %tag, %count, "MOBILE POINT BASE", "", MobileBaseVehicle, $VehicleMax[MobileBaseVehicle] - $VehicleTotalCount[%team, MobileBaseVehicle] );
+//new      messageClient( %client, 'SetLineHud', "", %tag, %count, 'MobileBaseVehicle', $VehicleMax[MobileBaseVehicle] - $VehicleTotalCount[%team, MobileBaseVehicle], '', "MOBILE POINT BASE" );
       %count++;
    }
    if ( %station.vehicle[scoutFlyer] )
    {
       messageClient( %client, 'SetLineHud', "", %tag, %count, "SCOUT FLIER", "", ScoutFlyer, $VehicleMax[ScoutFlyer] - $VehicleTotalCount[%team, ScoutFlyer] );
+//new      messageClient( %client, 'SetLineHud', "", %tag, %count, 'ScoutFlyer', $VehicleMax[ScoutFlyer] - $VehicleTotalCount[%team, ScoutFlyer], '', "SCOUT FLIER");
       %count++;
    }
    if ( %station.vehicle[bomberFlyer] )
    {
       messageClient( %client, 'SetLineHud', "", %tag, %count, "BOMBER", "", BomberFlyer, $VehicleMax[BomberFlyer] - $VehicleTotalCount[%team, BomberFlyer] );
+//new      messageClient( %client, 'SetLineHud', "", %tag, %count, 'BomberFlyer', $VehicleMax[BomberFlyer] - $VehicleTotalCount[%team, BomberFlyer], '', "BOMBER");
       %count++;
    }
    if ( %station.vehicle[hapcFlyer] )
    {
       messageClient( %client, 'SetLineHud', "", %tag, %count, "TRANSPORT", "", HAPCFlyer, $VehicleMax[HAPCFlyer] - $VehicleTotalCount[%team, HAPCFlyer] ); 
+//new      messageClient( %client, 'SetLineHud', "", %tag, %count, 'HAPCFlyer', $VehicleMax[HAPCFlyer] - $VehicleTotalCount[%team, HAPCFlyer], '', "TRANSPORT"); 
       %count++;
    }
    %station.lastCount = %count;

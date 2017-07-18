@@ -183,10 +183,6 @@ function RepairPackImage::onActivate(%data, %obj, %slot)
    {
       messageClient(%obj.client, 'MsgRepairPackOn', '\c2Repair pack activated.');
 
-      // unmount any weapon the player may have been holding
-      if(%obj.getMountedImage($WeaponSlot))
-         %obj.unmountImage($WeaponSlot);
-
       // make sure player's arm thread is "look"
       %obj.setArmThread(look);
 

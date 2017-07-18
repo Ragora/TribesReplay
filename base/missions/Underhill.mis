@@ -33,7 +33,7 @@ new SimGroup(MissionGroup) {
 		cloudSpeed[0] = "0.000500 0.000030";
 		cloudSpeed[1] = "0.000120 0.000001";
 		cloudSpeed[2] = "0.000205 0.000002";
-		visibleDistance = "500";
+		visibleDistance = "400";
 		useSkyTextures = "1";
 		SkySolidColor = "0.39 0.39 0.39 0.000000";
 		fogDistance = "25";

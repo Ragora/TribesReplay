@@ -28,7 +28,7 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 		maxLength = "255";
 		noTitleBar = "0";
 
-		new ShellBitmapButton() {
+		new ShellBitmapButton(NewsSubmitBtn) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "top";

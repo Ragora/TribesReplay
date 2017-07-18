@@ -14,10 +14,10 @@
 
 //--- OBJECT WRITE BEGIN ---
 new SimGroup(MissionGroup) {
-		cdTrack = "6";
-		powerCount = "0";
-		musicTrack = "desert";
 		Siege_timeLimit = "20";
+		musicTrack = "desert";
+		powerCount = "0";
+		cdTrack = "6";
 
 	new MissionArea(MissionArea) {
 		area = "-608 -440 1040 1040";
@@ -29,9 +29,9 @@ new SimGroup(MissionGroup) {
 		direction = "0.57735 0.57735 -0.57735";
 		color = "0.600000 0.600000 0.600000 1.000000";
 		ambient = "0.200000 0.200000 0.200000 1.000000";
-			scale = "1 1 1";
 			position = "-1680 -1880 0";
 			rotation = "1 0 0 0";
+			scale = "1 1 1";
 			locked = "true";
 	};
 	new TerrainBlock(Terrain) {
@@ -41,8 +41,6 @@ new SimGroup(MissionGroup) {
 		terrainFile = "Respite.ter";
 		squareSize = "8";
 		emptySquares = "359010";
-			hazeDistance = "250";
-			visibleDistance = "1200";
 			position = "-1024 -1024 0";
 			locked = "true";
 	};
@@ -50,24 +48,21 @@ new SimGroup(MissionGroup) {
 		conjoinAngleDev = "45";
 		cullDensity = "0.3";
 		customArea = "0 0 0 0";
-			scale = "1 1 1";
-			conjoinBowlDev = "20";
-			GraphFile = "Respite.nav";
 			position = "0 0 0 1";
-			coverage = "0";
-			rotation = "0 0 0 0";
-			XDimOverSize = "0";
 			YDimOverSize = "0";
+			rotation = "0 0 0 0";
+			GraphFile = "Respite.nav";
+			conjoinBowlDev = "20";
+			coverage = "0";
+			scale = "1 1 1";
 			locked = "true";
+			XDimOverSize = "0";
 	};
 	new SimGroup(Teams) {
-			powerCount = "0";
 
 		new SimGroup(Team1) {
-				powerCount = "0";
 
 			new SimGroup(spawnspheres) {
-					powerCount = "0";
 
 				new SpawnSphere() {
 					position = "-428.893 446.853 123.677";
@@ -84,7 +79,6 @@ new SimGroup(MissionGroup) {
 				};
 			};
 			new SimGroup(Base1) {
-					powerCount = "1";
 					providesPower = "1";
 
 				new ForceFieldBare() {
@@ -92,8 +86,8 @@ new SimGroup(MissionGroup) {
 					rotation = "1 0 0 0";
 					scale = "0.772095 6.3679 5.62782";
 					dataBlock = "defaultTeamSlowFieldBare";
-						Target = "33";
-						team = "1";
+					lockCount = "0";
+					homingCount = "0";
 						locked = "true";
 				};
 				new ForceFieldBare() {
@@ -101,8 +95,8 @@ new SimGroup(MissionGroup) {
 					rotation = "1 0 0 0";
 					scale = "1 6.3679 5.62782";
 					dataBlock = "defaultTeamSlowFieldBare";
-						Target = "34";
-						team = "1";
+					lockCount = "0";
+					homingCount = "0";
 						locked = "true";
 				};
 				new ForceFieldBare() {
@@ -110,8 +104,8 @@ new SimGroup(MissionGroup) {
 					rotation = "1 0 0 0";
 					scale = "6.1382 0.587158 13.1878";
 					dataBlock = "defaultTeamSlowFieldBare";
-						Target = "35";
-						team = "1";
+					lockCount = "0";
+					homingCount = "0";
 						locked = "true";
 				};
 				new InteriorInstance() {
@@ -121,7 +115,6 @@ new SimGroup(MissionGroup) {
 					interiorFile = "ptowr4.dif";
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_1";
-						team = "1";
 						locked = "true";
 				};
 				new StaticShape(Team1StationInventory8) {
@@ -132,9 +125,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "36";
-						team = "1";
-						Trigger = "6332";
 						locked = "true";
 				};
 				new StaticShape(Team1StationInventory7) {
@@ -145,9 +135,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "37";
-						team = "1";
-						Trigger = "6334";
 						locked = "true";
 				};
 				new Item() {
@@ -160,8 +147,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
-						team = "1";
 						locked = "true";
 				};
 				new Turret() {
@@ -172,10 +157,8 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 					initialBarrel = "PlasmaBarrelLarge";
-						Target = "38";
-						team = "1";
-						originalBarrel = "PlasmaBarrelLarge";
 						locked = "true";
+						originalBarrel = "PlasmaBarrelLarge";
 				};
 				new Turret() {
 					position = "-433.407 435.186 151.05";
@@ -185,14 +168,11 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 					initialBarrel = "PlasmaBarrelLarge";
-						Target = "39";
-						team = "1";
-						originalBarrel = "PlasmaBarrelLarge";
 						locked = "true";
+						originalBarrel = "PlasmaBarrelLarge";
 				};
 			};
 			new SimGroup(AIObjectives) {
-					powerCount = "0";
 
 				new AIObjective(AIOAttackObject) {
 					position = "-61.3335 -115.982 128.367";
@@ -204,7 +184,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the StationInventory";
 					targetObject = "Team2StationInventory3";
 					targetClientId = "-1";
-					targetObjectId = "6367";
+					targetObjectId = "4479";
 					location = "-61.3335 -115.982 128.367";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -219,7 +199,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "1";
 				};
 				new AIObjective(AIOAttackObject) {
 					position = "-66.0305 -111.598 137.022";
@@ -231,7 +210,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the generatorLarge";
 					targetObject = "Team2generatorLarge3";
 					targetClientId = "-1";
-					targetObjectId = "6366";
+					targetObjectId = "4478";
 					location = "-66.0305 -111.598 137.022";
 					weightLevel1 = "3100";
 					weightLevel2 = "1600";
@@ -246,7 +225,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "1";
 				};
 				new AIObjective(AIOAttackObject) {
 					position = "-69.5116 -106.377 128.364";
@@ -258,7 +236,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the StationInventory";
 					targetObject = "Team2StationInventory4";
 					targetClientId = "-1";
-					targetObjectId = "6369";
+					targetObjectId = "4481";
 					location = "-69.5116 -106.377 128.364";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -273,7 +251,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "1";
 				};
 				new AIObjective(AIOTouchObject) {
 					position = "-202.729 -45.0803 99.9606";
@@ -286,7 +263,7 @@ new SimGroup(MissionGroup) {
 					mode = "TouchFlipFlop";
 					targetObject = "Team2FlipFlop1";
 					targetClientId = "-1";
-					targetObjectId = "6354";
+					targetObjectId = "4466";
 					location = "-202.729 -45.0803 99.9606";
 					weightLevel1 = "3850";
 					weightLevel2 = "0";
@@ -301,7 +278,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "1";
 				};
 				new AIObjective(AIOAttackObject) {
 					position = "-103.341 25.4572 144.392";
@@ -313,7 +289,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the generatorLarge";
 					targetObject = "Team2generatorLarge2";
 					targetClientId = "-1";
-					targetObjectId = "6357";
+					targetObjectId = "4469";
 					location = "-103.341 25.4572 144.392";
 					weightLevel1 = "3100";
 					weightLevel2 = "1600";
@@ -328,7 +304,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "1";
 				};
 				new AIObjective(AIOAttackObject) {
 					position = "-115.004 27.3879 134.436";
@@ -340,7 +315,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the StationInventory";
 					targetObject = "Team2StationInventory1";
 					targetClientId = "-1";
-					targetObjectId = "6358";
+					targetObjectId = "4470";
 					location = "-115.004 27.3879 134.436";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -355,7 +330,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "1";
 				};
 				new AIObjective(AIOAttackObject) {
 					position = "-90.4107 27.457 134.412";
@@ -367,7 +341,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the StationInventory";
 					targetObject = "Team2StationInventory2";
 					targetClientId = "-1";
-					targetObjectId = "6360";
+					targetObjectId = "4472";
 					location = "-90.4107 27.457 134.412";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -382,15 +356,12 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "1";
 				};
 			};
 		};
 		new SimGroup(Team2) {
-				powerCount = "0";
 
 			new SimGroup(spawnspheres) {
-					powerCount = "0";
 
 				new SpawnSphere() {
 					position = "-114.601 -61.0651 119.369";
@@ -407,10 +378,9 @@ new SimGroup(MissionGroup) {
 				};
 			};
 			new SimGroup(Base0) {
-					powerCount = "0";
 
 				new SimGroup(ObjAlpha) {
-						providesPower = true;
+						providesPower = "1";
 
 					new InteriorInstance() {
 						position = "-202.509 -44.8018 107.6";
@@ -419,7 +389,6 @@ new SimGroup(MissionGroup) {
 						interiorFile = "pbunk1.dif";
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_1";
-							team = "2";
 							locked = "true";
 					};
 					new Item() {
@@ -432,8 +401,6 @@ new SimGroup(MissionGroup) {
 						collideable = "0";
 						static = "1";
 						rotate = "0";
-							Target = "-1";
-							team = "2";
 							locked = "true";
 					};
 					new StaticShape(Team2FlipFlop1) {
@@ -444,15 +411,11 @@ new SimGroup(MissionGroup) {
 						dataBlock = "FlipFlop";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "41";
-							team = "2";
-							Projector = "0";
 							locked = "true";
-					needsObjectiveWaypoint = true;
+							needsObjectiveWaypoint = "1";
 					};
 				};
 				new SimGroup(ObjBeta) {
-						powerCount = "1";
 
 					new InteriorInstance() {
 						position = "-102.692 20.9235 139.043";
@@ -461,7 +424,6 @@ new SimGroup(MissionGroup) {
 						interiorFile = "bbunk2.dif";
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
-							team = "2";
 							locked = "true";
 					};
 					new StaticShape(Team2generatorLarge2) {
@@ -473,11 +435,8 @@ new SimGroup(MissionGroup) {
 						lockCount = "0";
 						homingCount = "0";
 							name = "South Bunker Generator";
-							Target = "42";
-							team = "2";
-							scoreValue = "5";
 							locked = "true";
-					needsObjectiveWaypoint = true;
+							needsObjectiveWaypoint = "1";
 					};
 					new StaticShape(Team2StationInventory1) {
 						position = "-115.004 27.3879 132.533";
@@ -487,9 +446,6 @@ new SimGroup(MissionGroup) {
 						dataBlock = "StationInventory";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "43";
-							team = "2";
-							Trigger = "6359";
 							locked = "true";
 					};
 					new StaticShape(Team2StationInventory2) {
@@ -500,9 +456,6 @@ new SimGroup(MissionGroup) {
 						dataBlock = "StationInventory";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "44";
-							team = "2";
-							Trigger = "6361";
 							locked = "true";
 					};
 					new ForceFieldBare() {
@@ -510,13 +463,12 @@ new SimGroup(MissionGroup) {
 						rotation = "1 0 0 0";
 						scale = "1 4.49667 6.22947";
 						dataBlock = "defaultTeamSlowFieldBare";
-							Target = "45";
-							team = "2";
+						lockCount = "0";
+						homingCount = "0";
 							locked = "true";
 					};
 				};
 				new SimGroup(ObjLambda) {
-						powerCount = "1";
 
 					new InteriorInstance() {
 						position = "-58.1054 -111.149 132.645";
@@ -525,7 +477,6 @@ new SimGroup(MissionGroup) {
 						interiorFile = "bbunk1.dif";
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
-							team = "2";
 							locked = "true";
 					};
 					new StaticShape(Team2generatorLarge3) {
@@ -537,11 +488,8 @@ new SimGroup(MissionGroup) {
 						lockCount = "0";
 						homingCount = "0";
 							name = "North Bunker Generator";
-							Target = "46";
-							team = "2";
-							scoreValue = "5";
 							locked = "true";
-					needsObjectiveWaypoint = true;
+							needsObjectiveWaypoint = "1";
 					};
 					new StaticShape(Team2StationInventory3) {
 						position = "-61.3169 -115.977 126.67";
@@ -551,9 +499,6 @@ new SimGroup(MissionGroup) {
 						dataBlock = "StationInventory";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "47";
-							team = "2";
-							Trigger = "6368";
 							locked = "true";
 					};
 					new StaticShape(Team2StationInventory4) {
@@ -564,9 +509,6 @@ new SimGroup(MissionGroup) {
 						dataBlock = "StationInventory";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "48";
-							team = "2";
-							Trigger = "6370";
 							locked = "true";
 					};
 					new ForceFieldBare() {
@@ -574,14 +516,13 @@ new SimGroup(MissionGroup) {
 						rotation = "1 0 0 0";
 						scale = "0.985513 4.37129 6.19709";
 						dataBlock = "defaultTeamSlowFieldBare";
-							Target = "49";
-							team = "2";
+						lockCount = "0";
+						homingCount = "0";
 							locked = "true";
 					};
 				};
 			};
 			new SimGroup(AIObjectives) {
-					powerCount = "0";
 
 				new AIObjective(AIORepairObject) {
 					position = "-66.0305 -111.598 137.022";
@@ -593,7 +534,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the generatorLarge";
 					targetObject = "Team2generatorLarge3";
 					targetClientId = "-1";
-					targetObjectId = "6366";
+					targetObjectId = "4478";
 					location = "-66.0305 -111.598 137.022";
 					weightLevel1 = "3200";
 					weightLevel2 = "1600";
@@ -608,7 +549,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "2";
 				};
 				new AIObjective(AIORepairObject) {
 					position = "-61.3335 -115.982 128.367";
@@ -620,7 +560,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the StationInventory";
 					targetObject = "Team2StationInventory3";
 					targetClientId = "-1";
-					targetObjectId = "6367";
+					targetObjectId = "4479";
 					location = "-61.3335 -115.982 128.367";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -635,7 +575,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "2";
 				};
 				new AIObjective(AIORepairObject) {
 					position = "-69.5116 -106.377 128.364";
@@ -647,7 +586,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the StationInventory";
 					targetObject = "Team2StationInventory4";
 					targetClientId = "-1";
-					targetObjectId = "6369";
+					targetObjectId = "4481";
 					location = "-69.5116 -106.377 128.364";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -662,7 +601,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "2";
 				};
 				new AIObjective(AIODefendLocation) {
 					position = "-202.729 -45.0803 99.9606";
@@ -674,7 +612,7 @@ new SimGroup(MissionGroup) {
 					description = "Defend the FlipFlop";
 					targetObject = "Team2FlipFlop1";
 					targetClientId = "-1";
-					targetObjectId = "6354";
+					targetObjectId = "4466";
 					location = "-202.729 -45.0803 99.9606";
 					weightLevel1 = "3900";
 					weightLevel2 = "2000";
@@ -689,7 +627,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "2";
 				};
 				new AIObjective(AIORepairObject) {
 					position = "-103.341 25.4572 144.392";
@@ -701,7 +638,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the generatorLarge";
 					targetObject = "Team2generatorLarge2";
 					targetClientId = "-1";
-					targetObjectId = "6357";
+					targetObjectId = "4469";
 					location = "-103.341 25.4572 144.392";
 					weightLevel1 = "3200";
 					weightLevel2 = "1600";
@@ -716,7 +653,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "2";
 				};
 				new AIObjective(AIODefendLocation) {
 					position = "-103.341 25.4572 144.392";
@@ -728,7 +664,7 @@ new SimGroup(MissionGroup) {
 					description = "Defend the generatorLarge";
 					targetObject = "Team2generatorLarge2";
 					targetClientId = "-1";
-					targetObjectId = "6357";
+					targetObjectId = "4469";
 					location = "-103.341 25.4572 144.392";
 					weightLevel1 = "3100";
 					weightLevel2 = "1500";
@@ -743,7 +679,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "2";
 				};
 				new AIObjective(AIORepairObject) {
 					position = "-115.004 27.3879 134.436";
@@ -755,7 +690,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the StationInventory";
 					targetObject = "Team2StationInventory1";
 					targetClientId = "-1";
-					targetObjectId = "6358";
+					targetObjectId = "4470";
 					location = "-115.004 27.3879 134.436";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -770,7 +705,6 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "2";
 				};
 				new AIObjective(AIORepairObject) {
 					position = "-90.4107 27.457 134.412";
@@ -782,7 +716,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the StationInventory";
 					targetObject = "Team2StationInventory2";
 					targetClientId = "-1";
-					targetObjectId = "6360";
+					targetObjectId = "4472";
 					location = "-90.4107 27.457 134.412";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -797,15 +731,12 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						isInvalid = "0";
-						team = "2";
 				};
 			};
 		};
 		new SimGroup(team0) {
-				powerCount = "0";
 
 			new SimGroup(AIObjectives) {
-					powerCount = "0";
 			};
 		};
 	};
@@ -819,12 +750,13 @@ new SimGroup(MissionGroup) {
 		cloudSpeed1 = "0.0001";
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
-		visibleDistance = "900";
+		visibleDistance = "500";
 		useSkyTextures = "1";
+		renderBottomTexture = "0";
 		SkySolidColor = "0.390000 0.390000 0.390000 0.000000";
-		fogDistance = "600";
-		fogColor = "0.500000 0.500000 0.500000 1.000000";
-		fogVolume1 = "120 0 100";
+		fogDistance = "275";
+		fogColor = "0.400000 0.400000 0.400000 1.000000";
+		fogVolume1 = "0 0 0";
 		fogVolume2 = "0 0 0";
 		fogVolume3 = "0 0 0";
 		materialList = "Lush_l4.dml";
@@ -833,8 +765,8 @@ new SimGroup(MissionGroup) {
 		fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
 		fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000000";
 		fogVolumeColor3 = "128.000000 128.000000 128.000000 0.000000";
-			cloudSpeed0 = "0.000001 0.000001";
 			locked = "true";
+			cloudSpeed0 = "0.000001 0.000001";
 	};
 	new WaterBlock() {
 		position = "-128 -96 90";
@@ -851,37 +783,8 @@ new SimGroup(MissionGroup) {
 		removeWetEdges = "1";
 			locked = "true";
 	};
-	new SimGroup(Environment) {
-			powerCount = "0";
+	new SimGroup(environment) {
 
-		new TSStatic() {
-			position = "-99.589 -115.88 125.815";
-			rotation = "0 0 -1 55.0039";
-			scale = "1 1 1";
-			shapeName = "borg19.dts";
-				locked = "true";
-		};
-		new TSStatic() {
-			position = "-55.6873 14.5 124.435";
-			rotation = "0 0 1 123.186";
-			scale = "1 1 1";
-			shapeName = "borg18.dts";
-				locked = "true";
-		};
-		new TSStatic() {
-			position = "-103.306 -39.641 104.528";
-			rotation = "0 0 -1 12.605";
-			scale = "1 1 1";
-			shapeName = "borg16.dts";
-				locked = "true";
-		};
-		new TSStatic() {
-			position = "-122.789 -30.4939 104.096";
-			rotation = "0 0 1 63.5983";
-			scale = "1 1 1";
-			shapeName = "borg17.dts";
-				locked = "true";
-		};
 		new TSStatic() {
 			position = "-46.068 -90.5109 114.357";
 			rotation = "0 0 -1 32.0856";
@@ -897,15 +800,14 @@ new SimGroup(MissionGroup) {
 				locked = "true";
 		};
 		new TSStatic() {
-			position = "-117.452 -39.1965 105.735";
-			rotation = "1 0 0 0";
+			position = "-122.789 -30.4939 104.096";
+			rotation = "0 0 1 63.5983";
 			scale = "1 1 1";
-			shapeName = "borg34.dts";
+			shapeName = "borg17.dts";
 				locked = "true";
 		};
 	};
 	new SimGroup(ObserverDropPoints) {
-			powerCount = "0";
 
 		new Camera() {
 			position = "-31.5635 30.7804 157.928";
@@ -954,10 +856,8 @@ new SimGroup(MissionGroup) {
 		};
 	};
 	new SimGroup(RandomOrganics) {
-			powerCount = "0";
 
 		new SimGroup(Addition4BEPlant1) {
-				powerCount = "0";
 
 			new TSStatic() {
 				position = "-105 -82 103.342";
@@ -1003,7 +903,6 @@ new SimGroup(MissionGroup) {
 				locked = "true";
 		};
 		new SimGroup(Addition5PhoenixPlant1) {
-				powerCount = "0";
 
 			new TSStatic() {
 				position = "-113 46 132.148";
@@ -1140,7 +1039,6 @@ new SimGroup(MissionGroup) {
 			};
 		};
 		new SimGroup(Addition6PhoenixPlant2) {
-				powerCount = "0";
 
 			new TSStatic() {
 				position = "-137 102 168.824";
@@ -1277,26 +1175,11 @@ new SimGroup(MissionGroup) {
 			};
 		};
 		new SimGroup(Addition1BELgTree18) {
-				powerCount = "0";
 
 			new TSStatic() {
-				position = "-121 14 128.484";
-				rotation = "0 0 -1 102";
-				scale = "0.9 0.9 0.9";
-				shapeName = "borg18.dts";
-					locked = "true";
-			};
-			new TSStatic() {
-				position = "-49 6 119.805";
-				rotation = "0 0 1 57.9999";
-				scale = "1.4 1.4 1.4";
-				shapeName = "borg18.dts";
-					locked = "true";
-			};
-			new TSStatic() {
-				position = "-105 -18 99.633";
-				rotation = "0 0 1 169";
-				scale = "0.8 0.8 0.8";
+				position = "-97.206 -50.249 101.355";
+				rotation = "0 0 1 58.9997";
+				scale = "1.2 1.2 1.2";
 				shapeName = "borg18.dts";
 					locked = "true";
 			};
@@ -1307,24 +1190,9 @@ new SimGroup(MissionGroup) {
 				shapeName = "borg18.dts";
 					locked = "true";
 			};
-			new TSStatic() {
-				position = "-97.206 -50.249 101.355";
-				rotation = "0 0 1 58.9997";
-				scale = "1.2 1.2 1.2";
-				shapeName = "borg18.dts";
-					locked = "true";
-			};
-			new TSStatic() {
-				position = "-121 -74 104.211";
-				rotation = "0 0 -1 79";
-				scale = "1.1 1.1 1.1";
-				shapeName = "borg18.dts";
-					locked = "true";
-			};
 		};
 	};
 	new SimGroup(Ambiance) {
-			powerCount = "0";
 
 		new AudioEmitter() {
 			position = "-60.3481 -42.8411 108.656";

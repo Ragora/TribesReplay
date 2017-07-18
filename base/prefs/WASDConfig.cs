@@ -61,8 +61,6 @@ moveMap.bind(keyboard, "c", toggleCommanderMap);
 moveMap.bind(keyboard, "ctrl k", suicide);
 moveMap.bind(keyboard, "f1", toggleHelpGui);
 moveMap.bind(keyboard, "f2", toggleScoreScreen);
-moveMap.bind(keyboard, "f3", startRecordingDemo);
-moveMap.bind(keyboard, "f4", stopRecordingDemo);
 moveMap.bind(keyboard, "f6", toggleHudWaypoints);
 moveMap.bind(keyboard, "f7", toggleHudMarkers);
 moveMap.bind(keyboard, "f8", toggleHudTargets);

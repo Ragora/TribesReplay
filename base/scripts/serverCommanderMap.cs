@@ -85,9 +85,9 @@ function serverCmdControlObject(%client, %targetId)
       return;
    }
 
-	//mounted in a vehicle?
-	if (%client.player.isMounted())
-	{
+   //mounted in a vehicle?
+   if (%client.player.isMounted())
+   {
       commandToClient(%client, 'ControlObjectResponse', false, "can't control objects while mounted in a vehicle.");
       return;
    }
@@ -173,14 +173,14 @@ function serverCmdAttachCommanderCamera(%client, %target)
       commandToClient(%client, 'CameraAttachResponse', false);
       return;
    }
-   
+
    %data = %obj.getDataBlock();
    %obsData = %data.observeParameters;
    %obsX = firstWord(%obsData);
    %obsY = getWord(%obsData, 1);
    %obsZ = getWord(%obsData, 2);
 
-   %client.camera.mode = "observerFollow";
+   // don't set the camera mode so that it does not interfere with spawning
    %transform = %obj.getTransform();
    %client.camera.setTransform(%transform);
    %client.camera.setOrbitMode(%obj, %transform, %obsX, %obsY, %obsZ);

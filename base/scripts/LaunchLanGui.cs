@@ -83,7 +83,17 @@ function LaunchToolbarDlg::onWake(%this)
 
    LaunchToolbarMenu.clear();
 
-   if ( $PlayingOnline )
+   if ( isDemo() )
+   {
+      LaunchToolbarMenu.add( 1, "TRAINING" );
+      LaunchToolbarMenu.add( 0, "GAME" );
+      LaunchToolbarMenu.add( 2, "NEWS" );
+      //LaunchToolbarMenu.add( 3, "FORUMS" );
+      //LaunchToolbarMenu.add( 4, "EMAIL" );
+      //LaunchToolbarMenu.add( 5, "CHAT" );
+      //LaunchToolbarMenu.add( 6, "BROWSER" );
+   }
+   else if ( $PlayingOnline )
    {
       LaunchToolbarMenu.add( 0, "GAME" );
       LaunchToolbarMenu.add( 2, "NEWS" );
@@ -111,7 +121,17 @@ function LaunchToolbarDlg::onWake(%this)
 //       LaunchToolbarMenu.add( 11, "LOG ON" );
    LaunchToolbarMenu.add( 9, "QUIT" );
 
-   LaunchToolbarCloseButton.setVisible( LaunchTabView.tabCount() > 0 );
+   %on = false;
+   for ( %tab = 0; %tab < LaunchTabView.tabCount(); %tab++ )
+   {
+      if ( LaunchTabView.isTabActive( %tab ) )
+      {
+         %on = true;
+         break;
+      }
+   }
+   
+   LaunchToolbarCloseButton.setVisible( %on );
 }
 
 //----------------------------------------------------------------------------
@@ -125,14 +145,25 @@ function OpenLaunchTabs( %gotoWarriorSetup )
    $FirstLaunch = "";
 
    // Set up all of the launch bar tabs:
-   if ( $PlayingOnline )
+   if ( isDemo() )
+   {
+      LaunchTabView.addLaunchTab( "TRAINING",   TrainingGui );
+      LaunchTabView.addLaunchTab( "GAME",       GameGui );
+      LaunchTabView.addLaunchTab( "NEWS",       NewsGui );
+      LaunchTabView.addLaunchTab( "FORUMS",     "", true );
+      LaunchTabView.addLaunchTab( "EMAIL",      "", true );
+      LaunchTabView.addLaunchTab( "CHAT",       "", true );
+      LaunchTabView.addLaunchTab( "BROWSER",    "", true );
+      %launchGui = GameGui;
+   }
+   else if ( $PlayingOnline )
    {
       LaunchTabView.addLaunchTab( "GAME",    GameGui );
       LaunchTabView.addLaunchTab( "NEWS",    NewsGui );
       LaunchTabView.addLaunchTab( "FORUMS",  ForumsGui );
       LaunchTabView.addLaunchTab( "EMAIL",   EmailGui );
       LaunchTabView.addLaunchTab( "CHAT",    ChatGui );
-      LaunchTabView.addLaunchTab( "BROWSER", TribeAndWarriorBrowserGui );
+      LaunchTabView.addLaunchTab( "BROWSER", TribeandWarriorBrowserGui);
 
       switch$ ( $pref::Shell::LaunchGui )
       {
@@ -140,7 +171,7 @@ function OpenLaunchTabs( %gotoWarriorSetup )
          case "Forums":    %launchGui = ForumsGui;
          case "Email":     %launchGui = EmailGui;
          case "Chat":      %launchGui = ChatGui;
-         case "Browser":   %launchGui = TribeAndWarriorBrowserGui;
+         case "Browser":   %launchGui = TribeandWarriorBrowserGui;
          default:          %launchGui = GameGui;
       }
    }
@@ -158,12 +189,14 @@ function OpenLaunchTabs( %gotoWarriorSetup )
 }
 
 //--------------------------------------------------------
-function LaunchTabView::addLaunchTab( %this, %text, %gui )
+function LaunchTabView::addLaunchTab( %this, %text, %gui, %makeInactive )
 {
    %tabCount = %this.tabCount();
    %this.gui[%tabCount] = %gui;
    %this.key[%tabCount] = 0;
    %this.addTab( %tabCount, %text );
+	if ( %makeInactive )
+		%this.setTabActive( %tabCount, false );
 }
 
 //--------------------------------------------------------
@@ -219,10 +252,13 @@ function LaunchTabView::closeCurrentTab( %this )
 function LaunchTabView::closeTab( %this, %gui, %key )
 {
    %tabCount = %this.tabCount();
-   for ( %tab = 0; %tab < %tabCount; %tab++ )
+   %activeCount = 0;
+   for ( %i = 0; %i < %tabCount; %i++ )
    {
-      if( %this.gui[%tab] $= %gui && %this.key[%tab] $= %key )
-         break;
+      if ( %this.gui[%i] $= %gui && %this.key[%i] $= %key )
+         %tab = %i;
+      else if ( %this.isTabActive( %i ) )
+         %activeCount++;
    }
 
    if ( %tab == %tabCount )
@@ -237,7 +273,7 @@ function LaunchTabView::closeTab( %this, %gui, %key )
    %this.removeTabByIndex( %tab );
    %gui.onClose( %key );
    
-   if ( %tabCount == 1 )
+   if ( %activeCount == 0 )
    {
       %this.lastTab = "";
       Canvas.setContent( LaunchGui );
@@ -275,7 +311,10 @@ function LaunchGui::onWake(%this)
    if ( !$FirstLaunch )
       LaunchTabView.viewLastTab();
 
-   checkNamesAndAliases();
+	if ( !isDemo() )
+   	checkNamesAndAliases();
+	else
+		OpenLaunchTabs();
 }
 
 //----------------------------------------------------------------------------

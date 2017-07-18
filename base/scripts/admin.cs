@@ -6,6 +6,7 @@ $VoteMessage["VoteChangeMission"] = "change the mission to";
 $VoteMessage["VoteTeamDamage", 0] = "enable team damage";
 $VoteMessage["VoteTeamDamage", 1] = "disable team damage";
 $VoteMessage["VoteTournamentMode"] = "change the server to";
+$VoteMessage["VoteFFAMode"] = "change the server to";
 $VoteMessage["VoteChangeTimeLimit"] = "change the time limit to";
 $VoteMessage["VoteMatchStart"] = "start the match";
 $VoteMessage["VoteGreedMode", 0] = "enable Hoard Mode";
@@ -15,6 +16,13 @@ $VoteMessage["VoteHoardMode", 1] = "disable Greed Mode";
 
 function serverCmdStartNewVote(%client, %typeName, %arg1, %arg2, %arg3, %arg4, %playerVote)
 {
+   //DEMO VERSION - only voteKickPlayer is allowed
+   if ((isDemo() || isDemoServer()) && %typeName !$= "VoteKickPlayer")
+   {
+      messageClient(%client, '', "All voting options except to kick a player are disabled in the DEMO VERSION.");
+      return;
+   }
+
    // haha - who gets the last laugh... No admin for you!
    if( %typeName $= "VoteAdminPlayer" && !$Host::allowAdminPlayerVotes )
       return;

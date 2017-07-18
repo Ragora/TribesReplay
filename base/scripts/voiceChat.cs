@@ -232,8 +232,7 @@ function voiceCapStart()
          {
             case 0:   %level = "Codec .v12";
             case 1:   %level = "Codec .v24";
-            case 2:   %level = "Codec .v29";
-            default:  %level = "Codec GSM";
+            default:  %level = "Codec .v29";
          }
 
          addMessageHudLine("\c2System:\cr server has voice level capped at [\c1" @ %level @ "\cr].");

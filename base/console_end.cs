@@ -212,6 +212,7 @@ loadGui("LaunchToolbarDlg");
 loadGui("GameGui");
 loadGui("ChooseFilterDlg");
 loadGui("ServerInfoDlg");
+loadGui("EnterIPDlg");
 loadGui("AdvancedHostDlg");
 loadGui("NewWarriorDlg");
 loadGui("JoinChatDlg");
@@ -250,7 +251,7 @@ loadGui("SinglePlayerEscapeDlg");
 loadGui("LobbyGui");
 loadGui("DebriefGui");
 loadGui("CreditsGui");
-
+loadGui("MoveThreadDlg");
 loadGui("NewMissionGui");
 loadGui("ChatDlg");
 loadGui("PlayGui");

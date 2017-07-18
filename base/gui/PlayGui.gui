@@ -127,8 +127,8 @@ new GameTSCtrl(PlayGui) {
          horizSizing = "left";
          vertSizing = "bottom";
          position = "8 23";
-         extent = "92 5";
-         minExtent = "92 5";
+         extent = "93 5";
+         minExtent = "93 5";
          visible = "1";
          setFirstResponder = "0";
          modal = "1";
@@ -136,7 +136,7 @@ new GameTSCtrl(PlayGui) {
          fillColor = "0.353000 0.373000 0.933000 0.800000";
          frameColor = "0.000000 1.000000 0.000000 1.000000";
          opacity = "0.8";
-         subRegion = "0 0 92 10";
+         subRegion = "0 0 93 10";
          pulseRate = "500";
          pulseThreshold = "0.3";
       };
@@ -147,8 +147,8 @@ new GameTSCtrl(PlayGui) {
          horizSizing = "left";
          vertSizing = "bottom";
          position = "8 5";
-         extent = "92 8";
-         minExtent = "92 8";
+         extent = "93 8";
+         minExtent = "93 8";
          visible = "1";
          setFirstResponder = "0";
          modal = "1";
@@ -156,7 +156,7 @@ new GameTSCtrl(PlayGui) {
          fillColor = "0.000 1.000 0.000 0.800000";
          frameColor = "0.000000 1.000000 0.000000 0.000000";
          opacity = "0.8";
-         subRegion = "0 0 92 10";
+         subRegion = "0 0 93 10";
          pulseRate = "500";
          pulseThreshold = "0.3";
       };
@@ -167,8 +167,8 @@ new GameTSCtrl(PlayGui) {
          horizSizing = "left";
          vertSizing = "bottom";
          position = "8 30";
-         extent = "92 3";
-         minExtent = "92 3";
+         extent = "93 3";
+         minExtent = "93 3";
          visible = "1";
          setFirstResponder = "0";
          modal = "1";
@@ -410,6 +410,8 @@ new GameTSCtrl(PlayGui) {
 	  missileMarker2 = "gui/RET_missile_marker_red";
 	  missileFlash1 = "gui/RET_missile_horizflash_red";
 	  missileFlash2 = "gui/RET_missile_vertflash_red";
+
+	  LOSMarkerUpdate = 250; // amount of time in ms that markers get LOS updates. Turn this down to get more updates or up to get less.
    };
 
    new GuiControl(dashboardHud) {

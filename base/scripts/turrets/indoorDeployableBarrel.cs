@@ -61,9 +61,12 @@ datablock TurretData(TurretDeployedFloorIndoor) : TurretDamageProfile
    maxDamage = 0.5;
    destroyedLevel = 0.5;
    disabledLevel = 0.21;
+   explosion      = SmallTurretExplosion;
+      expDmgRadius = 5.0;
+      expDamage = 0.25;
+      expImpulse = 500.0;
    repairRate = 0;
    heatSignature = 0.0;
-   explosion = SmallTurretExplosion;
 
 	deployedObject = true;
 
@@ -105,9 +108,12 @@ datablock TurretData(TurretDeployedWallIndoor) : TurretDamageProfile
    maxDamage = 0.5;
    destroyedLevel = 0.5;
    disabledLevel = 0.21;
+   explosion      = SmallTurretExplosion;
+      expDmgRadius = 5.0;
+      expDamage = 0.25;
+      expImpulse = 500.0;
    repairRate = 0;
    heatSignature = 0.0;
-   explosion = SmallTurretExplosion;
 
    thetaMin = 5;
    thetaMax = 145;
@@ -149,6 +155,10 @@ datablock TurretData(TurretDeployedCeilingIndoor) : TurretDamageProfile
    maxDamage = 0.5;
    destroyedLevel = 0.5;
    disabledLevel = 0.21;
+   explosion      = SmallTurretExplosion;
+      expDmgRadius = 5.0;
+      expDamage = 0.25;
+      expImpulse = 500.0;
    repairRate = 0;
    explosion = SmallTurretExplosion;
 

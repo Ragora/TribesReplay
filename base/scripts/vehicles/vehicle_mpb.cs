@@ -150,8 +150,8 @@ datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
    speedDamageScale = 0.060;
 
    // Object Impact Damage (uses DamageType::Impact)
-   collDamageThresholdVel = 12;
-   collDamageMultiplier   = 0.080;
+   collDamageThresholdVel = 18;
+   collDamageMultiplier   = 0.070;
 
    // Engine
    engineTorque = 7.0 * 745;

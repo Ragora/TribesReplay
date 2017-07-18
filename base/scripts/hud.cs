@@ -802,13 +802,13 @@ function MainChatHud::nextChatHudLen( %this )
    
    %totalLines = HudMessageVector.getNumLines();
    %posLines = $pref::chatHudLength * 4;
-   %linesOver = ( %totalLines - %posLines ) * 14;
+   %linesOver = %totalLines - %posLines;
    ChatPageDown.position = ( firstWord( outerChatHud.extent ) - 20 ) @ " " @ ( $chatScrollLenY[$pref::chatHudLength] - 6 );
    
    if( ( %linesOver > 0 ) && !%sizeIncrease )
    {
       %linesOver = %totalLines - %posLines;
-      %posAdjust = %linesOver * ChatHud.profile.fontSize + 3;
+      %posAdjust = %linesOver * $ShellFontSize;
       
       %newPos = "0" @ " " @ ( -1 * %posAdjust );   
       ChatHud.position = %newPos;
@@ -816,7 +816,7 @@ function MainChatHud::nextChatHudLen( %this )
    else if( %sizeIncrease && ( %linesOver > 0 ) )
    {
       %curPos = getWord( ChatHud.position, 1 );
-      %newY = %curPos + ( 4 * 14 );
+      %newY = %curPos + ( 4 * $ShellFontSize );
       %newPos = "0 " @ %newY;
       ChatHud.position = %newPos;
    }
@@ -1094,11 +1094,10 @@ function ClientCmdDisplayHuds()
          else
             mainVoteHud.setVisible(0);   
          
-         clientCmdSetWeaponsHudActive(0);
    }
 }
 
-function clientCmdTogglePlayHuds(%val)
+function clientcmdTogglePlayHuds(%val)
 {
    ammoHud.setVisible(%val);
    objectiveHud.setVisible(%val);
@@ -1748,4 +1747,13 @@ function displayObserverHud(%client, %targetClient, %potentialClient)
 function hudFirstPersonToggled()
 {
    ammoHud.setVisible($firstPerson);
+}
+
+$testCount = 0;
+
+function testChatHud()
+{
+   $testCount++;
+   messageAll( '', "This is test number " @ $testCount );
+   $tester = schedule( 50, 0, "testChatHud");
 }

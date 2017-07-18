@@ -2154,7 +2154,7 @@ new GuiControl(OptionsDlg) {
 				value = "32";
 				usePlusMinus = "1";
 			};
-			new GuiTextCtrl() {
+			new GuiTextCtrl(OP_MasterServerTxt) {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
@@ -2220,7 +2220,7 @@ new GuiControl(OptionsDlg) {
 				selectedBarBitmap = "gui/shll_pulldownbar_act";
 				noButtonStyle = "0";
 			};
-			new ShellToggleButton() {
+			new ShellToggleButton(OP_CheckEmailTgl) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
@@ -2235,7 +2235,7 @@ new GuiControl(OptionsDlg) {
 				text = "CHECK EMAIL WHILE PLAYING";
 				maxLength = "255";
 			};
-			new ShellToggleButton() {
+			new ShellToggleButton(OP_ChatDisconnectTgl) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
@@ -2294,7 +2294,7 @@ new GuiControl(OptionsDlg) {
 				value = "500";
 				usePlusMinus = "1";
 			};
-			new ShellBitmapButton() {
+			new ShellBitmapButton(OP_EditChatMenuBtn) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
@@ -2400,7 +2400,7 @@ new GuiControl(OptionsDlg) {
 				text = "SHOW PERSONAL SKINS";
 				maxLength = "255";
 			};
-			new GuiTextCtrl() {
+			new GuiTextCtrl(OP_LaunchScreenTxt) {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";

@@ -265,31 +265,31 @@ function kick( %client, %admin, %guid )
    
    messageClient(%client, 'onClientKicked', "");
    messageAllExcept( %client, -1, 'MsgClientDrop', "", %client.name, %client );
-	
-	if( %client.isAIControlled() )
-	{
+   
+   if( %client.isAIControlled() )
+   {
       $HostGameBotCount--;
-		%client.drop();
-	}
-	else
-	{
+      %client.drop();
+   }
+   else
+   {
       %count = ClientGroup.getCount();
       for( %i = 0; %i < %count; %i++ )
       {
          %cl = ClientGroup.getObject( %i );
-	      if( %cl.guid == %guid )
+         if( %cl.guid == %guid )
          {
-	         // kill and delete this client
-	         if( isObject( %cl.player ) )
-	            %cl.player.scriptKill(0);
+            // kill and delete this client
+            if( isObject( %cl.player ) )
+               %cl.player.scriptKill(0);
             
-	         %cl.schedule(700, "delete");
-	         
-	         BanList::add( %guid, "0", $Host::KickBanTime );
-	         Game.kickGuid = "";
+            %cl.schedule(700, "delete");
+            
+            BanList::add( %guid, "0", $Host::KickBanTime );
+            Game.kickGuid = "";
          }   
-	   }
-	}
+      }
+   }
 }
 
 function ban( %client, %admin )
@@ -338,147 +338,161 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
    sendLoadInfoToClient( %client );
 
    //%client.setSimulatedNetParams(0.1, 30);
-   // if hosting this server, set this client to superAdmin
-   if(%client.getAddress() $= "Local")
-   {   
-      %client.isAdmin = true;
-      %client.isSuperAdmin = true;
-   }
-
-   // Get the client's unique id:
-   %authInfo = %client.getAuthInfo();
-   %client.guid = getField( %authInfo, 3 );
-   
-   // check admin and super admin list, and set status accordingly
-   if ( !%client.isSuperAdmin )
+   if ( isDemo() )
    {
-      if ( isOnSuperAdminList( %client ) )
+      %client.armor = "Light";
+      %client.sex = "Male";
+      %client.race = "Human";
+      %client.name = addTaggedString( "DemoGuy" );
+      %client.nameBase = "DemoGuy";
+      %client.voice = "Male1";
+      %client.voiceTag = addtaggedString( "Male1" );
+   }
+   else
+   {
+      // if hosting this server, set this client to superAdmin
+      if(%client.getAddress() $= "Local")
       {   
          %client.isAdmin = true;
-         %client.isSuperAdmin = true;   
+         %client.isSuperAdmin = true;
       }
-      else if( isOnAdminList( %client ) )
-      {
-         %client.isAdmin = true;
-      }
-   }
-         
-   // Sex/Race defaults
-   switch$ ( %raceGender )
-   {
-      case "Human Male":
-         %client.sex = "Male";
-         %client.race = "Human";
-      case "Human Female":
-         %client.sex = "Female";
-         %client.race = "Human";
-      case "Bioderm":
-         %client.sex = "Male";
-         %client.race = "Bioderm";
-      default:
-         error("Invalid race/gender combo passed: " @ %raceGender);
-         %client.sex = "Male";
-         %client.race = "Human";
-   }
-   %client.armor = "Light";
 
-   // Override the connect name if this server does not allow smurfs:
-   %realName = getField( %authInfo, 0 );
-   if ( $PlayingOnline && $Host::NoSmurfs )
-      %name = %realName;
-
-   if ( strcmp( %name, %realName ) == 0 )
-   {
-      %client.isSmurf = false;
-
-      // Add the tribal tag:
-      %tag = getField( %authInfo, 1 );
-      %append = getField( %authInfo, 2 );
-      if ( %append )
-         %name = "\cp\c6" @ %name @ "\c7" @ %tag @ "\co";
-      else
-         %name = "\cp\c7" @ %tag @ "\c6" @ %name @ "\co";
-
-      %client.sendGuid = %client.guid;
-   }
-   else
-   {
-      %client.isSmurf = true;
-      %client.sendGuid = 0;
-      %name = stripTrailingSpaces( strToPlayerName( %name ) );
-      if ( strlen( %name ) < 3 )
-         %name = "Poser";
+      // Get the client's unique id:
+      %authInfo = %client.getAuthInfo();
+      %client.guid = getField( %authInfo, 3 );
       
-      // Make sure the alias is unique:
-      %isUnique = true;
-      %count = ClientGroup.getCount();
-      for ( %i = 0; %i < %count; %i++ )
+      // check admin and super admin list, and set status accordingly
+      if ( !%client.isSuperAdmin )
       {
-         %test = ClientGroup.getObject( %i );
-         %rawName = stripChars( detag( getTaggedString( %test.name ) ), "\cp\co\c6\c7\c8\c9" );
-         if ( strcmp( %name, %rawName ) == 0 )
+         if ( isOnSuperAdminList( %client ) )
+         {   
+            %client.isAdmin = true;
+            %client.isSuperAdmin = true;   
+         }
+         else if( isOnAdminList( %client ) )
          {
-            %isUnique = false;
-            break;
+            %client.isAdmin = true;
          }
       }
-
-      // Append a number to make the alias unique:
-      if ( !%isUnique )
+            
+      // Sex/Race defaults
+      switch$ ( %raceGender )
       {
-         %suffix = 1;
-         while ( !%isUnique )
-         {
-            %nameTry = %name @ "." @ %suffix;
-            %isUnique = true;
+         case "Human Male":
+            %client.sex = "Male";
+            %client.race = "Human";
+         case "Human Female":
+            %client.sex = "Female";
+            %client.race = "Human";
+         case "Bioderm":
+            %client.sex = "Male";
+            %client.race = "Bioderm";
+         default:
+            error("Invalid race/gender combo passed: " @ %raceGender);
+            %client.sex = "Male";
+            %client.race = "Human";
+      }
+      %client.armor = "Light";
 
-            %count = ClientGroup.getCount();
-            for ( %i = 0; %i < %count; %i++ )
+      // Override the connect name if this server does not allow smurfs:
+      %realName = getField( %authInfo, 0 );
+      if ( $PlayingOnline && $Host::NoSmurfs )
+         %name = %realName;
+
+      if ( strcmp( %name, %realName ) == 0 )
+      {
+         %client.isSmurf = false;
+
+         // Add the tribal tag:
+         %tag = getField( %authInfo, 1 );
+         %append = getField( %authInfo, 2 );
+         if ( %append )
+            %name = "\cp\c6" @ %name @ "\c7" @ %tag @ "\co";
+         else
+            %name = "\cp\c7" @ %tag @ "\c6" @ %name @ "\co";
+
+         %client.sendGuid = %client.guid;
+      }
+      else
+      {
+         %client.isSmurf = true;
+         %client.sendGuid = 0;
+         %name = stripTrailingSpaces( strToPlayerName( %name ) );
+         if ( strlen( %name ) < 3 )
+            %name = "Poser";
+         
+         // Make sure the alias is unique:
+         %isUnique = true;
+         %count = ClientGroup.getCount();
+         for ( %i = 0; %i < %count; %i++ )
+         {
+            %test = ClientGroup.getObject( %i );
+            %rawName = stripChars( detag( getTaggedString( %test.name ) ), "\cp\co\c6\c7\c8\c9" );
+            if ( strcmp( %name, %rawName ) == 0 )
             {
-               %test = ClientGroup.getObject( %i );
-               %rawName = stripChars( detag( getTaggedString( %test.name ) ), "\cp\co\c6\c7\c8\c9" );
-               if ( strcmp( %nameTry, %rawName ) == 0 )
+               %isUnique = false;
+               break;
+            }
+         }
+
+         // Append a number to make the alias unique:
+         if ( !%isUnique )
+         {
+            %suffix = 1;
+            while ( !%isUnique )
+            {
+               %nameTry = %name @ "." @ %suffix;
+               %isUnique = true;
+
+               %count = ClientGroup.getCount();
+               for ( %i = 0; %i < %count; %i++ )
                {
-                  %isUnique = false;
-                  break;
+                  %test = ClientGroup.getObject( %i );
+                  %rawName = stripChars( detag( getTaggedString( %test.name ) ), "\cp\co\c6\c7\c8\c9" );
+                  if ( strcmp( %nameTry, %rawName ) == 0 )
+                  {
+                     %isUnique = false;
+                     break;
+                  }
                }
+
+               %suffix++;
             }
 
-            %suffix++;
+            // Success!
+            %name = %nameTry;
          }
 
-         // Success!
-         %name = %nameTry;
+         %smurfName = %name;
+         // Tag the name with the "smurf" color:
+         %name = "\cp\c8" @ %name @ "\co";
       }
 
-      %smurfName = %name;
-      // Tag the name with the "smurf" color:
-      %name = "\cp\c8" @ %name @ "\co";
+      %client.name = addTaggedString(%name);
+      if(%client.isSmurf)
+         %client.nameBase = %smurfName;
+      else
+         %client.nameBase = %realName;
+
+      // Make sure that the connecting client is not trying to use a bot skin:
+      %temp = detag( %skin );
+      if ( %temp $= "basebot" || %temp $= "basebbot" )
+         %client.skin = addTaggedString( "base" );
+      else
+         %client.skin = addTaggedString( %skin );
+
+      %client.voice = %voice;
+      %client.voiceTag = addtaggedString(%voice);
+      
+      //set the voice pitch based on a lookup table from their chosen voice
+      %client.voicePitch = getValidVoicePitch(%voice, %voicePitch);
    }
 
-   %client.name = addTaggedString(%name);
-   if(%client.isSmurf)
-      %client.nameBase = %smurfName;
-   else
-      %client.nameBase = %realName;
    %client.justConnected = true;
    %client.isReady = false;
 
-   // Make sure that the connecting client is not trying to use a bot skin:
-   %temp = detag( %skin );
-   if ( %temp $= "basebot" || %temp $= "basebbot" )
-      %client.skin = addTaggedString( "base" );
-   else
-      %client.skin = addTaggedString( %skin );
-
    // full reset of client target manager
    clientResetTargets(%client, false);
-
-   %client.voice = %voice;
-   %client.voiceTag = addtaggedString(%voice);
-   
-   //set the voice pitch based on a lookup table from their chosen voice
-   %client.voicePitch = getValidVoicePitch(%voice, %voicePitch);
 
    %client.target = allocClientTarget(%client, %client.name, %client.skin, %client.voiceTag, '_ClientConnection', 0, 0, %client.voicePitch);
    %client.score = 0;
@@ -517,7 +531,7 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
    if ( $CurrentMissionType !$= "SinglePlayer" ) 
    {
       messageClient(%client, 'MsgClientJoin', '\c2Welcome to Tribes2 %1.', 
-            %name, 
+            %client.name, 
             %client, 
             %client.target, 
             false,   // isBot 
@@ -527,7 +541,7 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
             %client.sendGuid );
 
       messageAllExcept(%client, -1, 'MsgClientJoin', '\c1%1 joined the game.', 
-            %name, 
+            %client.name, 
             %client, 
             %client.target, 
             false,   // isBot 
@@ -538,7 +552,7 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
    }
    else
       messageClient(%client, 'MsgClientJoin', "\c0Mission Insertion complete...", 
-            %name, 
+            %client.name, 
             %client, 
             %client.target, 
             false,   // isBot 
@@ -595,7 +609,8 @@ function dismountPlayers()
 
 function loadMission( %missionName, %missionType, %firstMission )
 {
-   cls();
+   if (!$pref::NoClearConsole)
+      cls();
    buildLoadInfo( %missionName, %missionType );
    
    // reset all of these
@@ -737,6 +752,10 @@ function loadMissionStage2()
       $TeamDamage = 1;
    else
       $TeamDamage = $Host::TeamDamageOn;
+
+   //the demo version always has team damage off
+   if (isDemo() || isDemoServer())
+      $TeamDamage = 0;
 
    Game.missionLoadDone();
    
@@ -1304,6 +1323,10 @@ function serverCmdChangePlayersTeam( %clientRequesting, %client, %team)
 {
    if( isObject( Game ) && %client != Game.kickClient && %clientRequesting.isAdmin)
    {   
+      // clear the pickteam menu
+      if( !$MatchStarted && $Host::TournamentMode && !$CountdownStarted && %client.camera.Mode $= "pickingTeam" )
+         commandToClient( %client, 'processPickTeam' ); 
+      
       serverCmdClientJoinTeam(%client, %team);
       
       if(!$MatchStarted)
@@ -1853,8 +1876,12 @@ function resetServerDefaults()
 {
    echo( "Resetting server defaults..." );
    
+   allowConnections( false );// no connections when resetting the server   
+   
    if( isObject( Game ) )
       Game.gameOver();
+   else
+      schedule( 500, 0, "resetServerDefaults" );
    
    // Override server defaults with prefs:   
    exec( "scripts/ServerDefaults.cs" );
@@ -1867,17 +1894,20 @@ function resetServerDefaults()
    if( $Host::botsEnabled )
       initGameBots( $Host::Map, $Host::MissionType );
    
-   // load the missions
-   loadMission( $Host::Map, $Host::MissionType );   
+   // load the mission
+   loadMission( $Host::Map, $Host::MissionType );
+   
+   // allow connections since were ready to go.
+   allowConnections( true );    
 }
 
 function removeAllBots()
 {
    while( ClientGroup.getCount() )
-	{
-		%client = ClientGroup.getObject(0);
-		if(%client.isAIControlled())
-			%client.drop();
+   {
+      %client = ClientGroup.getObject(0);
+      if(%client.isAIControlled())
+         %client.drop();
       else
          %client.delete();
    }
@@ -1925,6 +1955,9 @@ function getAdmin()
 
 function serverCmdSetPDAPose(%client, %val)
 {
+   if(!isObject(%client.player))
+      return;
+
    // if client is in a vehicle, return
    if(%client.player.isMounted())
       return;

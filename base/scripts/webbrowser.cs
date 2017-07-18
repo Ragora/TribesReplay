@@ -818,7 +818,7 @@ function BrowserSearchMatchList::onSelect( %this, %id, %text )
 //-----------------------------------------------------------------------------
 function BrowserSearchMatchList::onAdd(%this)
 {
-	BrowserSearchMatchList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
+//	BrowserSearchMatchList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
 }
 //==--  BrowserSearchPane ----------------------------------------------------
 function BrowserSearchPane::onDatabaseQueryResult(%this, %status, %resultStatus, %key)
@@ -1150,9 +1150,9 @@ function GuiMLTextCtrl::onURL(%this, %url)
             PostsPopupDlg.state = "adminRemovePostPlus";
             databaseQuery(63, 7 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
 	  case "joinPublicChat":
-			TribePane.joinChat(getField(%url,1),0);
+			joinPublicTribeChannel(getField(%url,1));
 	  case "joinPrivateChat":
-			TribePane.joinChat(getField(%url,1),1);
+			joinPrivateTribeChannel(getField(%url,1));
 
       //if there is an unknown URL type, treat it as a weblink..
       default:
@@ -1248,13 +1248,9 @@ function TribePane::onWake(%this)
 function TribePane::JoinChat(%this, %tribe, %chanType)
 {
 	if(%chanType == 0)
-		%chan = "_Public";
+		joinPublicTribeChannel(%tribe);
 	else
-		%chan = "_Private";
-
-	error("CHANNEL:" @ %chan);
-	IRCClient::join(IRCClient::channelName(%tribe) @ %chan);
-    LaunchTabView.viewTab("CHAT", ChatGui, 0);
+		joinPrivateTribeChannel(%tribe);
 }
 //-----------------------------------------------------------------------------
 function TribePane::onDatabaseQueryResult(%this, %status, %resultString , %key)
@@ -2175,7 +2171,7 @@ function TribeMemberPopupDlg::onWake( %this )
 			    TribeMemberPopup.add( "Contact by EMail", 2 );
 			    TribeMemberPopup.add( "Add To Buddylist", 4 );
 			    TribeMemberPopup.add( "Add To Blocklist", 5 );
-				TribeMemberPopup.add( "Invite To Chat", 8);
+//				TribeMemberPopup.add( "Invite To Chat", 8);
 				if(%isMember)
 				{
 					TribeMemberPopup.add( "............................................", -1);

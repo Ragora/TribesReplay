@@ -15,20 +15,32 @@ function updatePageBtn(%prev,%next)
 //-----------------------------------------------------------------------------
 function NewsGui::onWake(%this)
 {
-   Canvas.SetCursor(ArrowWaitCursor);
    Canvas.pushDialog(LaunchToolbarDlg);
-   %this.key = LaunchGui.key++;
-   %this.state = "status";
    %this.articleCount = 0;
    %this.set = 1; // signifies the first (latest) set
    NewsText.setValue("");
-   %this.caller = "GETNEWS";
-   DatabaseQueryArray(0,0,"0" TAB "0",%this,%this.key);
-   // Fetch the message of the day:
-   NewsMOTDText.key = LaunchGui.key++;
-   NewsMOTDText.state = "isvalid";
-   NewsMOTDText.lineCount = 0;
-   DatabaseQuery(0,"",NewsMOTDText,NewsMOTDText.key);
+	if ( isDemo() )
+	{
+      NewsPrevBtn.setVisible( false );
+      NewsNextBtn.setVisible( false );
+		NewsSubmitBtn.setVisible( false );
+		NewsMOTDText.setValue( "This is the fake Message of the Day just for people playing the demo." );
+		%this.addStaticArticle( "ALIENS INVADE CLEVELAND!", "Oh, never mind.\nIt just usually looks like that.\nMy bad." );
+		%this.addStaticArticle( "OMG! Tribes 2 is the Coolest!", "It's official, Tribes 2 is the coolest thing since ice cream." );
+		%this.addStaticArticle( "BigDevDawg Worship Service Rescheduled", "Please note that the weekly devotional service for the followers of the almighty DevDawg has been rescheduled to 9pm so that it no longer conflicts with \"That 70\'s Show\"." );
+	}
+	else
+	{
+   	Canvas.SetCursor(ArrowWaitCursor);
+   	%this.state = "status";
+   	%this.key = LaunchGui.key++;
+	   %this.caller = "GETNEWS";
+	   DatabaseQueryArray(0,0,"0" TAB "0",%this,%this.key);
+	   // Fetch the message of the day:
+	   NewsMOTDText.key = LaunchGui.key++;
+	   NewsMOTDText.state = "isvalid";
+	   DatabaseQuery(0,"",NewsMOTDText,NewsMOTDText.key);
+	}
    WebLinksMenu.setSelected( 0 );
    NewsPrevBtn.setActive( false );
    NewsNextBtn.setActive( false );
@@ -49,52 +61,66 @@ function NewsGui::onClose( %this, %key )
 //-----------------------------------------------------------------------------
 function NewsGui::rebuildText(%this)
 {
-   NewsHeadlines.clear();
-   for(%i = 0; %i < %this.articleCount; %i++)
-   {	  
-      %article = %this.article[%i];
+	NewsHeadlines.clear();
+	for(%i = 0; %i < %this.articleCount; %i++)
+	{	  
+   	%article = %this.article[%i];
 
-	%ai = wonGetAuthInfo();
-	%isMem = 0;
-	for(%east=0;%east<getField(getRecord(%ai,1),0);%east++)
-	{
-		%tpv = GetRecord(%ai,2+%east);
-		if(getField(%tpv,3)==1401 || getField(%tpv,3)==1402)
-			%isMem = 1;
-	}
-   	%editable = %isMem;
+		if ( isDemo() )
+		{
+			%topic = getField( %article, 0 );
+			%body = getFields( %article, 1 );
 
-      %topicid = getField(%article,1);
-      %articleid = getField(%article, 2);
-	  %postcount = getField(%article,3)-1;
-      %date = getField(%article,4);
-	  %update_id = getField(%article,5);
-	  %author_id = getField(%article,6);
-      %nameLink = getLinkName(getField(%article,8) TAB getField(%article,9) TAB getField(%article,10) TAB getField(%article,11),0);
-      %category = getField(%article, 12);
-      %topic = getField(%article, 13);
-	  %body = getFields(%article,14);
-      %rc = getRecordCount(%body);
-      %atxt = "";
-      if ( %editable )
-         %editText = "<a:editnews" TAB %i TAB %topicid TAB %articleid TAB %update_id @
-		     		 ">[edit]</a> <a:deletenews" TAB %i TAB %articleid TAB %topicid @
-		     		 ">[delete]</a> <a:forumlink" TAB "NEWS" TAB %articleid TAB %topic @
-		     		 ">[comments ("@%postcount@")]</a>";
-      else
-         %editText = "<a:forumlink" TAB "NEWS" TAB %articleid TAB %topic @
-		     ">[comments ("@%postcount@"]</a>";
+			%text = %text @ "<lmargin:10><color:adfffa><font:univers:22><tag:" @ %i @ ">"
+					@ %topic
+					@ "<lmargin:30><rmargin%:80><color:82beb9><font:univers:16>\n"
+					NL %body
+					@ "<sbreak>\n\n<rmargin%:100>";
+		}
+		else
+		{
+			%ai = wonGetAuthInfo();
+			%isMem = 0;
+			for(%east=0;%east<getField(getRecord(%ai,1),0);%east++)
+			{
+				%tpv = GetRecord(%ai,2+%east);
+				if(getField(%tpv,3)==1401 || getField(%tpv,3)==1402)
+					%isMem = 1;
+			}
+	   	%editable = %isMem;
 
-      for(%l = 0; %l < %rc; %l++)
-         %atxt = %atxt @ getRecord(%body,%l) @ "\n";
+      	%topicid = getField(%article,1);
+      	%articleid = getField(%article, 2);
+	  		%postcount = getField(%article,3)-1;
+      	%date = getField(%article,4);
+	  		%update_id = getField(%article,5);
+	  		%author_id = getField(%article,6);
+      	%nameLink = getLinkName(getField(%article,8) TAB getField(%article,9) TAB getField(%article,10) TAB getField(%article,11),0);
+      	%category = getField(%article, 12);
+      	%topic = getField(%article, 13);
+	  		%body = getFields(%article,14);
+      	%rc = getRecordCount(%body);
+      	%atxt = "";
+      	if ( %editable )
+         	%editText = "<a:editnews" TAB %i TAB %topicid TAB %articleid TAB %update_id @
+		     		         ">[edit]</a> <a:deletenews" TAB %i TAB %articleid TAB %topicid @
+		     		         ">[delete]</a> <a:forumlink" TAB "NEWS" TAB %articleid TAB %topic @
+		     		         ">[comments ("@%postcount@")]</a>";
+      	else
+         	%editText = "<a:forumlink" TAB "NEWS" TAB %articleid TAB %topic @
+		     					">[comments ("@%postcount@"]</a>";
+
+      	for(%l = 0; %l < %rc; %l++)
+         	%atxt = %atxt @ getRecord(%body,%l) @ "\n";
+
+      	%text = %text @ "<lmargin:10><color:ADFFFA><font:Univers:22><tag:" @ %i @ ">" @
+                 %topic @ " <font:Univers Condensed:18>" @ %editText @ "\nPosted by: " @ %nameLink @ " on " @ %date NL
+                 "\n<lmargin:30><rmargin%:80><font:Univers:16><color:82BEB9>" @ %atxt @ "<sbreak>\n\n<rmargin%:100>";
+		}
 
       NewsHeadlines.addRow( %i, %topic );
-      %text = %text @ "<lmargin:10><color:ADFFFA><font:Univers:22><tag:" @ %i @ ">" @
-              %topic @ " <font:Univers Condensed:18>" @ %editText @ "\nPosted by: " @ %nameLink @ " on " @ %date NL
-              "\n<lmargin:30><rmargin%:80><font:Univers:16><color:82BEB9>" @ %atxt @ "<sbreak>\n\n<rmargin%:100>";
    }
-   	  NewsText.setValue(%text);
-	  %article = "";
+   NewsText.setValue(%text);
 }
 //-----------------------------------------------------------------------------
 function NewsGui::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
@@ -168,6 +194,14 @@ function NewsGui::onDatabaseRow(%this, %row,%isLastRow,%key)
 	return;
 }
 //-----------------------------------------------------------------------------
+function NewsGui::addStaticArticle( %this, %topic, %body )
+{
+	%tag = %this.articleCount;
+	%this.article[%tag] = %topic TAB %body;
+	%this.articleCount++;
+	%this.rebuildText();
+}
+//-----------------------------------------------------------------------------
 function PostNews()
 {
 	messageBoxYesNo("CONFIRM","Please do not submit bug reports without a tested solution, test posts or recruiting posts." NL " " NL "Continue with your submittal?","StartPostNews();");
@@ -183,6 +217,24 @@ function StartPostNews()
 //-----------------------------------------------------------------------------
 function NewsPostDlg::onWake( %this )
 {
+   // Get the window pos and extent from prefs:
+   %res = getResolution();
+   %resW = firstWord( %res );
+   %resH = getWord( %res, 1 );
+   %w = firstWord( $pref::News::PostWindowExtent );
+   if ( %w > %resW )
+      %w = %resW;
+   %h = getWord( $pref::News::PostWindowExtent, 1 );
+   if ( %h > %resH )
+      %h = %resH;
+   %x = firstWord( $pref::News::PostWindowPos );
+   if ( %x > %resW - %w )
+      %x = %resW - %w;
+   %y = getWord( $pref::News::PostWindowPos, 1 );
+   if ( %y > %resH - %h )
+      %y = %resH - %h;
+   NP_Window.resize( %x, %y, %w, %h );
+
    // Fill the category menu (should we get this from somewhere?):
    NewsCategoryMenu.clear();
    NewsCategoryMenu.add( "General", 0 );
@@ -198,6 +250,12 @@ function NewsPostDlg::onWake( %this )
    else
       %selId = 1;
    NewsCategoryMenu.setSelected( %selId );
+}
+//-----------------------------------------------------------------------------
+function NewsPostDlg::onSleep( %this )
+{
+   $pref::News::PostWindowPos = NP_Window.getPosition();
+   $pref::News::PostWindowExtent = NP_Window.getExtent();
 }
 //-----------------------------------------------------------------------------
 function NewsCategoryMenu::onSelect( %this, %id, %text )

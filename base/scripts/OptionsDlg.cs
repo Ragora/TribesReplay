@@ -185,6 +185,18 @@ function OptionsDlg::onWake( %this )
       %selId = 1;
    OP_LaunchScreenMenu.setText( OP_LaunchScreenMenu.getTextById( %selId ) );
    OP_LaunchScreenMenu.setSelected( %selId );
+   
+   // Hide controls that are not relevant to the demo:
+   if ( isDemo() )
+   {
+      OP_MasterServerTxt.setVisible( false );
+      OP_MasterServerMenu.setVisible( false );
+      OP_CheckEmailTgl.setVisible( false );
+      OP_ChatDisconnectTgl.setVisible( false );
+      OP_EditChatMenuBtn.setVisible( false );
+      OP_LaunchScreenTxt.setVisible( false );
+      OP_LaunchScreenMenu.setVisible( false );
+   }
 
 	%this.setPane( %this.pane );
 }
@@ -1160,17 +1172,15 @@ function OP_VoiceListenMenu::init( %this )
    %this.add( ".v12",         1 );
    %this.add( ".v12 - .v24",  3 );
    %this.add( ".v12 - .v29",  7 );
-   %this.add( ".v12 - .gsm",  15 );
 
    switch ( $pref::Audio::decodingMask )
    {
-      case 0 or 3 or 7 or 15:
+      case 0 or 3 or 7:
          %this.setSelected( $pref::Audio::decodingMask );
       default:
          %this.setSelected( 1 );
    }
 
-   // Linux only has the GSM codec available for now
    if ( $platform $= "linux" ) {
       %this.setActive(false);
    }
@@ -1183,11 +1193,9 @@ function OP_VoiceSendMenu::init( %this )
    %this.add( ".v12",   0 );
    %this.add( ".v24",   1 );
    %this.add( ".v29",   2 );
-   %this.add( ".gsm",   3 );
 
    %this.setSelected($pref::Audio::encodingLevel);
 
-   // Linux only has the GSM codec available for now
    if ( $platform $= "linux" ) {
       %this.setActive(false);
    }
@@ -1201,7 +1209,6 @@ function OP_VoiceCodecInfo::init( %this )
                   "  .v12: variable bitrate codec (~1.2 kbits/sec win only)" NL
                   "  .v24: fixed bitrate codec (2.4 kbits/sec win only)" NL
                   "  .v29: fixed bitrate codec (2.9 kbits/sec win only)" NL
-                  "  .gsm: fixed bitrate codec (6.6 kbits/sec win/linux)" NL
                   "\n" @
                   "<bitmap:bullet_2><lmargin:24>" @ 
                      "Setting your codec levels too high can have adverse" @

@@ -1030,7 +1030,7 @@ function findAIEmptySeat(%vehicle, %player)
 	return %node;
 }
 
-function findEmptySeat(%vehicle, %player)
+function findEmptySeat(%vehicle, %player, %forceNode)
 {
    %minNode = 1;
    %node = -1;
@@ -1050,18 +1050,22 @@ function findEmptySeat(%vehicle, %player)
    else
       %minNode = findFirstHeavyNode(%dataBlock);
    
-   for(%i = 0; %i < %dataBlock.numMountPoints; %i++)
-      if(!%vehicle.getMountNodeObject(%i))
-      {
-         %seatPos = getWords(%vehicle.getSlotTransform(%i), 0, 2);
-         %disTemp = VectorLen(VectorSub(%seatPos, %playerPos));
-         if(%disTemp <= %dis)
+   if(%forceNode !$= "")
+      %node = %forceNode;
+   else
+   {
+      for(%i = 0; %i < %dataBlock.numMountPoints; %i++)
+         if(!%vehicle.getMountNodeObject(%i))
          {
-            %node = %i;
-            %dis = %disTemp;
+            %seatPos = getWords(%vehicle.getSlotTransform(%i), 0, 2);
+            %disTemp = VectorLen(VectorSub(%seatPos, %playerPos));
+            if(%disTemp <= %dis)
+            {
+               %node = %i;
+               %dis = %disTemp;
+            }
          }
-      }
-    
+    }
    if(%node != -1 && %node < %minNode)
    {
       if(%message $= "")
@@ -1109,6 +1113,7 @@ function VehicleData::damageObject(%data, %targetObject, %sourceObject, %positio
    // Scale damage type & include shield calculations...
    if (%data.isShielded)
       %amount = %data.checkShields(%targetObject, %position, %amount, %damageType);
+   
    
    %damageScale = %data.damageScale[%damageType];
    if(%damageScale !$= "")

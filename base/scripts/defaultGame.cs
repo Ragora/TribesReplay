@@ -753,6 +753,18 @@ function DefaultGame::onClientDamaged(%game, %clVictim, %clAttacker, %damageType
          %clVictim.lastDamageTurretTime = getSimTime();
          %clVictim.lastDamageTurret = %sourceObject;
       }
+   
+      %turretAttacker = %sourceObject.getControllingClient();
+      // should get a damagae message from friendly fire turrets also
+       if(%turretAttacker && %turretAttacker != %clVictim && %turretAttacker.team == %clVictim.team)
+       {   
+          if (%game.numTeams > 1 && %turretAttacker.player.causedRecentDamage != %clVictim.player)    //is a teamgame & player just damaged a teammate
+          {
+                %turretAttacker.player.causedRecentDamage = %clVictim.player;
+             %turretAttacker.player.schedule(1000, "causedRecentDamage", "");   //allow friendly fire message every x ms
+             %game.friendlyFireMessage(%clVictim, %turretAttacker);          
+          }        
+       }
    }
    else if (%sourceClassType $= "PlayerData")
    {
@@ -1076,7 +1088,7 @@ function DefaultGame::displayDeathMessages(%game, %clVictim, %clKiller, %damageT
 	      logEcho(%clVictim.nameBase@" (pl "@%clVictim.player@"/cl "@%clVictim@") killed by a vehicle (unmanned)");
 		}
 	}
-   else if (isObject(%implement) && (%implement.getClassName() $= "Turret" || %implement.getClassName() $= "VehicleTurret"))   //player killed by a turret
+   else if (isObject(%implement) && (%implement.getClassName() $= "Turret" || %implement.getClassName() $= "VehicleTurret" || %implement.getClassName() $= "FlyingVehicle" ))   //player killed by a turret
    {
       if (%implement.getControllingClient() != 0)  //is turret being controlled?
       {
@@ -1149,6 +1161,11 @@ function DefaultGame::displayDeathMessages(%game, %clVictim, %clKiller, %damageT
    {
       messageAll('msgLightningKill',  $DeathMessageLightning[mFloor(getRandom() * $DeathMessageLightningCount)], %victimName, %victimGender, %victimPoss, %killerName, %killerGender, %killerPoss, %damageType);
       logEcho(%clVictim.nameBase@" (pl "@%clVictim.player@"/cl "@%clVictim@") killed by lightning");
+   }
+   else if ( %damageType == $DamageType::Mine && !isObject(%implement) )
+   {
+         error("Mine kill w/o source");
+         messageAll('MsgRogueMineKill', $DeathMessageRogueMine[%damageType, mFloor(getRandom() * $DeathMessageRogueMineCount)], %victimName, %victimGender, %victimPoss, %killerName, %killerGender, %killerPoss, %damageType);
    }
    else  //was a legitimate enemy kill
    {  
@@ -2352,8 +2369,8 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
       %outrankTarget = !%targetClient.isSuperAdmin;
    else if ( %client.isAdmin )
       %outrankTarget = !%targetClient.isAdmin;
-      
-   if( %client.isSuperAdmin && %targetClient.guid != 0 )
+   
+   if( %client.isSuperAdmin && %targetClient.guid != 0 && !isDemo() && !isDemoServer())
    {   
       messageClient( %client, 'MsgPlayerPopupItem', "", %key, "addAdmin", "", 'Add to Server Admin List', 10);
       messageClient( %client, 'MsgPlayerPopupItem', "", %key, "addSuperAdmin", "", 'Add to Server SuperAdmin List', 11);
@@ -2363,9 +2380,9 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
    if ( !%isTargetSelf )
    {
       if ( %client.muted[%targetClient] )
-         messageClient( %client, 'MsgPlayerPopupItem', "", %key, "MutePlayer", "", 'Unmute', 1);
+         messageClient( %client, 'MsgPlayerPopupItem', "", %key, "MutePlayer", "", 'Unmute Text Chat', 1);
       else
-         messageClient( %client, 'MsgPlayerPopupItem', "", %key, "MutePlayer", "", 'Mute', 1);
+         messageClient( %client, 'MsgPlayerPopupItem', "", %key, "MutePlayer", "", 'Mute Text Chat', 1);
 
       if ( !%isTargetBot && %client.canListenTo( %targetClient ) )
       {
@@ -2382,7 +2399,7 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
    // regular vote options on players
    if ( %game.scheduleVote $= "" && !%isAdmin && !%isTargetAdmin )
    {
-      if ( $Host::allowAdminPlayerVotes && !%isTargetBot )
+      if ( $Host::allowAdminPlayerVotes && !%isTargetBot && !isDemo() && !isDemoServer())
          messageClient( %client, 'MsgPlayerPopupItem', "", %key, "AdminPlayer", "", 'Vote to Make Admin', 2 );
       
       if ( !%isTargetSelf )
@@ -2392,7 +2409,7 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
    }
 
    // Admin only options on players:
-   else if ( %isAdmin )
+   else if ( %isAdmin && !isDemo() && !isDemoServer())
    {
       if ( !%isTargetBot && !%isTargetAdmin )
          messageClient( %client, 'MsgPlayerPopupItem', "", %key, "AdminPlayer", "", 'Make Admin', 2 );
@@ -2471,6 +2488,9 @@ function DefaultGame::sendGameVoteMenu( %game, %client, %key )
    }
 
    if( !%client.canVote && !%isAdmin )
+      return;
+
+   if (isDemo() || isDemoServer())
       return;
    
    if ( %game.scheduleVote $= "" )

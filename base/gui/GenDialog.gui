@@ -7,27 +7,35 @@ new GuiControl(GenDialog) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	helpTag = "0";
 
 	new ShellDlgFrame() {
 		profile = "ShellDlgProfile";
 		horizSizing = "center";
 		vertSizing = "center";
-		position = "185 93";
-		extent = "317 271";
+		position = "161 168";
+		extent = "317 143";
 		minExtent = "8 8";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
-		text = "EDITOR";
+		text = "LOCK TOPIC";
+		maxLength = "255";
 
 		new ShellBitmapButton() {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			position = "169 229";
+			position = "169 99";
 			extent = "79 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
+			command = "Canvas.PopDIalog(\"GenDialog\");";
 			helpTag = "0";
 			text = "CANCEL";
 			simpleStyle = "0";
@@ -36,11 +44,13 @@ new GuiControl(GenDialog) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			position = "233 229";
+			position = "233 99";
 			extent = "79 38";
 			minExtent = "32 38";
 			visible = "1";
-			command = "Canvas.PopDIalog(\"GenDialog\");";
+			hideCursor = "0";
+			bypassHideCursor = "0";
+			command = "TopicsPopupMenu.ExecuteLock();";
 			helpTag = "0";
 			text = "OK";
 			simpleStyle = "0";
@@ -50,15 +60,18 @@ new GuiControl(GenDialog) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "9 53";
-			extent = "298 180";
+			extent = "298 52";
 			minExtent = "24 52";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			willFirstRespond = "1";
 			hScrollBar = "alwaysOff";
 			vScrollBar = "alwaysOn";
 			constantThumbHeight = "0";
 			defaultLineHeight = "15";
+			childMargin = "0 0";
 			fieldBase = "gui/shll_field";
 
 			new GuiScrollContentCtrl() {
@@ -66,32 +79,26 @@ new GuiControl(GenDialog) {
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "4 4";
-				extent = "274 172";
+				extent = "274 44";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
-				new ShellFancyTextList() {
-					profile = "GuiDefaultProfile";
-					horizSizing = "right";
-					vertSizing = "bottom";
+				new GuiMLTextEditCtrl(LockTopicReason) {
+					profile = "ShellMessageTextProfile";
+					horizSizing = "width";
+					vertSizing = "height";
 					position = "0 0";
-					extent = "289 26";
-					minExtent = "8 20";
+					extent = "274 44";
+					minExtent = "8 8";
 					visible = "1";
 					helpTag = "0";
-					startScrollRegion = "0 0";
-					headerBitmap = "gui/server_tabs";
-					sortArrowBitmap = "gui/shll_sortarrow";
-					barBase = "gui/shll_bar";
-					glowOffset = "4";
-					rowHeight = "17";
-					headerFontColor = "8 19 6 255";
-					headerFontColorHL = "25 68 56 255";
-					separatorColor = "192 192 192 255";
-					drawSeparators = "0";
-					headerSort = "1";
-					allowReposition = "0";
+					lineSpacing = "2";
+					allowColorChars = "1";
+					maxChars = "80";
+					deniedSound = "InputDeniedSound";
 				};
 			};
 		};
@@ -103,8 +110,11 @@ new GuiControl(GenDialog) {
 			extent = "286 17";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
-			text = "TRIBE";
+			text = "REASON";
+			maxLength = "255";
 		};
 	};
 };

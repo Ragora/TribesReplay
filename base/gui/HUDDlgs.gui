@@ -309,7 +309,7 @@ new GuiControl(MessageHud)
       horizSizing = "right";
       vertSizing = "bottom";
       position = "120 375";
-      extent = "400 24";
+      extent = "356 24";
       minExtent = "8 8";
       visible = "1";
 

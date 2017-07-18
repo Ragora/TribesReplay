@@ -99,9 +99,10 @@ datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
    isShielded = true;
    energyPerDamagePoint = 160;
    maxEnergy = 280;      // Afterburner and any energy weapon pool
+   rechargeRate = 0.8;
+
    minDrag = 30;           // Linear Drag (eventually slows you down when not thrusting...constant drag)
    rotationalDrag = 900;        // Anguler Drag (dampens the drift after you stop moving the mouse...also tumble drag)
-   rechargeRate = 0.8;
 
    maxAutoSpeed = 15;       // Autostabilizer kicks in when less than this speed. (meters/second)
    autoAngularForce = 400;       // Angular stabilizer force (this force levels you out when autostabilizer kicks in)
@@ -112,7 +113,7 @@ datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
    maxSteeringAngle = 5;    // Max radiens you can rotate the wheel. Smaller number is more maneuverable.
    horizontalSurfaceForce = 6;   // Horizontal center "wing" (provides "bite" into the wind for climbing/diving and turning)
    verticalSurfaceForce = 4;     // Vertical center "wing" (controls side slip. lower numbers make MORE slide.)
-   maneuveringForce = 3000;      // Horizontal jets (W,S,D,A key thrust)
+   maneuveringForce = 2500;      // Horizontal jets (W,S,D,A key thrust)
    steeringForce = 1200;         // Steering jets (force applied when you move the mouse)
    steeringRollForce = 400;      // Steering jets (how much you heel over when you turn)
    rollForce = 4;                // Auto-roll (self-correction to right you after you roll/invert)
@@ -120,10 +121,10 @@ datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
    createHoverHeight = 3;  // Height off the ground when created
 
    // Turbo Jet
-   jetForce = 2000;      // Afterburner thrust (this is in addition to normal thrust)
+   jetForce = 1750;      // Afterburner thrust (this is in addition to normal thrust)
    minJetEnergy = 28;     // Afterburner can't be used if below this threshhold.
    jetEnergyDrain = 2.8;       // Energy use of the afterburners (low number is less drain...can be fractional)                                                                                                                                                                                                                                                                                          // Auto stabilize speed
-   vertThrustMultiple = 2.0;
+   vertThrustMultiple = 2.5;
 
    // Rigid body
    mass = 150;        // Mass of the vehicle
@@ -134,7 +135,7 @@ datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
    hardImpactSpeed = 25;    // Sound hooks. This is the hard hit.
 
    // Ground Impact Damage (uses DamageType::Ground)
-   minImpactSpeed = 23;      // If hit ground at speed above this then it's an impact. Meters/second
+   minImpactSpeed = 10;      // If hit ground at speed above this then it's an impact. Meters/second
    speedDamageScale = 0.06;
 
    // Object Impact Damage (uses DamageType::Impact)
@@ -192,7 +193,7 @@ datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
    cmdIcon = CMDFlyingScoutIcon;
    cmdMiniIconName = "commander/MiniIcons/com_scout_grey";
    targetNameTag = 'Shrike';
-   targetTypeTag = 'Flying Vehicle';
+   targetTypeTag = 'Turbograv';
    sensorData = AWACPulseSensor;
    sensorRadius = AWACPulseSensor.detectRadius;
    sensorColor = "255 194 9";

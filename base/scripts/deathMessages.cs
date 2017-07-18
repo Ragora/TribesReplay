@@ -39,6 +39,9 @@ $DeathMessageSuicide[4] = '\c0%1 self-destructs in a fit of ennui.';
 $DeathMessageVehPadCount = 1;
 $DeathMessageVehPad[0] = '\c0%1 got caught in a vehicle\'s spawn field.'; 
 
+$DeathMessageRogueMineCount = 1;
+$DeathMessageRogueMine[$DamageType::Mine, 0] = '\c0%1 is all mine.';
+
 //these used when a player kills himself (other than by using ctrl - k)
 $DeathMessageSelfKillCount = 5;
 $DeathMessageSelfKill[$DamageType::Blaster, 0] = '\c0%1 kills %2self with a blaster.';	
@@ -349,9 +352,9 @@ $DeathMessageCTurretKill[$DamageType::TankMortars, 0] = '\c0Whoops! %1 + %4\'s t
 $DeathMessageCTurretKill[$DamageType::TankMortars, 1] = '\c0%1 learns the happy explosion dance from %4\'s tank mortar.';
 $DeathMessageCTurretKill[$DamageType::TankMortars, 2] = '\c0%4\'s tank mortar has a blast with %1.';
 
-$DeathMessageCTurretKill[$DamageType::ShrikeBlaster, 0] = '\c0%1 lunches on a Shrike blaster sandwich, courtesy of %4.';
-$DeathMessageCTurretKill[$DamageType::ShrikeBlaster, 1] = '\c0%4\'s Shrike blaster catches %1 with %3 pants down.';
-$DeathMessageCTurretKill[$DamageType::ShrikeBlaster, 2] = '\c0%1 gets drilled big-time by %4\'s Shrike blaster.';
+$DeathMessageCTurretKill[$DamageType::ShrikeBlaster, 0] = '\c0%1 dines on a Shrike blaster sandwich, courtesy of %4.';
+$DeathMessageCTurretKill[$DamageType::ShrikeBlaster, 1] = '\c0The blaster of %4\'s Shrike turns %1 into finely shredded meat.';
+$DeathMessageCTurretKill[$DamageType::ShrikeBlaster, 2] = '\c0%1 gets drilled big-time by the blaster of %4\'s Shrike.';
 
 $DeathMessageCTurretKill[$DamageType::MPBMissile, 0] = '\c0%1 intersects nicely with %4\'s MPB Missile.';
 $DeathMessageCTurretKill[$DamageType::MPBMissile, 1] = '\c0%4\'s MPB Missile makes armored chowder out of %1.';

@@ -18,16 +18,23 @@ function GameGui::onWake( %this )
 {
    Canvas.pushDialog( LaunchToolbarDlg );
 
-   GM_Frame.setTitle( $PlayingOnline ? "GAME" : "LAN GAME" );
+	if ( isDemo() || $PlayingOnline )
+   	GM_Frame.setTitle( "GAME" );
+	else
+   	GM_Frame.setTitle( "LAN GAME" );
 
    // This is essentially an "isInitialized" flag...
    if ( GM_TabView.tabCount() == 0 )
    {
       GM_TabView.addTab( 1, "JOIN" );
-      GM_TabView.addTab( 2, "HOST" );
-      GM_TabView.addTab( 3, "WARRIOR SETUP", 1 );
-
-      queryMasterGameTypes();
+		if ( !isDemo() )
+		{
+      	GM_TabView.addTab( 2, "HOST" );
+      	GM_TabView.addTab( 3, "WARRIOR SETUP", 1 );
+      	queryMasterGameTypes();
+		}
+		else
+			%this.pane = "Join";
    }
 
    switch$ ( %this.pane )
@@ -106,21 +113,27 @@ function GM_JoinPane::onActivate( %this )
 
    if ( %this.onceOnly $= "" )
    {
-      GM_VersionText.setText( "Version" SPC getT2VersionNumber() );
+		GM_VersionText.setText( "Version" SPC getT2VersionNumber() );
       GMJ_StopBtn.setActive( false );
 
       %this.onceOnly = 1;
-      GMJ_Browser.lastQuery = $PlayingOnline ? "Master" : "LanServers";
+		if ( isDemo() || isDemoServer() )
+			GMJ_Browser.lastQuery = "Demo";
+		else
+      	GMJ_Browser.lastQuery = $PlayingOnline ? "Master" : "LanServers";
       GMJ_Browser.runQuery();
    }
+   
+   if ( isObject( BrowserMap ) )
+   {
+      BrowserMap.pop();
+      BrowserMap.delete();
+   }
+   new ActionMap( BrowserMap );
+   BrowserMap.bindCmd( keyboard, insert, "GMJ_Browser.insertIPAddress();", "" );
+   BrowserMap.push();
 
-   GM_VersionText.setVisible( true );
-
-   // Use Server Info prefs:
-   SI_Window.resize( firstWord( $pref::ServerBrowser::InfoWindowPos ),
-         getWord( $pref::ServerBrowser::InfoWindowPos, 1 ),
-         firstWord( $pref::ServerBrowser::InfoWindowExtent ),
-         getWord( $pref::ServerBrowser::InfoWindowExtent, 1 ) );
+   GM_VersionText.setVisible( !isDemo() );
 
    if ( $pref::ServerBrowser::InfoWindowOpen )
       Canvas.pushDialog( ServerInfoDlg );
@@ -129,14 +142,12 @@ function GM_JoinPane::onActivate( %this )
 //------------------------------------------------------------------------------
 function GM_JoinPane::onDeactivate( %this )
 {
+   BrowserMap.pop();
+   BrowserMap.delete();
+   
    GM_VersionText.setVisible( false );
 
-   // Save off the Server Info Window prefs:
    $pref::ServerBrowser::InfoWindowOpen = GMJ_Browser.infoWindowOpen;
-   $pref::ServerBrowser::InfoWindowPos = SI_Window.getPosition();
-   $pref::ServerBrowser::InfoWindowExtent = SI_Window.getExtent();
-   $pref::ServerBrowser::InfoWindowBarPos = getWord( SI_InfoScroll.getExtent(), 1 );
-
    if ( GMJ_Browser.infoWindowOpen )
       Canvas.popDialog( ServerInfoDlg );
 }
@@ -173,9 +184,12 @@ $BrowserColumnCount++;
 $BrowserColumnName[9] = "IP Address";
 $BrowserColumnRange[9] = "25 200";
 $BrowserColumnCount++;
-$BrowserColumnName[10] = "Version";
-$BrowserColumnRange[10] = "25 200";
-$BrowserColumnCount++;
+if ( !isDemo() )
+{
+	$BrowserColumnName[10] = "Version";
+	$BrowserColumnRange[10] = "25 200";
+	$BrowserColumnCount++;
+}
 
 //------------------------------------------------------------------------------
 function GMJ_Browser::onAdd( %this )
@@ -184,8 +198,11 @@ function GMJ_Browser::onAdd( %this )
 	for ( %i = 0;  %i < $BrowserColumnCount; %i++ )
 	{
 		%key = firstWord( $pref::ServerBrowser::Column[%i] );
-		%width = getWord( $pref::ServerBrowser::Column[%i], 1 );
-		%this.addColumn( %key, $BrowserColumnName[%key], %width, firstWord( $BrowserColumnRange[%key] ), getWord( $BrowserColumnRange[%key], 1 ) );
+		if ( $BrowserColumnName[%key] !$= "" && $BrowserColumnRange[%key] !$= "" )
+		{
+			%width = getWord( $pref::ServerBrowser::Column[%i], 1 );
+			%this.addColumn( %key, $BrowserColumnName[%key], %width, firstWord( $BrowserColumnRange[%key] ), getWord( $BrowserColumnRange[%key], 1 ) );
+		}
 	}
 	%this.setSortColumn( $pref::ServerBrowser::SortColumnKey );
 	%this.setSortIncreasing( $pref::ServerBrowser::SortInc );
@@ -233,6 +250,15 @@ function GMJ_Browser::runQuery( %this )
       queryLanServers( $JoinGamePort );
       GMJ_StopBtn.setActive( true );
    }
+	else if ( %this.lastQuery $= "Demo" )
+	{
+      GMJ_StatusText.setValue( "Querying the master server..." );
+      GMJ_FilterBtn.setActive( false );
+		GMJ_FilterBtn.setVisible( false );
+      GMJ_FilterText.setText( "Demo Servers" );
+      queryMasterServer( $JoinGamePort );
+      GMJ_StopBtn.setActive( true );
+	}
    else
    {
 		GMJ_FilterBtn.setActive( true );
@@ -439,6 +465,36 @@ function GMJ_Browser::removeFavorite( %this, %address )
 }
 
 //------------------------------------------------------------------------------
+function GMJ_Browser::insertIPAddress( %this )
+{
+   if ( isServerQueryActive() )
+   {
+      BrowserMap.pop();
+      MessageBoxOK( "ERROR", "Can't insert addresses while a query is running!", "BrowserMap.push();" );
+      alxPlay( InputDeniedSound, 0, 0, 0 );
+      return;
+   }
+   
+   IPEntry.setText( "IP:" );
+   Canvas.pushDialog( EnterIPDlg );
+}
+
+//------------------------------------------------------------------------------
+function EnterIPDlg::onDone( %this )
+{
+   Canvas.popDialog( EnterIPDlg );
+   %address = IPEntry.getValue();
+   if ( getSubStr( %address, 0, 3 ) !$= "IP:" )
+      %address = "IP:" @ %address;
+   if ( strpos( %address, ":", 3 ) == -1 )
+      %address = %address @ ":28000";
+      
+   error( ">> address = \"" @ %address @ "\" <<" );
+   pushServerAddress( %address );
+   GMJ_Browser.selectRowByAddress( %address );
+}
+
+//------------------------------------------------------------------------------
 function ServerInfoDlg::onAdd( %this )
 {
    %this.headerStyle = "<font:" @ $ShellLabelFont @ ":" @ $ShellFontSize @ "><color:00DC00>";
@@ -448,6 +504,25 @@ function ServerInfoDlg::onAdd( %this )
 function ServerInfoDlg::onWake( %this )
 {
    GMJ_Browser.infoWindowOpen = true;
+
+   // Get the position and size from the prefs:
+   %res = getResolution();
+   %resW = firstWord( %res );
+   %resH = getWord( %res, 1 );
+   %w = firstWord( $pref::ServerBrowser::InfoWindowExtent );
+   if ( %w > %resW )
+      %w = %resW;
+   %h = getWord( $pref::ServerBrowser::InfoWindowExtent, 1 );
+   if ( %h > %resH )
+      %h = %resH;
+   %x = firstWord( $pref::ServerBrowser::InfoWindowPos );
+   if ( %x > %resW - %w )
+      %x = %resW - %w;
+   %y = getWord( $pref::ServerBrowser::InfoWindowPos, 1 );
+   if ( %y > %resH - %h )
+      %y = %resH - %h;
+   SI_Window.resize( %x, %y, %w, %h );
+
    GMJ_InfoBtn.setActive( false );
    SI_RefreshBtn.setActive( false );
    %this.update();
@@ -572,6 +647,12 @@ function SI_ContentWindow::fill( %this, %content )
 function ServerInfoDlg::onSleep( %this )
 {
    GMJ_Browser.infoWindowOpen = false;
+
+   // Save off the Server Info Window prefs:
+   $pref::ServerBrowser::InfoWindowPos = SI_Window.getPosition();
+   $pref::ServerBrowser::InfoWindowExtent = SI_Window.getExtent();
+   $pref::ServerBrowser::InfoWindowBarPos = getWord( SI_InfoScroll.getExtent(), 1 );
+   
    GMJ_InfoBtn.setActive( true );
 }
 

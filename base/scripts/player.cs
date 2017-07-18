@@ -1216,7 +1216,7 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    energyPerDamagePoint = 75.0; // shield energy required to block one point of damage
 
    rechargeRate = 0.256;
-   jetForce = 26.2 * 90;
+   jetForce = 28.2 * 90;
    underwaterJetForce = 26.2 * 90 * 2.0;
    underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  0.8;
@@ -1224,12 +1224,12 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    minJetEnergy = 1;
    maxJetHorizontalPercentage = 0.8;
 
-   runForce = 48 * 90;
+   runForce = 55.20 * 90;
    runEnergyDrain = 0;
    minRunEnergy = 0;
-   maxForwardSpeed = 14;
-   maxBackwardSpeed = 13;
-   maxSideSpeed = 13;
+   maxForwardSpeed = 15;
+   maxBackwardSpeed = 14;
+   maxSideSpeed = 14;
 
    maxUnderwaterForwardSpeed = 8.4;
    maxUnderwaterBackwardSpeed = 7.8;
@@ -1294,10 +1294,10 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    minJumpSpeed = 20;
    maxJumpSpeed = 30;
 
-   maxJetForwardSpeed = 30;
    horizMaxSpeed = 68;
    horizResistSpeed = 33;
    horizResistFactor = 0.35;
+   maxJetForwardSpeed = 30;
 
    upMaxSpeed = 80;
    upResistSpeed = 25;
@@ -1474,7 +1474,7 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    energyPerDamagePoint = 75.0; // shield energy required to block one point of damage
 
    rechargeRate = 0.256;
-   jetForce = 24.6 * 130;
+   jetForce = 27.06 * 130;
    underwaterJetForce = 24.6 * 130 * 2.0;
    underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  1.0;
@@ -1482,12 +1482,12 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    minJetEnergy = 1;
    maxJetHorizontalPercentage = 0.8;
 
-   runForce = 40 * 130;
+   runForce = 46 * 130;
    runEnergyDrain = 0;
    minRunEnergy = 0;
-   maxForwardSpeed = 11;
-   maxBackwardSpeed = 10;
-   maxSideSpeed = 10;
+   maxForwardSpeed = 12;
+   maxBackwardSpeed = 11;
+   maxSideSpeed = 11;
 
    maxUnderwaterForwardSpeed = 6.6;
    maxUnderwaterBackwardSpeed = 6;
@@ -1500,7 +1500,7 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    heatDecayPerSec      = 1.0 / 3.0; // takes 3 seconds to clear heat sig.
    heatIncreasePerSec   = 1.0 / 3.0; // takes 3.0 seconds of constant jet to get full heat sig.
 
-   jumpForce = 8.4 * 130;
+   jumpForce = 8.3 * 130;
    jumpEnergyDrain = 0;
    minJumpEnergy = 0;
    jumpSurfaceAngle = 75;
@@ -1512,15 +1512,15 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
 
    minJumpSpeed = 15;
    maxJumpSpeed = 25;
-   maxJetForwardSpeed = 22;
 
    horizMaxSpeed = 60;
    horizResistSpeed = 28;
-   horizResistFactor = 0.2;
+   horizResistFactor = 0.32;
+   maxJetForwardSpeed = 22;
 
-   upMaxSpeed = 80;
-   upResistSpeed = 35;
-   upResistFactor = 0.15;
+   upMaxSpeed = 70;
+   upResistSpeed = 30;
+   upResistFactor = 0.23;
 
    minImpactSpeed = 45;
    speedDamageScale = 0.004;
@@ -1730,7 +1730,7 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    energyPerDamagePoint = 75.0; // shield energy required to block one point of damage
 
    rechargeRate = 0.256;
-   jetForce = 21.4 * 180;
+   jetForce = 23.54 * 180;
    underwaterJetForce = 21.4 * 180 * 2.0;
    underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  1.1;
@@ -1738,12 +1738,12 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    minJetEnergy = 1;
    maxJetHorizontalPercentage = 0.8;
 
-   runForce = 35 * 180;
+   runForce = 40.25 * 180;
    runEnergyDrain = 0;
    minRunEnergy = 0;
-   maxForwardSpeed = 6.5;
-   maxBackwardSpeed = 5;
-   maxSideSpeed = 5;
+   maxForwardSpeed = 7.5;
+   maxBackwardSpeed = 6;
+   maxSideSpeed = 6;
 
    maxUnderwaterForwardSpeed = 3.9;
    maxUnderwaterBackwardSpeed = 3;
@@ -1768,14 +1768,14 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    minJumpSpeed = 20;
    maxJumpSpeed = 30;
 
-   horizMaxSpeed = 50;
-   horizResistSpeed = 20;
-   horizResistFactor = 0.3;
+   horizMaxSpeed = 52;
+   horizResistSpeed = 23;
+   horizResistFactor = 0.29;
    maxJetForwardSpeed = 16;
 
    upMaxSpeed = 60;
    upResistSpeed = 35;
-   upResistFactor = 0.15;
+   upResistFactor = 0.18;
 
    minImpactSpeed = 45;
    speedDamageScale = 0.006;
@@ -2137,6 +2137,10 @@ function Armor::onUnmount( %this, %obj, %vehicle, %node )
    {
       commandToClient( %obj.client, 'VehicleDismount' );
       %obj.mountImage(%obj.lastWeapon, $WeaponSlot);
+      //Inform gunner position when pilot leaves...
+      //if(%vehicle.getDataBlock().showPilotInfo !$= "")
+      //   if((%gunner = %vehicle.getMountNodeObject(1)) != 0)
+      //      commandToClient(%gunner.client, 'PilotInfo', "PILOT EJECTED", 6, 1);
    }
    // announce to any other passengers that you've left
    if(%vehicle.getDatablock().numMountPoints > 1)
@@ -2157,7 +2161,7 @@ $ammoType[3] = "MortarAmmo";
 $ammoType[4] = "MissileLauncherAmmo";
 $ammoType[5] = "ChaingunAmmo";
 
-function Armor::onCollision(%this,%obj,%col)
+function Armor::onCollision(%this,%obj,%col,%forceVehicleNode)
 {
    if (%obj.getState() $= "Dead")
       return;
@@ -2167,7 +2171,7 @@ function Armor::onCollision(%this,%obj,%col)
    %client = %obj.client;
    // player collided with a vehicle
    %node = -1;
-   if ((%className $= WheeledVehicleData || %className $= FlyingVehicleData || %className $= HoverVehicleData) &&
+   if (%forceVehicleNode !$= "" || (%className $= WheeledVehicleData || %className $= FlyingVehicleData || %className $= HoverVehicleData) &&
          %obj.mountVehicle && %obj.getState() $= "Move" && %col.mountable) {
 
       //if the player is an AI, he should snap to the mount points in node order,
@@ -2191,7 +2195,7 @@ function Armor::onCollision(%this,%obj,%col)
             %node = findAIEmptySeat(%col, %obj);
       }
       else
-         %node = findEmptySeat(%col, %obj);
+         %node = findEmptySeat(%col, %obj, %forceVehicleNode);
 
       //now mount the player in the vehicle
       if(%node >= 0)

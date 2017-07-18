@@ -114,7 +114,7 @@ datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
 
    // Object Impact Damage (uses DamageType::Impact)
    collDamageThresholdVel = 23;
-   collDamageMultiplier   = 0.040;
+   collDamageMultiplier   = 0.030;
 
    dragForce            = 25 / 45.0;
    vertFactor           = 0.0;
@@ -123,7 +123,7 @@ datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
    mainThrustForce    = 25;
    reverseThrustForce = 10;
    strafeThrustForce  = 8;
-   turboFactor        = 2.0;
+   turboFactor        = 1.5;
 
    brakingForce = 25;
    brakingActivationSpeed = 4;
@@ -188,7 +188,7 @@ datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
    cmdIcon = CMDHoverScoutIcon;
    cmdMiniIconName = "commander/MiniIcons/com_landscout_grey";
    targetNameTag = 'WildCat';
-   targetTypeTag = 'Hover Vehicle';
+   targetTypeTag = 'Grav Cycle';
    sensorData = VehiclePulseSensor;
 
    checkRadius = 1.7785;

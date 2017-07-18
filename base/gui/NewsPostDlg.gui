@@ -1,35 +1,47 @@
 //--- OBJECT WRITE BEGIN ---
 new GuiControl(NewsPostDlg) {
-	profile = "DlgBackProfile";
+	profile = "GuiModelessDialogProfile";
 	horizSizing = "right";
 	vertSizing = "bottom";
 	position = "0 0";
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	helpTag = "0";
 
-	new ShellPaneCtrl() {
-		profile = "ShellDlgPaneProfile";
-		horizSizing = "center";
-		vertSizing = "center";
-		position = "90 36";
-		extent = "460 408";
-		minExtent = "48 92";
+	new ShellWindowCtrl(NP_Window) {
+		profile = "ShellWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "85 39";
+		extent = "470 373";
+		minExtent = "388 209";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
-		text = "POST NEWS";
+		text = "SUBMIT NEWS";
 		maxLength = "255";
-		noTitleBar = "0";
+		frameBase = "gui/window";
+		borderWidth = "2";
+		resizeWidth = "1";
+		resizeHeight = "1";
+		canMove = "1";
+		canClose = "1";
+		closeCommand = "Canvas.popDialog( NewsPostDlg );";
 
 		new GuiTextCtrl() {
 			profile = "ShellTextRightProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			position = "24 40";
+			position = "3 40";
 			extent = "60 22";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			text = "Category:";
 			maxLength = "255";
@@ -38,10 +50,12 @@ new GuiControl(NewsPostDlg) {
 			profile = "ShellPopupProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			position = "81 31";
+			position = "60 31";
 			extent = "175 36";
 			minExtent = "49 36";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			maxLength = "255";
 			maxPopupHeight = "200";
@@ -54,37 +68,45 @@ new GuiControl(NewsPostDlg) {
 			profile = "ShellTextRightProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			position = "24 70";
+			position = "3 70";
 			extent = "60 22";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			text = "Title:";
 			maxLength = "255";
 		};
 		new ShellTextEditCtrl() {
 			profile = "NewTextEditProfile";
-			horizSizing = "right";
+			horizSizing = "width";
 			vertSizing = "bottom";
-			position = "80 62";
-			extent = "359 38";
+			position = "59 62";
+			extent = "405 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			variable = "$NewsTitle";
 			helpTag = "0";
 			maxLength = "48";
 			historySize = "0";
 			password = "0";
+			tabComplete = "0";
+			deniedSound = "InputDeniedSound";
 			glowOffset = "9 9";
 		};
 		new ShellScrollCtrl() {
 			profile = "NewScrollCtrlProfile";
 			horizSizing = "width";
 			vertSizing = "height";
-			position = "27 97";
-			extent = "407 254";
+			position = "11 97";
+			extent = "448 236";
 			minExtent = "24 52";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			willFirstRespond = "1";
 			hScrollBar = "alwaysOff";
@@ -96,26 +118,31 @@ new GuiControl(NewsPostDlg) {
 
 			new GuiScrollContentCtrl() {
 				profile = "GuiDefaultProfile";
-				horizSizing = "right";
-				vertSizing = "bottom";
+				horizSizing = "width";
+				vertSizing = "height";
 				position = "7 7";
-				extent = "377 240";
+				extent = "418 222";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new GuiMLTextEditCtrl(NewsPostBodyText) {
 					profile = "ShellMessageTextProfile";
-					horizSizing = "right";
-					vertSizing = "bottom";
+					horizSizing = "width";
+					vertSizing = "height";
 					position = "0 0";
-					extent = "377 240";
+					extent = "418 222";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					lineSpacing = "2";
 					allowColorChars = "0";
 					maxChars = "3600";
+					deniedSound = "InputDeniedSound";
 				};
 			};
 		};
@@ -123,10 +150,12 @@ new GuiControl(NewsPostDlg) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "top";
-			position = "68 354";
-			extent = "128 38";
+			position = "93 333";
+			extent = "100 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "Canvas.popDialog(NewsPostDlg);";
 			accelerator = "escape";
 			helpTag = "0";
@@ -135,15 +164,17 @@ new GuiControl(NewsPostDlg) {
 		};
 		new ShellBitmapButton() {
 			profile = "ShellButtonProfile";
-			horizSizing = "right";
+			horizSizing = "left";
 			vertSizing = "top";
-			position = "264 354";
-			extent = "128 38";
+			position = "277 333";
+			extent = "100 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "PostNewsProcess();";
 			helpTag = "0";
-			text = "POST";
+			text = "SUBMIT";
 			simpleStyle = "0";
 		};
 	};

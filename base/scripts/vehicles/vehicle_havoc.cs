@@ -111,12 +111,12 @@ datablock FlyingVehicleData(HAPCFlyer) : HavocDamageProfile
    hardImpactSpeed = 15;    // Sound hooks. This is the hard hit.
 
    // Ground Impact Damage (uses DamageType::Ground)
-   minImpactSpeed = 12;      // If hit ground at speed above this then it's an impact. Meters/second
+   minImpactSpeed = 25;      // If hit ground at speed above this then it's an impact. Meters/second
    speedDamageScale = 0.060;
 
    // Object Impact Damage (uses DamageType::Impact)
-   collDamageThresholdVel = 12;
-   collDamageMultiplier   = 0.080;
+   collDamageThresholdVel = 28;
+   collDamageMultiplier   = 0.020;
 
    //
    minTrailSpeed = 15;
@@ -154,7 +154,7 @@ datablock FlyingVehicleData(HAPCFlyer) : HavocDamageProfile
    cmdIcon = CMDFlyingHAPCIcon;
    cmdMiniIconName = "commander/MiniIcons/com_hapc_grey";
    targetNameTag = 'Havoc';
-   targetTypeTag = 'Flying Vehicle';
+   targetTypeTag = 'Heavy Transport';
    sensorData = VehiclePulseSensor;
 
    checkRadius = 7.8115;

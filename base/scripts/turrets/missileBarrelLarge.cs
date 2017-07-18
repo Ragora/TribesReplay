@@ -99,12 +99,12 @@ datablock TurretImageData(MissileBarrelLarge)
    minTargetingDistance = 40;
 
    // Turret parameters
-   activationMS      = 500;
-   deactivateDelayMS = 1000;
+   activationMS      = 250;
+   deactivateDelayMS = 500;
    thinkTimeMS       = 200;
    degPerSecTheta    = 580;
    degPerSecPhi      = 1080;
-   attackRadius      = 180;
+   attackRadius      = 250;
 
    // State transitions
    stateName[0]                  = "Activate";

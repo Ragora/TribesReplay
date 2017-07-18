@@ -39,13 +39,13 @@ new SimGroup(MissionGroup) {
 		cloudSpeed1 = "0.0001";
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
-		visibleDistance = "600";
+		visibleDistance = "500";
 		useSkyTextures = "1";
 		renderBottomTexture = "0";
 		SkySolidColor = "0.390000 0.390000 0.390000 0.000000";
 		fogDistance = "200";
 		fogColor = "0.500000 0.500000 0.500000 1.000000";
-		fogVolume1 = "0 0 0";
+		fogVolume1 = "600 0 190";
 		fogVolume2 = "0 0 0";
 		fogVolume3 = "0 0 0";
 		materialList = "Badlands_l4.dml";

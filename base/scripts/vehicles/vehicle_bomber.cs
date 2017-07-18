@@ -193,11 +193,11 @@ datablock FlyingVehicleData(BomberFlyer) : BomberDamageProfile
 
    // Ground Impact Damage (uses DamageType::Ground)
    minImpactSpeed = 20;      // If hit ground at speed above this then it's an impact. Meters/second
-   speedDamageScale = 0.150;
+   speedDamageScale = 0.060;
 
    // Object Impact Damage (uses DamageType::Impact)
    collDamageThresholdVel = 25;
-   collDamageMultiplier   = 0.030;
+   collDamageMultiplier   = 0.020;
 
    //
    minTrailSpeed = 15;      // The speed your contrail shows up at.
@@ -240,8 +240,8 @@ datablock FlyingVehicleData(BomberFlyer) : BomberDamageProfile
 
    checkRadius = 7.1895;
    observeParameters = "1 10 10";
-
    shieldEffectScale = "0.75 0.975 0.375";
+   showPilotInfo = 1;
 };
 
 //**************************************************************
@@ -334,8 +334,8 @@ datablock LinearFlareProjectileData(BomberFusionBolt)
    explosion           = BomberFusionBoltExplosion;
    sound               = BlasterProjectileSound;
 
-   dryVelocity       = 75.0;
-   wetVelocity       = 75.0;
+   dryVelocity       = 200.0;
+   wetVelocity       = 200.0;
    velInheritFactor  = 1.0;
    fizzleTimeMS      = 2000;
    lifetimeMS        = 3000;

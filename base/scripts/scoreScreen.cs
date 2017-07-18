@@ -31,6 +31,9 @@ function ScoreScreen::onSleep(%this)
 {
    hudMap.pop();
    hudMap.delete();
+
+   //make sure the action maps are still pushed in the correct order...
+   updateActionMaps();
 }
 
 //------------------------------------------------------------------------------

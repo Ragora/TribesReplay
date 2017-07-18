@@ -416,7 +416,7 @@ function ChatRoomMemberList::onRightMouseDown(%this,%column,%row,%mousePos)
 
    // if ( !ChatMember.player.isBot )
 
-   ChatMemberPopup.add(%nick,-1);
+   ChatMemberPopup.add(%nick,7);
    for (%i = 0; %i < strlen(%nick) * 1.5; %i++)
       %line = %line @ "-";
    ChatMemberPopup.add(%line,-1);
@@ -449,6 +449,7 @@ function ChatRoomMemberList::onRightMouseDown(%this,%column,%row,%mousePos)
          ChatMemberPopup.add("Mute",6);
 
 	  ChatMemberPopup.add( "--------------------",-1);
+//   	  ChatMemberPopup.add( "Instant Message", 9 );
    	  ChatMemberPopup.add( "TMail", 10 );
 	  ChatMemberPopup.add( "Add To Buddylist",11);
 
@@ -484,6 +485,8 @@ function ChatPrivate()
 function ChatMemberPopup::onSelect(%this,%id,%text)
 {
    %member = getSubStr(ChatMemberPopup.member.displayName,0,strlen(ChatMemberPopup.member.displayname)-strlen(nextToken(ChatMemberPopup.member.displayname,name,"^"))-1);
+   if(getsubstr(%member,strlen(%member)-1,strlen(%member)) $= "^")
+		%member = getsubstr(%member,0,strlen(%member)-1);
    switch( %id )
    {
       case 0:  // Set Back
@@ -502,6 +505,10 @@ function ChatMemberPopup::onSelect(%this,%id,%text)
          IRCClient::kick(ChatMemberPopup.member,$pref::IRCClient::banmsg);
       case 6:  // Mute/Unmute
          IRCClient::ignore(ChatMemberPopup.member,!(ChatMemberPopup.member.flags & $PERSON_IGNORE));
+	  case 7: // go to webbrowser page
+		 LinkBrowser(%member,"warrior");
+	  case 9: // Instant Message
+		IRCClient::invite(ChatMemberPopup.member, %id);
 	  case 10: // TMail
 		 LinkEMail(%member);
 	  case 11: // Add To Buddylist
@@ -848,6 +855,8 @@ function IRCClient::notify(%event)
       case IDIRC_INVITED: //invited to join existing channel.
          //MessageBoxOKCancel("Invite", "You have been invited to channel " @ IRCClient::displayChannel($IRCClient::invitechannel) @ " by " @ $IRCClient::inviteperson @ ".", "IRCClient::join($IRCClient::invitechannel);");
          IRCClient::newMessage($IRCClient::CurrentChannel, "You have been invited to channel " @ $IRCClient::invitechannel @ " by " @ $IRCClient::inviteperson @ ".");
+	  case IDIRC_INSTANTMSG:
+		   messageBoxOK("TESTING","This is a test of the Instant Messaging System.  Sent By: " @ $IRCClient::inviteperson @ ".");
       case IDIRC_BAN_LIST:
          ChannelBannedList_refresh();
       case IDIRC_TOPIC:
@@ -1537,9 +1546,10 @@ function IRCClient::dispatch(%prefix,%command,%params)
        IRCClient::onVersion(%prefix,%params);
      case "ACTION":
        IRCClient::onAction(%prefix,%params);
-     case "INVITE":
+     case "INVITE":		
        IRCClient::onInvite(%prefix,%params);
-
+	 case "INSTANTMSG":
+		IRCClient::onInstantMsg(%prefix,%params);
      case "301":
        IRCClient::onAwayReply(%prefix,%params);
      case "305":
@@ -1557,8 +1567,7 @@ function IRCClient::dispatch(%prefix,%command,%params)
      case "315":
        IRCClient::onEndOfWho(%prefix,%params);
      case "317":
-       IRCClient::onWhoisIdle(%prefix,%params);
-     
+       IRCClient::onWhoisIdle(%prefix,%params);     
      case "322":
        IRCClient::onList(%prefix,%params);
      case "323":
@@ -2348,8 +2357,8 @@ function IRCClient::onList(%prefix,%params)
      $IRCClient::channelTopics[$IRCClient::numChannels] = %topic;
      $IRCClient::numChannels++;
    }
-   else
-      IRCClient::newMessage($IRCClient::currentChannel,%users @ " " @ %ch @ " -- " @ %topic);
+//    else
+//       IRCClient::newMessage($IRCClient::currentChannel,%users @ " " @ %ch @ " -- " @ %topic);
 }
 
 //------------------------------------------------------------------------------
@@ -2525,7 +2534,25 @@ function IRCClient::onChannelInviteOnly(%prefix,%params)
    IRCClient::statusMessage("Cannot join " @ %channel @ ": room is invite only.");
    IRCClient::notify(IDIRC_INVITE_ONLY);
 }
+//------------------------------------------------------------------------------
+function IRCClient::onInstantMsg(%prefix,%params)
+{
+   %p = IRCClient::findPerson2(%prefix,true);
+   if (%p)
+   {
+      %params = nextToken(%params,channel,":");
+      %channel = %params;
 
+      // Only bother the user if they aren't ignoring this person
+      if (!(%person.flags & $PERSON_IGNORE))
+      {
+         // Set vars and notify the responder
+         $IRCClient::invitechannel = %channel;
+         $IRCClient::inviteperson = IRCClient::displayNick(%p);
+         IRCClient::notify(IDIRC_INSTANTMSG);
+      }
+   }
+}
 //------------------------------------------------------------------------------
 function IRCClient::onInvite(%prefix,%params)
 {
@@ -3166,7 +3193,7 @@ function IRCClient::ignore(%p,%tf)
 //------------------------------------------------------------------------------
 function IRCClient::invite(%p,%c)
 {
-   IRCClient::send("INVITE" SPC %p.displayName SPC %c.getName());
+	IRCClient::send("INVITE" SPC %p.displayName SPC %c.getName());
 }
 
 //------------------------------------------------------------------------------

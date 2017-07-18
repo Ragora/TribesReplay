@@ -111,7 +111,10 @@ datablock StaticShapeData(DeployedStationInventory) : StaticShapeDamageProfile
    maxDamage = 0.70;
    destroyedLevel = 0.70;
    disabledLevel = 0.42;
-   explosion = DeployablesExplosion;
+   explosion      = DeployablesExplosion;
+      expDmgRadius = 8.0;
+      expDamage = 0.35;
+      expImpulse = 500.0;
 
    dynamicType = $TypeMasks::StationObjectType;
    isShielded = true;
@@ -622,7 +625,7 @@ function TurretIndoorDeployableImage::testTurretTooClose(%item, %plyr)
    while((%found = containerSearchNext()) != 0)
    {
       %foundName = %found.getDataBlock().getName();
-      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) )
          if (%found.team == %plyr.team)
          {
             %turretInRange = true;
@@ -642,7 +645,7 @@ function TurretOutdoorDeployableImage::testTurretTooClose(%item, %plyr)
    while((%found = containerSearchNext()) != 0)
    {
       %foundName = %found.getDataBlock().getName();
-      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) )
          if (%found.team == %plyr.team)
          {
             %turretInRange = true;
@@ -666,7 +669,7 @@ function TurretIndoorDeployableImage::testTurretSaturation(%item)
    while(%found)
    {
       %foundName = %found.getDataBlock().getName();
-      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) )
       {
            //found one
            %numTurretsNearby++;
@@ -691,7 +694,7 @@ function TurretOutdoorDeployableImage::testTurretSaturation(%item)
    while(%found)
    {
       %foundName = %found.getDataBlock().getName();
-      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) )
       {
            //found one
            %numTurretsNearby++;
@@ -724,7 +727,7 @@ function testNearbyDensity(%item, %radius)
    while(%found)
    {
       %foundName = %found.getDataBlock().getName();
-      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) )
          %turretCount++;       
      %found = containerSearchNext();      
    }

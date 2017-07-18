@@ -168,12 +168,12 @@ datablock TurretImageData(AABarrelLarge)
    useTargetAudio = false;
 
    // Turret parameters
-   activationMS         = 500;
+   activationMS         = 250;
    deactivateDelayMS    = 500;
    thinkTimeMS          = 200;
    degPerSecTheta       = 600;
    degPerSecPhi         = 1080;
-   attackRadius         = 180;
+   attackRadius         = 200;
 
    // State transitions
    stateName[0]                     = "Activate";
