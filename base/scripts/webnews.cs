@@ -7,8 +7,10 @@ function LaunchNews()
 //-----------------------------------------------------------------------------
 function updatePageBtn(%prev,%next)
 {		
-   NewsPrevBtn.setActive( %prev );
-   NewsNextBtn.setActive( %next );
+   NewsPrevBtn.setVisible( 0 );
+   NewsNextBtn.setVisible( 0 );
+//   NewsPrevBtn.setActive( %prev );
+//   NewsNextBtn.setActive( %next );
 }
 //-----------------------------------------------------------------------------
 function NewsGui::onWake(%this)
@@ -228,8 +230,17 @@ function NewsPostDlg::onDatabaseQueryResult(%this, %status, %RowCount_Result, %k
 		switch$(%this.state)
 		{
 			case "post":	 			
+				if(%this.FromForums)
+				{
+					%this.FromForums = false;
+					ForumsMessageVector.deleteLine( %this.FIndex );
+					ForumsTopicsList.refreshFlag = true;
+					CacheForumTopic();
+					ForumsGoTopics(0);
+				}
 				%this.state = "OK";
-     		 	MessageBoxOK("NOTICE","Your article has been submitted. You may need to refresh your Browser.");      
+     		 	MessageBoxOK("NOTICE","Your article has been submitted. You may need to refresh your Browser.");
+
 			case "edit":				
 				%this.state = "OK";
      		 	MessageBoxOK("NOTICE","Article Updated. You may need to refresh your Browser.");      

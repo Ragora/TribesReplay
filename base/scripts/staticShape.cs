@@ -782,24 +782,24 @@ function StaticShapeData::damageObject(%data, %targetObject, %sourceObject, %pos
    if(%damageScale !$= "")
 		%amount *= %damageScale;
 
-	//if team damage is off, cap the amount of damage so as not to disable the object...
-	if (!$TeamDamage)
-	{
-		//see if the object is being shot by a friendly
-		%srcClient = %sourceObject.client;
-		if (isObject(%srcClient))
-		{
-			if (isTargetFriendly(%targetObject.getTarget(), %srcClient.getSensorGroup()))
-			{
-				%curDamage = %targetObject.getDamageLevel();
-				%availableDamage = %targetObject.getDataBlock().disabledLevel - %curDamage - 0.05;
-				if (%amount > %availableDamage)
-					%amount = %availableDamage;
-			}
-		}
-	}
+	 //if team damage is off, cap the amount of damage so as not to disable the object...
+	 if (!$TeamDamage && !%targetObject.getDataBlock().deployedObject && %targetObject.getDataBlock.getName $= "DeployedBeacon")
+	 {
+		 //see if the object is being shot by a friendly
+		 %srcClient = %sourceObject.client;
+		 if (isObject(%srcClient))
+		 {
+		    if (isTargetFriendly(%targetObject.getTarget() , %srcClient.getSensorGroup()))
+			 {
+				 %curDamage = %targetObject.getDamageLevel();
+				 %availableDamage = %targetObject.getDataBlock().disabledLevel - %curDamage - 0.05;
+				 if (%amount > %availableDamage)
+					 %amount = %availableDamage;
+			 }
+		 }
+   	 }
 
-	//if there's still damage to apply
+	// if there's still damage to apply
 	if (%amount > 0)
       %targetObject.applyDamage(%amount);
 }

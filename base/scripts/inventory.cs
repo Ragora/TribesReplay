@@ -304,7 +304,10 @@ function ShapeBase::setInventory(%this,%data,%value,%force)
 
 function ShapeBase::getInventory(%this,%data)
 {
-   return %this.inv[%data.getName()];
+   if ( isObject( %data ) )
+      return( %this.inv[%data.getName()] );
+   else
+      return( 0 );
 }
 
 function ShapeBase::hasAmmo( %this, %weapon )

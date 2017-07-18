@@ -7,6 +7,8 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	variable = "$ShellBackground";
 	helpTag = "0";
 	useVariable = "1";
@@ -15,12 +17,15 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 		profile = "ShellPaneProfile";
 		horizSizing = "width";
 		vertSizing = "height";
-		position = "12 46";
-		extent = "620 390";
+		position = "12 13";
+		extent = "620 423";
 		minExtent = "48 92";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
 		text = "CHAT";
+		maxLength = "255";
 		noTitleBar = "0";
 
 		new ShellTabFrame(ChatTabFrame) {
@@ -31,6 +36,8 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			extent = "576 254";
 			minExtent = "26 254";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			isVertical = "0";
 			useCloseButton = "0";
@@ -44,6 +51,8 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			extent = "560 29";
 			minExtent = "38 29";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			glowOffset = "7";
 			tabSpacing = "2";
@@ -55,9 +64,11 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			horizSizing = "width";
 			vertSizing = "height";
 			position = "33 91";
-			extent = "381 251";
+			extent = "381 284";
 			minExtent = "24 52";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			willFirstRespond = "1";
 			hScrollBar = "alwaysOff";
@@ -72,9 +83,11 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 				horizSizing = "width";
 				vertSizing = "height";
 				position = "6 7";
-				extent = "353 237";
+				extent = "353 270";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new GuiChannelVectorCtrl(ChatGuiMessageVector) {
@@ -82,14 +95,17 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 					horizSizing = "width";
 					vertSizing = "height";
 					position = "0 0";
-					extent = "357 19";
+					extent = "357 52";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					lineSpacing = "0";
 					lineContinuedIndex = "5";
 					allowedMatches[0] = "http";
 					matchColor = "4 235 105 255";
+					maxColorIndex = "9";
 				};
 			};
 		};
@@ -98,9 +114,11 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			horizSizing = "left";
 			vertSizing = "height";
 			position = "412 62";
-			extent = "175 308";
+			extent = "175 341";
 			minExtent = "24 52";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			willFirstRespond = "1";
 			hScrollBar = "alwaysOff";
@@ -115,9 +133,11 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "4 6";
-				extent = "151 296";
+				extent = "151 329";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new ShellChatMemberList(ChatRoomMemberList) {
@@ -125,9 +145,11 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 					horizSizing = "right";
 					vertSizing = "bottom";
 					position = "0 0";
-					extent = "149 8";
+					extent = "151 8";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					altCommand = "ChatPrivate();";
 					helpTag = "0";
 					enumerate = "1";
@@ -142,17 +164,20 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			profile = "NewTextEditProfile";
 			horizSizing = "width";
 			vertSizing = "top";
-			position = "27 337";
+			position = "27 370";
 			extent = "392 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			altCommand = "ChatSendText();";
 			helpTag = "0";
-			historySize = "0";
 			maxLength = "255";
+			historySize = "0";
 			password = "0";
-			glowOffset = "9 9";
 			tabComplete = "1";
+			deniedSound = "InputDeniedSound";
+			glowOffset = "9 9";
 		};
 		new GuiTextCtrl() {
 			profile = "ShellTextRightProfile";
@@ -162,8 +187,11 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			extent = "38 22";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			text = "TOPIC:";
+			maxLength = "255";
 		};
 		new GuiBubbleTextCtrl(ChatChannelTopic) {
 			profile = "ShellTopicTextProfile";
@@ -173,8 +201,11 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			extent = "207 22";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			text = "This is a sample chat topic";
+			maxLength = "255";
 		};
 		new ShellBitmapButton(ChatOpenPaneBtn) {
 			profile = "ShellButtonProfile";
@@ -184,6 +215,8 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			extent = "100 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "ChatTabView.openNewPane();";
 			helpTag = "0";
 			text = "CHANNELS";
@@ -197,6 +230,8 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			extent = "43 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "ChatTabView.closeCurrentPane();";
 			accelerator = "x";
 			helpTag = "0";
@@ -211,6 +246,8 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			extent = "128 38";
 			minExtent = "32 38";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EditChannelOptions();";
 			helpTag = "0";
 			text = "CHANNEL OPTIONS";
@@ -224,6 +261,8 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			extent = "128 38";
 			minExtent = "32 38";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EditChatOptions();";
 			helpTag = "0";
 			text = "CHAT OPTIONS";

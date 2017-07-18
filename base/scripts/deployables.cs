@@ -5,6 +5,7 @@
 // Note: cameras are treated as grenades, not "regular" deployables
 
 $TurretIndoorSpaceRadius  = 20;  // deployed turrets must be this many meters apart
+$InventorySpaceRadius  = 20;  // deployed inventory must be this many meters apart
 $TurretIndoorSphereRadius = 50;  // radius for turret frequency check
 $TurretIndoorMaxPerSphere = 4;   // # of turrets allowed in above radius
 
@@ -32,6 +33,7 @@ $NotDeployableReason::NoInteriorFound           =  7;
 $NotDeployableReason::TurretTooClose            =  8;
 $NotDeployableReason::TurretSaturation          =  9;
 $NotDeployableReason::SurfaceTooNarrow          =  10;
+$NotDeployableReason::InventoryTooClose            =  11;
 
 $MinDeployableDistance                       =   0.5;
 $MaxDeployableDistance                       =  4.0;  //meters from body
@@ -269,7 +271,7 @@ datablock SensorData(DeployPulseSensorObj)
    detectsPassiveJammed = false;
    detectsCloaked = false;
    detectionPings = true;
-   detectRadius = 120;
+   detectRadius = 150;
 };
 
 datablock StaticShapeData(DeployedPulseSensor) : StaticShapeDamageProfile
@@ -583,11 +585,16 @@ function ShapeBaseImageData::testHavePurchase(%item, %xform)
    //don't check this for non-Clasping turret deployables
    return true;
 }
-
+                                             
 //-------------------------------------------------
-function TurretIndoorDeployableImage::testTurretTooClose(%item, %plyr)
+function ShapeBaseImageData::testInventoryTooClose(%item, %plyr)
 {
-   InitContainerRadiusSearch(%item.surfacePt, $TurretIndoorSpaceRadius, $TypeMasks::StaticShapeObjectType);
+   return false;
+}
+
+function InventoryDeployableImage::testInventoryTooClose(%item, %plyr)
+{
+   InitContainerRadiusSearch(%item.surfacePt, $InventorySpaceRadius, $TypeMasks::StaticShapeObjectType);
 
    // old function was only checking whether the first object found was a turret -- also wasn't checking
    // which team the object was on
@@ -595,7 +602,7 @@ function TurretIndoorDeployableImage::testTurretTooClose(%item, %plyr)
    while((%found = containerSearchNext()) != 0)
    {
       %foundName = %found.getDataBlock().getName();
-      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor))
+      if( (%foundName $= DeployedStationInventory) )
          if (%found.team == %plyr.team)
          {
             %turretInRange = true;
@@ -615,7 +622,27 @@ function TurretOutdoorDeployableImage::testTurretTooClose(%item, %plyr)
    while((%found = containerSearchNext()) != 0)
    {
       %foundName = %found.getDataBlock().getName();
-      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor))
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
+         if (%found.team == %plyr.team)
+         {
+            %turretInRange = true;
+            break;
+         }
+   }
+   return %turretInRange;
+}
+
+function TurretOutdoorDeployableImage::testTurretTooClose(%item, %plyr)
+{
+   InitContainerRadiusSearch(%item.surfacePt, $TurretOutdoorSpaceRadius, $TypeMasks::StaticShapeObjectType);
+
+   // old function was only checking whether the first object found was a turret -- also wasn't checking
+   // which team the object was on
+   %turretInRange = false;
+   while((%found = containerSearchNext()) != 0)
+   {
+      %foundName = %found.getDataBlock().getName();
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
          if (%found.team == %plyr.team)
          {
             %turretInRange = true;
@@ -639,7 +666,7 @@ function TurretIndoorDeployableImage::testTurretSaturation(%item)
    while(%found)
    {
       %foundName = %found.getDataBlock().getName();
-      if ((%foundName $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor))
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
       {
            //found one
            %numTurretsNearby++;
@@ -664,7 +691,7 @@ function TurretOutdoorDeployableImage::testTurretSaturation(%item)
    while(%found)
    {
       %foundName = %found.getDataBlock().getName();
-      if ((%foundName $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor))
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
       {
            //found one
            %numTurretsNearby++;
@@ -697,7 +724,7 @@ function testNearbyDensity(%item, %radius)
    while(%found)
    {
       %foundName = %found.getDataBlock().getName();
-      if ((%foundName $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor))
+      if((%foundname $= TurretDeployedFloorIndoor) || (%foundName $= TurretDeployedWallIndoor) || (%foundName $= TurretDeployedCeilingIndoor) || (%foundName $= TurretDeployedOutdoor) || (%foundName $= DeployedStationInventory))
          %turretCount++;       
      %found = containerSearchNext();      
    }
@@ -762,9 +789,15 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
    else if (%item.testSelfTooClose(%plyr, %surfacePt))
       %disqualified = $NotDeployableReason::SelfTooClose;
    else if (%item.testObjectTooClose(%surfacePt))
+   {
       %disqualified = $NotDeployableReason::ObjectTooClose;   
+   }
    else if (%item.testTurretTooClose(%plyr))
       %disqualified = $NotDeployableReason::TurretTooClose;
+   else if (%item.testInventoryTooClose(%plyr))
+   {
+      %disqualified = $NotDeployableReason::InventoryTooClose;
+   }
    else if (%item.testTurretSaturation())
       %disqualified = $NotDeployableReason::TurretSaturation;
    else if (%disqualified == $NotDeployableReason::None)
@@ -787,7 +820,7 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
          %disqualified = $NotDeployableReason::SurfaceTooNarrow;
       }
    }
-      
+
    if (%plyr.getMountedImage($BackpackSlot) == %item)  //player still have the item?
    {
       if (%disqualified)
@@ -878,6 +911,9 @@ function Deployables::displayErrorMsg(%item, %plyr, %slot, %error)
          
       case $NotDeployableReason::SurfaceTooNarrow:
          %msg = '\c2There is not adequate surface to clamp to here.%1';
+
+      case $NotDeployableReason::InventoryTooClose:
+         %msg = '\c2Interference from a nearby inventory prevents placement here.%1';
 
       default:
          %msg = '\c2Deploy failed.';

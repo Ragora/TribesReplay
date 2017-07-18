@@ -7,6 +7,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	variable = "$ShellBackground";
 	helpTag = "0";
 	useVariable = "1";
@@ -15,10 +17,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 		profile = "ShellPaneProfile";
 		horizSizing = "width";
 		vertSizing = "height";
-		position = "12 46";
-		extent = "620 390";
+		position = "12 13";
+		extent = "620 423";
 		minExtent = "48 92";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
 		text = "GAME";
 		maxLength = "255";
@@ -32,6 +36,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 			extent = "576 254";
 			minExtent = "26 254";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			isVertical = "0";
 			useCloseButton = "0";
@@ -45,6 +51,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 			extent = "560 29";
 			minExtent = "38 29";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			glowOffset = "7";
 			tabSpacing = "2";
@@ -56,9 +64,11 @@ new GuiChunkedBitmapCtrl(GameGui) {
 			horizSizing = "width";
 			vertSizing = "height";
 			position = "31 62";
-			extent = "558 312";
+			extent = "558 345";
 			minExtent = "8 8";
-			visible = "1";
+			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
@@ -69,6 +79,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				extent = "48 26";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "FILTER:";
 				maxLength = "255";
@@ -81,6 +93,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				extent = "104 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new GuiTextCtrl(GMJ_FilterText) {
@@ -91,6 +105,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "67 26";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "All Servers";
 					maxLength = "255";
@@ -104,6 +120,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				extent = "190 26";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Status Text...";
 				maxLength = "255";
@@ -116,6 +134,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				extent = "154 18";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 			};
 			new ShellBitmapButton(GMJ_StopBtn) {
@@ -126,6 +146,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				extent = "59 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "stopServerQuery();";
 				accelerator = "escape";
 				helpTag = "0";
@@ -137,9 +159,11 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				horizSizing = "width";
 				vertSizing = "height";
 				position = "0 25";
-				extent = "558 253";
+				extent = "558 286";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				fixedHorizontal = "0";
 				vertSpacerBitmap = "gui/shll_vertspacer";
@@ -149,10 +173,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellServerBrowserProfile";
 					horizSizing = "right";
 					vertSizing = "bottom";
-					position = "184 16";
-					extent = "374 237";
+					position = "194 16";
+					extent = "364 270";
 					minExtent = "8 52";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					willFirstRespond = "0";
 					hScrollBar = "alwaysOn";
@@ -166,9 +192,11 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						horizSizing = "right";
 						vertSizing = "bottom";
 						position = "4 4";
-						extent = "350 213";
+						extent = "340 246";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 
 						new GuiControl() {
@@ -176,9 +204,11 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							horizSizing = "right";
 							vertSizing = "bottom";
 							position = "0 0";
-							extent = "831 8";
+							extent = "810 8";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 						};
 					};
@@ -188,9 +218,11 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					horizSizing = "right";
 					vertSizing = "bottom";
 					position = "0 0";
-					extent = "538 232";
+					extent = "538 265";
 					minExtent = "8 20";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					altCommand = "Canvas.pushDialog(ServerInfoDlg);";
 					helpTag = "0";
 					startScrollRegion = "1 0";
@@ -215,10 +247,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "38 273";
+				position = "38 306";
 				extent = "110 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "Canvas.pushDialog(ChooseFilterDlg);";
 				helpTag = "0";
 				text = "CHANGE FILTER";
@@ -228,10 +262,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "140 273";
+				position = "140 306";
 				extent = "110 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "GMJ_Browser.runQuery();";
 				helpTag = "0";
 				text = "REFRESH LIST";
@@ -241,10 +277,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "242 273";
+				position = "242 306";
 				extent = "110 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "GMJ_Browser.refreshSelectedServer();";
 				helpTag = "0";
 				text = "REFRESH SERVER";
@@ -254,10 +292,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "344 273";
+				position = "344 306";
 				extent = "110 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "Canvas.pushDialog(ServerInfoDlg);";
 				helpTag = "0";
 				text = "SERVER INFO";
@@ -267,10 +307,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "446 273";
+				position = "446 306";
 				extent = "110 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "JoinSelectedGame();";
 				helpTag = "0";
 				text = "JOIN GAME";
@@ -282,19 +324,23 @@ new GuiChunkedBitmapCtrl(GameGui) {
 			horizSizing = "width";
 			vertSizing = "height";
 			position = "31 62";
-			extent = "558 312";
+			extent = "558 345";
 			minExtent = "8 8";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiControl() {
 				profile = "GuiDefaultProfile";
 				horizSizing = "center";
 				vertSizing = "center";
-				position = "0 0";
+				position = "0 16";
 				extent = "558 312";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new GuiTextCtrl() {
@@ -305,6 +351,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "60 22";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Game Type:";
 					maxLength = "255";
@@ -317,6 +365,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "165 36";
 					minExtent = "49 36";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "GAME TYPE";
 					maxLength = "255";
@@ -334,6 +384,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "75 22";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Mission Name:";
 					maxLength = "255";
@@ -346,6 +398,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "218 251";
 					minExtent = "24 52";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					willFirstRespond = "1";
 					hScrollBar = "alwaysOff";
@@ -363,6 +417,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "210 239";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 
 						new ShellTextList(GMH_MissionList) {
@@ -373,6 +429,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							extent = "210 8";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							altCommand = "tryToStartHostedGame();";
 							helpTag = "0";
 							enumerate = "1";
@@ -391,6 +449,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "270 268";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 
 					new GuiTextCtrl() {
@@ -401,6 +461,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "80 22";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 						text = "Server Name:";
 						maxLength = "255";
@@ -413,11 +475,15 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "180 38";
 						minExtent = "32 38";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						variable = "$Host::GameName";
 						helpTag = "0";
 						maxLength = "24";
 						historySize = "0";
 						password = "0";
+						tabComplete = "0";
+						deniedSound = "InputDeniedSound";
 						glowOffset = "9 9";
 					};
 					new GuiTextCtrl() {
@@ -428,6 +494,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "80 22";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 						text = "Password:";
 						maxLength = "255";
@@ -440,11 +508,15 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "180 38";
 						minExtent = "32 38";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						variable = "$Host::Password";
 						helpTag = "0";
 						maxLength = "16";
 						historySize = "0";
 						password = "0";
+						tabComplete = "0";
+						deniedSound = "InputDeniedSound";
 						glowOffset = "9 9";
 					};
 					new GuiTextCtrl() {
@@ -455,6 +527,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "80 22";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 						text = "Max Players:";
 						maxLength = "255";
@@ -467,12 +541,16 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "180 38";
 						minExtent = "32 38";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						variable = "$Host::MaxPlayers";
 						helpTag = "0";
 						maxLength = "3";
 						validate = "validateMaxPlayers();";
 						historySize = "0";
 						password = "0";
+						tabComplete = "0";
+						deniedSound = "InputDeniedSound";
 						glowOffset = "9 9";
 					};
 					new ShellBitmapButton(GMH_AdvancedBtn) {
@@ -483,6 +561,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "180 38";
 						minExtent = "32 38";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						command = "Canvas.pushDialog(AdvancedHostDlg);";
 						helpTag = "0";
 						text = "ADVANCED OPTIONS";
@@ -496,6 +576,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "167 30";
 						minExtent = "26 27";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						variable = "$Host::BotsEnabled";
 						helpTag = "0";
 						text = "ENABLE BOTS";
@@ -509,6 +591,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						extent = "270 105";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 
 						new GuiTextCtrl() {
@@ -519,6 +603,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							extent = "90 22";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "Number of Bots:";
 							maxLength = "255";
@@ -531,6 +617,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							extent = "16 20";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "(0)";
 							maxLength = "255";
@@ -543,12 +631,14 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							extent = "185 24";
 							minExtent = "12 24";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							variable = "value";
 							altCommand = "setMinCombatants();";
 							helpTag = "0";
 							range = "0.000000 1.000000";
 							ticks = "15";
-							value = "0.136667";
+							value = "0.00333333";
 							usePlusMinus = "1";
 						};
 						new GuiTextCtrl(GMH_BotDiffText) {
@@ -559,6 +649,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							extent = "90 22";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "Bot Difficulty:";
 							maxLength = "255";
@@ -571,6 +663,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							extent = "42 22";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "Min:";
 							maxLength = "255";
@@ -583,6 +677,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							extent = "185 24";
 							minExtent = "12 24";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							variable = "value";
 							altCommand = "updateMinBotDifficulty();";
 							helpTag = "0";
@@ -599,6 +695,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							extent = "42 22";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "Max:";
 							maxLength = "255";
@@ -611,6 +709,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							extent = "185 24";
 							minExtent = "12 24";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							variable = "value";
 							altCommand = "updateMaxBotDifficulty();";
 							helpTag = "0";
@@ -629,6 +729,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "180 38";
 					minExtent = "32 38";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					command = "StartHostedGame();";
 					helpTag = "0";
 					text = "START GAME";
@@ -641,9 +743,11 @@ new GuiChunkedBitmapCtrl(GameGui) {
 			horizSizing = "width";
 			vertSizing = "height";
 			position = "31 62";
-			extent = "558 312";
+			extent = "558 345";
 			minExtent = "8 8";
-			visible = "0";
+			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
@@ -654,6 +758,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				extent = "74 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Warrior:";
 				maxLength = "255";
@@ -666,6 +772,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				extent = "200 38";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Warrior";
 				maxLength = "255";
@@ -679,10 +787,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				profile = "GuiDefaultProfile";
 				horizSizing = "left";
 				vertSizing = "center";
-				position = "290 6";
+				position = "290 22";
 				extent = "257 300";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new ShellBitmapButton(GMW_PlayerPageBtn) {
@@ -693,6 +803,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "152 38";
 					minExtent = "32 38";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					command = "GM_WarriorPane.gotoPlayerPage();";
 					helpTag = "0";
 					text = "JUMP TO PLAYER PAGE";
@@ -706,6 +818,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "80 22";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Race/Gender:";
 					maxLength = "255";
@@ -718,6 +832,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "152 38";
 					minExtent = "49 36";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Select Race/Gender";
 					maxLength = "255";
@@ -735,6 +851,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "80 22";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Skin:";
 					maxLength = "255";
@@ -747,6 +865,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "152 38";
 					minExtent = "49 36";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Select Skin";
 					maxLength = "255";
@@ -764,6 +884,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "80 22";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Voice:";
 					maxLength = "255";
@@ -776,6 +898,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "152 38";
 					minExtent = "49 36";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Select Voice";
 					maxLength = "255";
@@ -784,6 +908,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					rolloverBarBitmap = "gui/shll_pulldownbar_rol";
 					selectedBarBitmap = "gui/shll_pulldownbar_act";
 					noButtonStyle = "0";
+						voiceIndex = "0";
 				};
 				new GuiTextCtrl() {
 					profile = "ShellTextRightProfile";
@@ -793,6 +918,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "100 22";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Test Voice:";
 					maxLength = "255";
@@ -805,6 +932,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "24 24";
 					minExtent = "24 24";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					command = "GMW_VoicePopup.test();";
 					helpTag = "0";
 					simpleStyle = "1";
@@ -817,6 +946,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "152 38";
 					minExtent = "32 38";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					command = "GM_WarriorPane.createNewAlias();";
 					helpTag = "0";
 					text = "NEW ALIAS";
@@ -830,6 +961,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					extent = "152 38";
 					minExtent = "32 38";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					command = "GM_WarriorPane.deleteWarrior();";
 					helpTag = "0";
 					text = "DELETE ALIAS";
@@ -841,9 +974,11 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				horizSizing = "width";
 				vertSizing = "height";
 				position = "25 41";
-				extent = "261 263";
+				extent = "261 296";
 				minExtent = "16 18";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new GuiPlayerView(GMW_PlayerModel) {
@@ -851,19 +986,23 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					horizSizing = "width";
 					vertSizing = "height";
 					position = "1 1";
-					extent = "259 261";
+					extent = "259 294";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 				};
 				new ShellRadioButton(GMW_LightRdo) {
 					profile = "ShellRadioProfile";
 					horizSizing = "right";
 					vertSizing = "top";
-					position = "0 176";
+					position = "0 209";
 					extent = "80 30";
 					minExtent = "26 27";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					command = "GMW_PlayerModel.update();";
 					helpTag = "0";
 					text = "LIGHT";
@@ -874,10 +1013,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellRadioProfile";
 					horizSizing = "right";
 					vertSizing = "top";
-					position = "0 206";
+					position = "0 239";
 					extent = "80 30";
 					minExtent = "26 27";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					command = "GMW_PlayerModel.update();";
 					helpTag = "0";
 					text = "MEDIUM";
@@ -888,10 +1029,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellRadioProfile";
 					horizSizing = "right";
 					vertSizing = "top";
-					position = "0 236";
+					position = "0 269";
 					extent = "80 30";
 					minExtent = "26 27";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					command = "GMW_PlayerModel.update();";
 					helpTag = "0";
 					text = "HEAVY";
@@ -908,6 +1051,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 			extent = "160 22";
 			minExtent = "8 8";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			maxLength = "255";
 		};

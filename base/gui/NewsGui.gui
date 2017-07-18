@@ -7,6 +7,8 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	variable = "$ShellBackground";
 	helpTag = "0";
 	useVariable = "1";
@@ -15,22 +17,27 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 		profile = "ShellPaneProfile";
 		horizSizing = "width";
 		vertSizing = "height";
-		position = "12 46";
-		extent = "620 390";
+		position = "12 13";
+		extent = "620 423";
 		minExtent = "48 92";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
 		text = "NEWS";
+		maxLength = "255";
 		noTitleBar = "0";
 
 		new ShellBitmapButton() {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "top";
-			position = "52 335";
+			position = "52 368";
 			extent = "128 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "PostNews();";
 			helpTag = "0";
 			text = "SUBMIT NEWS";
@@ -44,8 +51,11 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 			extent = "55 22";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			text = "Web Links:";
+			maxLength = "255";
 		};
 		new ShellPopupMenu(WebLinksMenu) {
 			profile = "ShellPopupProfile";
@@ -55,7 +65,10 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 			extent = "200 36";
 			minExtent = "49 36";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
+			maxLength = "255";
 			maxPopupHeight = "200";
 			buttonBitmap = "gui/shll_pulldown";
 			rolloverBarBitmap = "gui/shll_pulldownbar_rol";
@@ -70,6 +83,8 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 			extent = "53 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "WebLinksMenu.launchWebBrowser();";
 			helpTag = "0";
 			text = "GO";
@@ -83,6 +98,8 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 			extent = "332 45";
 			minExtent = "16 18";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiMLTextCtrl(NewsMOTDText) {
@@ -93,9 +110,13 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 				extent = "310 16";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				lineSpacing = "2";
 				allowColorChars = "0";
+				maxChars = "-1";
+				deniedSound = "InputDeniedSound";
 			};
 		};
 		new GuiTextCtrl() {
@@ -106,17 +127,22 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 			extent = "60 22";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			text = "HEADLINES";
+			maxLength = "255";
 		};
 		new ShellScrollCtrl() {
 			profile = "NewScrollCtrlProfile";
 			horizSizing = "right";
 			vertSizing = "height";
 			position = "21 91";
-			extent = "190 220";
+			extent = "190 253";
 			minExtent = "24 52";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			willFirstRespond = "1";
 			hScrollBar = "alwaysOff";
@@ -131,9 +157,11 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "4 7";
-				extent = "182 206";
+				extent = "182 239";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new ShellTextList(NewsHeadlines) {
@@ -144,6 +172,8 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 					extent = "182 8";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					enumerate = "0";
 					resizeCell = "1";
@@ -157,10 +187,12 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "top";
-			position = "28 307";
+			position = "28 340";
 			extent = "85 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "NewsGui.getPreviousNewsItems();";
 			helpTag = "0";
 			text = "PREV";
@@ -170,10 +202,12 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "top";
-			position = "119 307";
+			position = "119 340";
 			extent = "85 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "NewsGui.getNextNewsItems();";
 			helpTag = "0";
 			text = "NEXT";
@@ -184,9 +218,11 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 			horizSizing = "width";
 			vertSizing = "height";
 			position = "211 91";
-			extent = "385 275";
+			extent = "385 308";
 			minExtent = "24 52";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			willFirstRespond = "1";
 			hScrollBar = "alwaysOff";
@@ -201,9 +237,11 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 				horizSizing = "width";
 				vertSizing = "height";
 				position = "4 6";
-				extent = "361 263";
+				extent = "361 296";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new GuiMLTextCtrl(NewsText) {
@@ -214,9 +252,13 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 					extent = "387 16";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					lineSpacing = "2";
 					allowColorChars = "0";
+					maxChars = "-1";
+					deniedSound = "InputDeniedSound";
 				};
 			};
 		};
@@ -228,6 +270,8 @@ new GuiChunkedBitmapCtrl(NewsGui) {
 			extent = "100 38";
 			minExtent = "32 38";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "NewsEditMOTD();";
 			helpTag = "0";
 			text = "EDIT MOTD";

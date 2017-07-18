@@ -119,6 +119,7 @@ function AIBuyInventory(%client, %requiredEquipment, %equipmentSets, %buyInvTime
 	%client.invBuyList = %inventorySet;		//the list/set of items we're going to buy...
 	%client.buyingSet = %buyingSet;			//whether it's a list or a set...
 	%client.isSeekingInv = false;
+   %client.seekingInv = "";
 
 	//now process the state machine
 	return AIProcessBuyInventory(%client);

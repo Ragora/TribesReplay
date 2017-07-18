@@ -2,9 +2,9 @@
 
 //--- GAME RULES BEGIN ---
 //Prevent enemy from capturing your flag
-//Capture enemy flag and bring it to your team's flag stand
-//Score a point each time enemy flag is "capped"
-//To score, your flag must be at its stand when the enemy flag arrives
+//Score one point for grabbing the enemy's flag 
+//To capture, your flag must be at its stand
+//Score 100 points each time enemy flag is captured
 //--- GAME RULES END ---
 
 //exec the AI scripts
@@ -84,7 +84,8 @@ function CTFGame::initGameVars(%game)
 
    %game.SCORE_PER_KILL = 1; 
    %game.SCORE_PER_PLYR_FLAG_CAP = 3;
-   %game.SCORE_PER_TEAM_FLAG_CAP = 1;  
+   %game.SCORE_PER_TEAM_FLAG_CAP = 100;
+   %game.SCORE_PER_TEAM_FLAG_TOUCH = 1;
    %game.SCORE_PER_GEN_DESTROY = 2;
    %game.SCORE_PER_ESCORT_ASSIST = 1;
 
@@ -101,9 +102,12 @@ function CTFGame::initGameVars(%game)
    %game.RADIUS_GEN_DEFENSE = 20;  //meters
    %game.RADIUS_FLAG_DEFENSE = 20;  //meters 
 
+	%game.TOUCH_DELAY_MS = 20000;  //20 secs
+
    %game.fadeTimeMS = 2000;
 
    %game.notifyMineDist = 7.5;
+
 
    %game.stalemate = false;
    %game.stalemateObjsVisible = false;
@@ -194,6 +198,9 @@ function CTFGame::playerTouchEnemyFlag(%game, %player, %flag)
    //if this flag was "at home", see if both flags have now been taken
    if (%flag.isHome)
    {
+		// tiebreaker score
+		game.awardScoreFlagTouch( %client, %flag );
+
       %startStalemate = false;
       if ($TeamFlag[1] == %flag)
          %startStalemate = !$TeamFlag[2].isHome;
@@ -660,12 +667,34 @@ function CTFGame::awardScoreFlagCap(%game, %cl, %flag)
    %game.checkScoreLimit(%cl.team);
 }
 
+
+function CTFGame::awardScoreFlagTouch(%game, %cl, %flag)
+{
+	%team = %cl.team;
+	if( $DontScoreTimer[%team] )
+		return;
+
+	$dontScoreTimer[%team] = true;
+	schedule(%game.TOUCH_DELAY_MS, 0, eval, "$dontScoreTimer["@%team@"] = false;");
+   $TeamScore[%team] += %game.SCORE_PER_TEAM_FLAG_TOUCH;
+   messageAll('MsgTeamScoreIs', "", %team, $TeamScore[%team]);
+
+   if (%game.SCORE_PER_TEAM_FLAG_TOUCH > 0)
+   {
+      %plural = (%game.SCORE_PER_TEAM_FLAG_TOUCH != 1 ? 's' : "");
+      messageTeam(%team, 'msgCTFFriendFlagTouch', '\c0Your team receives %1 point%2 for grabbing the enemy flag!', %game.SCORE_PER_TEAM_FLAG_TOUCH, %plural);
+      messageTeam(%flag.team, 'msgCTFEnemyFlagTouch', '\c0Enemy team %1 receives %2 point%3 for grabbing your flag!', %cl.name, %game.SCORE_PER_TEAM_FLAG_TOUCH, %plural);
+   }
+   %game.recalcScore(%cl);
+   %game.checkScoreLimit(%team);
+}
+
 function CTFGame::checkScoreLimit(%game, %team)
 {
-   %scoreLimit = MissionGroup.CTF_scoreLimit;
+   %scoreLimit = MissionGroup.CTF_scoreLimit * %game.SCORE_PER_TEAM_FLAG_CAP;
    // default of 5 if scoreLimit not defined
    if(%scoreLimit $= "")
-      %scoreLimit = 5;
+      %scoreLimit = 5 * %game.SCORE_PER_TEAM_FLAG_CAP;
    if($TeamScore[%team] >= %scoreLimit) 
       %game.scoreLimitReached();
 }

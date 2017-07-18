@@ -60,7 +60,7 @@ new GuiControl(LaunchToolbarDlg) {
 		profile = "CloseButtonProfile";
 		horizSizing = "left";
 		vertSizing = "bottom";
-		position = "583 46";
+		position = "583 13";
 		extent = "33 26";
 		minExtent = "8 8";
 		visible = "1";

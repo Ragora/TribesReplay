@@ -7,28 +7,22 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	variable = "$ShellBackground";
 	helpTag = "0";
 	useVariable = "1";
-		forumCount = "-1";
-		refreshFlag = "0";
-		state = "done";
-		eid = "112";
-		ebstat = "1";
-		initialized = "1";
-		key = "163";
-		TDialogOpen = "0";
-		bflag = "4";
-		TextCheck = "0";
 
 	new ShellPaneCtrl(ForumShell) {
 		profile = "ShellPaneProfile";
 		horizSizing = "width";
 		vertSizing = "height";
-		position = "13 46";
-		extent = "620 390";
+		position = "13 13";
+		extent = "620 423";
 		minExtent = "48 92";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
 		text = "FORUMS";
 		maxLength = "255";
@@ -39,9 +33,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 			horizSizing = "width";
 			vertSizing = "height";
 			position = "19 26";
-			extent = "582 350";
+			extent = "582 383";
 			minExtent = "8 8";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
@@ -52,6 +48,8 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				extent = "36 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "TOPIC:";
 				maxLength = "255";
@@ -64,6 +62,8 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				extent = "522 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Actual Topic Will Go Here";
 				maxLength = "255";
@@ -73,9 +73,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				horizSizing = "width";
 				vertSizing = "height";
 				position = "2 18";
-				extent = "578 292";
+				extent = "578 325";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				columns = "0";
 				rows = "0 158";
@@ -94,6 +96,8 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 					extent = "578 154";
 					minExtent = "24 72";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					fixedHorizontal = "1";
 					vertSpacerBitmap = "gui/shll_vertspacer";
@@ -107,6 +111,8 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						extent = "578 138";
 						minExtent = "8 52";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 						willFirstRespond = "0";
 						hScrollBar = "alwaysOff";
@@ -123,6 +129,8 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 							extent = "554 130";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 
 							new GuiControl() {
@@ -130,9 +138,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 								horizSizing = "right";
 								vertSizing = "bottom";
 								position = "0 0";
-								extent = "8 21";
+								extent = "8 8";
 								minExtent = "8 8";
 								visible = "1";
+								hideCursor = "0";
+								bypassHideCursor = "0";
 								helpTag = "0";
 							};
 						};
@@ -145,6 +155,8 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						extent = "558 150";
 						minExtent = "8 20";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						altCommand = "LinkBrowser(getField(ForumsMessageList.getRowTextById(ForumsMessageList.getSelectedID()),6),\"Warrior\");";
 						helpTag = "0";
 						startScrollRegion = "3 0";
@@ -163,12 +175,7 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						headerSort = "0";
 						allowReposition = "0";
 						noSelect = "0";
-							lastID = "413653";
-							state = "done";
-							highestUpdate = "413653";
-							lastDate = "04/20/2001 11:09am";
-							allRead = "1";
-							key = "162";
+						allowColorChars = "1";
 					};
 				};
 				new ShellScrollCtrl() {
@@ -176,9 +183,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 					horizSizing = "width";
 					vertSizing = "height";
 					position = "0 158";
-					extent = "578 134";
+					extent = "578 167";
 					minExtent = "24 52";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					willFirstRespond = "1";
 					hScrollBar = "alwaysOff";
@@ -193,9 +202,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						horizSizing = "width";
 						vertSizing = "height";
 						position = "7 7";
-						extent = "548 120";
+						extent = "548 153";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 
 						new GuiMLTextCtrl(ForumsText) {
@@ -203,9 +214,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 							horizSizing = "width";
 							vertSizing = "height";
 							position = "0 0";
-							extent = "532 36";
+							extent = "532 18";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 							lineSpacing = "2";
 							allowColorChars = "0";
@@ -219,10 +232,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "38 309";
+				position = "38 342";
 				extent = "80 38";
 				minExtent = "32 38";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsEditPost();";
 				helpTag = "0";
 				text = "EDIT";
@@ -232,10 +247,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "110 309";
+				position = "110 342";
 				extent = "80 38";
 				minExtent = "32 38";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsAcceptPost();";
 				accelerator = "alt a";
 				helpTag = "0";
@@ -246,10 +263,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "182 309";
+				position = "182 342";
 				extent = "80 38";
 				minExtent = "32 38";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsRejectPost();";
 				accelerator = "delete";
 				helpTag = "0";
@@ -260,10 +279,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "275 309";
+				position = "275 342";
 				extent = "80 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsReply();";
 				accelerator = "alt r";
 				helpTag = "0";
@@ -274,10 +295,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "405 309";
+				position = "405 342";
 				extent = "80 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsNext();";
 				accelerator = "s";
 				helpTag = "0";
@@ -288,10 +311,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "340 309";
+				position = "340 342";
 				extent = "80 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsPrevious();";
 				accelerator = "w";
 				helpTag = "0";
@@ -302,10 +327,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "left";
 				vertSizing = "top";
-				position = "470 309";
+				position = "470 342";
 				extent = "115 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsGoTopics();";
 				accelerator = "backspace";
 				helpTag = "0";
@@ -318,9 +345,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 			horizSizing = "width";
 			vertSizing = "height";
 			position = "15 26";
-			extent = "580 349";
+			extent = "580 382";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new ShellScrollCtrl() {
@@ -328,9 +357,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				horizSizing = "right";
 				vertSizing = "height";
 				position = "7 16";
-				extent = "161 291";
+				extent = "161 324";
 				minExtent = "24 52";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				willFirstRespond = "1";
 				hScrollBar = "alwaysOff";
@@ -345,9 +376,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 					horizSizing = "right";
 					vertSizing = "bottom";
 					position = "4 6";
-					extent = "137 279";
+					extent = "137 312";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 
 					new ShellTextList(ForumsList) {
@@ -355,9 +388,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						horizSizing = "right";
 						vertSizing = "bottom";
 						position = "0 0";
-						extent = "137 414";
+						extent = "137 8";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 						enumerate = "1";
 						resizeCell = "1";
@@ -372,9 +407,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				horizSizing = "width";
 				vertSizing = "height";
 				position = "166 1";
-				extent = "418 306";
+				extent = "418 339";
 				minExtent = "24 52";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				fixedHorizontal = "1";
 				vertSpacerBitmap = "gui/shll_vertspacer";
@@ -385,9 +422,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 					horizSizing = "right";
 					vertSizing = "bottom";
 					position = "344 16";
-					extent = "74 290";
+					extent = "74 323";
 					minExtent = "8 52";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					willFirstRespond = "0";
 					hScrollBar = "alwaysOff";
@@ -401,9 +440,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						horizSizing = "right";
 						vertSizing = "bottom";
 						position = "4 7";
-						extent = "50 276";
+						extent = "50 309";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 
 						new GuiControl() {
@@ -411,9 +452,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 							horizSizing = "right";
 							vertSizing = "bottom";
 							position = "0 0";
-							extent = "52 1902";
+							extent = "52 8";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 						};
 					};
@@ -423,9 +466,11 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 					horizSizing = "width";
 					vertSizing = "height";
 					position = "0 0";
-					extent = "398 302";
+					extent = "398 335";
 					minExtent = "8 20";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					altCommand = "ForumsOpenThread();";
 					helpTag = "0";
 					startScrollRegion = "3 0";
@@ -444,6 +489,7 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 					headerSort = "1";
 					allowReposition = "0";
 					noSelect = "0";
+					allowColorChars = "1";
 				};
 			};
 			new GuiTextCtrl() {
@@ -454,6 +500,8 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				extent = "47 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "FORUMS";
 				maxLength = "255";
@@ -462,10 +510,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "top";
-				position = "160 300";
+				position = "160 333";
 				extent = "90 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsNewTopic();";
 				helpTag = "0";
 				text = "NEW TOPIC";
@@ -475,10 +525,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "top";
-				position = "291 300";
+				position = "291 333";
 				extent = "82 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsRefreshTopics();";
 				helpTag = "0";
 				text = "REFRESH ";
@@ -488,10 +540,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "top";
-				position = "357 300";
+				position = "357 333";
 				extent = "53 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsGui.NextThreadPage();";
 				helpTag = "0";
 				text = "--->";
@@ -501,10 +555,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "top";
-				position = "254 300";
+				position = "254 333";
 				extent = "53 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ForumsGui.PreviousThreadPage();";
 				helpTag = "0";
 				text = "<---";
@@ -514,10 +570,12 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "top";
-				position = "1 300";
+				position = "1 333";
 				extent = "118 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "GetForumsList();";
 				helpTag = "0";
 				text = "REFRESH FORUMS";

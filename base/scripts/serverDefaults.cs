@@ -33,7 +33,7 @@ $Host::Dedicated = 0;
 $Host::MissionType = "CTF";
 $Host::Map = "Katabatic";
 $Host::MaxPlayers = 64;
-$Host::TimeLimit = 20;
+$Host::TimeLimit = 30;
 $Host::BotCount = 2;
 $Host::BotsEnabled = 0;
 $Host::MinBotDifficulty = 0.5;
@@ -50,6 +50,8 @@ $Host::TournamentMode = 0;
 $Host::allowAdminPlayerVotes = 1;
 $Host::FloodProtectionEnabled = 1;
 $Host::MaxMessageLen = 120;
+$Host::VoteSpread = 20;
+$Host::TeamDamageOn = 0;
 
 $MasterServerAddress = "IP:198.74.40.152:28000";
 

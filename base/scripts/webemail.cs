@@ -605,6 +605,39 @@ function StrToList(%listName, %str, %delim)
   }
 }
 //-----------------------------------------------------------------------------
+function LC_BigList::onAdd(%this)
+{
+	LC_BigList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
+}
+//-----------------------------------------------------------------------------
+function LC_BigList::GetOnlineStatus(%this)
+{
+    %this.key = LaunchGui.key++;
+    %this.status = "getOnline";
+    for(%oStat=0;%oStat<%this.RowCount();%oStat++)
+    {
+      if(%oStat == 0)
+        %roster = %this.getRowID(%oStat);
+      else
+        %roster = %roster TAB %this.getRowID(%oStat);
+    }
+    databaseQuery(69,%roster, %this,%this.key);
+}
+//-----------------------------------------------------------------------------
+function LC_BigList::onDatabaseQueryResult(%this,%status,%resultString,%key)
+{
+  if(%key != %this.key)
+    return;
+  switch$(%this.status)
+  {
+    case "getOnline": if(getField(%status,0) == 0)
+                        for(%str=0;%str<strLen(%resultString);%str++)
+                        {
+                          %this.setRowStyle( %str, !getSubStr(%resultString,%str,1) );
+                        }
+  }
+}
+//-----------------------------------------------------------------------------
 function AddressDlg::onDatabaseQueryResult(%this,%status,%resultString,%key)
 {
 	if(%this.key != %key)
@@ -1235,9 +1268,6 @@ function EmailGui::dumpCache( %this )
 //-----------------------------------------------------------------------------
 function EmailGui::onSleep( %this )
 {
-//	EMailGui.checkingEMail = false;
-//	%this.checkSchedule = schedule(1000 * 0 * 1, 0, CheckEmail, true);
-	Canvas.popDialog( LaunchToolbarDlg );
 }
 //-----------------------------------------------------------------------------
 function EMailGui::getEmail(%this,%fromSchedule)

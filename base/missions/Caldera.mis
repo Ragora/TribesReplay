@@ -27,10 +27,10 @@ new SimGroup(MissionGroup) {
 		direction = "0.57735 0.57735 -0.57735";
 		color = "0.600000 0.600000 0.600000 1.000000";
 		ambient = "0.200000 0.200000 0.200000 1.000000";
+			scale = "1 1 1";
+			locked = "true";
 			position = "-1024 -1024 0";
 			rotation = "1 0 0 0";
-			locked = "true";
-			scale = "1 1 1";
 	};
 	new TerrainBlock(Terrain) {
 		rotation = "1 0 0 0";
@@ -39,24 +39,24 @@ new SimGroup(MissionGroup) {
 		terrainFile = "Caldera.ter";
 		squareSize = "8";
 		emptySquares = "250";
-			position = "-1024 -1024 0";
-			hazeDistance = "250";
-			locked = "true";
 			visibleDistance = "1200";
+			locked = "true";
+			hazeDistance = "250";
+			position = "-1024 -1024 0";
 	};
 	new NavigationGraph(NavGraph) {
 		conjoinAngleDev = "45";
 		cullDensity = "0.3";
 		customArea = "0 0 0 0";
-			position = "0 0 0 1";
+			scale = "1 1 1";
+			locked = "true";
+			coverage = "0";
 			XDimOverSize = "0";
+			position = "0 0 0 1";
+			GraphFile = "Caldera.nav";
 			YDimOverSize = "0";
 			rotation = "0 0 0 0";
-			locked = "true";
 			conjoinBowlDev = "20";
-			scale = "1 1 1";
-			GraphFile = "Caldera.nav";
-			coverage = "0";
 	};
 	new WaterBlock() {
 		position = "112 -96 63.1568";
@@ -87,6 +87,7 @@ new SimGroup(MissionGroup) {
 		cloudSpeed3 = "0.0003";
 		visibleDistance = "550";
 		useSkyTextures = "1";
+		renderBottomTexture = "0";
 		SkySolidColor = "0.106000 0.125000 0.235000 0.000000";
 		fogDistance = "222";
 		fogColor = "0.850000 0.380000 0.100000 1.000000";
@@ -99,8 +100,8 @@ new SimGroup(MissionGroup) {
 		fogVolumeColor1 = "128.000000 128.000000 128.000000 -0.000000";
 		fogVolumeColor2 = "128.000000 128.000000 128.000000 -0.000000";
 		fogVolumeColor3 = "128.000000 128.000000 128.000000 -0.000000";
-			cloudSpeed0 = "0.001000 0.001000";
 			locked = "true";
+			cloudSpeed0 = "0.001000 0.001000";
 	};
 	new SimGroup(ObserverDropPoints) {
 
@@ -135,7 +136,8 @@ new SimGroup(MissionGroup) {
 	new SimGroup(Teams) {
 
 		new SimGroup(Team1) {
-			providesPower = true;
+				providesPower = "1";
+
 			new SimGroup(WBase) {
 
 				new StaticShape() {
@@ -146,7 +148,6 @@ new SimGroup(MissionGroup) {
 					dataBlock = "SensorMediumPulse";
 					lockCount = "0";
 					homingCount = "0";
-						Target = "33";
 						locked = "true";
 				};
 				new Item() {
@@ -159,7 +160,6 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						Target = "-1";
 						locked = "true";
 				};
 				new StaticShape() {
@@ -170,9 +170,8 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						damageTimeMS = "783957";
-						Target = "34";
 						locked = "true";
+						damageTimeMS = "783957";
 				};
 				new StaticShape() {
 					position = "-50.5461 -154.429 180.337";
@@ -182,9 +181,8 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						damageTimeMS = "782064";
-						Target = "35";
 						locked = "true";
+						damageTimeMS = "782064";
 				};
 				new StaticShape() {
 					position = "-215.474 -235.369 148.1";
@@ -194,13 +192,15 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationVehiclePad";
 					lockCount = "0";
 					homingCount = "0";
-						mobileBaseVehicle = "Removed";
-						damageTimeMS = "219608";
-						Target = "-1";
 						scoutVehicle = "Removed";
 						locked = "true";
+						damageTimeMS = "219608";
+						WayPoint = "3444";
 						AssaultVehicle = "Removed";
-				needsObjectiveWaypoint = true;
+						Ready = "1";
+						mobileBaseVehicle = "Removed";
+						needsObjectiveWaypoint = "1";
+						station = "3373";
 				};
 				new InteriorInstance() {
 					position = "-45.7829 -144.124 180.354";
@@ -224,7 +224,8 @@ new SimGroup(MissionGroup) {
 					rotation = "-0 0 -1 29.7938";
 					scale = "5.1479 4.14776 0.526289";
 					dataBlock = "defaultTeamSlowFieldBare";
-						Target = "38";
+					lockCount = "0";
+					homingCount = "0";
 						locked = "true";
 				};
 				new ForceFieldBare() {
@@ -232,7 +233,8 @@ new SimGroup(MissionGroup) {
 					rotation = "-0 0 -1 29.7938";
 					scale = "5.1479 4.14776 0.526289";
 					dataBlock = "defaultTeamSlowFieldBare";
-						Target = "39";
+					lockCount = "0";
+					homingCount = "0";
 						locked = "true";
 				};
 				new ForceFieldBare() {
@@ -240,7 +242,8 @@ new SimGroup(MissionGroup) {
 					rotation = "0 0 1 149.152";
 					scale = "1.60793 8.34049 7.7216";
 					dataBlock = "defaultTeamSlowFieldBare";
-						Target = "40";
+					lockCount = "0";
+					homingCount = "0";
 						locked = "true";
 				};
 				new Turret() {
@@ -252,7 +255,6 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 					initialBarrel = "PlasmaBarrelLarge";
-						Target = "41";
 						locked = "true";
 						originalBarrel = "PlasmaBarrelLarge";
 				};
@@ -304,18 +306,21 @@ new SimGroup(MissionGroup) {
 						dataBlock = "SensorLargePulse";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "42";
 							locked = "true";
 					};
-					new ForceFieldBare() {
-						position = "264.56 8.06406 219.686";
-						rotation = "1 0 0 0";
-						scale = "1 22.9263 8.12996";
-						dataBlock = "defaultTeamSlowFieldBare";
-							Target = "43";
+					new StaticShape() {
+						position = "174.821 19.469 219.67";
+						rotation = "0 0 1 90.5273";
+						scale = "1 1 1";
+						nameTag = "Secondary";
+						dataBlock = "GeneratorLarge";
+						lockCount = "0";
+						homingCount = "0";
 							locked = "true";
-							color = "0.500000 0.500000 1.000000 1.000000";
-							triggerCount = "0";
+							WayPoint = "3445";
+							name = "Tactical Generator";
+							scoreValue = "5";
+							needsObjectiveWaypoint = "1";
 					};
 					new Item() {
 						position = "211.16 42.98 252.866";
@@ -327,7 +332,6 @@ new SimGroup(MissionGroup) {
 						collideable = "0";
 						static = "1";
 						rotate = "0";
-							Target = "-1";
 							locked = "true";
 					};
 					new Turret() {
@@ -339,7 +343,6 @@ new SimGroup(MissionGroup) {
 						lockCount = "0";
 						homingCount = "0";
 						initialBarrel = "SentryTurretBarrel";
-							Target = "44";
 							locked = "true";
 					};
 					new Turret() {
@@ -351,23 +354,8 @@ new SimGroup(MissionGroup) {
 						lockCount = "0";
 						homingCount = "0";
 						initialBarrel = "PlasmaBarrelLarge";
-							Target = "45";
 							locked = "true";
 							originalBarrel = "PlasmaBarrelLarge";
-					};
-					new StaticShape() {
-						position = "174.821 19.469 219.67";
-						rotation = "0 0 1 90.5273";
-						scale = "1 1 1";
-						nameTag = "Tactical";
-						dataBlock = "GeneratorLarge";
-						lockCount = "0";
-						homingCount = "0";
-							Target = "46";
-							locked = "true";
-							name = "Tactical Generator";
-							scoreValue = "5";
-					needsObjectiveWaypoint = true;
 					};
 				};
 				new SimGroup(Stations) {
@@ -380,7 +368,6 @@ new SimGroup(MissionGroup) {
 						dataBlock = "StationInventory";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "47";
 							locked = "true";
 							scoreValue = "5";
 					};
@@ -392,9 +379,9 @@ new SimGroup(MissionGroup) {
 						dataBlock = "FlipFlop";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "48";
 							locked = "true";
-					needsObjectiveWaypoint = true;
+							WayPoint = "3446";
+							needsObjectiveWaypoint = "1";
 					};
 					new InteriorInstance() {
 						position = "210.961 -2.7616 219.719";
@@ -406,18 +393,19 @@ new SimGroup(MissionGroup) {
 							locked = "true";
 					};
 					new StaticShape() {
-						position = "268.399 9.43564 219.67";
-						rotation = "0 0 -1 89.9544";
+						position = "211.031 12.9246 239.71";
+						rotation = "1 0 0 0";
 						scale = "1 1 1";
 						nameTag = "Primary";
 						dataBlock = "GeneratorLarge";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "49";
 							locked = "true";
+							WayPoint = "3447";
+							damageTimeMS = "35412";
 							name = "Primary Generator";
 							scoreValue = "5";
-					needsObjectiveWaypoint = true;
+							needsObjectiveWaypoint = "1";
 					};
 					new StaticShape() {
 						position = "182.86 -5.01 219.7";
@@ -427,7 +415,6 @@ new SimGroup(MissionGroup) {
 						dataBlock = "StationInventory";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "50";
 							locked = "true";
 					};
 					new StaticShape() {
@@ -438,7 +425,6 @@ new SimGroup(MissionGroup) {
 						dataBlock = "StationInventory";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "51";
 							locked = "true";
 					};
 					new StaticShape() {
@@ -449,7 +435,6 @@ new SimGroup(MissionGroup) {
 						dataBlock = "StationInventory";
 						lockCount = "0";
 						homingCount = "0";
-							Target = "52";
 							locked = "true";
 					};
 					new ForceFieldBare() {
@@ -457,7 +442,8 @@ new SimGroup(MissionGroup) {
 						rotation = "1 0 0 0";
 						scale = "1 17.0756 8.19376";
 						dataBlock = "defaultForceFieldBare";
-							Target = "53";
+						lockCount = "0";
+						homingCount = "0";
 							locked = "true";
 					};
 				};
@@ -517,6 +503,8 @@ new SimGroup(MissionGroup) {
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
 			dataBlock = "doubleTimeEmissionDummy";
+			lockCount = "0";
+			homingCount = "0";
 			emitter = "LightDamageSmoke";
 			velocity = "1";
 				locked = "true";
@@ -590,6 +578,8 @@ new SimGroup(MissionGroup) {
 			rotation = "1 0 0 180.091";
 			scale = "1.97494 1.80987 1";
 			dataBlock = "doubleTimeEmissionDummy";
+			lockCount = "0";
+			homingCount = "0";
 			emitter = "PlasmaExplosionEmitter";
 			velocity = "1";
 				locked = "true";
@@ -599,6 +589,8 @@ new SimGroup(MissionGroup) {
 			rotation = "0 1 0 180.664";
 			scale = "1 1 1";
 			dataBlock = "doubleTimeEmissionDummy";
+			lockCount = "0";
+			homingCount = "0";
 			emitter = "PlasmaExplosionEmitter";
 			velocity = "1";
 				locked = "true";

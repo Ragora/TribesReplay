@@ -2205,6 +2205,7 @@ function JoystickConfigDlg::setPane( %this, %pane )
       else
          DeadZoneSlider.setValue( abs( firstWord( %deadZone ) ) / %scale );
       InvertJoyAxisTgl.setValue( moveMap.isInverted( "joystick", %axisType ) ); 
+      JoyAxisRelativeTgl.setValue( moveMap.isRelativeAxis( "joystick", %axisType ) );
    }
    else
    {
@@ -2213,6 +2214,7 @@ function JoystickConfigDlg::setPane( %this, %pane )
       JoyAxisSlider.setValue( 0.5 );
       DeadZoneSlider.setValue( 0.0 );
       InvertJoyAxisTgl.setValue( false );
+      JoyAxisRelativeTgl.setValue( %axisType $= "slider" );
    }
 }
 
@@ -2225,6 +2227,7 @@ function JoyAxisActionMenu::onSelect( %this, %id, %text )
    DeadZoneSlider.setActive( %on );
    DeadZoneText.setVisible( %on );
    InvertJoyAxisTgl.setActive( %on );
+   JoyAxisRelativeTgl.setActive( %on );
 }
 
 //------------------------------------------------------------------------------
@@ -2259,21 +2262,18 @@ function bindJoystickAxis( %axisIndex, %cmdIndex )
 
    %sens = JoyAxisSlider.getValue() * 100;
  	%delta = DeadZoneSlider.getValue() * %sens;
+   %flags = "S";
+   if ( InvertJoyAxisTgl.getValue() )
+      %flags = %flags @ "I";
+   if ( JoyAxisRelativeTgl.getValue() )
+      %flags = %flags @ "L";
  	if ( %delta > 0 )
    {
       %deadZone = "-" @ %delta SPC %delta;
-      if ( InvertJoyAxisTgl.getValue() )
- 		   moveMap.bind( "joystick", %axis, "SDI", %deadZone, %sens, %cmd );
-      else
- 		   moveMap.bind( "joystick", %axis, "SD", %deadZone, %sens, %cmd );
+      moveMap.bind( "joystick", %axis, %flags @ "D", %deadZone, %sens, %cmd );
    }
  	else
-   {
-      if ( InvertJoyAxisTgl.getValue() )
- 		   moveMap.bind( "joystick", %axis, "SI", %sens, %cmd );
-      else
- 		   moveMap.bind( "joystick", %axis, "S", %sens, %cmd );
-   }
+      moveMap.bind( "joystick", %axis, %flags, %sens, %cmd );
 }
 
 //------------------------------------------------------------------------------

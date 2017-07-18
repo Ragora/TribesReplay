@@ -53,6 +53,7 @@ function AIHuntersTask::assume(%task, %client)
    %task.setMonitorFreq(10);
    %task.pickupFlag = -1;
 	%task.engageTarget = -1;
+   %task.getHealth = -1;
    %task.capFlags = false;
 }
 
@@ -60,6 +61,7 @@ function AIHuntersTask::retire(%task, %client)
 {
    %task.pickupFlag = -1;
 	%task.engageTarget = -1;
+   %task.getHealth = -1;
    %task.capFlags = false;
 }
 
@@ -88,30 +90,66 @@ function AIHuntersTask::weight(%task, %client)
 	if (%nexusDist < 0)
 		%nexusDist = 32767;
 
+   //validate the health item
+   if (isObject(%task.getHealth))
+   {
+		if (%task.getHealth.isHidden())
+         %task.getHealth = -1;
+      else if ((%task.getHealth.getDataBlock().getName() $= "DeployedStationInventory") || 
+                        (%task.getHealth.getDataBlock().getName() $= "StationInventory"))
+      {
+         if (%task.getHealth.isDisabled() && !%task.getHealth.isPowered())
+            %task.getHealth = -1;
+      }
+   }
+
 	//find the dist to the closest health
 	%healthDist = 32767;
 	%damage = %client.player.getDamagePercent();
-	if (%damage > 0.7)
+   if (%client.flagCount < 5)
+      %damageTolerance = 0.7;
+   else
+      %damageTolerance = 0.25 + ((%client.getSkillLevel() * %client.getSkillLevel()) * 0.35);
+	if (%damage > %damageTolerance)
 	{
-		//search for a health kit
-		%closestHealth = AIFindSafeItem(%client, "Health");
-		if (%closestHealth > 0)
-		{
-			%healthDist = %client.getPathDistance(%closestHealth);
-			if (%healthDist < 0)
-				%healthDist = 32767;
-		}
+	   if (!isObject(%task.getHealth))
+	   {
+		   //search for a health kit
+		   %closestHealth = AIFindSafeItem(%client, "Health");
+		   if (isObject(%closestHealth))
+		   {
+			   %healthDist = %client.getPathDistance(%closestHealth.getWorldBoxCenter());
+			   if (%healthDist < 0)
+				   %healthDist = 32767;
+            else
+               %healthItem = %closestHealth;
+		   }
 
-		//else search for an inventory station
-		else
-		{
-			%result = AIFindClosestInventory(%client, false);
-			%closestInv = getWord(%result, 0);
-			%closestDist = getWord(%result, 1);
-			if (%closestInv > 0)
-				%healthDist = %closestDist;
-		}
-	}
+		   //else search for an inventory station
+		   else
+		   {
+			   %result = AIFindClosestInventory(%client, false);
+			   %closestInv = getWord(%result, 0);
+			   %closestDist = getWord(%result, 1);
+			   if (isObject(%closestInv))
+            {
+				   %healthDist = %closestDist;
+               %healthItem = %closestInv;
+            }
+		   }
+	   }
+      else
+      {
+         %healthDist = %client.getPathDistance(%task.getHealth.getWorldBoxCenter());
+         if (%healthDist < 0)
+         {
+            %healthDist = 32767;
+            %task.getHealth = -1;
+         }
+      }
+   }
+   else
+      %task.getHealth = -1;
 
 	//see if we need to cap - make sure we're actually able first 
 	%mustCap = false;
@@ -199,16 +237,15 @@ function AIHuntersTask::weight(%task, %client)
 
 		//If there's a tough or equal enemy nearby, or no flags, think about capping
 		//ie.  never cap if there are flags nearby and no enemies...
-		if ((AIClientIsAlive(%closestEnemy) && AIEngageWhoWillWin(%closestEnemy, %client) != %client) ||
+      if ((AICheckEnemyDanger(%client, 35) >= 3 && %damage > %damageTolerance) || 
 			(!isObject(%closestFlag) || %closestFlagDist > $AIHuntersCloseFlagDist))
 		{
 			//if we've got enough to take the lead, and there are no flags in the vicinity
 			if ((!%clientIsInLead && %needFlagsForLead == 0) || %highestScore == 0)
 				%mustCap = true;
 
-			//else if we're about to get our butt kicked and we're much closer to the nexus than to health...
-			else if ((AIClientIsAlive(%closestEnemy) && AIEngageWhoWillWin(%closestEnemy, %client) == %closestEnemy) &&
-																												(%healthDist - %nexusDist > 100))
+			//else if we're about to get our butt kicked...
+			else if (AIClientIsAlive(%closestEnemy) && AIEngageWhoWillWin(%closestEnemy, %client) == %closestEnemy)
 			{
 				%mustCap = true;
 			}
@@ -238,7 +275,9 @@ function AIHuntersTask::weight(%task, %client)
 					if (%needFlagsForLead == 0 || %numEnemyFlags < %needFlagsForLead || Game.teamMode)
 					{
 						if (%numToScore >= $AIHuntersMinFlagsToCap + (%client.getSkillLevel() * %client.getSkillLevel() * 15))
+                  {
 							%shouldCap = true;
+                  }
 					}
 				}
 			}
@@ -257,15 +296,19 @@ function AIHuntersTask::weight(%task, %client)
 		}
 	}
 
-	//if we've made it this far, we either can't cap, or there's no need to cap...
+   ////////////////////////////////////////////////////////////////////////////////////
+	//  if we've made it this far, we either can't cap, or there's no need to cap...  //
+   ////////////////////////////////////////////////////////////////////////////////////
 
-	//if we're engaging someone that's going to kill us, return 0 and let the patrol take over...
-	%currentTarget = %client.getEngageTarget();
-	if ((AIClientIsAlive(%currentTarget) && AIEngageWhoWillWin(%currentTarget, %client) == %currentTarget) && %healthDist < 300)
-	{
-		%task.setWeight(0);
-		return;
-	}
+   //see if we need health
+   if (%damage > %damageTolerance && (isObject(%healthItem) || isObject(%task.getHealth)))
+   {
+      if (!isObject(%task.getHealth))
+         %task.getHealth = %healthItem;
+
+      %task.setWeight($AIHuntersWeightNeedHealth);
+      return;
+   }
 	
 	//find the closest player with the most flags (that we have los to)
    %losTimeout = $AIClientMinLOSTime + ($AIClientLOSTimeout * %client.getSkillLevel());
@@ -348,6 +391,15 @@ function AIHuntersTask::monitor(%task, %client)
 			%client.setEngageTarget(%task.engageTarget);
    }
 
+	//see if we've should go for health...
+   else if (isObject(%task.getHealth))
+   {
+      %client.stepMove(%task.getHealth.getWorldBoxCenter(), 1);
+
+		if (AIClientIsAlive(%task.engageTarget))
+			%client.setEngageTarget(%task.engageTarget);
+   }
+
 	//else see if there's just someone to engage
 	else if (AIClientIsAlive(%task.engageTarget))
 		%client.stepEngage(%task.engageTarget);
@@ -360,6 +412,31 @@ function AIHuntersTask::monitor(%task, %client)
 //---------------------------------------------------------------------------
 // AIHunters utility functions
 //---------------------------------------------------------------------------
+
+//this function checks to make sure a bot isn't in a mosh pit of enemies
+//notice it cheats by not using LOS...  )
+function AICheckEnemyDanger(%client, %radius)
+{
+   %numEnemies = 0;
+   for (%i = 0; %i < ClientGroup.getCount(); %i++)
+   {
+      %cl = ClientGroup.getObject(%i);
+      if (AIClientIsAlive(%cl) && %cl.team != %client.team)
+      {
+         %dist = %client.getPathDistance(%cl.player.position);
+         if (%dist < %radius)
+         {
+            %winner = AIEngageWhoWillWin(%cl, %client);
+            if (%winner == %cl)
+               %numEnemies += 3;
+            else if (%winner != %client)
+               %numEnemies++;
+         }
+      }
+   }
+
+   return %numEnemies;
+}
 
 function AIFindClosestFlag(%client, %radius)
 {
@@ -436,7 +513,6 @@ function aih()
 
 function aiHlist()
 {
-	$timescale = 0.01;
 	%count = ClientGroup.getCount();
 	for (%i = 0; %i < %count; %i++)
 	{

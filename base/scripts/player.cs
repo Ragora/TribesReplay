@@ -946,7 +946,8 @@ datablock SplashData(PlayerSplash)
 };
 
 //----------------------------------------------------------------------------
-
+// Jet data
+//----------------------------------------------------------------------------
 datablock ParticleData(HumanArmorJetParticle)
 {
    dragCoefficient      = 0.0;
@@ -975,6 +976,62 @@ datablock ParticleEmitterData(HumanArmorJetEmitter)
    phiVariance      = 360;
    overrideAdvances = false;
    particles = "HumanArmorJetParticle";
+};
+
+datablock JetEffectData(HumanArmorJetEffect)
+{
+   texture        = "special/jetExhaust02";
+   coolColor      = "0.0 0.0 1.0 1.0";
+   hotColor       = "0.2 0.4 0.7 1.0";
+   activateTime   = 0.2;
+   deactivateTime = 0.05;
+   length         = 0.75;
+   width          = 0.2;
+   speed          = -15;
+   stretch        = 2.0;
+   yOffset        = 0.2;
+};
+
+datablock JetEffectData(HumanMediumArmorJetEffect)
+{
+   texture        = "special/jetExhaust02";
+   coolColor      = "0.0 0.0 1.0 1.0";
+   hotColor       = "0.2 0.4 0.7 1.0";
+   activateTime   = 0.2;
+   deactivateTime = 0.05;
+   length         = 0.75;
+   width          = 0.2;
+   speed          = -15;
+   stretch        = 2.0;
+   yOffset        = 0.4;
+};
+
+datablock JetEffectData(HumanLightFemaleArmorJetEffect)
+{
+   texture        = "special/jetExhaust02";
+   coolColor      = "0.0 0.0 1.0 1.0";
+   hotColor       = "0.2 0.4 0.7 1.0";
+   activateTime   = 0.2;
+   deactivateTime = 0.05;
+   length         = 0.75;
+   width          = 0.2;
+   speed          = -15;
+   stretch        = 2.0;
+   yOffset        = 0.2;
+};
+
+datablock JetEffectData(BiodermArmorJetEffect)
+{
+   texture        = "special/jetExhaust02";
+   coolColor      = "0.0 0.0 1.0 1.0";
+   hotColor       = "0.8 0.6 0.2 1.0";
+   activateTime   = 0.2;
+   deactivateTime = 0.05;
+   length         = 0.75;
+   width          = 0.2;
+   speed          = -15;
+   stretch        = 2.0;
+   yOffset        = 0.0;
 };
 
 //----------------------------------------------------------------------------
@@ -1194,7 +1251,8 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    jetSound = ArmorJetSound;
    wetJetSound = ArmorJetSound;
    jetEmitter = HumanArmorJetEmitter;
-
+   jetEffect = HumanArmorJetEffect;
+   
    boundingBox = "1.2 1.2 2.3";
    pickupRadius = 0.75;
    
@@ -1468,6 +1526,7 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    wetJetSound = ArmorWetJetSound;
 
    jetEmitter = HumanArmorJetEmitter;
+   jetEffect = HumanMediumArmorJetEffect;
 
    boundingBox = "1.45 1.45 2.4";
    pickupRadius = 0.75;
@@ -1561,7 +1620,7 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    max[DiscAmmo]           = 15;
    max[SniperRifle]        = 0;
    max[GrenadeLauncher]    = 1;
-   max[GrenadeLauncherAmmo]= 10;
+   max[GrenadeLauncherAmmo]= 12;
    max[Mortar]             = 0;
    max[MortarAmmo]         = 0;
    max[MissileLauncher]    = 1;
@@ -1863,6 +1922,7 @@ datablock PlayerData(LightFemaleHumanArmor) : LightMaleHumanArmor
 {
    shapeFile = "light_female.dts";
    waterBreathSound = WaterBreathFemaleSound;
+   jetEffect =  HumanMediumArmorJetEffect;
 };
 
 //----------------------------------------------------------------------------
@@ -1870,6 +1930,7 @@ datablock PlayerData(MediumFemaleHumanArmor) : MediumMaleHumanArmor
 {
    shapeFile = "medium_female.dts";
    waterBreathSound = WaterBreathFemaleSound;
+   jetEffect =  HumanArmorJetEffect;
 };
 
 //----------------------------------------------------------------------------
@@ -1891,9 +1952,11 @@ datablock PlayerData(LightMaleBiodermArmor) : LightMaleHumanArmor
 {
    shapeFile = "bioderm_light.dts";
    jetEmitter = BiodermArmorJetEmitter;
+   jetEffect =  BiodermArmorJetEffect;
+
 
    debrisShapeName = "bio_player_debris.dts";
-
+   
    //Foot Prints
    decalData   = LightBiodermFootprint;
    decalOffset = 0.3;
@@ -1913,6 +1976,7 @@ datablock PlayerData(MediumMaleBiodermArmor) : MediumMaleHumanArmor
 {
    shapeFile = "bioderm_medium.dts";
    jetEmitter = BiodermArmorJetEmitter;
+   jetEffect =  BiodermArmorJetEffect;
 
    debrisShapeName = "bio_player_debris.dts";
 
@@ -2423,7 +2487,7 @@ function Armor::doDismount(%this, %obj, %forced)
    // Position above dismount point
    %obj.setTransform(%pos);
    %obj.playAudio(0, UnmountVehicleSound);
-   %obj.applyImpulse(%pos, VectorScale(%impulseVec, %obj.getDataBlock().mass));
+   %obj.applyImpulse(%pos, VectorScale(%impulseVec, %obj.getDataBlock().mass * 3));
    %obj.setPilot(false);
    %obj.vehicleTurret = "";
 }
@@ -2440,6 +2504,7 @@ function Player::scriptKill(%player, %damageType)
 
 function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %amount, %damageType, %momVec)
 {
+//error("Armor::damageObject( "@%data@", "@%targetObject@", "@%sourceObject@", "@%position@", "@%amount@", "@%damageType@", "@%momVec@" )");
    if(%targetObject.invincible || %targetObject.getState() $= "Dead")
       return;
 
@@ -2476,11 +2541,15 @@ function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %am
 
    //if the source object is a player object, player's don't have sensor groups
    // if it's a turret, get the sensor group of the target
+   // if its a vehicle (of any type) use the sensor group
    if (%sourceClient)
       %sourceTeam = %sourceClient.getSensorGroup();
    else if(%damageType == $DamageType::Suicide)
       %sourceTeam = 0;
    else if(isObject(%sourceObject) && %sourceObject.getClassName() $= "Turret")
+      %sourceTeam = getTargetSensorGroup(%sourceObject.getTarget());
+   else if( isObject(%sourceObject) &&
+   	( %sourceObject.getClassName() $= "FlyingVehicle" || %sourceObject.getClassName() $= "WheeledVehicle" ) || %sourceObject.getClassName() $= "HoverVehicle")
       %sourceTeam = getTargetSensorGroup(%sourceObject.getTarget());
    else
    {
@@ -2534,7 +2603,8 @@ function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %am
           %damageType == $DamageType::Mortar ||
           %damageType == $DamageType::MortarTurret ||
           %damageType == $DamageType::BomberBombs ||
-          %damageType == $DamageType::SatchelCharge )
+          %damageType == $DamageType::SatchelCharge ||
+          %damageType == $DamageType::Missile )     
       {
          if( %previousDamage >= 0.35 ) // only if <= 35 percent damage remaining
          {

@@ -672,6 +672,7 @@ function FlashGrenadeThrown::onThrow(%this, %gren)
 
 function detonateFlashGrenade(%hg)
 {
+   %thrower = %hg.sourceObject.client;
    %hg.setDamageState(Destroyed);
    %hgt = %hg.getTransform();
    %plX = firstword(%hgt);
@@ -720,7 +721,17 @@ function detonateFlashGrenade(%hg)
          %dotFactor = ((1.0 - ((%difAcos - 45.0) / 15.0)) * 0.5) + 0.5;
 
       %totalFactor = %dotFactor * %distFactor;
-      %damage.setWhiteOut(%damage.getWhiteOut() + %totalFactor);
+	  %prevWhiteOut = %damage.getWhiteOut();
+
+		if(!%prevWhiteOut)
+			if(!$teamDamage)
+			{
+				error("checking for message");
+				if(%damage.client != %thrower && %damage.client.team == %thrower.team)
+					messageClient(%damage.client, 'teamWhiteOut', '\c1You were hit by %1\'s whiteout grenade.', getTaggedString(%thrower.name)); 
+			}
+		
+      %damage.setWhiteOut( %prevWhiteOut + %totalFactor);
    }
    %hg.schedule(500, "delete");
 }

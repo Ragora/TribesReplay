@@ -204,6 +204,7 @@ function createAIDebugDlg()
 			visible = "True";
 			setFirstResponder = "True";
 			helpTag = "0";
+         bypassHideCursor = "1";
 		   
 			new DebugView(aiDebug)
 		   {
@@ -235,6 +236,13 @@ function ToggleAIDebug(%make)
 			createAIDebugDlg();
 	      Canvas.pushDialog(aiDebugDlg, 70);
          $AIDebugActive = true;
+
+         //make sure we're debuging the correct client
+         if (LocalClientConnection.getControlObject() == LocalClientConnection.camera)
+         {
+            if (isObject(LocalClientConnection.observeClient))
+               aidebug(LocalClientConnection.observeClient);
+         }
       }
    }
 }

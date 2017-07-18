@@ -18,6 +18,7 @@ $AIWeightPatrolling        	= 2000;
 
 //Hunters weights...
 $AIHuntersWeightMustCap			= 4690;
+$AIHuntersWeightNeedHealth		= 4625;
 $AIHuntersWeightShouldCap		= 4425;
 $AIHuntersWeightMustEngage		= 4450;
 $AIHuntersWeightShouldEngage	= 4325;

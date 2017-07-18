@@ -60,6 +60,7 @@ function LaunchToolbarMenu::onSelect(%this, %id, %text)
       //case 8: // Play Recording
       //   Canvas.pushDialog(RecordingsDlg);
       case 9: // Quit
+         IRCClient::quit();
          LaunchTabView.closeAllTabs();
          quit();
       //case 10: // Log Off

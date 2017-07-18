@@ -378,7 +378,7 @@ function throwGrenade( %val )
       commandToServer( 'startThrowCount' );
    else
       commandToServer( 'endThrowCount' );
-   $mvTriggerCount4++;
+   $mvTriggerCount4 += $mvTriggerCount4 & 1 == %val ? 2 : 1;
 }
 
 function placeMine( %val )
@@ -387,7 +387,7 @@ function placeMine( %val )
       commandToServer( 'startThrowCount' );
    else
       commandToServer( 'endThrowCount' );
-   $mvTriggerCount5++;
+   $mvTriggerCount5 += $mvTriggerCount5 & 1 == %val ? 2 : 1;
 }
 
 function placeBeacon( %val )
@@ -842,7 +842,8 @@ function togglePlayerArmor(%val)
 
 function jump(%val)
 {
-   $mvTriggerCount2++;
+   //$mvTriggerCount2++;
+   $mvTriggerCount2 += $mvTriggerCount2 & 1 == %val ? 2 : 1;
 }
 
 // moveMap.bind(keyboard, "alt c", playCel);
@@ -863,17 +864,17 @@ function jump(%val)
 
 function mouseFire(%val)
 {
-   $mvTriggerCount0++;
+   $mvTriggerCount0 += $mvTriggerCount0 & 1 == %val ? 2 : 1;
 }
 
 function mouseJet(%val)
 {
-   $mvTriggerCount3++;  // Fire
+   $mvTriggerCount3 += $mvTriggerCount3 & 1 == %val ? 2 : 1;
 }
 
 function altTrigger(%val)
 {
-   $mvTriggerCount1++;  // Alt Trigger
+   $mvTriggerCount1 += $mvTriggerCount1 & 1 == %val ? 2 : 1;
 }
 
 function testLOSTarget()

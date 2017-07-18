@@ -607,7 +607,7 @@ function DispatchLaunchMode()
    }
 }
 
-if($LaunchMode !$= "Demo")
-   VerifyCDCheck(DispatchLaunchMode);
-else
+// if($LaunchMode !$= "Demo")
+//    VerifyCDCheck(DispatchLaunchMode);
+// else
    DispatchLaunchMode();

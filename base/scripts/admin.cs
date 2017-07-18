@@ -1,5 +1,57 @@
-function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %arg3, %arg4, %playerVote)
+// These have been secured against all those wanna-be-hackers. 
+$VoteMessage["VoteAdminPlayer"] = "Admin Player";
+$VoteMessage["VoteKickPlayer"] = "Kick Player";
+$VoteMessage["BanPlayer"] = "Ban Player";
+$VoteMessage["VoteChangeMission"] = "change the mission to";
+$VoteMessage["VoteTeamDamage", 0] = "enable team damage";
+$VoteMessage["VoteTeamDamage", 1] = "disable team damage";
+$VoteMessage["VoteTournamentMode"] = "change the server to";
+$VoteMessage["VoteChangeTimeLimit"] = "change the time limit to";
+$VoteMessage["VoteMatchStart"] = "start the match";
+$VoteMessage["VoteGreedMode", 0] = "enable Hoard Mode";
+$VoteMessage["VoteGreedMode", 1] = "disable Hoard Mode";
+$VoteMessage["VoteHoardMode", 0] = "enable Greed Mode";
+$VoteMessage["VoteHoardMode", 1] = "disable Greed Mode";
+
+function serverCmdStartNewVote(%client, %typeName, %arg1, %arg2, %arg3, %arg4, %playerVote)
 {
+   // haha - who gets the last laugh... No admin for you!
+   if( %typeName $= "VoteAdminPlayer" && !$Host::allowAdminPlayerVotes )
+      return;
+
+   %typePass = true;
+   
+   // if not a valid vote, turn back. 
+   if( $VoteMessage[ %typeName ] $= "" && %typeName !$= "VoteTeamDamage" )
+      if( $VoteMessage[ %typeName ] $= "" && %typeName !$= "VoteHoardMode" )
+         if( $VoteMessage[ %typeName ] $= "" && %typeName !$= "VoteGreedMode" )
+            %typePass = false;
+      
+   if(( $VoteMessage[ %typeName, $TeamDamage ] $= "" && %typeName $= "VoteTeamDamage" ))
+      %typePass = false;
+
+   if( !%typePass )
+      return; // -> bye ;)
+
+   if( %typeName $= "BanPlayer" )
+      if( !%client.isSuperAdmin )
+         return; // -> bye ;)
+   
+   %isAdmin = ( %client.isAdmin || %client.isSuperAdmin );
+   
+   // keep these under the server's control. I win.
+   if( !%playerVote )
+      %actionMsg = $VoteMessage[ %typeName ];
+   else if( %typeName $= "VoteTeamDamage" || %typeName $= "VoteGreedMode" || %typeName $= "VoteHoardMode" )
+      %actionMsg = $VoteMessage[ %typeName, $TeamDamage ];
+   else
+      %actionMsg = $VoteMessage[ %typeName ];
+   
+   if( !%client.canVote && !%isAdmin )
+   {
+      return;
+   }
+   
    if ( !%client.isAdmin || ( ( %arg1.isAdmin && ( %client != %arg1 ) ) ) )
    {
       %teamSpecific = false;
@@ -9,9 +61,9 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
          %clientsVoting = 0;
 
 			//send a message to everyone about the vote...
-         if (%playerVote)
+         if ( %playerVote )
 	      {   
-            %teamSpecific = Game.numTeams > 1;
+            %teamSpecific = ( %typeName $= "VoteKickPlayer" );
             %kickerIsObs = %client.team == 0;
             %kickeeIsObs = %arg1.team == 0;
             %sameTeam = %client.team == %arg1.team;
@@ -27,9 +79,9 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
                messageClient(%client, '', "\c2Player votes must be team based.");
                return;
             }
-            
-            // kicking and banning are team specific
-            if(%typeName $= "VoteKickPlayer" || %typeName $= "VoteBanPlayer")
+
+            // kicking is team specific
+            if( %typeName $= "VoteKickPlayer" )
             {
                if(%arg1.isSuperAdmin)
                {
@@ -38,6 +90,8 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
                }
                
                Game.kickClient = %arg1;
+               Game.kickGuid = %arg1.guid;
+               Game.kickTeam = %arg1.team;
                if(%teamSpecific)
                {   
                   for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ ) 
@@ -204,19 +258,29 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
             messageClient(%client, '', '\c2You can not %1 %2, %3 is a Super Admin!', %actionMsg, %arg1.name, %gender);
       }      
    }
+   
+   %client.canVote = false;
+   %client.rescheduleVote = schedule( ($Host::voteSpread * 1000) + ($Host::voteTime * 1000) , 0, "resetVotePrivs", %client );        
+}
+
+function resetVotePrivs( %client )
+{
+   //messageClient( %client, '', 'You may now start a new vote.');
+   %client.canVote = true;
+   %client.rescheduleVote = "";
 }
 
 function serverCmdSetPlayerVote(%client, %vote)
 {
    // players can only vote once
-   if(%client.vote $= "")
+   if( %client.vote $= "" )
    {
       %client.vote = %vote;
       if(%client.vote == 1)
          messageAll('addYesVote', "");
       else
          messageAll('addNoVote', "");
-   
+
       commandToClient(%client, 'voteSubmitted', %vote);
    }
 }
@@ -254,6 +318,7 @@ function calcVotes(%typeName, %arg1, %arg2, %arg3, %arg4)
    eval( "Game." @ %typeName @ "(false,\"" @ %arg1 @ "\",\"" @ %arg2 @ "\",\"" @ %arg3 @ "\",\"" @ %arg4 @ "\");" );
    Game.scheduleVote = "";
    Game.kickClient = "";
+   clearVotes();
 }
 
 function clearVotes()
@@ -282,7 +347,6 @@ function setModeFFA( %mission, %missionType )
 {
    if( $Host::TournamentMode )
    {
-      $TeamDamage = 1;
       $Host::TournamentMode = false;
       
       if( isObject( Game ) )
@@ -298,7 +362,6 @@ function setModeTournament( %mission, %missionType )
 {
    if( !$Host::TournamentMode )
    {
-      $TeamDamage = 1;
       $Host::TournamentMode = true;
       
       if( isObject( Game ) )

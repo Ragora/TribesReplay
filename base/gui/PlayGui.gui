@@ -405,6 +405,11 @@ new GameTSCtrl(PlayGui) {
       markerImageNames[2] = "small_diamond";    // assigned task
       markerImageNames[3] = "small_cross";      // client waypoint
       markerImageNames[4] = "small_circle";     // target
+	  
+	  missileMarker1 = "gui/RET_missile_marker";
+	  missileMarker2 = "gui/RET_missile_marker_red";
+	  missileFlash1 = "gui/RET_missile_horizflash_red";
+	  missileFlash2 = "gui/RET_missile_vertflash_red";
    };
 
    new GuiControl(dashboardHud) {

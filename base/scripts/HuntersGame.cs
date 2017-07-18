@@ -508,7 +508,7 @@ function HuntersYardSaleTimeOut(%waypoint)
    %waypoint.delete();
 }
 
-function HuntersGame::updateFlagHoarder(%game)
+function HuntersGame::updateFlagHoarder(%game, %eventClient)
 {
    %hoarder = -1;
    %maxFlags = -1;
@@ -526,30 +526,36 @@ function HuntersGame::updateFlagHoarder(%game)
    //if we found our hoarder, set the waypoint, otherwise, delete it
    if (%hoarder > 0)
    {
-      if (!isObject(%game.hoarderWaypoint))
+      //only update if the event (capping, picking up flag, etc...) was the actual hoarder
+      if (!isObject(%game.flagHoarder) || %game.flagHoarder == %eventClient)
       {
-         //create a waypoint at player's location...
-         %game.hoarderWaypoint = new WayPoint()
+         if (!isObject(%game.hoarderWaypoint))
          {
-            position = %hoarder.player.position;
-            rotation = "1 0 0 0";
-            scale = "1 1 1";
-            name = "Flag Hoarder Was Here";
-            dataBlock = "WayPointMarker";
-            lockCount = "0";
-            homingCount = "0";
-            team = 0;
-         };
+            //create a waypoint at player's location...
+            %game.hoarderWaypoint = new WayPoint()
+            {
+               position = %hoarder.player.position;
+               rotation = "1 0 0 0";
+               scale = "1 1 1";
+               name = "Flag Hoarder Was Here";
+               dataBlock = "WayPointMarker";
+               lockCount = "0";
+               homingCount = "0";
+               team = 0;
+            };
 
-         //add the waypoint to the cleanup group
-         MissionCleanup.add(%game.hoarderWaypoint);
+            //add the waypoint to the cleanup group
+            MissionCleanup.add(%game.hoarderWaypoint);
+         }
+
+         //set the position
+         %game.flagHoarder = %hoarder;
+         %game.hoarderWaypoint.setTransform(%hoarder.player.getWorldBoxCenter() SPC "0 0 1 0");
       }
-
-      //set the position
-      %game.hoarderWaypoint.setTransform(%hoarder.player.getWorldBoxCenter() SPC "0 0 1 0");
    }
    else if (isObject(%game.hoarderWaypoint))
    {
+      %game.flaghoarder = "";
       %game.hoarderWaypoint.delete();
    }
 }
@@ -634,7 +640,7 @@ function HuntersGame::playerTouchFlag(%game, %player, %flag)
       }
 
       //new tracking - *everyone* automatically tracks the "flag hoarder" if they have at least 15 flags
-      %game.updateFlagHoarder();
+      %game.updateFlagHoarder(%client);
    }
 }
 
@@ -875,7 +881,7 @@ function Nexus::onCollision(%data, %obj, %colObj)
             messageAllExcept(%client, -1, 'MsgHuntPlayerScored', '\c2%1 returned 1 flag for 1 point.~wfx/misc/nexus_cap.wav', %client.name, 1);
 
             //new tracking - *everyone* automatically tracks the "flag hoarder" if they have at least 15 flags
-            Game.updateFlagHoarder();
+            Game.updateFlagHoarder(%client);
          }
 
          //add the nexus effect
@@ -892,7 +898,7 @@ function Nexus::onCollision(%data, %obj, %colObj)
             messageAllExcept(%client, -1, 'MsgHuntPlayerScored', '\c2%1 returned %2 flags for %3 points.~wfx/misc/nexus_cap.wav', %client.name, %numToScore, %totalScore);
 
             //new tracking - *everyone* automatically tracks the "flag hoarder" if they have at least 15 flags
-            Game.updateFlagHoarder();
+            Game.updateFlagHoarder(%client);
          }
 
          //add the nexus effect
@@ -909,7 +915,7 @@ function Nexus::onCollision(%data, %obj, %colObj)
             messageAllExcept(%client, -1, 'MsgHuntPlayerScored', '\c2%1 returned %2 flags for %3 points.~wfx/misc/nexus_cap.wav', %client.name, %numToScore, %totalScore);
 
             //new tracking - *everyone* automatically tracks the "flag hoarder" if they have at least 15 flags
-            Game.updateFlagHoarder();
+            Game.updateFlagHoarder(%client);
          }
 
          //add the nexus effect
@@ -1391,7 +1397,7 @@ function HuntersGame::throwFlags(%game, %player)
    messageClient(%client, 'MsgHuntYouHaveFlags', "", 0);
 
    //new tracking - *everyone* automatically tracks the "flag hoarder" if they have at least 15 flags
-   %game.updateFlagHoarder();
+   %game.updateFlagHoarder(%client);
 }
 
 function HuntersGame::dropFlag(%game, %player)

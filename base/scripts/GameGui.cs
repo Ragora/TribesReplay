@@ -348,7 +348,19 @@ function GMJ_Browser::onDatabaseRow( %this, %row, %isLastRow, %key )
    if ( %isLastRow )
    {
       GMJ_StatusText.setValue( "Querying the master server..." );
-      queryMasterServer( $JoinGamePort, 0, "Any", "Any", 0, 255, 16, 0xFFFFFFFF, 0, 0, %this.buddyList );
+      queryMasterServer( 
+            $JoinGamePort,    // Port 
+            0,                // Flags 
+            "Any",            // Rules Set 
+            "Any",            // Mission Type  
+            0,                // Min Players 
+            255,              // Max Players
+            16,               // Max Bots 
+            0xFFFFFFFF,       // Region Mask 
+            0,                // Max Ping
+            0,                // Min CPU Speed
+            0,                // Filter flags
+            %this.buddyList );
       GMJ_StopBtn.setActive( true );
       %this.buddyList = "";
    }

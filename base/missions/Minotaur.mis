@@ -381,7 +381,7 @@ new SimGroup(MissionGroup) {
 					locked = "true";
 			};
 			new TSStatic() {
-				position = "-23.79 -325.171 130.635";
+				position = "-23.79 -325.171 129.2";
 				rotation = "0 0 1 108.719";
 				scale = "1.3 1.3 1.3";
 				shapeName = "xorg5.dts";

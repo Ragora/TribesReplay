@@ -236,7 +236,7 @@ function VehicleData::onDestroyed(%data, %obj, %prevState)
          %flingee.damage(0, %obj.getPosition(), 0.4, $DamageType::Explosion); 
       }
    }
-   %obj.schedule(300, "delete");
+   %obj.schedule(600, "delete");
 }
 
 function radiusVehicleExplosion(%data, %vehicle)
@@ -1087,7 +1087,7 @@ function VehicleData::damageObject(%data, %targetObject, %sourceObject, %positio
    else
       %sourceTeam = %sourceObject ? getTargetSensorGroup(%sourceObject.getTarget()) : -1;
 
-   if(!$teamDamage && (%targetTeam == %sourceTeam))
+   if(!$teamDamage && (%targetTeam == %sourceTeam) && %targetObject.getDamagePercent() > 0.5)
       return;
 
    // Scale damage type & include shield calculations...

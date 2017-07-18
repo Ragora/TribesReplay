@@ -280,7 +280,7 @@ function LobbyPlayerPopup::onSelect( %this, %id, %text )
       
       case 4:  // Ban
          MessageBoxYesNo( "CONFIRM", "Are you sure you want to ban " @ %this.player.name @ "?",
-               "lobbyPlayerVote( VoteBanPlayer, \"BAN player\", " @ %this.player.clientId @ " );" );
+               "lobbyPlayerVote( BanPlayer, \"BAN player\", " @ %this.player.clientId @ " );" );
 
       case 5: // force observer
          forceToObserver(%this.player.clientId);   
@@ -466,7 +466,7 @@ function handleSuperAdminPlayerMessage( %msgType, %msgString, %client )
       %player.isSuperAdmin = true;
       %player.isAdmin = true;
    }
-   alxPlay(VotePassSound, 0, 0, 0);
+   alxPlay(AdminForceSound, 0, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -537,7 +537,7 @@ function lobbyVote()
                return; 
                
             case "VoteMatchStart":
-               startNewVote( "VoteMatchStart", "Started the Match" );
+               startNewVote( "VoteMatchStart" );
                schedule( 100, 0, lobbyReturnToGame );
                return;   
 
@@ -572,7 +572,6 @@ function lobbyVote()
          if( !LobbyVoteMenu.tourneyChoose )
          {
             startNewVote( "VoteChangeMission", 
-                  "change the mission to", 
                   %text,                        // Mission display name 
                   LobbyVoteMenu.typeName,       // Mission type display name 
                   $clVoteCmd[%id],              // Mission id                              
@@ -581,7 +580,6 @@ function lobbyVote()
          else
          {
             startNewVote( "VoteTournamentMode", 
-                  "change the server to",
                   %text,                        // Mission display name
                   LobbyVoteMenu.typeName,       // Mission type display name
                   $clVoteCmd[%id],              // Mission id
@@ -592,7 +590,7 @@ function lobbyVote()
          return;
 
       case "timeLimit":
-         startNewVote( "VoteChangeTimeLimit", "change the time limit to", $clVoteCmd[%id] );
+         startNewVote( "VoteChangeTimeLimit", $clVoteCmd[%id] );
          LobbyVoteMenu.reset();
          return;
    }
@@ -613,6 +611,6 @@ function LobbyVoteMenu::reset( %this )
 //------------------------------------------------------------------------------
 function lobbyPlayerVote(%voteType, %actionMsg, %playerId)
 {
-   startNewVote(%voteType, %actionMsg, %playerId, 0, 0, 0, true);
+   startNewVote(%voteType, %playerId, 0, 0, 0, true);
    fillLobbyVoteMenu();
 }

@@ -2338,7 +2338,11 @@ function DefaultGame::onAIKilledClient(%game, %clVictim, %clAttacker, %damageTyp
 //------------------------------------------------------------------------------
 function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %key )
 {
+   if( !%targetClient.matchStartReady )
+      return;
+
    %isAdmin = ( %client.isAdmin || %client.isSuperAdmin );
+
    %isTargetSelf = ( %client == %targetClient );
    %isTargetAdmin = ( %targetClient.isAdmin || %targetClient.isSuperAdmin );
    %isTargetBot = %targetClient.isAIControlled();
@@ -2349,10 +2353,7 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
    else if ( %client.isAdmin )
       %outrankTarget = !%targetClient.isAdmin;
       
-   if( ! %targetClient.matchStartReady )
-      return;
-      
-   if( %client.isSuperAdmin )
+   if( %client.isSuperAdmin && %targetClient.guid != 0 )
    {   
       messageClient( %client, 'MsgPlayerPopupItem', "", %key, "addAdmin", "", 'Add to Server Admin List', 10);
       messageClient( %client, 'MsgPlayerPopupItem', "", %key, "addSuperAdmin", "", 'Add to Server SuperAdmin List', 11);
@@ -2366,7 +2367,6 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
       else
          messageClient( %client, 'MsgPlayerPopupItem', "", %key, "MutePlayer", "", 'Mute', 1);
 
-      //if ( !%isTargetBot )
       if ( !%isTargetBot && %client.canListenTo( %targetClient ) )
       {
          if ( %client.getListenState( %targetClient ) )
@@ -2375,6 +2375,9 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
             messageClient( %client, 'MsgPlayerPopupItem', "", %key, "ListenPlayer", "", 'Enable Voice Com', 9 );
       }
    }
+
+   if( !%client.canVote && !%isAdmin )
+      return;
    
    // regular vote options on players
    if ( %game.scheduleVote $= "" && !%isAdmin && !%isTargetAdmin )
@@ -2442,6 +2445,7 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
 //------------------------------------------------------------------------------
 function DefaultGame::sendGameVoteMenu( %game, %client, %key )
 {
+   %isAdmin = ( %client.isAdmin || %client.isSuperAdmin );
    %multipleTeams = %game.numTeams > 1;
 
    // no one is going anywhere until this thing starts
@@ -2465,6 +2469,9 @@ function DefaultGame::sendGameVoteMenu( %game, %client, %key )
      // if( $HostGameBotCount > 0 && %totalSlots > 0 && %client.isAdmin)
          //messageClient( %client, 'MsgVoteItem', "", %key, 'Addbot', "", 'Add a Bot' );
    }
+
+   if( !%client.canVote && !%isAdmin )
+      return;
    
    if ( %game.scheduleVote $= "" )
    {
@@ -2604,16 +2611,16 @@ function DefaultGame::voteTeamDamage(%game, %admin)
    %cause = "";
    if(%admin) 
    {
-      if($teamDamage) 
+      if($teamDamage)
       {
-         messageAll('MsgAdminForce', '\c2The Admin has disabled team damage.');  
-         $teamDamage = 0;
+         messageAll('MsgAdminForce', '\c2The Admin has disabled team damage.');   
+         $Host::TeamDamageOn = $TeamDamage = 0;
          %setto = "disabled";
       }
       else 
       {
          messageAll('MsgAdminForce', '\c2The Admin has enabled team damage.');   
-         $teamDamage = 1;
+         $Host::TeamDamageOn = $TeamDamage = 1;
          %setto = "enabled";
       }
       %cause = "(admin)";
@@ -2626,13 +2633,13 @@ function DefaultGame::voteTeamDamage(%game, %admin)
          if($teamDamage) 
          {
             messageAll('MsgVotePassed', '\c2Team damage was disabled by vote.'); 
-            $teamDamage = 0;
+            $Host::TeamDamageOn = $TeamDamage = 0;
             %setto = "disabled";
          }
          else 
          {
             messageAll('MsgVotePassed', '\c2Team damage was enabled by vote.');  
-            $teamDamage = 1;
+            $Host::TeamDamageOn = $TeamDamage = 1;
             %setto = "enabled";
          }
          %cause = "(vote)";
@@ -2698,12 +2705,12 @@ function DefaultGame::voteMatchStart( %game, %admin)
    {
       if(!%ready)
       {   
-         messageClient( %client, 'msgClient', "\c2No players are ready yet.");
+         messageClient( %client, 'msgClient', '\c2No players are ready yet.');
          return;
       }
       else
       {
-         messageAll('msgMissionStart', 'The admin has forced the match to start.');
+         messageAll('msgMissionStart', '\c2The admin has forced the match to start.');
          %cause = "(admin)";
          startTourneyCountdown();
       }
@@ -2712,7 +2719,7 @@ function DefaultGame::voteMatchStart( %game, %admin)
    {
       if(!%ready)
       {
-         messageAll( 'msgClient', "\c2Vote passed to start Match, but no players are ready yet.");
+         messageAll( 'msgClient', '\c2Vote passed to start match, but no players are ready yet.');
          return;
       }
       else
@@ -2740,7 +2747,7 @@ function DefaultGame::voteFFAMode( %game, %admin, %client )
    
    if (%admin) 
    {
-      messageAll('MsgAdminForce', "\c2The Admin has switched the server to Free For All mode.", %client);   
+      messageAll('MsgAdminForce', '\c2The Admin has switched the server to Free For All mode.', %client);   
       setModeFFA($CurrentMission, $CurrentMissionType); 
       %cause = "(admin)";
    }
@@ -2749,7 +2756,7 @@ function DefaultGame::voteFFAMode( %game, %admin, %client )
       %totalVotes = %game.totalVotesFor + %game.totalVotesAgainst;
       if(%totalVotes > 0 && (%game.totalVotesFor / (ClientGroup.getCount() - $HostGameBotCount)) > ($Host::VotePasspercent / 100)) 
       {
-         messageAll('MsgVotePassed', "\c2Server switched to Free For All mode by vote.", %client); 
+         messageAll('MsgVotePassed', '\c2Server switched to Free For All mode by vote.', %client); 
          setModeFFA($CurrentMission, $CurrentMissionType); 
          %cause = "(vote)";
       }
@@ -2834,49 +2841,43 @@ function DefaultGame::voteKickPlayer(%game, %admin, %client)
 {
    %cause = "";
    %name = %client.nameBase;
+
    if(%admin) 
    {
-      kick(%client, %admin);
+      kick(%client, %admin, %client.guid );
       %cause = "(admin)";
    }
    else 
    {
-      %team = %client.team;
-      %totalVotes = %game.votesFor[%team] + %game.votesAgainst[%team];
-      if(%totalVotes > 0 && (%game.votesFor[%team] / %totalVotes) > ($Host::VotePasspercent / 100)) 
+      //%team = %client.team;
+      %totalVotes = %game.votesFor[%game.kickTeam] + %game.votesAgainst[%game.kickTeam];
+      if(%totalVotes > 0 && (%game.votesFor[%game.kickTeam] / %totalVotes) > ($Host::VotePasspercent / 100)) 
       {
-         kick(%client, %admin);
+         kick(%client, %admin, Game.kickGuid);
          %cause = "(vote)";
       }
       else
          messageAll('MsgVoteFailed', '\c2Kick player vote did not pass');
    }
+   
+   %game.kickTeam = "";
+   %game.kickGuid = "";
+
    if(%cause !$= "")
       logEcho(%name@" (cl "@%client@") kicked "@%cause);
 }
 
 //------------------------------------------------------------------------------
-function DefaultGame::voteBanPlayer(%game, %admin, %client)
+function DefaultGame::banPlayer(%game, %admin, %client)
 {
    %cause = "";
    %name = %client.nameBase;
-   if(%admin) 
+   if( %admin ) 
    {
-      ban(%client, %admin);
+      ban( %client, %admin );
       %cause = "(admin)";
    }
-   else 
-   {
-      %team = %client.team;
-      %totalVotes = %game.votesFor[%team] + %game.votesAgainst[%team];
-      if((%totalVotes > 0) && (%game.votesFor[%team] / %totalVotes) > ($Host::VotePasspercent / 100)) 
-      {
-         ban(%client, %admin);
-         %cause = "(vote)";
-      }
-      else
-         messageAll('MsgVoteFailed', '\c2Ban player vote did not pass.');
-   }
+   
    if(%cause !$= "")
       logEcho(%name@" (cl "@%client@") banned "@%cause);
 }
@@ -2885,11 +2886,10 @@ function DefaultGame::voteBanPlayer(%game, %admin, %client)
 function DefaultGame::voteAdminPlayer(%game, %admin, %client)
 {
    %cause = "";
-   %name = getTaggedString(%client.name);
    
    if (%admin) 
    {
-      messageAll('MsgAdminAdminPlayer', "\c2The Admin made " @ %name @ " an admin.", %client);  
+      messageAll('MsgAdminAdminPlayer', '\c2The Admin made %2 an admin.', %client, %client.name);  
       %client.isAdmin = 1;
       %cause = "(admin)";
    }
@@ -2898,12 +2898,12 @@ function DefaultGame::voteAdminPlayer(%game, %admin, %client)
       %totalVotes = %game.totalVotesFor + %game.totalVotesAgainst;
       if(%totalVotes > 0 && (%game.totalVotesFor / (ClientGroup.getCount() - $HostGameBotCount)) > ($Host::VotePasspercent / 100)) 
       {
-         messageAll('MsgAdminPlayer', "\c2" @ %name @ " was made an admin by vote.");  
+         messageAll('MsgAdminPlayer', '\c2%2 was made an admin by vote.', %client, %client.name);  
          %client.isAdmin = 1;
          %cause = "(vote)";
       }
       else
-         messageAll('MsgVoteFailed', '\c2Admin vote did not pass.');
+         messageAll('MsgVoteFailed', '\c2Vote to make %1 an admin did not pass.', %client.name);
    }
    if(%cause !$= "")
       logEcho(%client.nameBase@" (cl "@%client@") made admin "@%cause);

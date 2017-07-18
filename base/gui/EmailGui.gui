@@ -7,6 +7,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	variable = "$ShellBackground";
 	helpTag = "0";
 	useVariable = "1";
@@ -15,10 +17,12 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 		profile = "ShellPaneProfile";
 		horizSizing = "width";
 		vertSizing = "height";
-		position = "12 46";
-		extent = "620 390";
+		position = "12 13";
+		extent = "620 423";
 		minExtent = "48 92";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
 		text = "EMAIL";
 		maxLength = "255";
@@ -32,6 +36,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "90 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailEditBlocks();";
 			helpTag = "0";
 			text = "BLOCK LIST";
@@ -45,6 +51,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "93 38";
 			minExtent = "32 38";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailBlockSender();";
 			helpTag = "0";
 			text = "TRACK SENDER";
@@ -58,6 +66,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "65 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailMessageDelete();";
 			accelerator = "delete";
 			helpTag = "0";
@@ -72,6 +82,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "75 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailMessageForward();";
 			helpTag = "0";
 			text = "FORWARD";
@@ -85,6 +97,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "80 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailMessageReplyAll();";
 			helpTag = "0";
 			text = "REPLY ALL";
@@ -98,6 +112,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "60 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailMessageReply();";
 			helpTag = "0";
 			text = "REPLY";
@@ -111,6 +127,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "53 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailMessageNew();";
 			helpTag = "0";
 			text = "NEW";
@@ -121,9 +139,11 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			horizSizing = "width";
 			vertSizing = "height";
 			position = "18 70";
-			extent = "583 301";
+			extent = "583 334";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			columns = "0";
 			rows = "0 146";
@@ -142,6 +162,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 				extent = "583 142";
 				minExtent = "8 72";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				fixedHorizontal = "1";
 				vertSpacerBitmap = "gui/shll_vertspacer";
@@ -155,6 +177,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 					extent = "583 126";
 					minExtent = "8 52";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					willFirstRespond = "0";
 					hScrollBar = "alwaysOff";
@@ -171,6 +195,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 						extent = "559 118";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 
 						new GuiControl() {
@@ -178,9 +204,11 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 							horizSizing = "right";
 							vertSizing = "bottom";
 							position = "0 0";
-							extent = "8 8";
+							extent = "8 59";
 							minExtent = "8 8";
 							visible = "1";
+							hideCursor = "0";
+							bypassHideCursor = "0";
 							helpTag = "0";
 						};
 					};
@@ -193,6 +221,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 					extent = "563 138";
 					minExtent = "8 20";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 					startScrollRegion = "4 0";
 					headerBitmap = "gui/server_tabs";
@@ -209,6 +239,7 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 					drawSeparators = "0";
 					headerSort = "1";
 					allowReposition = "1";
+					noSelect = "0";
 					iconBase = "gui/email";
 					unreadFontType = "Univers Bold";
 					unreadFontSize = "16";
@@ -221,9 +252,11 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 				horizSizing = "left";
 				vertSizing = "height";
 				position = "0 146";
-				extent = "583 155";
+				extent = "583 188";
 				minExtent = "24 52";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				willFirstRespond = "1";
 				hScrollBar = "alwaysOff";
@@ -238,9 +271,11 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 					horizSizing = "right";
 					vertSizing = "bottom";
 					position = "7 7";
-					extent = "553 141";
+					extent = "553 174";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 
 					new GuiMLTextCtrl(EMailInboxBodyText) {
@@ -248,13 +283,16 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 						horizSizing = "width";
 						vertSizing = "bottom";
 						position = "0 0";
-						extent = "551 18";
+						extent = "551 248";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						helpTag = "0";
 						lineSpacing = "2";
 						allowColorChars = "0";
 						maxChars = "-1";
+						deniedSound = "InputDeniedSound";
 					};
 				};
 			};
@@ -267,6 +305,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "100 38";
 			minExtent = "32 38";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailEditBuddys();";
 			helpTag = "0";
 			text = "TRACKING LIST";
@@ -280,6 +320,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "105 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailBlockSender();";
 			helpTag = "0";
 			text = "BLOCK SENDER";
@@ -293,6 +335,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "75 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "GetEmailBtnClick();";
 			helpTag = "0";
 			text = "GET MAIL";
@@ -306,6 +350,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "101 30";
 			minExtent = "26 27";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EMailGui.ButtonClick(0);";
 			helpTag = "0";
 			text = "INBOX";
@@ -320,6 +366,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "110 30";
 			minExtent = "26 27";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			text = "SENT MAIL";
 			maxLength = "255";
@@ -333,6 +381,8 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 			extent = "112 30";
 			minExtent = "26 27";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "EmailGui.buttonClick(1);";
 			helpTag = "0";
 			text = "DELETED MAIL";

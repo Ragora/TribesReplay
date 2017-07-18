@@ -1,7 +1,6 @@
 if($Host::TimeLimit $= "")
    $Host::TimeLimit = 20;
 
-$teamDamage = 1;
 $SB::WODec = 0.004; // whiteout 
 $SB::DFDec = 0.02; // damageFlash
 
@@ -35,7 +34,7 @@ function CreateServer(%mission, %missionType)
    exec("scripts/turret.cs");
    exec("scripts/weapTurretCode.cs");
    exec("scripts/pack.cs");
-   exec("scripts/vehicles/vehicle_spec_fx.cs");		// Must exist before other vehicle files or CRASH BOOM
+   exec("scripts/vehicles/vehicle_spec_fx.cs");    // Must exist before other vehicle files or CRASH BOOM
    exec("scripts/vehicles/serverVehicleHud.cs");
    exec("scripts/vehicles/vehicle_shrike.cs");
    exec("scripts/vehicles/vehicle_bomber.cs");
@@ -43,7 +42,7 @@ function CreateServer(%mission, %missionType)
    exec("scripts/vehicles/vehicle_wildcat.cs");
    exec("scripts/vehicles/vehicle_tank.cs");
    exec("scripts/vehicles/vehicle_mpb.cs");
-   exec("scripts/vehicles/vehicle.cs");				// Must be added after all other vehicle files or EVIL BAD THINGS
+   exec("scripts/vehicles/vehicle.cs");            // Must be added after all other vehicle files or EVIL BAD THINGS
    exec("scripts/ai.cs");
    exec("scripts/item.cs");
    exec("scripts/station.cs");
@@ -69,7 +68,7 @@ function CreateServer(%mission, %missionType)
    for(%file = findFirstFile(%search); %file !$= ""; %file = findNextFile(%search))
    {
       %type = fileBase(%file); // get the name of the script      
-	  exec("scripts/" @ %type @ ".cs");
+     exec("scripts/" @ %type @ ".cs");
    }
    
    $missionSequence = 0;
@@ -88,8 +87,19 @@ function CreateServer(%mission, %missionType)
       schedule(0,0,startHeartbeat);
 
    // setup the bots for this server
+   if( $Host::BotsEnabled )
+      initGameBots( %mission, %missionType ); 
+      
+   // load the mission...
+   loadMission(%mission, %missionType, true);
+}
+
+function initGameBots( %mission, %mType )
+{
+   echo( "adding bots..." );
+   
    AISystemEnabled( false );
-   if ( $HostGameBotCount > 0 && %missionType !$= "SinglePlayer" )
+   if ( $Host::BotCount > 0 && %mType !$= "SinglePlayer" )
    {
       // Make sure this mission is bot enabled:
       for ( %idx = 0; %idx < $HostMissionCount; %idx++ )
@@ -100,20 +110,23 @@ function CreateServer(%mission, %missionType)
 
       if ( $BotEnabled[%idx] )
       {
-         if ( $HostGameBotCount > 16 )
+         if ( $Host::BotCount > 16 )
             $HostGameBotCount = 16;
-         if ( $HostGameBotCount > $Host::MaxPlayers - 1 )
+         else
+            $HostGameBotCount = $Host::BotCount;
+
+         if ( $Host::BotCount > $Host::MaxPlayers - 1 )
             $HostGameBotCount = $Host::MaxPlayers - 1;
 
-		   //set the objective reassessment timeslice var
-		   $AITimeSliceReassess = 0;
+         //set the objective reassessment timeslice var
+         $AITimeSliceReassess = 0;
          aiConnectMultiple( $HostGameBotCount, $Host::MinBotDifficulty, $Host::MaxBotDifficulty, -1 );
       }
       else
+      {   
          $HostGameBotCount = 0;
+      }
    }
-      
-   loadMission(%mission, %missionType, true);
 }
 
 function findNextCycleMission()
@@ -165,27 +178,25 @@ function DestroyServer()
    $missionRunning = false;
    allowConnections(false);
    stopHeartbeat();
-	MissionGroup.delete();
-	MissionCleanup.delete();
-	if(isObject(game))
-	{
-		game.deactivatePackages();
-		game.delete();
-	}
+   MissionGroup.delete();
+   MissionCleanup.delete();
+   if(isObject(game))
+   {
+      game.deactivatePackages();
+      game.delete();
+   }
    if(isObject($ServerGroup))
       $ServerGroup.delete();
 
    // delete all the connections:
    while(ClientGroup.getCount())
-	{
-		%client = ClientGroup.getObject(0);
-		if (%client.isAIControlled())
-			%client.drop();
-		else
-			%client.delete();
-	}
-
-   %HostGuidList = "";
+   {
+      %client = ClientGroup.getObject(0);
+      if (%client.isAIControlled())
+         %client.drop();
+      else
+         %client.delete();
+   }
 
    // delete all the data blocks... 
    // this will cause problems if there are any connections
@@ -209,7 +220,7 @@ function Disconnect()
 
 function DisconnectedCleanup()
 {
-	// clear the chat hud message vector
+   // clear the chat hud message vector
    HudMessageVector.clear();
    if ( isObject( PlayerListGroup ) )
       PlayerListGroup.delete();
@@ -225,9 +236,9 @@ function DisconnectedCleanup()
    clientCmdclearBottomPrint();
    clientCmdClearCenterPrint();
 
-	// clear the inventory and weapons hud
-	weaponsHud.clearAll();
-	inventoryHud.clearAll();
+   // clear the inventory and weapons hud
+   weaponsHud.clearAll();
+   inventoryHud.clearAll();
    
    // back to the launch screen
    Canvas.setContent(LaunchGui);
@@ -240,10 +251,11 @@ function DisconnectedCleanup()
    if ( !EmailGui.checkingEmail && EmailGui.checkSchedule $= "" )
       CheckEmail( true );
 
-	IRCClient::onLeaveGame();
+   IRCClient::onLeaveGame();
 }
 
-function kick(%client, %admin)
+// we pass the guid as well, in case this guy leaves the server.
+function kick( %client, %admin, %guid )
 {
    if(%admin)   
       messageAll( 'MsgAdminForce', '\c2The Admin has kicked %1.', %client.name );
@@ -252,21 +264,30 @@ function kick(%client, %admin)
    
    messageClient(%client, 'onClientKicked', "");
    messageAllExcept( %client, -1, 'MsgClientDrop', "", %client.name, %client );
-
-	if (%client.isAIControlled())
+	
+	if( %client.isAIControlled() )
 	{
       $HostGameBotCount--;
 		%client.drop();
 	}
 	else
 	{
-	   // kill and delete this client
-	   if( isObject(%client.player) )
-	      %client.player.scriptKill(0);
-	      
-	   %client.schedule(700, "delete");
-   
-	   BanList::add( %client.guid, %client.getAddress(), $Host::KickBanTime );
+      %count = ClientGroup.getCount();
+      for( %i = 0; %i < %count; %i++ )
+      {
+         %cl = ClientGroup.getObject( %i );
+	      if( %cl.guid == %guid )
+         {
+	         // kill and delete this client
+	         if( isObject( %cl.player ) )
+	            %cl.player.scriptKill(0);
+            
+	         %cl.schedule(700, "delete");
+	         
+	         BanList::add( %guid, "0", $Host::KickBanTime );
+	         Game.kickGuid = "";
+         }   
+	   }
 	}
 }
 
@@ -342,18 +363,18 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
    }
          
    // Sex/Race defaults
-	switch$ ( %raceGender )
-	{
-		case "Human Male":
-			%client.sex = "Male";
-			%client.race = "Human";
-		case "Human Female":
-			%client.sex = "Female";
-			%client.race = "Human";
-		case "Bioderm":
-			%client.sex = "Male";
-			%client.race = "Bioderm";
-	}
+   switch$ ( %raceGender )
+   {
+      case "Human Male":
+         %client.sex = "Male";
+         %client.race = "Human";
+      case "Human Female":
+         %client.sex = "Female";
+         %client.race = "Human";
+      case "Bioderm":
+         %client.sex = "Male";
+         %client.race = "Bioderm";
+   }
    %client.armor = "Light";
 
    // Override the connect name if this server does not allow smurfs:
@@ -373,7 +394,6 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
       else
          %name = "\cp\c7" @ %tag @ "\c6" @ %name @ "\co";
 
-      addToServerGuidList( %client.guid );
       %client.sendGuid = %client.guid;
    }
    else
@@ -426,16 +446,16 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
          %name = %nameTry;
       }
 
-		%smurfName = %name;
+      %smurfName = %name;
       // Tag the name with the "smurf" color:
       %name = "\cp\c8" @ %name @ "\co";
    }
 
    %client.name = addTaggedString(%name);
-	if(%client.isSmurf)
-		%client.nameBase = %smurfName;
-	else
-		%client.nameBase = %realName;
+   if(%client.isSmurf)
+      %client.nameBase = %smurfName;
+   else
+      %client.nameBase = %realName;
    %client.justConnected = true;
    %client.isReady = false;
 
@@ -449,8 +469,8 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
    // full reset of client target manager
    clientResetTargets(%client, false);
 
-	%client.voice = %voice;
-	%client.voiceTag = addtaggedString(%voice);
+   %client.voice = %voice;
+   %client.voiceTag = addtaggedString(%voice);
    
    //set the voice pitch based on a lookup table from their chosen voice
    %client.voicePitch = getValidVoicePitch(%voice, %voicePitch);
@@ -468,18 +488,18 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
    for(%cl = 0; %cl < %count; %cl++)
    {
       %recipient = ClientGroup.getObject(%cl);
-	   if((%recipient != %client))
+      if((%recipient != %client))
       {
          // These should be "silent" versions of these messages...
-	      messageClient(%client, 'MsgClientJoin', "", 
-	            %recipient.name, 
-	            %recipient, 
-	            %recipient.target, 
-	            %recipient.isAIControlled(), 
-	            %recipient.isAdmin, 
-	            %recipient.isSuperAdmin, 
-	            %recipient.isSmurf, 
-	            %recipient.sendGuid);
+         messageClient(%client, 'MsgClientJoin', "", 
+               %recipient.name, 
+               %recipient, 
+               %recipient.target, 
+               %recipient.isAIControlled(), 
+               %recipient.isAdmin, 
+               %recipient.isSuperAdmin, 
+               %recipient.isSmurf, 
+               %recipient.sendGuid);
 
          messageClient(%client, 'MsgClientJoinTeam', "", %recipient.name, $teamName[%recipient.team], %recipient, %recipient.team ); 
       }
@@ -535,8 +555,6 @@ function GameConnection::onDrop(%client, %reason)
    if(isObject(Game))
       Game.onClientLeaveGame(%client);
    
-   if ( !%client.isSmurf )
-      removeFromServerGuidList( %client.guid );
    if ( $CurrentMissionType $= "SinglePlayer" ) 
       messageAllExcept(%client, -1, 'MsgClientDrop', "", %client.name, %client);
    else
@@ -551,27 +569,28 @@ function GameConnection::onDrop(%client, %reason)
    $HostGamePlayerCount--;
    
    // reset the server if everyone has left the game
-   if( $HostGamePlayerCount == 0 && $Host::Dedicated)
+   if( $HostGamePlayerCount - $HostGameBotCount == 0 && $Host::Dedicated)
       schedule(0, 0, "resetServerDefaults");
 }
 
 function dismountPlayers()
 {
-	// make sure all palyers are dismounted from vehicles and have normal huds
+   // make sure all palyers are dismounted from vehicles and have normal huds
    %count = ClientGroup.getCount();
    for(%cl = 0; %cl < %count; %cl++)
    {
       %client = ClientGroup.getObject(%cl);
-		%player = %client.player;
-		if(%player.isMounted())	{
-			%player.unmount();
-		   commandToClient(%client, 'setHudMode', 'Standard', "", 0);
-		}
+      %player = %client.player;
+      if(%player.isMounted()) {
+         %player.unmount();
+         commandToClient(%client, 'setHudMode', 'Standard', "", 0);
+      }
    }
 }
 
 function loadMission( %missionName, %missionType, %firstMission )
 {
+   cls();
    buildLoadInfo( %missionName, %missionType );
    
    // reset all of these
@@ -624,7 +643,7 @@ function loadMissionStage1(%missionName, %missionType, %firstMission)
    
    $CurrentMission = %missionName;
    $CurrentMissionType = %missionType;
-	
+   
    createInvBanCount();
    echo("LOADING MISSION: " @ %missionName);
    
@@ -707,6 +726,12 @@ function loadMissionStage2()
    $MatchStarted = false;
    $CountdownStarted = false;
    AISystemEnabled( false );
+
+   // Set the team damage here so that the game type can override it:
+   if ( $Host::TournamentMode )
+      $TeamDamage = 1;
+   else
+      $TeamDamage = $Host::TeamDamageOn;
 
    Game.missionLoadDone();
    
@@ -807,11 +832,12 @@ function GameConnection::dataBlocksDone( %client, %missionSequence )
       return;
    %client.currentPhase = 2;
 
-   // targets require ShapeBase datablocks (only needed on first connection)
-   if(!%client.receivedTargets)
+   // only want to set this once... (targets will not be updated/sent until a 
+   // client has this flag set)
+   if(!%client.getReceivedDataBlocks())
    {
+      %client.setReceivedDataBlocks(true);
       sendTargetsToClient(%client);
-      %client.receivedTargets = true;
    }
 
    commandToClient(%client, 'MissionStartPhase2', $missionSequence);
@@ -863,6 +889,11 @@ function serverSetClientTeamState( %client )
    {
       dataBlock = Observer;
    };
+
+   if( isObject( %client.rescheduleVote ) )
+      Cancel( %client.rescheduleVote );
+   %client.canVote = true;
+   %client.rescheduleVote = "";
    
    MissionCleanup.add( %client.camera ); // we get automatic cleanup this way.
    
@@ -954,16 +985,16 @@ function serverSetClientTeamState( %client )
 function HideHudHACK(%visible)
 {
    //compassHud.setVisible(%visible);
-	//enerDamgHud.setVisible(%visible);
+   //enerDamgHud.setVisible(%visible);
    retCenterHud.setVisible(%visible);
    reticleFrameHud.setVisible(%visible);
    //invPackHud.setVisible(%visible);
    weaponsHud.setVisible(%visible);
-	outerChatHud.setVisible(%visible);
-	objectiveHud.setVisible(%visible);
+   outerChatHud.setVisible(%visible);
+   objectiveHud.setVisible(%visible);
    chatHud.setVisible(%visible);
    navHud.setVisible(%visible);
-	//watermarkHud.setVisible(%visible);
+   //watermarkHud.setVisible(%visible);
    hudClusterBack.setVisible(%visible);
    inventoryHud.setVisible(%visible);
    clockHUD.setVisible(%visible);
@@ -985,10 +1016,10 @@ function ServerPlay3D(%profile,%transform)
 function clientCmdSetFirstPerson(%value)
 {
    $firstPerson = %value;
-	if(%value)
-		ammoHud.setVisible(true);
-	else
-		ammoHud.setVisible(false);
+   if(%value)
+      ammoHud.setVisible(true);
+   else
+      ammoHud.setVisible(false);
 }
 
 function clientCmdVehicleMount()
@@ -1013,7 +1044,7 @@ function serverCmdSAD( %client, %password )
       %client.isAdmin = true;
       %client.isSuperAdmin = true;
       %name = getTaggedString( %client.name );
-      MessageAll( 'MsgAdminForce', "\c2" @ %name @ " has become Admin by force.", %client );   
+      MessageAll( 'MsgSuperAdminPlayer', '\c2%2 has become a Super Admin by force.', %client, %client.name );   
    }
 }
 
@@ -1284,7 +1315,7 @@ function serverCmdChangePlayersTeam( %clientRequesting, %client, %team)
          }
       }
       else
-	      commandToClient(%client, 'setHudMode', 'Standard', "", 0);
+         commandToClient(%client, 'setHudMode', 'Standard', "", 0);
       
       %multiTeam = (Game.numTeams > 1);
       if(%multiTeam)
@@ -1310,16 +1341,16 @@ function serverCmdForcePlayerToObserver( %clientRequesting, %client )
 
 function serverCmdTogglePlayerMute(%client, %who)
 {
-	if (%client.muted[%who])
-	{
-		%client.muted[%who] = false;
-		messageClient(%client, 'MsgPlayerUnmuted', '%1 has been unmuted.', %who.name);
-	}
-	else
-	{
-		%client.muted[%who] = true;
-		messageClient(%client, 'MsgPlayerMuted', '%1 has been muted.', %who.name);
-	}
+   if (%client.muted[%who])
+   {
+      %client.muted[%who] = false;
+      messageClient(%client, 'MsgPlayerUnmuted', '%1 has been unmuted.', %who.name);
+   }
+   else
+   {
+      %client.muted[%who] = true;
+      messageClient(%client, 'MsgPlayerMuted', '%1 has been muted.', %who.name);
+   }
 }
 
 //--------------------------------------------------------------------------
@@ -1400,7 +1431,7 @@ function serverCmdClientPickedTeam( %client, %option )
    %client.observerMode = "pregame";
    %client.notReady = true;
    %client.camera.getDataBlock().setMode( %client.camera, "pre-game", %client.player );
-	commandToClient(%client, 'setHudMode', 'Observer');
+   commandToClient(%client, 'setHudMode', 'Observer');
    
    
    %client.setControlObject( %client.camera );
@@ -1448,7 +1479,7 @@ function dumpGameString()
 
 function isOnAdminList(%client)
 {
-   if( !%totalRecords = getRecordCount( $Host::AdminList ) )
+   if( !%totalRecords = getFieldCount( $Host::AdminList ) )
    {   
       return false;
    }
@@ -1456,7 +1487,6 @@ function isOnAdminList(%client)
    for(%i = 0; %i < %totalRecords; %i++)
    {
       %record = getField( getRecord( $Host::AdminList, 0 ), %i);
-      echo( "record: " @ %record @ "guid: " @ %client.guid );
       if(%record == %client.guid)
          return true;
    }
@@ -1466,7 +1496,7 @@ function isOnAdminList(%client)
 
 function isOnSuperAdminList(%client)
 {
-   if( !%totalRecords = getRecordCount( $Host::superAdminList ) )
+   if( !%totalRecords = getFieldCount( $Host::superAdminList ) )
    {   
       return false;
    }
@@ -1474,7 +1504,6 @@ function isOnSuperAdminList(%client)
    for(%i = 0; %i < %totalRecords; %i++)
    {
       %record = getField( getRecord( $Host::superAdminList, 0 ), %i);
-      echo( "record: " @ %record @ "guid: " @ %client.guid );
       if(%record == %client.guid)
          return true;
    }
@@ -1487,13 +1516,15 @@ function ServerCmdAddToAdminList( %admin, %client )
    if( !%admin.isSuperAdmin )
       return;
    
-   %count = getRecordCount( $Host::AdminList );
+   %count = getFieldCount( $Host::AdminList );
 
    for ( %i = 0; %i < %count; %i++ )
    {
-      %id = getRecord( $Host::AdminList, %i );
+      %id = getField( $Host::AdminList, %i );
       if ( %id == %client.guid )
+      {   
          return;  // They're already there!
+      }
    }
 
    if( %count == 0 )
@@ -1507,11 +1538,11 @@ function ServerCmdAddToSuperAdminList( %admin, %client )
    if( !%admin.isSuperAdmin )
       return;
 
-   %count = getRecordCount( $Host::SuperAdminList );
+   %count = getFieldCount( $Host::SuperAdminList );
 
    for ( %i = 0; %i < %count; %i++ )
    {
-      %id = getRecord( $Host::SuperAdminList, %i );
+      %id = getField( $Host::SuperAdminList, %i );
       if ( %id == %client.guid )
          return;  // They're already there!
    }
@@ -1699,8 +1730,8 @@ function Countdown(%timeMS)
    $countdownStarted = true;
    Game.matchStart = Game.schedule( %timeMS, "StartMatch" );
 
-	if (%timeMS > 30000)
-	   notifyMatchStart(%timeMS);
+   if (%timeMS > 30000)
+      notifyMatchStart(%timeMS);
    
    if(%timeMS >= 30000)
       Game.thirtyCount = schedule(%timeMS - 30000, Game, "notifyMatchStart", 30000);
@@ -1785,7 +1816,7 @@ function CancelCountdown()
 
 function CancelEndCountdown()
 {
-	//cancel the mission end countdown...
+   //cancel the mission end countdown...
    if(Game.endsixtyCount !$= "")
       cancel(Game.endsixtyCount);
    if(Game.endthirtyCount !$= "")
@@ -1824,38 +1855,53 @@ function resetServerDefaults()
    exec( "scripts/ServerDefaults.cs" );
    exec( "prefs/ServerPrefs.cs" );
 
-   loadMission( $CurrentMission, $CurrentMissionType );   
+   // kick all bots...
+   removeAllBots();
+   
+   // add bots back if they were there before..
+   if( $Host::botsEnabled )
+      initGameBots( $Host::Map, $Host::MissionType );
+   
+   // load the missions
+   loadMission( $Host::Map, $Host::MissionType );   
+}
+
+function removeAllBots()
+{
+   while( ClientGroup.getCount() )
+	{
+		%client = ClientGroup.getObject(0);
+		if(%client.isAIControlled())
+			%client.drop();
+      else
+         %client.delete();
+   }
 }
 
 //------------------------------------------------------------------------------
-// Guid list maintenance functions:
-function addToServerGuidList( %guid )
+function getServerGUIDList()
 {
-   %count = getFieldCount( $HostGuidList );
+   %count = ClientGroup.getCount();
    for ( %i = 0; %i < %count; %i++ )
    {
-      if ( getField( $HostGuidList, %i ) == %guid )
-         return;
-   }
-
-   $HostGuidList = $HostGuidList $= "" ? %guid : $HostGuidList TAB %guid;
-}
-
-function removeFromServerGuidList( %guid )
-{
-   %count = getFieldCount( $HostGuidList );
-   for ( %i = 0; %i < %count; %i++ )
-   {
-      if ( getField( $HostGuidList, %i ) == %guid )
+      %cl = ClientGroup.getObject( %i );
+      if ( isObject( %cl ) && !%cl.isSmurf && !%cl.isAIControlled() )
       {
-         $HostGuidList = removeField( $HostGuidList, %i );
-         return;
+         %guid = getField( %cl.getAuthInfo(), 3 );
+         if ( %guid != 0 )
+         {
+            if ( %list $= "" )
+               %list = %guid;
+            else
+               %list = %list TAB %guid; 
+         }
       }
    }
 
-   // Huh, didn't find it.
+   return( %list );
 }
 
+//------------------------------------------------------------------------------
 // will return the first admin found on the server 
 function getAdmin()
 {
@@ -1874,20 +1920,20 @@ function getAdmin()
 
 function serverCmdSetPDAPose(%client, %val)
 {
-	// if client is in a vehicle, return
-	if(%client.player.isMounted())
-		return;
+   // if client is in a vehicle, return
+   if(%client.player.isMounted())
+      return;
 
-	if(%val)
-	{
-		// play "PDA" animation thread on player
-		%client.player.setActionThread("PDA", false);
-	}
-	else
-	{
-		// cancel PDA animation thread
-		%client.player.setActionThread("root", true);
-	}
+   if(%val)
+   {
+      // play "PDA" animation thread on player
+      %client.player.setActionThread("PDA", false);
+   }
+   else
+   {
+      // cancel PDA animation thread
+      %client.player.setActionThread("root", true);
+   }
 }
 
 function serverCmdProcessGameLink(%client, %arg1, %arg2, %arg3, %arg4, %arg5)

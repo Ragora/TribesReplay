@@ -387,23 +387,32 @@ $ELFFireSound = 3;
 
 function ELFProjectileData::zapTarget(%data, %projectile, %target, %targeter)
 {
-   %oldERate = %target.getRechargeRate();
-   %target.setRechargeRate(%oldERate - %data.drainEnergy);
-   %projectile.checkELFStatus(%data, %target, %targeter);
+	%oldERate = %target.getRechargeRate();
+	%target.teamDamageStateOnZap = $teamDamage;
+	
+	if(!%target.teamDamageStateOnZap && %target.team == %targeter.team)
+		%target.setRechargeRate(%oldERate);	
+	else	 
+		%target.setRechargeRate(%oldERate - %data.drainEnergy);
+	%projectile.checkELFStatus(%data, %target, %targeter);
 }
 
 function ELFProjectileData::unzapTarget(%data, %projectile, %target, %targeter)
 {
-   cancel(%projectile.ELFrecur);
+	cancel(%projectile.ELFrecur);
 	%target.stopAudio($ELFZapSound);
-   %targeter.stopAudio($ELFFireSound);
+	%targeter.stopAudio($ELFFireSound);
 	%target.zapSound = false;
 	%targeter.zappingSound = false;
-   if(!%target.isDisabled())
-   {
-      %oldERate = %target.getRechargeRate();
-      %target.setRechargeRate(%oldERate + %data.drainEnergy);
-   }
+	
+	if(!%target.isDisabled())
+	{
+		%oldERate = %target.getRechargeRate();
+		if(!%target.teamDamageStateOnZap && %target.team == %targeter.team)
+			%target.setRechargeRate(%oldERate);
+		else	 
+			%target.setRechargeRate(%oldERate + %data.drainEnergy);
+	}
 }
 
 function ELFProjectileData::targetDestroyedCancel(%data, %projectile, %target, %targeter)
@@ -549,7 +558,14 @@ function RadiusExplosion(%explosionSource, %position, %radius, %damage, %impulse
       if(%amount > 0)
          %data.damageObject(%targetObject, %sourceObject, %position, %amount, %damageType, %momVec);
       else if( %explosionSource.getDataBlock().getName() $= "ConcussionGrenadeThrown" && %data.getClassName() $= "PlayerData" )
-         %data.applyConcussion( %dist, %radius, %sourceObject, %targetObject ); 
+	  {
+         %data.applyConcussion( %dist, %radius, %sourceObject, %targetObject );
+ 	  	
+ 	  	if(!$teamDamage && %sourceObject != %targetObject && %sourceObject.client.team == %targetObject.client.team)
+ 	  	{
+			messageClient(%targetObject.client, 'msgTeamConcussionGrenade', '\c1You were hit by %1\'s concussion grenade.', getTaggedString(%sourceObject.client.name));
+		}
+	  }
       
       if( %doImpulse )
          %targetObject.applyImpulse(%position, %impulseVec);

@@ -14,6 +14,12 @@ function VehicleHud::onWake( %this )
    hudMap.blockBind( moveMap, toggleScoreScreen );
    hudMap.blockBind( moveMap, toggleCommanderMap );
    hudMap.bindCmd( keyboard, escape, "", "VehicleHud.onCancel();" );
+   hudMap.bindCmd( keyboard, "1", "", "VehicleHud.quickBuy( 0 );" );
+   hudMap.bindCmd( keyboard, "2", "", "VehicleHud.quickBuy( 1 );" );
+   hudMap.bindCmd( keyboard, "3", "", "VehicleHud.quickBuy( 2 );" );
+   hudMap.bindCmd( keyboard, "4", "", "VehicleHud.quickBuy( 3 );" );
+   hudMap.bindCmd( keyboard, "5", "", "VehicleHud.quickBuy( 4 );" );
+   hudMap.bindCmd( keyboard, "6", "", "VehicleHud.quickBuy( 5 );" );
    hudMap.push();
 }
 
@@ -52,6 +58,17 @@ function VehicleHud::loadHud( %obj, %tag )
    $Hud[%tag] = VehicleHud;
    $Hud[%tag].childGui = VIN_Root;
    $Hud[%tag].parent = VIN_Root;
+}
+
+//------------------------------------------------------------------------------
+function VehicleHud::quickBuy( %this, %id )
+{
+   if ( isObject( $Hud['vehicleHud'].data[%id, 0] ) )
+   {
+      if ( %this.selId != %id )
+         eval( $Hud['vehicleHud'].data[%id, 0].command );
+      %this.onBuy();
+   }
 }
 
 //------------------------------------------------------------------------------

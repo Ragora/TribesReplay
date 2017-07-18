@@ -318,7 +318,7 @@ function onConnectionToServerLost( %msg )
 }
 
 // Client voting functions:
-function startNewVote(%name, %actionMsg, %arg1, %arg2, %arg3, %arg4, %playerVote)
+function startNewVote(%name, %arg1, %arg2, %arg3, %arg4, %playerVote)
 {
    if ( %arg1 $= "" )
       %arg1 = 0;
@@ -331,7 +331,7 @@ function startNewVote(%name, %actionMsg, %arg1, %arg2, %arg3, %arg4, %playerVote
    if ( %playerVote $= "" )
       %playerVote = 0;
 
-   commandToServer('startNewVote', %name, %actionMsg, %arg1, %arg2, %arg3, %arg4, %playerVote);   
+   commandToServer('startNewVote', %name, %arg1, %arg2, %arg3, %arg4, %playerVote);   
 }
 
 function setPlayerVote(%vote)

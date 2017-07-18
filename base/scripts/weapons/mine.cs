@@ -2,7 +2,7 @@
 // mine script
 // ----------------------------------------------
 
-$TeamDeployableMax[MineDeployed]		= 15;
+$TeamDeployableMax[MineDeployed]		= 20;
 
 // ----------------------------------------------
 // force-feedback datablocks
@@ -338,88 +338,4 @@ datablock ItemData(Mine)
    computeCRC = true;
 
 };
-
-//--------------------------------------
-//datablock ItemData(MineAirDeployed)
-//{
-//   className = Weapon;
-//   shapeFile = "mine_anti_air.dts";
-//   mass = 1;
-//   elasticity = 0.2;
-//   friction = 0.9;
-//   pickupRadius = 3;
-//   maxDamage = 0.1;
-//   explosion = MineExplosion;
-//   indirectDamage = 1.3;
-//   damageRadius = 15.0;
-//   radiusDamageType = $DamageType::Mine;
-//   kickBackStrength = 3000;
-//};
-//
-//datablock ItemData(MineAir)
-//{
-//   className = HandInventory;
-//   catagory = "Handheld";
-//   shapeFile = "mine_anti_air.dts";
-//   mass = 1;
-//   elasticity = 0.2;
-//   friction = 0.8;
-//   pickupRadius = 1;
-//};
-
-//--------------------------------------
-//datablock ItemData(MineLandDeployed)
-//{
-//   className = Weapon;
-//   shapeFile = "mine_anti_land.dts";
-//   mass = 7;
-//   elasticity = 0.2;
-//   friction = 0.8;
-//   pickupRadius = 3;
-//   maxDamage = 0.1;
-//   explosion = MineExplosion;
-//   indirectDamage = 1.3;
-//   damageRadius = 15.0;
-//   radiusDamageType = $DamageType::Mine;
-//   kickBackStrength = 3000;
-//};
-//
-//datablock ItemData(MineLand)
-//{
-//   className = HandInventory;
-//   catagory = "Handheld";
-//   shapeFile = "mine_anti_land.dts";
-//   mass = 3;
-//   elasticity = 0.2;
-//   friction = 0.7;
-//   pickupRadius = 1;
-//};
-
-//--------------------------------------
-//datablock ItemData(MineStickyDeployed)
-//{
-//   className = Weapon;
-//   shapeFile = "mine_sticky.dts";
-//   mass = 7;
-//   elasticity = 0.2;
-//   friction = 0.8;
-//   pickupRadius = 3;
-//   maxDamage = 0.1;
-//   explosion = MineExplosion;
-//   indirectDamage = 1.3;
-//   damageRadius = 15.0;
-//   radiusDamageType = $DamageType::Mine;
-//   kickBackStrength = 3000;
-//};
-//
-//datablock ItemData(MineSticky)
-//{
-//   className = HandInventory;
-//   catagory = "Handheld";
-//   shapeFile = "mine_sticky.dts";
-//   mass = 3;
-//   elasticity = 0.2;
-//   friction = 0.7;
-//   pickupRadius = 1;
-//};
 

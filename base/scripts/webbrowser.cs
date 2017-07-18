@@ -211,27 +211,28 @@ function GetProfileHdr(%type, %line)
 		TProfileHdr.appending = getField(%line,3);
 		TProfileHdr.recruiting = getField(%line,4);
 		TProfileHdr.tribegfx = getField(%line,5);
+		TProfileHdr.twa = 0;
 		TProfileHdr.Desc = "";
+
 		TL_Profile.setVisible(1);
 		TL_Roster.setVisible(1);
-		TProfileHdr.twa = getField(%line,6);
+
+       for(%checkID=0;%checkID<getField(getRecord($GuidTribes,0),0);%checkID++)
+       {
+           if(getField(getRecord($GuidTribes,1+%checkID),3) == 1401)
+               TProfileHdr.twa = 4;
+           else if(TProfileHdr.tribe_id == getField(getRecord($GuidTribes,1+%checkID),3))
+				if(TProfileHdr.twa == 0)
+           			TProfileHdr.twa =  getField(getRecord($GuidTribes,1+%checkID),4);
+       }
+   
 		TL_News.setVisible(TProfileHdr.twa);
 		TL_Invites.setVisible(TProfileHdr.twa);
-		switch (TProfileHdr.twa)
-		{
-			case 0:
-				TW_Admin.setVisible(0);
-			case 1:
-				TW_Admin.setVisible(0);
-			case 2:
-				TW_Admin.setVisible(1);
-			case 3:
-				TW_Admin.setVisible(1);
-			case 4:
-				TW_Admin.setVisible(1);
-			default:
-				TW_Admin.setVisible(0);
-		}
+
+		if(TProfileHdr.twa > 1)
+			TW_Admin.setVisible(1);
+		else
+			TW_Admin.setVisible(0);
 	}
 	else
 	{
@@ -249,18 +250,23 @@ function GetProfileHdr(%type, %line)
 		if(getField(getRecord(WonGetAuthInfo(),0),3)==getField(%line,3))
 			TProfileHdr.twa = 1;
 
-		for(%i=0;%i<getField(getRecord(wonGetAuthInfo,1),0);%i++)
-		{
-			if(getField(getRecord(wonGetAuthInfo(),2+%i),3)==1401 && getField(getRecord(wonGetAuthInfo(),2+%i),4) >= 2)
-				TProfileHdr.twa = 1;
-		}
+       for(%checkID=0;%checkID<getField(getRecord($GuidTribes,0),0);%checkID++)
+       {
+           if(getField(getRecord($GuidTribes,1+%checkID),3) == 1401 && getField(getRecord($GuidTribes,1+%checkID),4) >= 2)
+               TProfileHdr.twa = 1;
+       }
 
 		W_Profile.setVisible(1);
 		W_History.setVisible(1);
 		W_Tribes.setVisible(1);
+
 		%isMe = getField(getRecord(wonGetAuthInfo(),0),0)$=twbTitle.name;
 		TProfileHdr.isMe = %isMe;
-		if(%isMe)
+
+//		if(!TProfileHdr.twa)
+		TProfileHdr.twa = TProfileHdr.isMe;
+
+		if(TProfileHdr.twa)
 		{
 			W_BuddyList.setText("BUDDYLIST");
 			W_BuddyList.setVisible(1);
@@ -361,6 +367,7 @@ function LinkEditWarriorDesc(%player, %handler)
 //-----------------------------------------------------------------------------
 function LinkEditMember(%player, %tribe, %pv, %title,%owner)
 {
+//		  initialize buttons
 		  tb_onProbation.setVisible(true);
 	      tb_tribeMember.setVisible(false);		    
 	      tb_tribeAdmin.setVisible(false);
@@ -372,6 +379,7 @@ function LinkEditMember(%player, %tribe, %pv, %title,%owner)
 	      tb_tribeAdmin.setValue(false);
 	      tb_tribeController.setValue(false);
 	      tb_sysAdmin.setValue(false);
+
 		  %owner.vTribe = %tribe;
 		  %owner.vPlayer = %player;
 		  t_whois.setValue(%player);
@@ -382,7 +390,7 @@ function LinkEditMember(%player, %tribe, %pv, %title,%owner)
 		  // Get callers rank in members tribe
 		  for(%i=0;%i<getfield(getRecord(%ai,1),0);%i++)
 		  {
-			if( getField(getRecord(%ai,2+%i),0) == %tribe || (getField(getRecord(%ai,2+%i),3)==1401 && getField(getRecord(%ai,2+%i),4)>1))
+			if( getField(getRecord(%ai,2+%i),0) $= %tribe || (getField(getRecord(%ai,2+%i),3)==1401 && getField(getRecord(%ai,2+%i),4)>1))
 			{
 				%callerPv = getField(getRecord(%ai,2+%i),4);
 				break;
@@ -573,9 +581,10 @@ function SetMemberProfile()
    	   TribeAdminMemberDlg.key = LaunchGui.key++;
    	   TribeAdminMemberDlg.state = "setMemberProfile";
        canvas.SetCursor(ArrowWaitCursor);
+	   %title = E_Title.getValue();
 	   DatabaseQuery(21,TribeAdminMemberDlg.vTribe TAB
 						TribeAdminMemberDlg.vPlayer TAB
-						E_Title.getValue() TAB
+						%title TAB
 						TribeAdminMemberDlg.vPerm,
 						TribeAdminMemberDlg,
 						TribeAdminMemberDlg.key);
@@ -1038,6 +1047,74 @@ function GuiMLTextCtrl::onURL(%this, %url)
 
       case "gamelink":
          commandToServer('ProcessGameLink', %fld[1], %fld[2], %fld[3], %fld[4], %fld[5]);
+// THESE ARE EMAIL RELATED MODERATOR LINKS
+	  case "moderatorTopicKill":
+      		TopicsPopupDlg.key = LaunchGui.key++;
+            TopicsPopupDlg.state = "adminRemoveTopic";
+            databaseQuery(62, 0 TAB getField(%url,1) TAB getField(%url,2), TopicsPopupDlg, TopicsPopupDlg.key);
+	  case "moderatorTopicWarn":
+      		TopicsPopupDlg.key = LaunchGui.key++;
+            TopicsPopupDlg.state = "adminRemoveTopicPlus";
+            error("MTW: " @ %url);			
+            databaseQuery(62, 1 TAB getField(%url,1) TAB getField(%url,2), TopicsPopupDlg, TopicsPopupDlg.key);
+	  case "moderatorTopicBan24":
+      		TopicsPopupDlg.key = LaunchGui.key++;
+            TopicsPopupDlg.state = "adminRemoveTopicPlus";
+            error("MTB24: " @ %url);			
+            databaseQuery(62, 2 TAB getField(%url,1) TAB getField(%url,2), TopicsPopupDlg, TopicsPopupDlg.key);
+	  case "moderatorTopicBan48":
+      		TopicsPopupDlg.key = LaunchGui.key++;
+            TopicsPopupDlg.state = "adminRemoveTopicPlus";
+            databaseQuery(62, 3 TAB getField(%url,1) TAB getField(%url,2), TopicsPopupDlg, TopicsPopupDlg.key);
+	  case "moderatorTopicBan72":
+      		TopicsPopupDlg.key = LaunchGui.key++;
+            TopicsPopupDlg.state = "adminRemoveTopicPlus";
+            databaseQuery(62, 4 TAB getField(%url,1) TAB getField(%url,2), TopicsPopupDlg, TopicsPopupDlg.key);
+	  case "moderatorTopicBan7Days":
+      		TopicsPopupDlg.key = LaunchGui.key++;
+            TopicsPopupDlg.state = "adminRemoveTopicPlus";
+            databaseQuery(62, 5 TAB getField(%url,1) TAB getField(%url,2), TopicsPopupDlg, TopicsPopupDlg.key);
+	  case "moderatorTopicBan30Days":
+      		TopicsPopupDlg.key = LaunchGui.key++;
+            TopicsPopupDlg.state = "adminRemoveTopicPlus";
+            databaseQuery(62, 6 TAB getField(%url,1) TAB getField(%url,2), TopicsPopupDlg, TopicsPopupDlg.key);
+	  case "moderatorTopicBanForever":
+      		TopicsPopupDlg.key = LaunchGui.key++;
+            TopicsPopupDlg.state = "adminRemoveTopicPlus";
+            databaseQuery(62, 7 TAB getField(%url,1) TAB getField(%url,2), TopicsPopupDlg, TopicsPopupDlg.key);
+
+	  case "moderatorPostKill":
+      		PostsPopupDlg.key = LaunchGui.key++;
+            PostsPopupDlg.state = "adminRemovePost";
+            databaseQuery(63, 0 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
+	  case "moderatorPostWarn":
+      		PostsPopupDlg.key = LaunchGui.key++;
+            PostsPopupDlg.state = "adminRemovePostPlus";
+            databaseQuery(63, 1 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
+	  case "moderatorPostBan24":
+      		PostsPopupDlg.key = LaunchGui.key++;
+            PostsPopupDlg.state = "adminRemovePostPlus";
+            databaseQuery(63, 2 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
+	  case "moderatorPostBan48":
+      		PostsPopupDlg.key = LaunchGui.key++;
+            PostsPopupDlg.state = "adminRemovePostPlus";
+            databaseQuery(63, 3 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
+	  case "moderatorPostBan72":
+      		PostsPopupDlg.key = LaunchGui.key++;
+            PostsPopupDlg.state = "adminRemovePostPlus";
+            databaseQuery(63, 4 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
+	  case "moderatorPostBan7Days":
+      		PostsPopupDlg.key = LaunchGui.key++;
+            PostsPopupDlg.state = "adminRemovePostPlus";
+            databaseQuery(63, 5 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
+	  case "moderatorPostBan30Days":
+      		PostsPopupDlg.key = LaunchGui.key++;
+            PostsPopupDlg.state = "adminRemovePostPlus";
+            databaseQuery(63, 6 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
+	  case "moderatorPostBanForever":
+      		PostsPopupDlg.key = LaunchGui.key++;
+            PostsPopupDlg.state = "adminRemovePostPlus";
+            databaseQuery(63, 7 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
 
       //if there is an unknown URL type, treat it as a weblink..
       default:
@@ -1195,7 +1272,10 @@ function TribePane::onDatabaseQueryResult(%this, %status, %resultString , %key)
 				%this.linecount--;
 				%this.MList = "";
 				if(getField(%resultString,0)>0)
+                {
 					%this.state = "tribeRoster";
+                    %this.rosterRowcount = getField(%resultString,0);
+                }
 				else
 				{
 					%this.state="done";
@@ -1279,7 +1359,7 @@ function TribePane::onDatabaseRow(%this, %row, %isLastRow, %key)
 				{
 					MemberList.AddMember(%wid,%name,%adminLevel,%editkick,%row);
 	   				MemberList.AddRow(%wid,%name TAB %title TAB %adminLevel);
-					MemberList.setRowStylebyID( %wid, !%onLine );
+//					MemberList.setRowStylebyID( %wid, !%onLine );
 				}
 
 	            if(%this.linecount <= 0)
@@ -1293,6 +1373,16 @@ function TribePane::onDatabaseRow(%this, %row, %isLastRow, %key)
 					if(%name !$= "")
 						%this.MList = %this.MList @ %name @ ",";
 				%this.linecount++;
+    
+            	if(%isLastRow)
+                {
+                  MemberList.GetOnlineStatus();
+                  if(%this.needRefresh)
+                  {
+            		%this.needRefresh = 0;
+            		TL_ROSTER.setValue(1);
+                  }
+                }
 
 		case "tribeNews":
 				%this.articleID = getField(%row,0);
@@ -1316,11 +1406,8 @@ function TribePane::onDatabaseRow(%this, %row, %isLastRow, %key)
 				MemberList.AddInvite(%inviteID,%invitedQuad,%invitorQuad,%isOwned,%row);
 	   		    MemberList.AddRow(%inviteID, getField(%invitedQuad,0) TAB %inviteDate);
 				MemberList.setRowStylebyID( %inviteId, !%onLine );
-	}
-	if(%isLastRow && %this.needRefresh)
-	{
-		%this.needRefresh = 0;
-		TL_ROSTER.setValue(1);
+            	if(%isLastRow)
+                  MemberList.GetOnlineStatus();
 	}
 }
 //-----------------------------------------------------------------------------
@@ -1464,7 +1551,7 @@ function PlayerPane::onDatabaseQueryResult(%this,%status,%resultString,%key)
 						PlayerPix.setBitmap($PlayerGfx);
 					%profileText = "<just:left><lmargin:10><color:ADFFFA><Font:Univers Condensed:10> \n<Font:Univers Condensed:18>";
 					%profileText = %profileText @ "Registered:<color:FFAA00>" SPC TProfileHdr.registered @ "<color:ADFFFA>\n";
-					%profileText = %profileText @ "Online:        " SPC (TProfileHdr.onLine ? "<color:33FF33>YES":"<color:FF3333>NO") @ "<color:ADFFFA>\n";
+//					%profileText = %profileText @ "Online:        " SPC (TProfileHdr.onLine ? "<color:33FF33>YES":"<color:FF3333>NO") @ "<color:ADFFFA>\n";
 
 					if(trim(TProfileHdr.playerURL) !$= "")
 						%profileText = %profileText @ "WebSite:     " SPC "<spush><color:CCAA33><a:wwwlink\t" @ TProfileHdr.playerURL @ ">"@TProfileHdr.playerURL@"</a><spop>\n\n";
@@ -1569,7 +1656,8 @@ function PlayerPane::onDatabaseQueryResult(%this,%status,%resultString,%key)
 				MessageBoxOK("CONFIRMED",getField(%status,1));
 			case "changePlayerName":
 				%this.state = "done";
-//				echo("wus:"@WonUpdateCertificate());
+            IRCClient::quit();
+            WonUpdateCertificate();
 				TProfileHdr.playername = NewNameEdit.getValue();
 				wp_currentname.setText(NewNameEdit.getValue());
 				twbTabView.setTabText(twbTabView.getSelectedId(),NewNameEdit.getValue());
@@ -1623,7 +1711,9 @@ function PlayerPane::onDatabaseRow(%this,%row,%isLastRow,%key)
 		case "warriorBuddyList":
 				W_MemberList.AddInvite(getField(%row,3),getFields(%row,0,3),getFields(%row,0,3),4,%row);
 	   		    W_MemberList.AddRow(getField(%row,3),getField(%row,0) TAB getField(%row,4));
-				W_MemberList.setRowStyleByID(getField(%row,3),!getField(%row,5));
+				if(%isLastRow)
+				  W_MemberList.getOnlineStatus();
+//				W_MemberList.setRowStyleByID(getField(%row,3),!getField(%row,5));
 	}
 }
 //-----------------------------------------------------------------------------
@@ -1693,10 +1783,10 @@ function PlayerPane::ButtonClick( %this, %senderid )
 					%row = getRecord(%ai,2+%ix);
 					%wid = getField(%row,2);
 					%name = getField(%row,0);
-					%title = getField(%row,4);
+					%title = getField(%row,5);
 					if(%title $= "")
 						%title = "Not Shown";
-					%adminLevel = getField(%row,3);
+					%adminLevel = getField(%row,4);
 					%editkick = %adminLevel >= 2;
 					W_MemberList.AddMember(%wid,%name,%adminLevel,%editkick,%row);
 		   			W_MemberList.AddRow(%wid,%name TAB %title TAB %adminLevel);
@@ -1793,9 +1883,38 @@ function W_MemberList::onRightMouseDown( %this, %column, %row, %mousePos )
 	      error( "Member/Invite Locate Error!" );
 	}
 }
+//-----------------------------------------------------------------------------
 function w_MemberList::onAdd(%this)
 {
 	W_MemberList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
+}
+//-----------------------------------------------------------------------------
+function W_MemberList::GetOnlineStatus(%this)
+{
+    %this.key = LaunchGui.key++;
+    %this.status = "getOnline";
+    for(%oStat=0;%oStat<%this.RowCount();%oStat++)
+    {
+      if(%oStat == 0)
+        %roster = %this.getRowID(%oStat);
+      else
+        %roster = %roster TAB %this.getRowID(%oStat);
+    }
+    databaseQuery(69,%roster, %this,%this.key);
+}
+//-----------------------------------------------------------------------------
+function W_MemberList::onDatabaseQueryResult(%this,%status,%resultString,%key)
+{
+  if(%key != %this.key)
+    return;
+  switch$(%this.status)
+  {
+    case "getOnline": if(getField(%status,0) == 0)
+                        for(%str=0;%str<strLen(%resultString);%str++)
+                        {
+                          %this.setRowStyle( %str, !getSubStr(%resultString,%str,1) );
+                        }
+  }
 }
 //==--------------------------------------------------------------------------
 function WarriorPopupDlg::onWake( %this )
@@ -1882,7 +2001,7 @@ function WarriorPopupDlg::onSleep(%this)
    	TribeAndWarriorBrowserGui.WDialogOpen = false;
 }
 //-----------------------------------------------------------------------------
-function MemberList::ClearList()
+function MemberList::ClearList(%this)
 {
 	if(isObject(MemberListGroup))
 		MemberListGroup.Delete();
@@ -1934,9 +2053,38 @@ function MemberList::onRightMouseDown( %this, %column, %row, %mousePos )
    else
       error( "Member/Invite Locate Error!" );
 }
+//-----------------------------------------------------------------------------
 function Memberlist::onAdd(%this)
 {
     MemberList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
+}
+//-----------------------------------------------------------------------------
+function MemberList::GetOnlineStatus(%this)
+{
+    MemberList.key = LaunchGui.key++;
+    MemberList.status = "getOnline";
+    for(%oStat=0;%oStat<%this.RowCount();%oStat++)
+    {
+      if(%oStat == 0)
+        %roster = MemberList.getRowID(%oStat);
+      else
+        %roster = %roster TAB MemberList.getRowID(%oStat);
+    }
+    databaseQuery(69,%roster, MemberList,MemberList.key);
+}
+//-----------------------------------------------------------------------------
+function MemberList::onDatabaseQueryResult(%this,%status,%resultString,%key)
+{
+  if(%key != %this.key)
+    return;
+  switch$(%this.status)
+  {
+    case "getOnline": if(getField(%status,0) == 0)
+                        for(%str=0;%str<strLen(%resultString);%str++)
+                        {
+                          MemberList.setRowStyle( %str, !getSubStr(%resultString,%str,1) );
+                        }
+  }
 }
 //-----------------------------------------------------------------------------
 function TribeMemberPopupDlg::onWake( %this )
