@@ -148,7 +148,7 @@ function HandleDatabaseProxyResponse(%prefix, %params)
    {
       // erase the query from the array:
       if(getWord($DBQueries[%qc], 1) == 0)
-         warnf("Error in database query response - not enough data.");
+         warn("Error in database query response - not enough data.");
       for(%i = %qc; %i < $DBQueryCount; %i++)
       {
          $DBQueries[%i] = $DBQueries[%i+1];

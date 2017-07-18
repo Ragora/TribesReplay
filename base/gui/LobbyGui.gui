@@ -156,7 +156,7 @@ new GuiChunkedBitmapCtrl(LobbyGui) {
 				minExtent = "8 20";
 				visible = "1";
 				helpTag = "0";
-				startScrollRegion = "2 0";
+				startScrollRegion = "4 0";
 				headerBitmap = "gui/server_tabs";
 				sortArrowBitmap = "gui/shll_sortarrow";
 				fieldBase = "gui/shll_field";

@@ -187,6 +187,7 @@ new SimGroup(MissionGroup) {
 				lockCount = "0";
 				homingCount = "0";
 					locked = "true";
+				needsObjectiveWaypoint = true;
 			};
 			new StaticShape(Team2generatorLarge2) {
 				position = "444.673 206.305 47.5003";
@@ -197,28 +198,7 @@ new SimGroup(MissionGroup) {
 				lockCount = "0";
 				homingCount = "0";
 					locked = "true";
-			};
-			new WayPoint() {
-				position = "468.836 157.363 103.217";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				dataBlock = "WayPointMarker";
-				lockCount = "0";
-				homingCount = "0";
-				name = "Power Building";
-				team = "0";
-					locked = "true";
-			};
-			new WayPoint() {
-				position = "477.048 329.22 103.709";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				dataBlock = "WayPointMarker";
-				lockCount = "0";
-				homingCount = "0";
-				name = "Control Building";
-				team = "0";
-					locked = "true";
+				needsObjectiveWaypoint = true;
 			};
 			new StaticShape(Team2SensorLargePulse1) {
 				position = "412.455 189.482 168.46";
@@ -242,6 +222,7 @@ new SimGroup(MissionGroup) {
 					homingCount = "0";
 						scoreValue = "5";
 						locked = "true";
+				needsObjectiveWaypoint = true;
 				};
 				new ForceFieldBare() {
 					position = "506.928 283.603 45.4741";

@@ -132,41 +132,45 @@ new SimGroup(MissionGroup) {
 					position = "114.695 -236.202 71.1529";
 					rotation = "0 0 1 89.5639";
 					scale = "1 1 1";
-					nameTag = "Bunker  1";
+					nameTag = "Bunker 1";
 					dataBlock = "GeneratorLarge";
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
+				needsObjectiveWaypoint = true;
 				};
 				new StaticShape(Team2generatorLarge2) {
 					position = "201.307 -171.776 53.1292";
 					rotation = "0 0 -1 89.9544";
 					scale = "1 1 1";
-					nameTag = "Bunker  2";
+					nameTag = "Bunker 2";
 					dataBlock = "GeneratorLarge";
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
+				needsObjectiveWaypoint = true;
 				};
 				new StaticShape(Team2generatorLarge3) {
 					position = "220.274 -75.7459 47.4929";
 					rotation = "0 0 -1 89.9544";
 					scale = "1 1 1";
-					nameTag = "Bunker  3";
+					nameTag = "Bunker 3";
 					dataBlock = "GeneratorLarge";
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
+				needsObjectiveWaypoint = true;
 				};
 				new StaticShape(Team2generatorLarge4) {
 					position = "122.055 -68.2083 63.2656";
 					rotation = "0 0 1 89.5639";
 					scale = "1 1 1";
-					nameTag = "Bunker  4";
+					nameTag = "Bunker 4";
 					dataBlock = "GeneratorLarge";
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
+				needsObjectiveWaypoint = true;
 				};
 				new SimGroup(Bunker1) {
 
@@ -418,61 +422,7 @@ new SimGroup(MissionGroup) {
 				homingCount = "0";
 					scoreValue = "5";
 					locked = "true";
-			};
-			new WayPoint() {
-				position = "199.172 -171.42 96.1636";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				dataBlock = "WayPointMarker";
-				lockCount = "0";
-				homingCount = "0";
-				name = "Bunker  2";
-				team = "0";
-					locked = "true";
-			};
-			new WayPoint() {
-				position = "116.693 -235.964 113.659";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				dataBlock = "WayPointMarker";
-				lockCount = "0";
-				homingCount = "0";
-				name = "Bunker  1";
-				team = "0";
-					locked = "true";
-			};
-			new WayPoint() {
-				position = "218.486 -75.1646 90.4386";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				dataBlock = "WayPointMarker";
-				lockCount = "0";
-				homingCount = "0";
-				name = "Bunker  3";
-				team = "0";
-					locked = "true";
-			};
-			new WayPoint() {
-				position = "123.951 -67.938 106.075";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				dataBlock = "WayPointMarker";
-				lockCount = "0";
-				homingCount = "0";
-				name = "Bunker  4";
-				team = "0";
-					locked = "true";
-			};
-			new WayPoint() {
-				position = "187.809 11.6775 32.3547";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				dataBlock = "WayPointMarker";
-				lockCount = "0";
-				homingCount = "0";
-				name = "Main Switch";
-				team = "0";
-					locked = "true";
+				needsObjectiveWaypoint = true;
 			};
 			new SimGroup(AIObjectives) {
 

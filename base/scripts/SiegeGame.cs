@@ -67,6 +67,22 @@ function FlipFlop::playerTouch(%data, %flipflop, %player)
    Game.allObjectivesCompleted();
 }
 
+//--------------------------------------------------------------------------------
+function StaticShapeData::onDisabled(%data, %obj, %prevState)
+{
+	Parent::onDisabled(%data, %obj, %prevState);
+
+	if(%obj.waypoint)
+		game.switchWaypoint(%obj.waypoint);
+}
+
+//--------------------------------------------------------------------------------
+function StaticShapeData::onEnabled(%data, %obj, %prevState)
+{
+	if(%obj.waypoint)
+		game.switchWaypoint(%obj.waypoint);
+}
+
 };
 
 //--------- Siege SCORING INIT ------------------
@@ -136,6 +152,9 @@ function SiegeGame::missionLoadDone(%game)
 
    // save off turret bases' original barrels
    %game.checkTurretBases();
+
+	// add objective waypoints
+	%game.findObjectiveWaypoints();
 
    MissionGroup.setupPositionMarkers(true);
 }
@@ -388,6 +407,9 @@ function SiegeGame::halftime(%game, %reason)
       
       // start the mission again (release players)
       %game.halfTimeCountDown($Host::warmupTime);
+
+		//redo the objective waypoints
+		%game.findObjectiveWaypoints();
    }
    else
    {
@@ -658,6 +680,68 @@ function ForceFieldBare::objectRestore(%this)
    // avoid console error spam
 }
 
+// ------------------------------------------------------------------------
+// Waypoint managing
+
+function siegeGame::findObjectiveWaypoints(%game, %group)
+{
+	if(!%group)
+		%group = nameToId("MissionGroup/Teams");
+	
+	for (%i = 0; %i < %group.getCount(); %i++)
+	{
+		%obj = %group.getObject(%i);
+		if(%obj.getClassName() $= SimGroup)
+		{
+			%game.findObjectiveWaypoints(%obj);
+		}
+ 		else if(%obj.needsObjectiveWaypoint)
+ 		{
+ 			%game.initializeWaypointAtObjective(%obj);
+ 		}
+	}
+}
+
+function siegeGame::initializeWaypointAtObjective(%game, %object)
+{
+	// out with the old...jic
+	if(%object.waypoint)
+		%object.waypoint.delete();
+
+	if(%object.team == %game.offenseTeam)
+		%team = %game.offenseTeam;
+	else
+		%team = (%game.offenseTeam == 1 ? 2 : 1);
+	
+	// to make the waypoint look a little prettier we are using the z from
+	// position and the x and y from worldBoxCenter
+	%posX = getWord(%object.getWorldBoxCenter(), 0);
+	%posY = getWord(%object.getWorldBoxCenter(), 1);
+	%posZ = getWord(%object.position, 2);
+
+	%append = getTaggedString(%object.getDataBlock().targetTypeTag);
+
+	%object.waypoint = new WayPoint() {
+		position = %posX SPC %posY SPC %posZ;
+		rotation = "1 0 0 0";
+		scale = "1 1 1";
+		dataBlock = "WayPointMarker";
+		team = %team;
+		name = %object.nameTag SPC %append;
+	};
+	MissionCleanup.add(%object.waypoint);
+}
+
+function siegeGame::switchWaypoint(%game, %waypoint)
+{
+	%team = %waypoint.team;
+	%newTeam = (%team == 1 ? 2 : 1);
+	
+	%waypoint.team = %newTeam; 
+}
+
+
+
 function SiegeGame::gameOver(%game)
 {
    //call the default
@@ -866,8 +950,8 @@ function SiegeGame::genOnRepaired(%game, %obj, %objName)
    if (%game.testValidRepair(%obj))
    {
       %repairman = %obj.repairedBy;
-      messageTeam(%repairman.team, 'msgGenRepaired', '\c0%1 repaired the %2 generator!', %repairman.name, %objName);    
-   }           
+      messageTeam(%repairman.team, 'msgGenRepaired', '\c0%1 repaired the %2 generator!', %repairman.name, %obj.nameTag);    
+   }
 }
 
 function SiegeGame::stationOnRepaired(%game, %obj, %objName)
@@ -875,7 +959,7 @@ function SiegeGame::stationOnRepaired(%game, %obj, %objName)
    if (%game.testValidRepair(%obj)) 
    {     
       %repairman = %obj.repairedBy;
-      messageTeam(%repairman.team, 'msgStationRepaired', '\c0%1 repaired the %2 inventory station!', %repairman.name, %objName);
+      messageTeam(%repairman.team, 'msgStationRepaired', '\c0%1 repaired the %2 inventory station!', %repairman.name, %obj.nameTag);
    }
 }
 
@@ -884,7 +968,7 @@ function SiegeGame::sensorOnRepaired(%game, %obj, %objName)
    if (%game.testValidRepair(%obj)) 
    {     
       %repairman = %obj.repairedBy;
-      messageTeam(%repairman.team, 'msgSensorRepaired', '\c0%1 repaired the %2 pulse sensor!', %repairman.name, %objName);
+      messageTeam(%repairman.team, 'msgSensorRepaired', '\c0%1 repaired the %2 pulse sensor!', %repairman.name, %obj.nameTag);
    }
 }
 
@@ -893,7 +977,7 @@ function SiegeGame::turretOnRepaired(%game, %obj, %objName)
    if (%game.testValidRepair(%obj)) 
    {     
       %repairman = %obj.repairedBy;
-      messageTeam(%repairman.team, 'msgTurretRepaired', '\c0%1 repaired the %2 turret!', %repairman.name, %objName);
+      messageTeam(%repairman.team, 'msgTurretRepaired', '\c0%1 repaired the %2 turret!', %repairman.name, %obj.nameTag);
    }
 }
 
@@ -902,7 +986,7 @@ function SiegeGame::vStationOnRepaired(%game, %obj, %objName)
    if (%game.testValidRepair(%obj)) 
    {     
       %repairman = %obj.repairedBy;
-      messageTeam(%repairman.team, 'msgTurretRepaired', '\c0%1 repaired the %2 vehicle station!', %repairman.name, %objName);
+      messageTeam(%repairman.team, 'msgTurretRepaired', '\c0%1 repaired the %2 vehicle station!', %repairman.name, %obj.nameTag);
    }
 }
 

@@ -61,14 +61,14 @@ function serverCmdThrowPack(%client,%data)
 
 function serverCmdTogglePack(%client,%data)
 {
-	// this function is apparently never called
-	%client.getControlObject().togglePack();
+   // this function is apparently never called
+   %client.getControlObject().togglePack();
 }
 
 function serverCmdThrowFlag(%client)
 {
-	//Game.playerDroppedFlag(%client.player);
-	Game.dropFlag(%client.player);
+   //Game.playerDroppedFlag(%client.player);
+   Game.dropFlag(%client.player);
 }
 
 function serverCmdSelectWeaponSlot( %client, %data )
@@ -83,37 +83,37 @@ function serverCmdCycleWeapon( %client, %data )
 
 function serverCmdStartThrowCount(%client, %data)
 {
-	%client.player.throwStart = getSimTime();
+   %client.player.throwStart = getSimTime();
 }
 
 function serverCmdEndThrowCount(%client, %data)
 {
-	if(%client.player.throwStart == 0)
-		return;
+   if(%client.player.throwStart == 0)
+      return;
 
-	// throwStrength will be how many seconds the key was held
-	%throwStrength = (getSimTime() - %client.player.throwStart) / 300;
-	// trim the time to fit between 0.5 and 1.5
-	if(%throwStrength > 1.5)
-		%throwStrength = 1.5;
-	else if(%throwStrength < 0.5)
-		%throwStrength = 0.5;
+   // throwStrength will be how many seconds the key was held
+   %throwStrength = (getSimTime() - %client.player.throwStart) / 300;
+   // trim the time to fit between 0.5 and 1.5
+   if(%throwStrength > 1.5)
+      %throwStrength = 1.5;
+   else if(%throwStrength < 0.5)
+      %throwStrength = 0.5;
 
-	%throwScale = %throwStrength / 2;
-	%client.player.throwStrength = %throwScale;
+   %throwScale = %throwStrength / 2;
+   %client.player.throwStrength = %throwScale;
 
-	%client.player.throwStart = 0;
+   %client.player.throwStart = 0;
 }
 
 //----------------------------------------------------------------------------
 
 function ShapeBase::throwWeapon(%this)
 {
-	if(Game.shapeThrowWeapon(%this)) {
-	   %image = %this.getMountedImage($WeaponSlot);
-	   %this.throw(%image.item);
-	   %this.client.setWeaponsHudItem(%image.item, 0, 0);
-	}
+   if(Game.shapeThrowWeapon(%this)) {
+      %image = %this.getMountedImage($WeaponSlot);
+      %this.throw(%image.item);
+      %this.client.setWeaponsHudItem(%image.item, 0, 0);
+   }
 }
 
 function ShapeBase::throwPack(%this)
@@ -139,12 +139,12 @@ function ShapeBase::throw(%this,%data)
 
 function ShapeBase::use(%this, %data)
 {
-	//if(%data.class $= "Weapon") {
-	//	error("ShapeBase::use " @ %data);
-	//}
+   //if(%data.class $= "Weapon") {
+   // error("ShapeBase::use " @ %data);
+   //}
    if(%data $= Grenade)
    {
-		// figure out which grenade type you're using
+      // figure out which grenade type you're using
       for(%x = 0; $InvGrenade[%x] !$= ""; %x++) {
          if(%this.inv[$NameToInv[$InvGrenade[%x]]] > 0)
          {
@@ -153,23 +153,25 @@ function ShapeBase::use(%this, %data)
          }
       }
    }
-	else if(%data $= "Backpack") {
-		%pack = %this.getMountedImage($BackpackSlot);
-		// if you don't have a pack but have placed a satchel charge, detonate it
-		if(!%pack && (%this.thrownChargeId > 0) && %this.thrownChargeId.armed )
+   else if(%data $= "Backpack") {
+      %pack = %this.getMountedImage($BackpackSlot);
+      // if you don't have a pack but have placed a satchel charge, detonate it
+      if(!%pack && (%this.thrownChargeId > 0) && %this.thrownChargeId.armed )
       {
          %this.playAudio( 0, SatchelChargeExplosionSound );
          schedule( 800, %this, "detonateSatchelCharge", %this );
-			return true;
-		}
-	}
-	else if(%data $= Beacon) 
+         return true;
+      }
+      return false;
+   }
+   else if(%data $= Beacon) 
    {
       %data.onUse(%this);
       if (%this.inv[%data.getName()] > 0)
          return true;
    }
-	// default case
+
+   // default case
    if (%this.inv[%data.getName()] > 0) {
       %data.onUse(%this);
       return true;
@@ -188,7 +190,7 @@ function ShapeBase::pickup(%this,%obj,%amount)
 
 function ShapeBase::hasInventory(%this, %data)
 {
-	// changed because it was preventing weapons cycling correctly (MES)
+   // changed because it was preventing weapons cycling correctly (MES)
    return (%this.inv[%data] > 0);
 }
 
@@ -230,12 +232,12 @@ function ShapeBase::decInventory(%this,%data,%amount)
 
 function SimObject::decCatagory(%this)
 {
-	//function was added to reduce console err msg spam
+   //function was added to reduce console err msg spam
 }
 
 function SimObject::incCatagory(%this)
 {
-	//function was added to reduce console err msg spam
+   //function was added to reduce console err msg spam
 }
 
 function ShapeBase::setInventory(%this,%data,%value,%force)
@@ -320,7 +322,7 @@ function ShapeBase::hasAmmo( %this, %weapon )
       case GrenadeLauncher:
          return( %this.getInventory( GrenadeLauncherAmmo ) > 0 );
       case SniperRifle:
-			return( %this.getInventory( EnergyPack ) );
+         return( %this.getInventory( EnergyPack ) );
       case ELFGun:
          return( true );
       case Mortar:
@@ -340,7 +342,7 @@ function ShapeBase::hasAmmo( %this, %weapon )
 
 function SimObject::onInventory(%this, %obj)
 {
-	//function was added to reduce console error msg spam
+   //function was added to reduce console error msg spam
 }
 
 function ShapeBase::throwItem(%this,%data)
@@ -358,7 +360,7 @@ function ShapeBase::throwObject(%this,%obj)
    //if the object is being thrown by a corpse, use a random vector
    if (%this.getState() $= "Dead")
    {
-	   %vec = (-1.0 + getRandom() * 2.0) SPC (-1.0 + getRandom() * 2.0) SPC getRandom();
+      %vec = (-1.0 + getRandom() * 2.0) SPC (-1.0 + getRandom() * 2.0) SPC getRandom();
       %vec = vectorScale(%vec, 10);
    }
 
@@ -379,10 +381,10 @@ function ShapeBase::throwObject(%this,%obj)
    %vec = vectorAdd(%vec,%this.getVelocity());
    %pos = getBoxCenter(%this.getWorldBox());
 
-	//since flags have a huge mass (so when you shoot them, they don't bounce too far)
-	//we need to up the %vec so that you can still throw them...
-	if (%obj.getDataBlock().getName() $= "Flag")
-		%vec = vectorScale(%vec, 40);
+   //since flags have a huge mass (so when you shoot them, they don't bounce too far)
+   //we need to up the %vec so that you can still throw them...
+   if (%obj.getDataBlock().getName() $= "Flag")
+      %vec = vectorScale(%vec, 40);
 
    //
    %obj.setTransform(%pos);
@@ -391,8 +393,8 @@ function ShapeBase::throwObject(%this,%obj)
    %data = %obj.getDatablock();
    %data.onThrow(%obj,%this);
 
-	//call the AI hook
-	AIThrowObject(%obj);
+   //call the AI hook
+   AIThrowObject(%obj);
 }
 
 function ShapeBase::clearInventory(%this)
@@ -408,7 +410,7 @@ function ShapeBase::clearInventory(%this)
    %this.setInventory(FlashGrenade,0);
    %this.setInventory(ConcussionGrenade,0);
    %this.setInventory(FlareGrenade,0);
-	%this.setInventory(CameraGrenade, 0);
+   %this.setInventory(CameraGrenade, 0);
 
    %this.setInventory(Blaster,0);
    %this.setInventory(Plasma,0);
@@ -428,12 +430,12 @@ function ShapeBase::clearInventory(%this)
    %this.setInventory(GrenadeLauncherAmmo, 0);
    %this.setInventory(MissileLauncherAmmo, 0);
    %this.setInventory(MortarAmmo, 0);
-	%this.setInventory(Beacon, 0);
+   %this.setInventory(Beacon, 0);
 
-	// take away any pack the player has
-	%curPack = %this.getMountedImage($BackpackSlot);
-	if(%curPack > 0)
-		%this.setInventory(%curPack.item, 0);
+   // take away any pack the player has
+   %curPack = %this.getMountedImage($BackpackSlot);
+   if(%curPack > 0)
+      %this.setInventory(%curPack.item, 0);
 
 }   
 
@@ -488,7 +490,7 @@ function ShapeBase::cycleWeapon( %this, %data )
         && %this.hasInventory( %this.weaponSlot[%i] ) 
         && %this.hasAmmo( %this.weaponSlot[%i] ) )
       {
-			// player has this weapon and it has ammo or doesn't need ammo
+         // player has this weapon and it has ammo or doesn't need ammo
          %newSlot = %i;
          break;
       }
@@ -539,7 +541,7 @@ function serverCmdGiveAll(%client)
       %player.setInventory(FlashGrenade,999);
       %player.setInventory(FlareGrenade,999);
       %player.setInventory(ConcussionGrenade,999);
-		%player.setInventory(CameraGrenade, 999);
+      %player.setInventory(CameraGrenade, 999);
       %player.setInventory(Blaster,1);
       %player.setInventory(Plasma,1);
       %player.setInventory(Chaingun, 1);
@@ -557,6 +559,6 @@ function serverCmdGiveAll(%client)
       %player.setInventory(PlasmaAmmo,999);  
       %player.setInventory(ChaingunAmmo, 999);
       %player.setInventory(DiscAmmo, 999);
-		%player.setInventory(Beacon, 999);
+      %player.setInventory(Beacon, 999);
    }
 }

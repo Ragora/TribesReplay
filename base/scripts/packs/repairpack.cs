@@ -179,7 +179,7 @@ function RepairPackImage::onActivate(%data, %obj, %slot)
       return;
    }
 
-   if(%obj.getMountedImage($WeaponSlot).getName() !$= "RepairGunImage")
+   if(!isObject(%obj.getMountedImage($WeaponSlot)) || %obj.getMountedImage($WeaponSlot).getName() !$= "RepairGunImage")
    {
       messageClient(%obj.client, 'MsgRepairPackOn', '\c2Repair pack activated.');
 

@@ -64,11 +64,28 @@ function ChooseFilterDlg::editFilter( %this )
    %rowText = CF_FilterList.getRowTextById( %rowId );
    %filterName = getField( %rowText, 0 );
    %gameType = getField( %rowText, 1 );
+   if ( %gameType $= "" )
+      %gameType = "Any";
    %misType = getField( %rowText, 2 );
+   if ( %misType $= "" )
+      %misType = "Any";
    %minPlayers = getField( %rowText, 3 );
+   if ( %minPlayers $= "" )
+      %minPlayers = 0;
    %maxPlayers = getField( %rowText, 4 );
+   if ( %maxPlayers $= "" )
+      %maxPlayers = 255;
    %regionCode = getField( %rowText, 5 );
+   if ( %regionCode $= "" )
+      %regionCode = 4294967295;
    %maxPing = getField( %rowText, 6 );
+   %maxBots = getField( %rowText, 7 );
+   if ( %maxBots $= "" )
+      %maxBots = 16;
+   %minCPU = getField( %rowText, 8 );
+   if ( %minCPU $= "" )
+      %minCPU = 0;
+   %flags = getField( %rowText, 9 );
    
    FilterEditName.setValue( %filterName );
    FilterEditMinPlayers.setValue( %minPlayers );
@@ -96,6 +113,12 @@ function ChooseFilterDlg::editFilter( %this )
       FilterEditMaxPing.setVisible( true );
    }
 
+   FilterEditMaxBots.setValue( %maxBots );
+   FilterEditMinCPU.setValue( %minCPU );
+   FilterEditDedicatedTgl.setValue( %flags & 1 );
+   FilterEditNoPwdTgl.setValue( %flags & 2 );
+   FilterEditCurVersionTgl.setValue( %flags & 128 );
+
    %this.editFilterIndex = %rowId;
    Canvas.pushDialog( FilterEditDlg );
 }
@@ -115,8 +138,14 @@ function ChooseFilterDlg::saveFilter( %this )
          %regionCode |= ( 1 << %i );
    }
    %maxPing = FilterEditUsePingTgl.getValue() ? FilterEditMaxPing.getValue() : 0;
+   %maxBots = FilterEditMaxBots.getValue();
+   %minCPU = FilterEditMinCPU.getValue();
+   %flags = FilterEditDedicatedTgl.getValue()
+     | ( FilterEditNoPwdTgl.getValue() << 1 )
+     | ( FilterEditCurVersionTgl.getValue() << 7 );
    %row = %filterName TAB %gameType TAB %misType
-        TAB %minPlayers TAB %maxPlayers TAB %regionCode TAB %maxPing;
+        TAB %minPlayers TAB %maxPlayers TAB %regionCode 
+        TAB %maxPing TAB %maxBots TAB %minCPU TAB %flags;
         
    CF_FilterList.setRowById( %this.editFilterIndex, %row );
    CF_FilterList.setSelectedById( %this.editFilterIndex );
@@ -209,7 +238,7 @@ function FilterEditDlg::setMaxPlayers( %this )
 		%newMax = 1;
 		FilterEditMaxPlayers.setValue( %newMax );
 	}
-	if ( %newMax > 255 )
+	else if ( %newMax > 255 )
 	{
 		%newMax = 255;
 		FilterEditMaxPlayers.setValue( %newMax );
@@ -221,6 +250,22 @@ function FilterEditDlg::setMaxPlayers( %this )
 		%newMin = %newMax - 1;
 		FilterEditMinPlayers.setValue( %newMin );
 	}
+}
+
+//------------------------------------------------------------------------------
+function FilterEditDlg::setMaxBots( %this )
+{
+   %newMax = FilterEditMaxBots.getValue();
+   if ( %newMax < 0 )
+   {
+      %newMax = 0;
+      FilterEditMaxBots.setValue( %newMax );
+   }
+   else if ( %newMax > 16 )
+   {
+      %newMax = 16;
+      FilterEditMaxBots.setValue( %newMax );
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -237,6 +282,17 @@ function FilterEditDlg::setMaxPing( %this )
    {
       %newMax = 10;
       FilterEditMaxPing.setValue( %newMax );
+   }
+}
+
+//------------------------------------------------------------------------------
+function FilterEditDlg::setMinCPU( %this )
+{
+   %newMin = FilterEditMinCPU.getValue();
+   if ( %newMin < 0 )
+   {
+      %newMin = 0;
+      FilterEditMinCPU.setValue( %newMin );
    }
 }
 

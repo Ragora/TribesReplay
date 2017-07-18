@@ -1024,28 +1024,6 @@ new SimGroup(MissionGroup) {
 			new SimGroup(defense) {
 					powerCount = "3";
 
-				new WayPoint() {
-					position = "-5.4366 -45.1529 272.689";
-					rotation = "-0 0 -1 42.9718";
-					scale = "1 1 1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "Holdfast Generators";
-					team = "2";
-						locked = "true";
-				};
-				new WayPoint() {
-					position = "15.7295 83.0713 296.738";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "Stronghold Generator";
-					team = "2";
-						locked = "true";
-				};
 				new InteriorInstance() {
 					position = "-15.5504 -20.6638 284.652";
 					rotation = "-0 0 -1 89.9543";
@@ -1092,7 +1070,7 @@ new SimGroup(MissionGroup) {
 						Target = "42";
 						team = "2";
 						locked = "true";
-						damageTimeMS = "694715";
+				needsObjectiveWaypoint = true;
 				};
 				new StaticShape(Team2generatorLarge2) {
 					position = "-6.7802 -43.0255 271.588";
@@ -1106,7 +1084,7 @@ new SimGroup(MissionGroup) {
 						Target = "43";
 						team = "2";
 						locked = "true";
-						damageTimeMS = "695007";
+				needsObjectiveWaypoint = true;
 				};
 				new Item() {
 					position = "-14.7471 -32.7903 282.27";
@@ -1230,6 +1208,7 @@ new SimGroup(MissionGroup) {
 						team = "2";
 						locked = "true";
 						damageTimeMS = "652863";
+				needsObjectiveWaypoint = true;
 				};
 				new Item() {
 					position = "-11.0846 -30.0616 297.07";
@@ -1249,7 +1228,7 @@ new SimGroup(MissionGroup) {
 					position = "-15.3318 -0.0208392 269.726";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
-					nameTag = "Control Switch";
+					nameTag = "Control";
 					dataBlock = "FlipFlop";
 					lockCount = "0";
 					homingCount = "0";
@@ -1257,6 +1236,7 @@ new SimGroup(MissionGroup) {
 						team = "2";
 						locked = "true";
 						Projector = "0";
+				needsObjectiveWaypoint = true;
 				};
 				new ForceFieldBare() {
 					position = "-15.6484 -12.6499 269.508";

@@ -122,6 +122,17 @@ function DateStrCompare(%date1,%date2)
        return false;
 }
 //-----------------------------------------------------------------------------
+function IsPostAuthor(%author)
+{
+//    %ai = wonGetAuthInfo();
+//    %pid = getField(GetRecord(%ai,0),
+//    for(%east=0;%east<getField(getRecord(%ai,1),0);%east++)
+//    {
+//        %wonTribe = getRecord(%ai,2+%east);
+//        ForumsList.addRow(getField(%wonTribe,3)*-1,getField(%wonTribe,0) TAB getField(%wonTribe,4) TAB getField(%wonTribe,2));
+//    }
+}
+//-----------------------------------------------------------------------------
 function BackToTopics()
 {
    CacheForumTopic();
@@ -351,16 +362,7 @@ function ForumsPost()
    
 	TextCheck($ForumsSubject,ForumsGui);
 	if(!ForumsGui.textCheck)
-	{
-//   if(ForumsComposeDlg.action !$= "Post" || ForumsComposeDlg.parentPost != 0)
-//      {
-//         %proxy = ForumsMessageList;
-//         %newGroup = TopicsListGroup.getObject(ForumsTopicsList.getSelectedRow());
-//         %proxy.lastId = %newGroup.updateid;
-//         %proxy.highestUpdate = %proxy.lastId;
-//         %proxy.state = "updateCheck";
-//      }
-      
+	{      
       ForumsTopicsList.refreshFlag = 1;
       if(ForumsComposeDlg.parentPost == 0) //this is a new topic request
       {
@@ -375,6 +377,7 @@ function ForumsPost()
 						 ForumsComposeDlg.parentPost TAB
 						 $ForumsSubject TAB
 						 ForumsBodyText.getValue();
+           error("RT:" TAB ForumsComposeDlg.forum TAB ForumsComposeDlg.topic TAB ForumsComposeDlg.parentPost);
          }
          else if(ForumsComposeDlg.action $="News")
 		  {
@@ -397,6 +400,7 @@ function ForumsPost()
 						 ForumsComposeDlg.parentPost TAB
 						 $ForumsSubject TAB
 						 ForumsBodyText.getValue();
+//           error("RT:" TAB ForumsComposeDlg.forum TAB ForumsComposeDlg.topic TAB ForumsComposeDlg.parentPost);
          }
 	      else if(ForumsComposeDlg.action $="Edit")
          {
@@ -502,7 +506,7 @@ function GetTopicsList()
    canvas.SetCursor(ArrowWaitCursor);
    ForumsTopicsList.clearList();
 //   error("DQA:" @ 8 TAB ForumsComposeDlg.forum);
-	DatabaseQueryArray(8,80,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key);
+	DatabaseQueryArray(8,80,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key,true);
 	ForumsTopicsList.refreshFlag = 0;
 }
 //-----------------------------------------------------------------------------
@@ -528,7 +532,7 @@ function GetTopicPosts()
        ForumsMessageList.clear();
    }   
 //   error("DQA:" @ 8 TAB ForumsComposeDlg.topic);
-   DatabaseQueryArray(9,0,ForumsComposeDlg.Topic TAB ForumsMessageList.lastID,ForumsGui,ForumsGui.key);
+   DatabaseQueryArray(9,0,ForumsComposeDlg.Topic TAB ForumsMessageList.lastID,ForumsGui,ForumsGui.key,true);
 }
 //-----------------------------------------------------------------------------
 //-- ForumsGui ---------------------------------------------------------------
@@ -715,7 +719,7 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 {
 	if(%this.key != %key)
 		return;
-//	echo("RECV: " @ %row);
+	echo("RECV: " @ %row);
 	%forumTID = getField(ForumsList.getRowTextbyId(ForumsList.getSelectedID()),2);
 	switch$(%this.state)
 	{
@@ -747,8 +751,8 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 	   		%hasDeletes = getField(%row,12);
            %slevel = getField(%row,13);
            %maxUpdateId = getField(%row,14);
- 			ForumsTopicsList.addRow( %id, %topic TAB %postCount TAB %name TAB %date TAB %hasDeletes);
            ForumsTopicsList.addTopic( %id, %topic, %date, %maxUpdateID, %slevel, %row);
+ 			ForumsTopicsList.addRow( %id, %topic TAB %postCount TAB %name TAB %date TAB %hasDeletes);
  			if ( %isLastRow ) //is last line
  	   		{
  				%this.state = "done";
@@ -762,6 +766,8 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
  				}
                else if( ForumsMessageVector.tid !$= "" )
                    ForumsTopicsList.setSelectedbyId(ForumsMessageVector.tid);
+               else
+                   ForumsTopicsList.setSelectedRow(0);
  			}
 		case "PostList":
 				%isAuthor = getField(%row,0);
@@ -770,6 +776,7 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
          		%high = getField(%row,4);
             	%poster = getFields(%row,5,8);
             	%date = getField(%row,10);
+               %isDeleted = getField(%row,12);
             	%topic = getField(%row,13);
             	%body = getFields(%row,14);
          		if ( %high > ForumsMessageList.highestUpdate )
@@ -793,7 +800,9 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
                if(ForumsMessageList.allRead && DateStrCompare(ForumsMessageList.lastDate,%date))
                    %text = setRecord( %text, 0, "1" );
                    
-            	ForumsMessageVector.pushBackLine(%text, %postId);
+               if(!%isDeleted)
+               	ForumsMessageVector.pushBackLine(%text, %postId);
+                   
 				if(%isLastRow)
 				{
                    ForumsMessageVector.tid = ForumsTopicsList.getSelectedID();

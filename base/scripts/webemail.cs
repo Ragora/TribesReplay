@@ -374,6 +374,8 @@ function CheckEmail(%calledFromSched)
 	EmailGui.checkSchedule = "";
 	EMailGui.key = LaunchGui.key++;
 	EmailGui.state = "getMail";
+	EM_Browser.clear();
+	EmailGui.LoadCache();
 	DatabaseQueryArray(1,0,$EmailNextSeq, EMailGui, EMailGui.key);
 	EmailGui.checkingEmail = true;
 }
@@ -765,7 +767,7 @@ function AddressDlg::GoSearch(%this)
 		%this.key = LaunchGui.key++;
 		%this.state = "goSearch";
 		%this.lbstate = "errorcheck";
-		DatabaseQueryArray(3,100,trim(LC_Search.getValue()) TAB 0 TAB 100 TAB 1 ,%this, %this.key);
+		DatabaseQueryArray(3,100,trim(LC_Search.getValue()) TAB 0 TAB 100 TAB 1 ,%this, %this.key,true);
 		LC_BuddyListBtn.direction = 0;
 		LC_BuddyListBtn.text = "ADD TO BUDDYLIST";
 		LC_ListBox.setSelected(0);
@@ -792,7 +794,7 @@ function AddressDlg::GoList(%this)
   else
   {
 	%this.state = "getTribeMembers";
-	DatabaseQueryArray(6,0,LC_ListBox.getValue(),%this,%this.key);
+	DatabaseQueryArray(6,0,LC_ListBox.getValue(),%this,%this.key,true);
 	LC_BuddyListBtn.direction = 0;
 	LC_BuddyListBtn.text = "ADD TO BUDDYLIST";
   }
@@ -932,7 +934,7 @@ function EmailGui::onWake(%this)
 
 	if(!%this.cacheFile)
 	{
-		%this.cacheFile = "email0";
+		%this.cacheFile = "email1";
 		EmailGui.getCache();
 	}
 	if ( !EmailGui.cacheLoaded || EM_Browser.rowCount() == 0 )
@@ -969,7 +971,7 @@ function EmailGui::ButtonClick(%this,%ord)
 				EmailInboxBodyText.setText("");
 				EMailGui.state = "getDeletedMail";
 				EmailGui.key = LaunchGui.key++;
-				DatabaseQueryArray(14,100,EmailGui.state,EMailGui,EMailGui.key);
+				DatabaseQueryArray(14,100,EmailGui.state,EMailGui,EMailGui.key,true);
 	}
 }
 //-----------------------------------------------------------------------------
@@ -997,10 +999,8 @@ function EMailGui::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
 					EMailGui.getCache();
 					EMailGui.outputVector();
 					if(EMailGui.btnClicked)
-					{
-						MessageBoxOK("NOTICE","No New Mail");
 						EmailGui.btnClicked = false;
-					}
+
 					%this.checkingEmail = false;
 		   			%this.checkSchedule = schedule(1000 * 60 * 5, 0, CheckEmail, true);
 //					echo("scheduling Email check " @ %this.checkSchedule @ " in 5 minutes");
@@ -1121,7 +1121,7 @@ function EmailGui::getCache(%this)
 	EM_Browser.clear();
 	EMailMessageVector.clear();
 	EmailInboxBodyText.setText("");
-	%fileName = $EmailCachePath @ "email0";
+	%fileName = $EmailCachePath @ "email1";
    %file = new FileObject();
    if ( %this.cacheFile $= "" )
    {
@@ -1131,7 +1131,7 @@ function EmailGui::getCache(%this)
             if ( %guid $= getField( WonGetAuthInfo(), 3 ) )
             {
                // This is the right one!
-               %this.cacheFile = "email0";
+               %this.cacheFile = "email1";
                %this.messageCount = %file.readLine();
                while( !%file.isEOF() )
                {
@@ -1176,7 +1176,7 @@ function EmailGui::loadCache( %this )
    EM_Browser.clear();
    EMailMessageVector.clear();
    EMailInboxBodyText.setText("");
-   %fileName = $EmailCachePath @ "email0";
+   %fileName = $EmailCachePath @ "email1";
    %file = new FileObject();
    if ( %this.cacheFile $= "" )
    {
@@ -1186,7 +1186,7 @@ function EmailGui::loadCache( %this )
             if ( %guid $= getField( WonGetAuthInfo(), 3 ) )
             {
                // This is the right one!
-               %this.cacheFile = "email0";
+               %this.cacheFile = "email1";
                %this.messageCount = %file.readLine();
                while( !%file.isEOF() )
                {
@@ -1219,7 +1219,7 @@ function EmailGui::loadCache( %this )
 function EmailGui::dumpCache( %this )
 {
    %guid = getField( WONGetAuthInfo(), 3 );
-   if ( %this.cacheFile $= "" ) %this.cacheFile = "email0";
+   if ( %this.cacheFile $= "" ) %this.cacheFile = "email1";
    EmailMessageVector.dump( $EmailCachePath @ %this.cacheFile, %guid );
 }
 //-----------------------------------------------------------------------------

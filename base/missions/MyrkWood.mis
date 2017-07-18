@@ -1469,7 +1469,7 @@ new SimGroup(MissionGroup) {
 			position = "-123.276 28.4301 116.558";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/bird1.wav";
+			fileName = "fx/environment/bird_echo2.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "1";
 			volume = "1";
@@ -1513,7 +1513,7 @@ new SimGroup(MissionGroup) {
 			position = "-288.977 118.926 110.287";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/bird1.wav";
+			fileName = "fx/environment/bird_echo3.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "1";
 			volume = "1";
@@ -1535,7 +1535,7 @@ new SimGroup(MissionGroup) {
 			position = "-464.766 -25.1102 114.665";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/bird2.wav";
+			fileName = "fx/environment/bird_echo4.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "1";
 			volume = "1";
@@ -1579,7 +1579,7 @@ new SimGroup(MissionGroup) {
 			position = "-464.866 108.756 106.983";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/bird1.wav";
+			fileName = "fx/environment/bird_echo1.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "1";
 			volume = "1";

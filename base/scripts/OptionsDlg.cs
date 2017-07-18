@@ -115,6 +115,21 @@ function OptionsDlg::onWake( %this )
    OP_AudioBitRateMenu.init();
    OP_AudioChannelsMenu.init();
 
+   // don't allow changing of of mixer settings while in a game...
+   %active = !isObject(ServerConnection);
+   OP_AudioFrequencyMenu.setActive(%active);
+   // Changing these audio settings doesn't help Linux performance
+   if ( $platform $= "linux" ) {
+      OP_AudioBitRateMenu.setActive(false);
+      OP_AudioChannelsMenu.setActive(false);
+   } else {
+      OP_AudioBitRateMenu.setActive(%active);
+      OP_AudioChannelsMenu.setActive(%active);
+   }
+      OP_AudioProviderMenu.setActive(%active);
+      OP_AudioEnvironmentTgl.setActive(%active);
+      OP_AudioSpeakerMenu.setActive(%active);
+
    OP_MasterVolumeSlider.setValue( $pref::Audio::masterVolume );
    OP_EffectsVolumeSlider.setValue( $pref::Audio::effectsVolume );
    OP_VoiceBindVolumeSlider.setValue( $pref::Audio::radioVolume );
@@ -128,6 +143,7 @@ function OptionsDlg::onWake( %this )
    OP_InputBoostSlider.setValue( $pref::Audio::captureGainScale );
    OP_VoiceListenMenu.init();
    OP_VoiceSendMenu.init();
+   OP_VoiceCodecInfo.init();
    updateInputBoost();
 
 	// Initialize the Control Options controls:
@@ -272,6 +288,12 @@ function OptionsDlg::onSleep( %this )
       audioSetDriver( "none" );
       audioSetDriver( $pref::Audio::activeDriver );
       %this.resetAudio = "";
+      
+      // Play the shell hum: (all sources are gone)
+      if($HudHandle['shellScreen'] $= "")
+         alxStop($HudHandle['shellScreen']);
+
+      $HudHandle['shellScreen'] = alxPlay(ShellScreenHumSound, 0, 0, 0);
    }
 
    if ( isObject( ServerConnection ) && isTextureFlushRequired() )
@@ -1127,13 +1149,16 @@ function localCaptureStop( %method )
 function OP_VoiceListenMenu::init( %this )
 {
    %this.clear();
-   %this.add( "Low", 1 );
-   %this.add( "Medium", 3 );
-   %this.add( "High", 7 );
+   %this.add( "<NONE>",       0 );
+   %this.add( ".v12",         1 );
+   %this.add( ".v12 - .v24",  3 );
+   %this.add( ".v12 - .v29",  7 );
+//   %this.add( ".v12 - .gsm",  15 );
 
    switch ( $pref::Audio::decodingMask )
    {
-      case 3 or 7:
+//      case 0 or 3 or 7 or 15:
+      case 0 or 3 or 7:
          %this.setSelected( $pref::Audio::decodingMask );
       default:
          %this.setSelected( 1 );
@@ -1144,17 +1169,31 @@ function OP_VoiceListenMenu::init( %this )
 function OP_VoiceSendMenu::init( %this )
 {
    %this.clear();
-   %this.add( "Low", 0 );
-   %this.add( "Medium", 1 );
-   %this.add( "High", 2 );
+   %this.add( ".v12",   0 );
+   %this.add( ".v24",   1 );
+   %this.add( ".v29",   2 );
+//   %this.add( ".gsm",   3 );
 
-   switch ( $pref::Audio::encodingLevel )
-   {
-      case 1 or 2:
-         %this.setSelected( $pref::Audio::encodingLevel );
-      default:
-         %this.setSelected( 0 );
-   }
+   %this.setSelected($pref::Audio::encodingLevel);
+}
+
+function OP_VoiceCodecInfo::init( %this )
+{
+   %headerStyle = "<font:" @ $ShellLabelFont @ ":" @ $ShellFontSize @ "><color:00DC00>";
+   %displayText = "<spush>" @ %headerStyle @ "Voice Codec Information:<spop>" NL
+                  "\n" @
+                  "  .v12: variable bitrate codec (~1.2 kbits/sec win)" NL
+                  "  .v24: fixed bitrate codec (2.4 kbits/sec win)" NL
+                  "  .v29: fixed bitrate codec (2.9 kbits/sec win)" NL
+//                  "  .gsm: fixed bitrate codec (6.6 kbits/sec win/linux)" NL
+                  "\n" @
+                  "<bitmap:bullet_2><lmargin:24>" @ 
+                     "Setting your codec levels too high can have adverse" @
+                     " affects on network performance." @
+                  "<lmargin:0>";
+
+   %this.setText(%displayText);
+   %this.setActive(false);
 }
 
 //------------------------------------------------------------------------------

@@ -45,10 +45,16 @@ function NewsGui::rebuildText(%this)
    for(%i = 0; %i < %this.articleCount; %i++)
    {	  
       %article = %this.article[%i];
-	  if(getField(%article,0)==1 || %this.acl > 2)
-      	%editable = 1;
-	  else
-		%editable = 0;
+
+	%ai = wonGetAuthInfo();
+	%isMem = 0;
+	for(%east=0;%east<getField(getRecord(%ai,1),0);%east++)
+	{
+		%tpv = GetRecord(%ai,2+%east);
+		if(getField(%tpv,3)==1401 || getField(%tpv,3)==1402)
+			%isMem = 1;
+	}
+   	%editable = %isMem;
 
       %topicid = getField(%article,1);
       %articleid = getField(%article, 2);
@@ -333,9 +339,17 @@ function NewsMOTDText::onDatabaseQueryResult(%this, %status, %RowCount_Result, %
 	if(%key != %this.key)
     	return;
 //	echo("RECV: " @ %status);
+	%ai = wonGetAuthInfo();
+	%isMem = 0;
 	if(getField(%status,0)==0)
 	{
-      	NewsEditMOTDBtn.setVisible( getField(%status,2));
+		for(%east=0;%east<getField(getRecord(%ai,1),0);%east++)
+		{
+			%tpv = GetRecord(%ai,2+%east);
+			if(getField(%tpv,3)==1401 || getField(%tpv,3)==1402)
+				%isMem = 1;
+		}
+      	NewsEditMOTDBtn.setVisible(%isMem);
    		%this.setText( %RowCount_Result );
 	}
 	else if (getSubStr(getField(%status,1),0,9) $= "ORA-04061")
@@ -348,6 +362,7 @@ function NewsMOTDText::onDatabaseQueryResult(%this, %status, %RowCount_Result, %
     	%this.state = "halt";		
   	     MessageBoxOK("NOTICE",getField(%status,1));
 	}
+	canvas.repaint();
 	Canvas.setCursor(defaultCursor);
 }
 //-----------------------------------------------------------------------------
@@ -383,9 +398,18 @@ function NewsEditMotdDlg::OnDatabaseQueryResult(%this, %status, %RowCount_Result
 	switch$(%this.state)
 	{
 		case "proceed":
-   			NewsEditMOTDBtn.setVisible( getField(%status,2));
+			%ai = wonGetAuthInfo();
+			%isMem = 0;
+			for(%east=0;%east<getField(getRecord(%ai,1),0);%east++)
+			{
+				%tpv = GetRecord(%ai,2+%east);
+				if(getField(%tpv,3)==1401 || getField(%tpv,3)==1402)
+					%isMem = 1;
+			}
+	      	NewsEditMOTDBtn.setVisible(%isMem);			
    			MessageBoxOK("NOTICE",getField(%status,1));
 			NewsMOTDText.setText( NewsEditMOTDText.getText() );
+			canvas.repaint();
 			Canvas.PopDialog(NewsEditMOTDDlg);
 		case "error":
    			MessageBoxOK("NOTICE",getField(%status,1));

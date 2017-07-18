@@ -1365,7 +1365,7 @@ new GuiControl(OptionsDlg) {
 				minExtent = "8 8";
 				visible = "1";
 				helpTag = "0";
-				text = "Voice Listen Quality:";
+				text = "Voice Listen Codec(s):";
 				maxLength = "255";
 			};
 			new ShellPopupMenu(OP_VoiceListenMenu) {
@@ -1373,7 +1373,7 @@ new GuiControl(OptionsDlg) {
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "183 87";
-				extent = "169 36";
+				extent = "129 36";
 				minExtent = "49 36";
 				visible = "1";
 				helpTag = "0";
@@ -1394,7 +1394,7 @@ new GuiControl(OptionsDlg) {
 				minExtent = "8 8";
 				visible = "1";
 				helpTag = "0";
-				text = "Voice Send Quality:";
+				text = "Voice Send Codec:";
 				maxLength = "255";
 			};
 			new ShellPopupMenu(OP_VoiceSendMenu) {
@@ -1402,7 +1402,7 @@ new GuiControl(OptionsDlg) {
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "183 117";
-				extent = "169 36";
+				extent = "129 36";
 				minExtent = "49 36";
 				visible = "1";
 				helpTag = "0";
@@ -1437,6 +1437,20 @@ new GuiControl(OptionsDlg) {
 				helpTag = "0";
 				text = "Voice Send Quality:";
 				maxLength = "255";
+			};
+			new GuiMLTextCtrl(OP_VoiceCodecInfo) {
+				profile = "GuiDefaultProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "25 159";
+				extent = "395 140";
+				minExtent = "8 140";
+				visible = "1";
+				helpTag = "0";
+				lineSpacing = "2";
+				allowColorChars = "0";
+				maxChars = "-1";
+				deniedSound = "InputDeniedSound";
 			};
 		};
 		new ShellFieldCtrl(OP_ControlsPane) {

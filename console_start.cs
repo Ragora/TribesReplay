@@ -242,7 +242,8 @@ for($i = 1; $i < $Game::argc ; $i++)
    else if ($arg $= "-nologin")
    {
       $SkipLogin = true;
-      $LaunchMode = "Offline";
+      if ($LaunchMode !$= "DedicatedServer")
+         $LaunchMode = "Offline";
    }
    else if ( $arg $= "-online" )
       $fromLauncher = true;
@@ -289,8 +290,7 @@ for($i = 1; $i < $Game::argc ; $i++)
    
    if($arg $= "--nosound" || $arg $= "-s")
    {
-      // This is a Linux null audio device specifier
-      $pref::OpenAL::driver = "'( ( devices '( null )))";
+      $noloadAudio = 1;
    }
    else if($arg $= "--fullscreen" || $arg $= "-f")
    {
@@ -491,6 +491,7 @@ function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
    %code = getField( %result, 1 );
    %codeText = getField(%result, 2);
    %status = getField( %result, 0 );
+   %errorString = getField( %result, 3);
 
    if ( %status $= "Waiting" )
    {
@@ -543,6 +544,10 @@ function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
 					%msg = "Account has already been created - Please login." @ %code;
 			   else
                		%msg = "Account Creation Failed - That warrior name is already in use.  Please choose another warrior name and try again. Code = " @ %code;
+            }
+            else if(%errorString !$= "")
+            {
+               %msg = "Error - " @ %errorString;
             }
             else
                %msg = "Login Failed - Your internet connection may be having problems or the servers may be temporarily unavailable.  (Error code: " @ %codeText @ ")";

@@ -73,7 +73,7 @@ new GuiControl(JoinChatDlg) {
 			extent = "128 38";
 			minExtent = "32 38";
 			visible = "1";
-			command = "Canvas.popDialog(JoinChatDlg); LaunchTabView.viewTab(\"Chat\",ChatGui,0);";
+			command = "Canvas.popDialog(JoinChatDlg); LaunchTabView.viewTab(\"CHAT\",ChatGui,0);";
          accelerator = "escape";
 			helpTag = "0";
 			text = "CANCEL";

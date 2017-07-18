@@ -555,15 +555,7 @@ function singlePlayerGame::gameOver(%game)
 	//disable the AI system
 	AISystemEnabled(false);
 	
-	//Deactivate packages...gotta catch'm all
-	//deactivatepackage(SinglePlayer);
-	deactivatepackage(Training1);
-	deactivatepackage(Training2);
-	deactivatepackage(Training3);
-	deactivatepackage(Training4);
-	deactivatepackage(Training5);
-	deactivatepackage(Training6);
-	deactivatePackage(singlePlayerMissionAreaEnforce);
+	game.deactivatePackages();
 
 	if(isObject( $player.currentWaypoint ))
 		$player.currentWaypoint.delete();
@@ -578,6 +570,22 @@ function singlePlayerGame::gameOver(%game)
 
 	DefaultGame::GameOver(%game);
 }
+
+function singlePlayerGame::deactivatePackages(%game)
+{
+	error("singlePlayerGame packages deactivated");
+	//Deactivate packages...gotta catch'm all
+	//deactivatepackage(SinglePlayer);
+	deactivatepackage(Training1);
+	deactivatepackage(Training2);
+	deactivatepackage(Training3);
+	deactivatepackage(Training4);
+	deactivatepackage(Training5);
+	deactivatepackage(Training6);
+	deactivatePackage(singlePlayerMissionAreaEnforce);
+}
+//------------------------------------------------------------------------------------
+
 
 // Voice line, text, function and audio parsing
 //=================================================================================

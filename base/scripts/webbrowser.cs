@@ -76,7 +76,7 @@ function BrowserStartSearch()
 //-----------------------------------------------------------------------------
 function ExecuteSearch(%id)
 {
-	DatabaseQueryArray(BrowserSearchPane.query,0,trim($BrowserSearchField) TAB 0 TAB 100 TAB 0, BrowserSearchPane, BrowserSearchPane.key);
+	DatabaseQueryArray(BrowserSearchPane.query,0,trim($BrowserSearchField) TAB 0 TAB 100 TAB 0, BrowserSearchPane, BrowserSearchPane.key, true);
 }
 //-----------------------------------------------------------------------------
 function getTribeMember(%tribeName)
@@ -1372,12 +1372,12 @@ function TribePane::ButtonClick( %this, %senderid )
          MemberList.addColumn( 0, "MEMBER", 92, 0, 100,"left");
          MemberList.addColumn( 1, "TITLE", 90, 0, 100,"left");
          MemberList.addColumn( 2, "RNK", 30, 0, 40, "numeric center" );
-         TribeAndWarriorBrowserGui.eid = schedule(500, 0, DatabaseQueryArray,6,0,%tribeName,%this,%this.key);
+         TribeAndWarriorBrowserGui.eid = schedule(500, 0, DatabaseQueryArray,6,0,%tribeName,%this,%this.key, true);
       case 2: //NEWS BUTTON
          %this.key = LaunchGui.key++;
          %this.state = "getTribeNews";
          %this.tstate = "NEWS";
-         TribeAndWarriorBrowserGui.eid = schedule(500, 0, DatabaseQueryArray,10,20,%tribeName,%this,%this.key);
+         TribeAndWarriorBrowserGui.eid = schedule(500, 0, DatabaseQueryArray,10,20,%tribeName,%this,%this.key,true);
       case 3: //INVITE BUTTON
          MemberList.Clear();
          MemberList.ClearColumns();
@@ -1388,7 +1388,7 @@ function TribePane::ButtonClick( %this, %senderid )
          %this.tstate = "INVITES";
          MemberList.addColumn( 0, "PLAYER", 100, 0, 350,"left" );
          MemberList.addColumn( 1, "INVITED", 112, 0, 300, "left" );
-         TribeAndWarriorBrowserGui.eid = schedule(500, 0, DatabaseQueryArray,11,0,%tribeName,%this,%this.key);
+         TribeAndWarriorBrowserGui.eid = schedule(500, 0, DatabaseQueryArray,11,0,%tribeName,%this,%this.key,true);
 	   case 4: //Admin Tribe
 			if(trim(TWBText.getText()) !$= "")
 			{
@@ -1673,7 +1673,7 @@ function PlayerPane::ButtonClick( %this, %senderid )
     	    %playerName = TWBTabView.getTabText(TWBTabView.GetSelectedID());
         	%callId = 3;
 
-	        TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQueryArray,12,0,%playerName,%this,%this.key);
+	        TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQueryArray,12,0,%playerName,%this,%this.key,true);
     	 case 2:	//TribeList
 	        W_MemberList.Clear();
     	    W_MemberList.ClearColumns();
@@ -1684,7 +1684,7 @@ function PlayerPane::ButtonClick( %this, %senderid )
 	        W_MemberList.addColumn( 1, "TITLE", 80, 0, 300 );
     	    W_MemberList.addColumn( 2, "RNK", 38, 0, 50, "numeric center" );
         	%playerName = TWBTabView.getTabText(TWBTabView.GetSelectedID());
-	        TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQueryArray,13,0,%playerName,%this,%this.key);
+	        TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQueryArray,13,0,%playerName,%this,%this.key,true);
 	     case 3:	//Player Buddylist
     	    W_MemberList.Clear();
         	W_MemberList.ClearColumns();
@@ -1695,14 +1695,14 @@ function PlayerPane::ButtonClick( %this, %senderid )
     	    %this.key = LaunchGui.key++;
         	%this.state = "getWarriorBuddyList";
 	        %playerName = TWBTabView.getTabText(TWBTabView.GetSelectedID());
-    	    TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQueryArray,5,0,%playerName,%this,%this.key);
+    	    TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQueryArray,5,0,%playerName,%this,%this.key,true);
 		case 4:	//Visitor Options
         	W_Text.setValue("");
 	        %this.state = "getVisitorOptions";
     	    %owner = getField(getRecord(WonGetAuthInfo(),0),0);
         	%playerName = TWBTabView.getTabText(TWBTabView.GetSelectedID());
 	        TWBTitle.OldText = TWBTitle.name;
-    	    TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQuery,23,%playerName,%this,%this.key);
+    	    TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQuery,23,%playerName,%this,%this.key,true);
 		case 5: //Admin Options
 			if(trim(w_text.getText()) !$= "")
 			{
@@ -1828,8 +1828,6 @@ function WarriorPopup::onSelect( %this, %id, %text )
 				{
 					case "T2 ADMINISTRATION":
 							%tribe = "Game Feedback";
-					case "T2 PRESSCORPS":
-							%tribe = "PRESSCORPS-Submissions";
 				}
 			    ForumsThreadPane.setVisible(false);
 			    ForumsTopicsPane.setVisible(true);

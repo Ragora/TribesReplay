@@ -5,7 +5,6 @@ $numTalking = 0;
 //------------------------------------------------------------------------------
 function clientCmdPlayerStartTalking(%client, %success)
 {
-	//error("Client " @ %client @ " start talking, success = " @ %success);
 	// if more people are talking than we can handle, don't bother with names
 	if($numTalking > $voiceLines)
 		return;
@@ -45,8 +44,6 @@ function clientCmdPlayerStoppedTalking(%client, %success)
 	}
 	if(%doneLine != -1)
 		%rmSuccess = removeVoiceLine(%doneLine);
-	//else
-	//	error("Did not find voice line for client " @ %client);
 }
 
 //------------------------------------------------------------------------------
@@ -233,9 +230,10 @@ function voiceCapStart()
       {
          switch($Audio::serverEncodingLevel)
          {
-            case 0:   %level = "Low";
-            case 1:   %level = "Medium";
-            default:  %level = "High";
+            case 0:   %level = "Codec .v12";
+            case 1:   %level = "Codec .v24";
+            case 2:   %level = "Codec .v29";
+            default:  %level = "Codec GSM";
          }
 
          addMessageHudLine("\c2System:\cr server has voice level capped at [\c1" @ %level @ "\cr].");

@@ -383,7 +383,7 @@ function CnHGame::genOnRepaired(%game, %obj, %objName)
 	if (%game.testValidRepair(%obj))
 	{
 		%repairman = %obj.repairedBy;
-		messageTeam(%repairman.team, 'msgGenRepaired', '\c0%1 repaired the %2 Generator!', %repairman.name, %objName);		
+		messageTeam(%repairman.team, 'msgGenRepaired', '\c0%1 repaired the %2 Generator!', %repairman.name, %obj.nameTag);		
 	}				
 }
 
@@ -392,7 +392,7 @@ function CnHGame::stationOnRepaired(%game, %obj, %objName)
 	if (%game.testValidRepair(%obj))	
 	{		
 	   %repairman = %obj.repairedBy;
-	   messageTeam(%repairman.team, 'msgStationRepaired', '\c0%1 repaired the %2 Inventory Station!', %repairman.name, %objName);
+	   messageTeam(%repairman.team, 'msgStationRepaired', '\c0%1 repaired the %2 Inventory Station!', %repairman.name, %obj.nameTag);
 	}
 }
 
@@ -401,16 +401,16 @@ function CnHGame::sensorOnRepaired(%game, %obj, %objName)
 	if (%game.testValidRepair(%obj))	
 	{		
 	   %repairman = %obj.repairedBy;
-	   messageTeam(%repairman.team, 'msgSensorRepaired', '\c0%1 repaired the %2 Pulse Sensor!', %repairman.name, %objName);
+	   messageTeam(%repairman.team, 'msgSensorRepaired', '\c0%1 repaired the %2 Pulse Sensor!', %repairman.name, %obj.nameTag);
 	}
 }
 
 function CnHGame::turretOnRepaired(%game, %obj, %objName)
-{
+{																												 
 	if (%game.testValidRepair(%obj))	
 	{		
 	   %repairman = %obj.repairedBy;
-	   messageTeam(%repairman.team, 'msgTurretRepaired', '\c0%1 repaired the %2 Turret!', %repairman.name, %objName);
+	   messageTeam(%repairman.team, 'msgTurretRepaired', '\c0%1 repaired the %2 Turret!', %repairman.name, %obj.nameTag);
 	}
 }
 
@@ -419,7 +419,7 @@ function CnHGame::vStationOnRepaired(%game, %obj, %objName)
 	if (%game.testValidRepair(%obj))	
 	{		
 	   %repairman = %obj.repairedBy;
-	   messageTeam(%repairman.team, 'msgTurretRepaired', '\c0%1 repaired the %2 Vehicle Station!', %repairman.name, %objName);
+	   messageTeam(%repairman.team, 'msgTurretRepaired', '\c0%1 repaired the %2 Vehicle Station!', %repairman.name, %obj.nameTag);
 	}
 }
 

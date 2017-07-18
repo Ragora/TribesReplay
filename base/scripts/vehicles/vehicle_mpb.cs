@@ -124,12 +124,12 @@ datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
    hardImpactSpeed = 25;      // Play HardImpact Sound
 
    // Ground Impact Damage (uses DamageType::Ground)
-   minImpactSpeed = 25;
-   speedDamageScale = 0.220;
+   minImpactSpeed = 12;
+   speedDamageScale = 0.060;
 
    // Object Impact Damage (uses DamageType::Impact)
-   collDamageThresholdVel = 28;
-   collDamageMultiplier   = 0.040;
+   collDamageThresholdVel = 12;
+   collDamageMultiplier   = 0.080;
 
    // Engine
    engineTorque = 7.0 * 745;

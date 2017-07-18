@@ -788,7 +788,7 @@ function addQuickPackFavorite( %pack, %item )
 	if(%item $= "")
 		%item = "Pack";
 	%packFailMsg = "You cannot use that equipment with your selected loadout.";
-	if ( $Hud['inventoryScreen'].staticData[1, 1].getValue() $= ""  ) 
+	if ( !isObject($Hud['inventoryScreen'].staticData[1, 1]) || $Hud['inventoryScreen'].staticData[1, 1].getValue() $= ""  ) 
 	{
 		//if the player hasnt brought up the inv screen we use his current fav
 		%currentFav = $pref::Favorite[$pref::FavCurrentSelect];

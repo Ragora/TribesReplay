@@ -1657,7 +1657,7 @@ new SimGroup(MissionGroup) {
 			position = "641.802 118.866 134.47";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/cicadas.wav";
+			fileName = "fx/environment/crickets_drygrass.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "1";
 			volume = "1";
@@ -1679,7 +1679,7 @@ new SimGroup(MissionGroup) {
 			position = "-201.563 -1.4155 139.489";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/cicadas.wav";
+			fileName = "fx/environment/crickets_drygrass.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "1";
 			volume = "1";

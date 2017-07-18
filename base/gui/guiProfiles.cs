@@ -1607,7 +1607,7 @@ new GuiControlProfile ("GuiChannelVectorProfile")
    fontColors[6] = "77 253 95";  	// team chat, spam protection message, client tasks
    fontColors[7] = "40 231 240";  	// global chat
    fontColors[8] = "200 200 50 200";  // used in single player game
-   fontColors[9] = "0 255 255";       // action
+   fontColors[9] = "66 219 234";
    autoSizeWidth = false;
    autoSizeHeight = true;
 };

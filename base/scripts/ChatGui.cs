@@ -41,7 +41,7 @@ $CHANNEL_NEW           = 512;
 // Default messages (if gui is left blank)
 $DefaultChatAwayMessage = "Don't be alarmed.  I'm going to step away from my computer.";
 $DefaultChatKickMessage = "Alright, you\'re outta here!";
-$DefaultChatBanMessage = "You, and three generations of your offspring, are banned from this channel.";
+$DefaultChatBanMessage = "Get out. And stay out!";
 
 
 //------------------------------------------------------------------------------
@@ -145,6 +145,7 @@ function ChatTabView::onSelect(%this,%obj,%name)
       if ($IRCClient::currentChannel == $IRCClient::attachedChannel)
          ChatGuiMessageVector.detach();
       ChatGuiMessageVector.attach(%obj);
+	  ChatGuiMessageVector.scrollToBottom();
 		$IRCClient::attachedChannel = %obj;
    }
    $IRCClient::currentChannel = %obj;
@@ -786,7 +787,7 @@ function IRCClient::notify(%event)
 		case IDIRC_SORT:
 			%i = $IRCClient::currentChannel.findMember($IRCClient::people.getObject(0));
 			ChatEditChannelBtn.setVisible($IRCClient::currentChannel.getFlags(%i) & $PERSON_OPERATOR);
-			ChatRoomMemberList_rebuild($IRCClient::currentChannel);
+			ChatRoomMemberList_refresh($IRCClient::currentChannel);
 		case IDIRC_PART:
 			ChatRoomMemberList_refresh($IRCClient::currentChannel);
 		case IDIRC_KICK:
@@ -824,6 +825,7 @@ function IRCClient::notify(%event)
 //------------------------------------------------------------------------------
 function IRCClient::statusMessage(%message)
 {
+	//error("IRCClient::statusMessage( "@%message@" )");
    $IRCClient::channels.getObject(0).pushBackLine("[STATUS] " @ %message);
 }
 
@@ -1370,6 +1372,9 @@ function	IRCClient::relogin()
 //------------------------------------------------------------------------------
 function IRCClient::send(%message)
 {
+   if($IRCEcho)
+      echo("IRC SEND:" @ %message);
+
    $IRCClient::tcp.send(%message @ "\r\n");
 }
 
@@ -1377,7 +1382,7 @@ function IRCClient::send(%message)
 function IRCTCP::onLine(%this,%line)
 {
    if($IRCEcho)
-      echo("IRC " @ %line);
+      echo("IRC RECV:" @ %line);
    // HACK:  Windows 2000 bug.  We shouldn't need to do this!
    if ($IRCClient::state $= IDIRC_CONNECTING_SOCKET)
       IRCTCP::onConnected(%this);
@@ -1614,6 +1619,7 @@ function IRCClient::onJoin(%prefix,%params)
 		
 		// this is a hack, the list isnt being rebuilt right away but it is if you give it a half second
 		schedule(500, 0, chatRoomMemberList_rebuild);
+   //error("rebuilt by onJoin");
    }
 	IRCClient::connected();
 }
@@ -1942,7 +1948,7 @@ function IRCClient::onKick(%prefix,%params)
          }
          else
          {
-            IRCClient::newMessage($IRCClient::currentChannel,"Host " @ %host @ " kicks " @ IRCClient::taggedNick(%p) @ " out of the chat room, saying \"" @ %params @ "\"");
+            IRCClient::newMessage(%c, "Host " @ %host @ " kicks " @ IRCClient::taggedNick(%p) @ " out of the chat room, saying \"" @ %params @ "\"");
 	  	 	IRCClient::notify(IDIRC_PART);
 		 }
 	  	 
@@ -2199,7 +2205,7 @@ function IRCClient::censor(%str)
 //------------------------------------------------------------------------------
 function IRCClient::onList(%prefix,%params)
 {
-//error("IRCClient::onList( "@ %prefix @", "@ %params @")");
+	//error("IRCClient::onList( "@ %prefix @", "@ %params @")");
    //EXAMPLE: :StLouis.MO.US.UnderNet.org 322 homer128 #bmx 9 :BMX Rules!
 
    %params = nextToken(%params,nick," ");
@@ -2309,6 +2315,7 @@ function IRCClient::onAway(%prefix,%params)
 //------------------------------------------------------------------------------
 function IRCClient::onAction(%prefix,%params)
 {
+	//error("IRCClient::onAction( "@ %prefix @", "@ %params @")");
    %msg = nextToken(%params,ch," :");
    %c = IRCClient::findChannel(%ch,true);
    
@@ -2436,7 +2443,8 @@ function IRCClient::onChannelBanned(%prefix,%params)
    nextToken(%channel,channel," ");
 
    IRCClient::connected();
-   IRCClient::statusMessage("Cannot join " @ %channel @ ": you have been banned.");
+   //IRCClient::statusMessage("Cannot join " @ %channel @ ": you have been banned.");
+   MessageBoxOk("Banned", "Cannot join " @ IRCClient::displayChannel(%channel) @ ". You have been banned.");
    IRCClient::notify(IDIRC_BANNED_CH);
 }
 
@@ -2446,6 +2454,7 @@ function IRCClient::onServerBanned(%prefix,%params)
    $IRCClient::state = $IDIRC_DISCONNECTED;
 
    IRCClient::statusMessage("You have been banned from this server."); 
+   MessageBoxOk("Server Ban", "You have been banned from this server.");
    // IRCClient::notify(IDIRC_BANNED_SERVER);
 }
 
@@ -2830,6 +2839,7 @@ function IRCClient::setSpectator(%nick)
 //------------------------------------------------------------------------------
 function IRCClient::kick(%p,%msg)
 {
+	//error("IRCClient::kick( "@ %p @", "@ %msg@" )");
    IRCClient::send("KICK" SPC $IRCClient::currentChannel.getName() SPC %p.displayName @ " :" @ %msg);
 }
 
@@ -2968,19 +2978,29 @@ function IRCClient::onJoinServer(%mission,%server,%address,%mayprequire,%prequir
 }
 
 //------------------------------------------------------------------------------
-function IRCClient::onJoinGame(%address,%desc)
+ function IRCClient::onJoinGame(%address,%desc)
 {
+	//error("IRCClient::onJoinGame( "@ %address @", "@ %desc @" )");
+	IRCClient::away("joined a game.");
+
+	%me = $IRCClient::people.getObject(0);
+	if(%address $= %me.lastAddress)
+		return;
+
+	%me.lastAddress = %address;
+
 	if (%address $= "")
 		%msg = $pref::IRCClient::hostMsg;
 	else
 		%msg = "launched into <t2server:" @ %address @ ">" @ %desc @ "</t2server>.";
-	IRCClient::away(%msg);
+
+	//IRCClient::sendAction(%msg);
+
 	for (%i = 1; %i < $IRCClient::channels.getCount(); %i++)
 	{
 		%c = $IRCClient::channels.getObject(%i);
 		if (!%c.private)
-			//IRCClient::send2(%msg,%c.getName());
-	      IRCClient::send("PRIVMSG " @ %c.getName() @ ":\x01ACTION " @ %msg @ "\x01");
+			IRCClient::send("PRIVMSG " @ %c.getName() @ " :\x01ACTION " @ %msg @  "\x01");
 	}
 }
 

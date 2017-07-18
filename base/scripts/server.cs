@@ -8,7 +8,7 @@ $SB::DFDec = 0.02; // damageFlash
 function VerifyCDCheck(%func)
 {
    if (!cdFileCheck())
-      messageBoxOkCancel("Tribes 2 CD Check", "You must have the Tribes 2 CD in the CD-ROM drive while playing offline.  Please insert the CD.", "schedule(0, 0, VerifyCDCheck, " @ %func @ ");", "quit();"); 
+      messageBoxOkCancel("TRIBES 2 CD CHECK", "You must have the Tribes 2 CD in the CD-ROM drive while playing Tribes 2.  Please insert the CD.", "schedule(0, 0, VerifyCDCheck, " @ %func @ ");", "quit();"); 
    else
       call(%func);
 }
@@ -165,11 +165,13 @@ function DestroyServer()
    $missionRunning = false;
    allowConnections(false);
    stopHeartbeat();
-	%game = game.class;
 	MissionGroup.delete();
 	MissionCleanup.delete();
-	%game.deactivatePackages();
-	%game.delete();
+	if(isObject(game))
+	{
+		game.deactivatePackages();
+		game.delete();
+	}
    if(isObject($ServerGroup))
       $ServerGroup.delete();
 
@@ -1472,12 +1474,30 @@ function isOnSuperAdminList(%client)
 
 function addToAdminList( %client )
 {
+   %count = getRecordCount( $Host::AdminList );
 
+   for ( %i = 0; %i < %count; %i++ )
+   {
+      %id = getRecord( $Host::AdminList, %i );
+      if ( %id == %client.guid )
+         return;  // They're already there!
+   }
+
+   $Host::AdminList = $Host::AdminList NL %client.guid;
 }
 
 function addToSuperAdminList( %client )
 {
-   
+   %count = getRecordCount( $Host::SuperAdminList );
+
+   for ( %i = 0; %i < %count; %i++ )
+   {
+      %id = getRecord( $Host::SuperAdminList, %i );
+      if ( %id == %client.guid )
+         return;  // They're already there!
+   }
+
+   $Host::SuperAdminList = $Host::SuperAdminList NL %client.guid;
 }
 
 function resetTournamentPlayers()

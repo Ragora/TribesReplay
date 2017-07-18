@@ -460,9 +460,7 @@ function RadiusExplosion(%explosionSource, %position, %radius, %damage, %impulse
 {
    InitContainerRadiusSearch(%position, %radius, $TypeMasks::PlayerObjectType      |
                                                  $TypeMasks::VehicleObjectType     |
-                                                 $TypeMasks::MoveableObjectType    |
                                                  $TypeMasks::StaticShapeObjectType |
-                                                 $TypeMasks::ForceFieldObjectType  |
                                                  $TypeMasks::TurretObjectType      |
                                                  $TypeMasks::ItemObjectType);
 

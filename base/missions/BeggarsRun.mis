@@ -3225,7 +3225,7 @@ new SimGroup(MissionGroup) {
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
 			description = "AudioDefault3d";
-			fileName = "fx/environment/cicadas.wav";
+			fileName = "fx/environment/crickets_drygrass.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "1";
 			volume = "1";

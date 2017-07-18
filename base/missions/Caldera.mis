@@ -135,7 +135,7 @@ new SimGroup(MissionGroup) {
 	new SimGroup(Teams) {
 
 		new SimGroup(Team1) {
-
+			providesPower = true;
 			new SimGroup(WBase) {
 
 				new StaticShape() {
@@ -200,6 +200,7 @@ new SimGroup(MissionGroup) {
 						scoutVehicle = "Removed";
 						locked = "true";
 						AssaultVehicle = "Removed";
+				needsObjectiveWaypoint = true;
 				};
 				new InteriorInstance() {
 					position = "-45.7829 -144.124 180.354";
@@ -208,16 +209,6 @@ new SimGroup(MissionGroup) {
 					interiorFile = "dtowr1.dif";
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_Pulse_2";
-						locked = "true";
-				};
-				new StaticShape() {
-					position = "67.61 -48.218 -207.508";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "GeneratorLarge";
-					lockCount = "0";
-					homingCount = "0";
-						Target = "37";
 						locked = "true";
 				};
 				new InteriorInstance() {
@@ -264,18 +255,6 @@ new SimGroup(MissionGroup) {
 						Target = "41";
 						locked = "true";
 						originalBarrel = "PlasmaBarrelLarge";
-				};
-				new WayPoint() {
-					position = "-211.497 -233.586 151.337";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					nameTag = "Vehicle Pad";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "Vehicle Pad";
-					team = "0";
-						locked = "true";
 				};
 			};
 			new SimGroup(spawnspheres) {
@@ -388,18 +367,7 @@ new SimGroup(MissionGroup) {
 							locked = "true";
 							name = "Tactical Generator";
 							scoreValue = "5";
-					};
-					new WayPoint() {
-						position = "172.84 20.1 219.825";
-						rotation = "1 0 0 0";
-						scale = "0.1 0.1 0.1";
-						nameTag = "Tactical Generator";
-						dataBlock = "WayPointMarker";
-						lockCount = "0";
-						homingCount = "0";
-						name = "Tactical Generator";
-						team = "0";
-							locked = "true";
+					needsObjectiveWaypoint = true;
 					};
 				};
 				new SimGroup(Stations) {
@@ -426,6 +394,7 @@ new SimGroup(MissionGroup) {
 						homingCount = "0";
 							Target = "48";
 							locked = "true";
+					needsObjectiveWaypoint = true;
 					};
 					new InteriorInstance() {
 						position = "210.961 -2.7616 219.719";
@@ -448,18 +417,7 @@ new SimGroup(MissionGroup) {
 							locked = "true";
 							name = "Primary Generator";
 							scoreValue = "5";
-					};
-					new WayPoint() {
-						position = "268.3 20 219.8";
-						rotation = "1 0 0 0";
-						scale = "0.1 0.1 0.1";
-						nameTag = "Primary Generator";
-						dataBlock = "WayPointMarker";
-						lockCount = "0";
-						homingCount = "0";
-						name = "Primary Generator";
-						team = "0";
-							locked = "true";
+					needsObjectiveWaypoint = true;
 					};
 					new StaticShape() {
 						position = "182.86 -5.01 219.7";

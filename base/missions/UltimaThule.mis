@@ -107,6 +107,7 @@ new SimGroup(MissionGroup) {
 						name = "Sorth Entrance Generator";
 						Target = "33";
 						team = "1";
+				needsObjectiveWaypoint = true;
 				};
 				new StaticShape() {
 					position = "40.62 -127.18 51.09";
@@ -120,6 +121,7 @@ new SimGroup(MissionGroup) {
 						name = "East Generator";
 						Target = "34";
 						team = "1";
+				needsObjectiveWaypoint = true;
 				};
 				new Turret() {
 					position = "-1.6 -288.306 120.594";
@@ -251,51 +253,20 @@ new SimGroup(MissionGroup) {
 						name = "Great Hall Generator";
 						Target = "41";
 						team = "1";
-				};
-				new WayPoint() {
-					position = "34.89 -165.434 71.8233";
-					rotation = "1 0 0 0";
-					scale = "0.1 0.1 0.1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "Great Hall Generator";
-					team = "1";
-						locked = "true";
-				};
-				new WayPoint() {
-					position = "40.81 -129.263 50.1692";
-					rotation = "1 0 0 0";
-					scale = "0.1 0.1 0.1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "East Generator";
-					team = "1";
-						locked = "true";
-				};
-				new WayPoint() {
-					position = "40.03 -223.787 46.0142";
-					rotation = "1 0 0 0";
-					scale = "0.1 0.1 0.1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "South Entrance Generator";
-					team = "1";
-						locked = "true";
+				needsObjectiveWaypoint = true;
 				};
 				new StaticShape() {
 					position = "31.6522 -165.653 51.15";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
-					nameTag = "Control Switch";
+					nameTag = "Control";
 					dataBlock = "FlipFlop";
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
 						Target = "42";
 						team = "1";
+				needsObjectiveWaypoint = true;
 				};
 				new ForceFieldBare() {
 					position = "25.7162 -158.946 50.9885";
@@ -493,6 +464,7 @@ new SimGroup(MissionGroup) {
 						name = "NE Force Field Generator #1";
 						Target = "47";
 						team = "1";
+				needsObjectiveWaypoint = true;
 				};
 				new StaticShape() {
 					position = "243.46 232.45 166.9";
@@ -506,6 +478,7 @@ new SimGroup(MissionGroup) {
 						name = "NE Force Field Generator #2";
 						Target = "48";
 						team = "1";
+				needsObjectiveWaypoint = true;
 				};
 				new InteriorInstance() {
 					position = "240.91 269.69 155.91";
@@ -542,17 +515,6 @@ new SimGroup(MissionGroup) {
 							Target = "50";
 							team = "1";
 					};
-				};
-				new WayPoint() {
-					position = "239.74 221.29 169.23";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "North Force Field Generator Bunker";
-					team = "1";
-						locked = "true";
 				};
 				new Item() {
 					position = "250.45 216.71 144.22";

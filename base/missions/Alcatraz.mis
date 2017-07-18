@@ -389,17 +389,6 @@ new SimGroup(MissionGroup) {
 			};
 			new SimGroup(IslandBase) {
 
-				new WayPoint() {
-					position = "40.0495 -103.975 291.518";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "Control Switch";
-					team = "0";
-						locked = "true";
-				};
 				new StaticShape() {
 					position = "40.0495 -103.975 291.518";
 					rotation = "1 0 0 0";
@@ -408,6 +397,7 @@ new SimGroup(MissionGroup) {
 					lockCount = "0";
 					homingCount = "0";
 						locked = "true";
+				needsObjectiveWaypoint = true;
 				};
 				new InteriorInstance() {
 					position = "40 -104 277.557";

@@ -277,15 +277,34 @@ function GMJ_Browser::runQuery( %this )
          {
             %filter = $pref::ServerBrowser::Filter[%filterIndex];
             GMJ_FilterText.setText( getField( %filter, 0 ) );
+            %rulesSet = getField( %filter, 1 );
+            if ( %rulesSet $= "" )
+               %rulesSet = "any";
+            %missionType = getField( %filter, 2 );
+            if ( %missionType $= "" )
+               %missionType = "any";
+            %maxPlayers = getField( %filter, 4 );
+            if ( %maxPlayers $= "" )
+               %maxPlayers = 255;
+            %maxBots = getField( %filter, 7 );
+            if ( %maxBots $= "" )
+               %maxBots = 16;
+            %regionMask = getField( %filter, 5 );
+            if ( %regionMask $= "" )
+               %regionMask = 4294967295;
+
             queryMasterServer( 
                   $JoinGamePort, 
                   0,                         // Flags 
-                  getField( %filter, 1 ),    // Rules Set 
-                  getField( %filter, 2 ),    // Mission Type 
+                  %rulesSet,                 // Rules Set 
+                  %missionType,              // Mission Type 
                   getField( %filter, 3 ),    // Min Players 
-                  getField( %filter, 4 ),    // Max Players 
-                  getField( %filter, 5 ),    // Region Mask 
-                  getField( %filter, 6 ) );  // Max Ping
+                  %maxPlayers,               // Max Players
+                  %maxBots,                  // Max Bots 
+                  %regionMask,               // Region Mask 
+                  getField( %filter, 6 ),    // Max Ping
+                  getField( %filter, 8 ),    // Min CPU Speed
+                  getField( %filter, 9 ) );  // Filter flags
             GMJ_StopBtn.setActive( true );
          }
          else
@@ -329,7 +348,7 @@ function GMJ_Browser::onDatabaseRow( %this, %row, %isLastRow, %key )
    if ( %isLastRow )
    {
       GMJ_StatusText.setValue( "Querying the master server..." );
-      queryMasterServer( $JoinGamePort, 0, "Any", "Any", 0, 255, 0xFFFFFFFF, 0, %this.buddyList );
+      queryMasterServer( $JoinGamePort, 0, "Any", "Any", 0, 255, 16, 0xFFFFFFFF, 0, 0, %this.buddyList );
       GMJ_StopBtn.setActive( true );
       %this.buddyList = "";
    }

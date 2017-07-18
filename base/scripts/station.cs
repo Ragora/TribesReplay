@@ -1226,7 +1226,7 @@ function checkSpawnPos(%MPB, %radius)
       
       %terrHeight = getTerrainHeight(%posX @ " " @ %posY);
 
-      if(abs(%terrHeight - %pPosZ) < %radius )
+      if(mAbs(%terrHeight - %pPosZ) < %radius )
       {
          %mask = $TypeMasks::VehicleObjectType     | $TypeMasks::MoveableObjectType   |
                  $TypeMasks::StaticShapeObjectType | $TypeMasks::StaticTSObjectType   | 

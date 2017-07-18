@@ -1,12 +1,16 @@
 $JoinGamePort = 28000;
 $pref::Audio::activeDriver = "default";
-$pref::Audio::drivers = "Miles";
+if ( $platform $= "linux" ) {
+   $pref::Audio::drivers = "OpenAL";
+} else {
+   $pref::Audio::drivers = "Miles";
+}
 $pref::Audio::frequency = 22100;
 $pref::Audio::sampleBits = 16;
 $pref::Audio::channels = 2;
 $pref::Audio::enableVoiceCapture = 1;
-$pref::Audio::voiceChannels = 2;
-$pref::Audio::encodingLevel = 0;
+$pref::Audio::voiceChannels = 1;
+$pref::Audio::encodingLevel = 0;             
 $pref::Audio::decodingMask = 1;
 $pref::Audio::forceMaxDistanceUpdate = 0;
 $pref::Audio::environmentEnabled = 0;
@@ -77,7 +81,7 @@ $pref::Input::KeyboardTurnSpeed = 0.1;
 $pref::Interior::TexturedFog = 0;
 $pref::IRCClient::autoreconnect = 1;
 $pref::IRCClient::awaymsg = "Don't be alarmed.  I'm going to step away from my computer.";
-$pref::IRCClient::banmsg = "You, and three generations of your offspring, are banned from this channel.";
+$pref::IRCClient::banmsg = "Get out.  And stay out!";
 $pref::IRCClient::kickmsg = "Alright, you're outta here!";
 $pref::IRCClient::hostmsg = "left to host a game.";
 $pref::IRCClient::showJoin = true;

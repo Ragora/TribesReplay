@@ -496,9 +496,12 @@ function MobileBaseVehicle::deleteAllMounted(%data, %obj)
    if(isObject(%obj.shield))
       %obj.shield.delete();
                             
-   %obj.teleporter.setThreadDir($ActivateThread, FALSE);
-   %obj.teleporter.playThread($ActivateThread,"activate");	
-   %obj.teleporter.playAudio($ActivateSound, StationTeleportDeacitvateSound);
+   if (isObject(%obj.teleporter))
+   {
+      %obj.teleporter.setThreadDir($ActivateThread, FALSE);
+      %obj.teleporter.playThread($ActivateThread,"activate");	
+      %obj.teleporter.playAudio($ActivateSound, StationTeleportDeacitvateSound);
+   }
 }
 
 //**************************************************************

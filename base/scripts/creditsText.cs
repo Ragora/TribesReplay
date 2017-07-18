@@ -96,9 +96,16 @@ addCreditsLine("<spush><font:Univers condensed:22><spush><color:18A27B>Motion Ca
 addCreditsLine("Technical Director: Troy McFarland");
 addCreditsLine("Performer: Cosmo Hom");
 addCreditsLine("");
+addCreditsLine("<spush><font:Univers condensed:22><spush><color:18A27B>Digital Video Support Team<spop><spop>");
+addCreditsLine("Director: Jim\"zootboy\" Carey");
+addCreditsLine("Sage \"3Dkid\" Freeman");
+addCreditsLine("Steve \"opticNerve\" Bradford");
+addCreditsLine("Tonya \"Agentmoody\" Stumphauzer");
+addCreditsLine("Troy \"cann n fodder\" McFarland");
+addCreditsLine("Kate \"reelBoss\" Alley");
+addCreditsLine("");
 addCreditsLine("<spush><font:Univers condensed:22><spush><color:18A27B>Movie Intro<spop><spop>");
-addCreditsLine("Robert Borth");
-addCreditsLine("Mike Price");
+addCreditsLine("PBDigital, Inc.");
 addCreditsLine("");
 addCreditsLine("<spush><font:Univers condensed:22><spush><color:18A27B>Installer<spop><spop>");
 addCreditsLine("Chris Mahnken");

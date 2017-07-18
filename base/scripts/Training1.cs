@@ -824,42 +824,42 @@ function flashObjective()
 }
 
 //------------------------------------------------------------------------------
-function playCinematicSound(%sound)
-{
-	switch$(%sound)
-	{
-	case "MissileLock":
-		%file = "fx/weapons/missile_launcher_lock.wav";
-		%looping = true;
-	
-	case "Heartbeat":
-		%file = "fx/misc/heartbeat.wav";
-		%looping = false;
-	}
-
-	%audiosound = new AudioEmitter() {
-		filename = %flie;
-		position = $player.player;
-		volume = "1";
-		isLooping = %looping;
-		is3D = false;
-		type = "EffectAudioType";
-	};
-	$player.currentSound = %audiosound;
-}
-
-function playCinematicMissileLockSound()
-{
-   %audiosound = new AudioEmitter() {
-      filename = "fx/weapons/missile_launcher_lock.wav";
-      position = $player.player;
-      volume = "1";
-      isLooping = "1";
-      is3D = false;
-      type = "EffectAudioType";
-   };
-   $player.missileSound = %audiosound;
-}
+// function playCinematicSound(%sound)
+// {
+// 	switch$(%sound)
+// 	{
+// 	case "MissileLock":
+// 		%file = "fx/weapons/missile_launcher_lock.wav";
+// 		%looping = true;
+// 	
+// 	case "Heartbeat":
+// 		%file = "fx/misc/heartbeat.wav";
+// 		%looping = false;
+// 	}
+// 
+// 	%audiosound = new AudioEmitter() {
+// 		filename = %flie;
+// 		position = $player.player;
+// 		volume = "1";
+// 		isLooping = %looping;
+// 		is3D = false;
+// 		type = "EffectAudioType";
+// 	};
+// 	$player.currentSound = %audiosound;
+// }
+// 
+// function playCinematicMissileLockSound()
+// {
+//    %audiosound = new AudioEmitter() {
+//       filename = "fx/weapons/missile_launcher_lock.wav";
+//       position = $player.player;
+//       volume = "1";
+//       isLooping = "1";
+//       is3D = false;
+//       type = "EffectAudioType";
+//    };
+//    $player.missileSound = %audiosound;
+// }
 
 
 //------------------------------------------------------------------------------
@@ -1079,7 +1079,7 @@ function AITraining1Pilot::monitor(%task, %client)
 
       if (VectorDist(%dest2D, %pos2D) < 20)
       {
-         if(%group.getCount() > %task.locationIndex) {
+         if(%group.getCount() > %task.locationIndex + 1) {
             %task.locationIndex++;
             cinematicEvent(%task.locationIndex);
          }
@@ -1130,7 +1130,7 @@ function cinematicEvent(%num)
          moveMap.push();
          TrainingPacifistMap.push();
          hideHudHack(true);
-         playCinematicSound("MissileLock");
+         // playCinematicSound("MissileLock");
          schedule(5700, 0, forcedCinematicPlayerDismount);
          schedule( 6100, game, cleanUpFlyer);
          //schedule( 8000, game, trainingIntroFlightEnd);

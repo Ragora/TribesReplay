@@ -752,7 +752,7 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
       %disqualified = $NotDeployableReason::TurretTooClose;
    else if (%item.testTurretSaturation())
       %disqualified = $NotDeployableReason::TurretSaturation;
-   else
+   else if (%disqualified == $NotDeployableReason::None)
    {
       // Test that there are no objstructing objects that this object
       //  will intersect with

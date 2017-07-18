@@ -1387,7 +1387,7 @@ new SimGroup(MissionGroup) {
 			position = "640.679 -507.778 104.063";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/sandpatter2. wav";
+			fileName = "fx/environment/sandpatter1. wav";
 			useProfileDescription = "0";
 			outsideAmbient = "0";
 			volume = "1";
@@ -1408,7 +1408,7 @@ new SimGroup(MissionGroup) {
 			position = "5.48026 2.36356 61.6817";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/sandpatter2.wav";
+			fileName = "fx/environment/sandpatter1.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "0";
 			volume = "1";
@@ -1450,7 +1450,7 @@ new SimGroup(MissionGroup) {
 			position = "335.214 -315.084 70.6655";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/sandpatter2.wav";
+			fileName = "fx/environment/sandpatter1.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "0";
 			volume = "1";
@@ -1492,7 +1492,7 @@ new SimGroup(MissionGroup) {
 			position = "904.258 -618.315 111.262";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
-			fileName = "fx/environment/sandpatter2.wav";
+			fileName = "fx/environment/sandpatter1.wav";
 			useProfileDescription = "0";
 			outsideAmbient = "0";
 			volume = "1";

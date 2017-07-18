@@ -410,7 +410,7 @@ new SimGroup(MissionGroup) {
 					powerCount = "0";
 
 				new SimGroup(ObjAlpha) {
-						powerCount = "1";
+						providesPower = true;
 
 					new InteriorInstance() {
 						position = "-202.509 -44.8018 107.6";
@@ -436,25 +436,11 @@ new SimGroup(MissionGroup) {
 							team = "2";
 							locked = "true";
 					};
-					new StaticShape(Team2generatorLarge1) {
-						position = "-208.471 -50.5374 91.9001";
-						rotation = "0 0 -1 89.9544";
-						scale = "1 1 1";
-						nameTag = "East Stronghold";
-						dataBlock = "GeneratorLarge";
-						lockCount = "0";
-						homingCount = "0";
-							name = "East Bunker Generator";
-							Target = "40";
-							team = "2";
-							scoreValue = "5";
-							locked = "true";
-					};
 					new StaticShape(Team2FlipFlop1) {
 						position = "-202.729 -45.0803 97.5";
 						rotation = "1 0 0 0";
 						scale = "1 1 1";
-						nameTag = "Control Switch";
+						nameTag = "Control";
 						dataBlock = "FlipFlop";
 						lockCount = "0";
 						homingCount = "0";
@@ -462,6 +448,7 @@ new SimGroup(MissionGroup) {
 							team = "2";
 							Projector = "0";
 							locked = "true";
+					needsObjectiveWaypoint = true;
 					};
 				};
 				new SimGroup(ObjBeta) {
@@ -490,6 +477,7 @@ new SimGroup(MissionGroup) {
 							team = "2";
 							scoreValue = "5";
 							locked = "true";
+					needsObjectiveWaypoint = true;
 					};
 					new StaticShape(Team2StationInventory1) {
 						position = "-115.004 27.3879 132.533";
@@ -553,6 +541,7 @@ new SimGroup(MissionGroup) {
 							team = "2";
 							scoreValue = "5";
 							locked = "true";
+					needsObjectiveWaypoint = true;
 					};
 					new StaticShape(Team2StationInventory3) {
 						position = "-61.3169 -115.977 126.67";
@@ -589,39 +578,6 @@ new SimGroup(MissionGroup) {
 							team = "2";
 							locked = "true";
 					};
-				};
-				new WayPoint() {
-					position = "-64.5573 -106.805 125.669";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "South Base Generator";
-					team = "2";
-						locked = "true";
-				};
-				new WayPoint() {
-					position = "-104.34 26.2317 135.396";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "North Base Generator";
-					team = "2";
-						locked = "true";
-				};
-				new WayPoint() {
-					position = "-206.347 -48.8631 90.5829";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "WayPointMarker";
-					lockCount = "0";
-					homingCount = "0";
-					name = "West Tower";
-					team = "2";
-						locked = "true";
 				};
 			};
 			new SimGroup(AIObjectives) {
