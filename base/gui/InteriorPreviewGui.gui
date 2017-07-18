@@ -1,0 +1,109 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(interiorPreviewGui) {
+	profile = "GuiContentProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+
+	new GameTSCtrl() {
+		profile = "GuiButtonProfile";
+		horizSizing = "width";
+		vertSizing = "height";
+		position = "0 0";
+		extent = "640 480";
+		minExtent = "8 8";
+		visible = "1";
+		helpTag = "0";
+		beaconBaseTextureName = "gui/beacon_base";
+		beaconTargetTextureName = "gui/crosshairs";
+		beaconTargetPeriod = "4000";
+		beaconsVisible = "1";
+		enemyBeaconLineBeginColor = "0.000000 1.000000 0.000000 0.200000";
+		enemyBeaconLineEndColor = "0.000000 1.000000 0.000000 0.800000";
+		vehicleBeaconLineBeginColor = "1.000000 0.000000 0.000000 0.200000";
+		vehicleBeaconLineEndColor = "1.000000 0.000000 0.000000 0.800000";
+		friendBeaconLineBeginColor = "1.000000 1.000000 0.000000 0.200000";
+		friendBeaconLineEndColor = "1.000000 1.000000 0.000000 0.800000";
+		beaconLineWidth = "2.5";
+		beaconTextYOffset = "14";
+		showAlternateTarget = "0";
+
+		new GameOverlayCtrl() {
+			profile = "GuiDefaultProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "0 0";
+			extent = "640 480";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+		};
+	};
+	new GuiButtonCtrl() {
+		profile = "GuiButtonProfile";
+		horizSizing = "right";
+		vertSizing = "top";
+		position = "22 438";
+		extent = "100 20";
+		minExtent = "8 8";
+		visible = "1";
+		command = "quit();";
+		helpTag = "0";
+		text = "Exit";
+	};
+};
+//--- OBJECT WRITE END ---
+
+function toggleMouse()
+{
+   if(Canvas.isCursorOn())
+      CursorOff();
+   else
+      CursorOn();
+}
+
+function interiorDebug(%val)
+{
+   if ( !%val )
+      Canvas.pushDialog( interiorDebugDialog );
+}
+
+function InteriorPreviewGui::onWake(%this)
+{
+   GlobalActionMap.bindcmd( keyboard, "tab", "", "toggleMouse();" );
+   GlobalActionMap.bindcmd( keyboard, "f9", "", "interiorDebug();" );
+   GlobalActionMap.bindcmd( keyboard, escape, "", "quit();" );
+
+   if ( isObject( previewMap ) )
+   {
+      previewMap.pop();
+      previewMap.delete();
+   }
+   new ActionMap( previewMap );
+   previewMap.bind( keyboard, w, moveforward );
+   previewMap.bind( keyboard, s, movebackward );
+   previewMap.bind( keyboard, a, moveleft );
+   previewMap.bind( keyboard, d, moveright );
+   previewMap.bind( keyboard, e, moveup );
+   previewMap.bind( keyboard, c, movedown );
+   previewMap.bindCmd( keyboard, k, "cycleDebugRenderMode();", "" );
+   previewMap.copyBind( moveMap, yaw );
+   previewMap.copyBind( moveMap, pitch );
+   previewMap.push();
+}
+
+function InteriorPreviewGui::onSleep(%this)
+{
+   previewMap.pop();
+   previewMap.delete();
+
+   GlobalActionMap.unbind(keyboard, "tab");
+   GlobalActionMap.unbind(keyboard, "f9");
+   lockMouse(false);
+   CursorOn();
+}
+

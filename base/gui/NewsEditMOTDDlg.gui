@@ -1,0 +1,96 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(NewsEditMOTDDlg) {
+	profile = "DlgBackProfile";
+	horizSizing = "width";
+	vertSizing = "height";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+
+	new ShellPaneCtrl() {
+		profile = "ShellDlgPaneProfile";
+		horizSizing = "center";
+		vertSizing = "center";
+		position = "125 163";
+		extent = "390 153";
+		minExtent = "48 92";
+		visible = "1";
+		helpTag = "0";
+		text = "EDIT MOTD";
+		maxLength = "255";
+		noTitleBar = "0";
+
+		new ShellScrollCtrl() {
+			profile = "NewScrollCtrlProfile";
+			horizSizing = "center";
+			vertSizing = "bottom";
+			position = "25 35";
+			extent = "340 54";
+			minExtent = "24 52";
+			visible = "1";
+			helpTag = "0";
+			willFirstRespond = "1";
+			hScrollBar = "alwaysOff";
+			vScrollBar = "alwaysOff";
+			constantThumbHeight = "0";
+			defaultLineHeight = "15";
+			childMargin = "4 3";
+			fieldBase = "gui/shll_field";
+
+			new GuiScrollContentCtrl() {
+				profile = "GuiDefaultProfile";
+				horizSizing = "width";
+				vertSizing = "height";
+				position = "8 7";
+				extent = "324 40";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+
+				new GuiMLTextEditCtrl(NewsEditMOTDText) {
+					profile = "ShellEditMOTDTextProfile";
+					horizSizing = "width";
+					vertSizing = "height";
+					position = "0 0";
+					extent = "319 40";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					lineSpacing = "2";
+					allowColorChars = "0";
+					maxChars = "120";
+				};
+			};
+		};
+		new ShellBitmapButton() {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "top";
+			position = "217 98";
+			extent = "128 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "NewsUpdateMOTD(); Canvas.popDialog(NewsEditMOTDDlg);";
+			helpTag = "0";
+			text = "UPDATE";
+			simpleStyle = "0";
+		};
+		new ShellBitmapButton() {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "top";
+			position = "45 98";
+			extent = "128 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "Canvas.popDialog(NewsEditMOTDDlg);";
+			accelerator = "escape";
+			helpTag = "0";
+			text = "CANCEL";
+			simpleStyle = "0";
+		};
+	};
+};
+//--- OBJECT WRITE END ---

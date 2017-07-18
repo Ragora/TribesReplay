@@ -1,0 +1,872 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiChunkedBitmapCtrl(GameGui) {
+	profile = "GuiContentProfile";
+	horizSizing = "width";
+	vertSizing = "height";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	variable = "$ShellBackground";
+	helpTag = "0";
+	useVariable = "1";
+
+	new ShellPaneCtrl(GM_Frame) {
+		profile = "ShellPaneProfile";
+		horizSizing = "width";
+		vertSizing = "height";
+		position = "12 46";
+		extent = "620 390";
+		minExtent = "48 92";
+		visible = "1";
+		helpTag = "0";
+		text = "GAME";
+		noTitleBar = "0";
+
+		new ShellTabFrame(GM_TabFrame) {
+			profile = "ShellHorzTabFrameProfile";
+			horizSizing = "width";
+			vertSizing = "bottom";
+			position = "22 54";
+			extent = "576 254";
+			minExtent = "26 254";
+			visible = "1";
+			helpTag = "0";
+			isVertical = "0";
+			useCloseButton = "0";
+			edgeInset = "0";
+		};
+		new ShellTabGroupCtrl(GM_TabView) {
+			profile = "TabGroupProfile";
+			horizSizing = "width";
+			vertSizing = "bottom";
+			position = "30 25";
+			extent = "560 29";
+			minExtent = "38 29";
+			visible = "1";
+			helpTag = "0";
+			glowOffset = "7";
+			tabSpacing = "2";
+			maxTabWidth = "150";
+			stretchToFit = "0";
+		};
+		new GuiControl(GM_JoinPane) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "31 62";
+			extent = "558 312";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+
+			new GuiTextCtrl() {
+				profile = "BrowserFilterLabelProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "5 2";
+				extent = "39 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "FILTER:";
+			};
+			new GuiControl() {
+				profile = "GuiDefaultProfile";
+				horizSizing = "width";
+				vertSizing = "bottom";
+				position = "48 2";
+				extent = "104 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+
+				new GuiTextCtrl(GMJ_FilterText) {
+					profile = "BrowserFilterTextProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "0 0";
+					extent = "8 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+				};
+			};
+			new GuiTextCtrl(GMJ_StatusText) {
+				profile = "BrowserStatusTextProfile";
+				horizSizing = "left";
+				vertSizing = "bottom";
+				position = "157 2";
+				extent = "190 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Status Text...";
+			};
+			new GuiProgressCtrl(GMJ_ProgressBar) {
+				profile = "BrowserProgressProfile";
+				horizSizing = "left";
+				vertSizing = "bottom";
+				position = "354 4";
+				extent = "200 14";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+			};
+			new ShellFancyArrayScrollCtrl() {
+				profile = "ShellServerBrowserProfile";
+				horizSizing = "width";
+				vertSizing = "height";
+				position = "0 18";
+				extent = "558 260";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				fixedHorizontal = "0";
+				vertSpacerBitmap = "gui/shll_vertspacer";
+				horzSpacerBitmap = "gui/shll_horzspacer";
+
+				new VirtualScrollCtrl() {
+					profile = "ShellServerBrowserProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "195 16";
+					extent = "363 244";
+					minExtent = "8 52";
+					visible = "1";
+					helpTag = "0";
+					willFirstRespond = "0";
+					hScrollBar = "alwaysOn";
+					vScrollBar = "alwaysOn";
+					constantThumbHeight = "0";
+					defaultLineHeight = "15";
+					childMargin = "0 0";
+
+					new VirtualScrollContentCtrl() {
+						profile = "GuiDefaultProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "4 4";
+						extent = "339 220";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+
+						new GuiControl() {
+							profile = "GuiDefaultProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "0 0";
+							extent = "769 8";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+						};
+					};
+				};
+				new GuiServerBrowser(GMJ_Browser) {
+					profile = "ShellServerBrowserProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "0 0";
+					extent = "538 239";
+					minExtent = "8 20";
+					visible = "1";
+					altCommand = "Canvas.pushDialog(ServerInfoDlg);";
+					helpTag = "0";
+					startScrollRegion = "1 0";
+					headerBitmap = "gui/server_tabs";
+					sortArrowBitmap = "gui/shll_sortarrow";
+					barBase = "gui/shll_bar";
+					glowOffset = "4";
+					rowHeight = "19";
+					headerFontType = "Univers Condensed";
+					headerFontSize = "16";
+					headerFontColor = "8 19 6 255";
+					headerFontColorHL = "25 68 56 255";
+					separatorColor = "192 192 192 255";
+					drawSeparators = "0";
+					headerSort = "1";
+					allowReposition = "1";
+					iconBase = "gui/shll_icon";
+				};
+			};
+			new ShellBitmapButton(GMJ_FilterBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "38 273";
+				extent = "110 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "Canvas.pushDialog(ChooseFilterDlg);";
+				helpTag = "0";
+				text = "CHANGE FILTER";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(GMJ_RefreshListBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "140 273";
+				extent = "110 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "GMJ_Browser.runQuery();";
+				helpTag = "0";
+				text = "REFRESH LIST";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(GMJ_RefreshServerBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "242 273";
+				extent = "110 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "GMJ_Browser.refreshSelectedServer();";
+				helpTag = "0";
+				text = "REFRESH SERVER";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(GMJ_InfoBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "344 273";
+				extent = "110 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "Canvas.pushDialog(ServerInfoDlg);";
+				helpTag = "0";
+				text = "SERVER INFO";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(GMJ_JoinBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "446 273";
+				extent = "110 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "JoinSelectedGame();";
+				helpTag = "0";
+				text = "JOIN GAME";
+				simpleStyle = "0";
+			};
+		};
+		new GuiControl(GM_HostPane) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "31 62";
+			extent = "558 312";
+			minExtent = "8 8";
+			visible = "0";
+			helpTag = "0";
+
+			new GuiControl() {
+				profile = "GuiDefaultProfile";
+				horizSizing = "center";
+				vertSizing = "center";
+				position = "0 0";
+				extent = "558 312";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+
+				new GuiTextCtrl() {
+					profile = "ShellTextProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "34 13";
+					extent = "60 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "Game Type:";
+				};
+				new ShellPopupMenu(GMH_MissionType) {
+					profile = "ShellPopupProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "90 4";
+					extent = "165 36";
+					minExtent = "49 36";
+					visible = "1";
+					helpTag = "0";
+					text = "GAME TYPE";
+					maxPopupHeight = "200";
+					buttonBitmap = "gui/shll_pulldown";
+					rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+					selectedBarBitmap = "gui/shll_pulldownbar_act";
+					noButtonStyle = "0";
+				};
+				new GuiTextCtrl() {
+					profile = "ShellTextProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "35 40";
+					extent = "75 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "Mission Name:";
+				};
+				new ShellScrollCtrl() {
+					profile = "NewScrollCtrlProfile";
+					horizSizing = "right";
+					vertSizing = "height";
+					position = "31 54";
+					extent = "218 251";
+					minExtent = "24 52";
+					visible = "1";
+					helpTag = "0";
+					willFirstRespond = "1";
+					hScrollBar = "alwaysOff";
+					vScrollBar = "dynamic";
+					constantThumbHeight = "0";
+					defaultLineHeight = "15";
+					childMargin = "0 2";
+					fieldBase = "gui/shll_field";
+
+					new GuiScrollContentCtrl() {
+						profile = "GuiDefaultProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "4 6";
+						extent = "210 239";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+
+						new ShellTextList(GMH_MissionList) {
+							profile = "ShellTextArrayProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "0 0";
+							extent = "210 8";
+							minExtent = "8 8";
+							visible = "1";
+							altCommand = "tryToStartHostedGame();";
+							helpTag = "0";
+							enumerate = "1";
+							resizeCell = "1";
+							columns = "0";
+							fitParentWidth = "1";
+							clipColumnText = "0";
+						};
+					};
+				};
+				new GuiControl() {
+					profile = "GuiDefaultProfile";
+					horizSizing = "relative";
+					vertSizing = "bottom";
+					position = "266 4";
+					extent = "270 268";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+
+					new GuiTextCtrl() {
+						profile = "ShellTextRightProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "8 8";
+						extent = "80 22";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+						text = "Server Name:";
+					};
+					new ShellTextEditCtrl() {
+						profile = "NewTextEditProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "84 0";
+						extent = "180 38";
+						minExtent = "32 38";
+						visible = "1";
+						variable = "$Host::GameName";
+						helpTag = "0";
+						historySize = "0";
+						maxLength = "24";
+						password = "0";
+						glowOffset = "9 9";
+					};
+					new GuiTextCtrl() {
+						profile = "ShellTextRightProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "8 38";
+						extent = "80 22";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+						text = "Password:";
+					};
+					new ShellTextEditCtrl() {
+						profile = "NewTextEditProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "84 30";
+						extent = "180 38";
+						minExtent = "32 38";
+						visible = "1";
+						variable = "$Host::Password";
+						helpTag = "0";
+						historySize = "0";
+						maxLength = "16";
+						password = "0";
+						glowOffset = "9 9";
+					};
+					new GuiTextCtrl() {
+						profile = "ShellTextRightProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "8 68";
+						extent = "80 22";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+						text = "Max Players:";
+					};
+					new ShellTextEditCtrl(GMH_MaxPlayersTE) {
+						profile = "NewTextEditNumericProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "84 60";
+						extent = "180 38";
+						minExtent = "32 38";
+						visible = "1";
+						variable = "$Host::MaxPlayers";
+						helpTag = "0";
+						validate = "validateMaxPlayers();";
+						historySize = "0";
+						maxLength = "3";
+						password = "0";
+						glowOffset = "9 9";
+					};
+					new ShellBitmapButton(GMH_AdvancedBtn) {
+						profile = "ShellButtonProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "84 96";
+						extent = "180 38";
+						minExtent = "32 38";
+						visible = "1";
+						command = "Canvas.pushDialog(AdvancedHostDlg);";
+						helpTag = "0";
+						text = "ADVANCED OPTIONS";
+						simpleStyle = "0";
+					};
+					new ShellToggleButton(GMH_BotsEnabledTgl) {
+						profile = "ShellRadioProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "88 132";
+						extent = "167 30";
+						minExtent = "26 27";
+						visible = "1";
+						variable = "$Host::BotsEnabled";
+						helpTag = "0";
+						text = "ENABLE BOTS";
+					};
+					new GuiControl(GMH_EnableBotsGroup) {
+						profile = "GuiDefaultProfile";
+						horizSizing = "left";
+						vertSizing = "bottom";
+						position = "1 157";
+						extent = "270 105";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+
+						new GuiTextCtrl() {
+							profile = "ShellTextRightProfile";
+							horizSizing = "left";
+							vertSizing = "bottom";
+							position = "11 5";
+							extent = "90 22";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+							text = "Number of Bots:";
+						};
+						new GuiTextCtrl(GMH_BotCountText) {
+							profile = "ShellAltTextProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "107 6";
+							extent = "16 20";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+							text = "(0)";
+						};
+						new ShellSliderCtrl(GMH_MinCombatantSlider) {
+							profile = "ShellSliderProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "79 20";
+							extent = "185 24";
+							minExtent = "12 24";
+							visible = "1";
+							variable = "value";
+							altCommand = "setMinCombatants();";
+							helpTag = "0";
+							range = "0.000000 1.000000";
+							ticks = "15";
+							value = "0.333333";
+							usePlusMinus = "1";
+						};
+						new GuiTextCtrl(GMH_BotDiffText) {
+							profile = "ShellTextRightProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "11 45";
+							extent = "90 22";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+							text = "Bot Difficulty:";
+						};
+						new GuiTextCtrl(GMH_BotMinText) {
+							profile = "ShellTextRightProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "31 63";
+							extent = "42 22";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+							text = "Min:";
+						};
+						new ShellSliderCtrl(GMH_BotMinSlider) {
+							profile = "ShellSliderProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "79 60";
+							extent = "185 24";
+							minExtent = "12 24";
+							visible = "1";
+							variable = "value";
+							altCommand = "updateMinBotDifficulty();";
+							helpTag = "0";
+							range = "0.000000 0.990000";
+							ticks = "1000";
+							value = "0.99";
+							usePlusMinus = "1";
+						};
+						new GuiTextCtrl(GMH_BotMaxText) {
+							profile = "ShellTextRightProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "31 86";
+							extent = "42 22";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+							text = "Max:";
+						};
+						new ShellSliderCtrl(GMH_BotMaxSlider) {
+							profile = "ShellSliderProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "79 83";
+							extent = "185 24";
+							minExtent = "12 24";
+							visible = "1";
+							variable = "value";
+							altCommand = "updateMaxBotDifficulty();";
+							helpTag = "0";
+							range = "0.000000 0.990000";
+							ticks = "1000";
+							value = "0.99";
+							usePlusMinus = "1";
+						};
+					};
+				};
+				new ShellBitmapButton(GMH_StartGameBtn) {
+					profile = "ShellButtonProfile";
+					horizSizing = "left";
+					vertSizing = "top";
+					position = "350 273";
+					extent = "180 38";
+					minExtent = "32 38";
+					visible = "1";
+					command = "StartHostedGame();";
+					helpTag = "0";
+					text = "START GAME";
+					simpleStyle = "0";
+				};
+			};
+		};
+		new GuiControl(GM_WarriorPane) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "31 62";
+			extent = "558 312";
+			minExtent = "8 8";
+			visible = "0";
+			helpTag = "0";
+
+			new GuiTextCtrl() {
+				profile = "ShellTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "9 12";
+				extent = "74 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Warrior:";
+			};
+			new ShellPopupMenu(GMW_WarriorPopup) {
+				profile = "ShellPopupProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "80 3";
+				extent = "200 38";
+				minExtent = "49 36";
+				visible = "1";
+				helpTag = "0";
+				text = "Select Warrior";
+				maxPopupHeight = "200";
+				buttonBitmap = "gui/shll_pulldown";
+				rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+				selectedBarBitmap = "gui/shll_pulldownbar_act";
+				noButtonStyle = "0";
+			};
+			new GuiControl() {
+				profile = "GuiDefaultProfile";
+				horizSizing = "left";
+				vertSizing = "center";
+				position = "290 6";
+				extent = "257 300";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+
+				new ShellBitmapButton(GMW_PlayerPageBtn) {
+					profile = "ShellButtonProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "94 12";
+					extent = "152 38";
+					minExtent = "32 38";
+					visible = "1";
+					command = "GM_WarriorPane.gotoPlayerPage();";
+					helpTag = "0";
+					text = "JUMP TO PLAYER PAGE";
+					simpleStyle = "0";
+				};
+				new GuiTextCtrl() {
+					profile = "ShellTextRightProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "18 63";
+					extent = "80 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "Race/Gender:";
+				};
+				new ShellPopupMenu(GMW_RaceGenderPopup) {
+					profile = "ShellPopupProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "95 54";
+					extent = "152 38";
+					minExtent = "49 36";
+					visible = "1";
+					helpTag = "0";
+					text = "Select Race/Gender";
+					maxPopupHeight = "200";
+					buttonBitmap = "gui/shll_pulldown";
+					rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+					selectedBarBitmap = "gui/shll_pulldownbar_act";
+					noButtonStyle = "0";
+				};
+				new GuiTextCtrl() {
+					profile = "ShellTextRightProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "18 99";
+					extent = "80 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "Skin:";
+				};
+				new ShellPopupMenu(GMW_SkinPopup) {
+					profile = "ShellPopupProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "95 90";
+					extent = "152 38";
+					minExtent = "49 36";
+					visible = "1";
+					helpTag = "0";
+					text = "Select Skin";
+					maxPopupHeight = "200";
+					buttonBitmap = "gui/shll_pulldown";
+					rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+					selectedBarBitmap = "gui/shll_pulldownbar_act";
+					noButtonStyle = "0";
+				};
+				new GuiTextCtrl() {
+					profile = "ShellTextRightProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "18 136";
+					extent = "80 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "Voice:";
+				};
+				new ShellPopupMenu(GMW_VoicePopup) {
+					profile = "ShellPopupProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "95 127";
+					extent = "152 38";
+					minExtent = "49 36";
+					visible = "1";
+					helpTag = "0";
+					text = "Select Voice";
+					maxPopupHeight = "200";
+					buttonBitmap = "gui/shll_pulldown";
+					rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+					selectedBarBitmap = "gui/shll_pulldownbar_act";
+					noButtonStyle = "0";
+				};
+				new GuiTextCtrl() {
+					profile = "ShellTextRightProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "114 168";
+					extent = "100 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "Test Voice:";
+				};
+				new ShellBitmapButton(GMW_VoiceTestBtn) {
+					profile = "SoundTestButtonProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "214 165";
+					extent = "24 24";
+					minExtent = "24 24";
+					visible = "1";
+					command = "GMW_VoicePopup.test();";
+					helpTag = "0";
+					simpleStyle = "1";
+				};
+				new ShellBitmapButton() {
+					profile = "ShellButtonProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "94 206";
+					extent = "152 38";
+					minExtent = "32 38";
+					visible = "1";
+					command = "GM_WarriorPane.createNewAlias();";
+					helpTag = "0";
+					text = "NEW ALIAS";
+					simpleStyle = "0";
+				};
+				new ShellBitmapButton(GMW_DeleteWarriorBtn) {
+					profile = "ShellButtonProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "94 243";
+					extent = "152 38";
+					minExtent = "32 38";
+					visible = "1";
+					command = "GM_WarriorPane.deleteWarrior();";
+					helpTag = "0";
+					text = "DELETE ALIAS";
+					simpleStyle = "0";
+				};
+			};
+			new ShellFieldCtrl() {
+				profile = "ShellFieldProfile";
+				horizSizing = "width";
+				vertSizing = "height";
+				position = "25 41";
+				extent = "261 263";
+				minExtent = "16 18";
+				visible = "1";
+				helpTag = "0";
+
+				new GuiPlayerView(GMW_PlayerModel) {
+					profile = "GuiDefaultProfile";
+					horizSizing = "width";
+					vertSizing = "height";
+					position = "1 1";
+					extent = "259 261";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+				};
+				new ShellRadioButton(GMW_LightRdo) {
+					profile = "ShellRadioProfile";
+					horizSizing = "right";
+					vertSizing = "top";
+					position = "0 176";
+					extent = "80 30";
+					minExtent = "26 27";
+					visible = "1";
+					command = "GMW_PlayerModel.update();";
+					helpTag = "0";
+					text = "LIGHT";
+					groupNum = "1";
+				};
+				new ShellRadioButton(GMW_MediumRdo) {
+					profile = "ShellRadioProfile";
+					horizSizing = "right";
+					vertSizing = "top";
+					position = "0 206";
+					extent = "80 30";
+					minExtent = "26 27";
+					visible = "1";
+					command = "GMW_PlayerModel.update();";
+					helpTag = "0";
+					text = "MEDIUM";
+					groupNum = "1";
+				};
+				new ShellRadioButton(GMW_HeavyRdo) {
+					profile = "ShellRadioProfile";
+					horizSizing = "right";
+					vertSizing = "top";
+					position = "0 236";
+					extent = "80 30";
+					minExtent = "26 27";
+					visible = "1";
+					command = "GMW_PlayerModel.update();";
+					helpTag = "0";
+					text = "HEAVY";
+					groupNum = "1";
+				};
+			};
+		};
+		new GuiTextCtrl(GM_VersionText) {
+			profile = "VersionTextProfile";
+			horizSizing = "left";
+			vertSizing = "bottom";
+			position = "396 4";
+			extent = "160 20";
+			minExtent = "8 8";
+			visible = "0";
+			helpTag = "0";
+			text = "";
+		};
+	};
+};
+//--- OBJECT WRITE END ---

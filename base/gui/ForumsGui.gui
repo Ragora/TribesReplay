@@ -1,0 +1,534 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiChunkedBitmapCtrl(ForumsGui) {
+	profile = "GuiContentProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	variable = "$ShellBackground";
+	helpTag = "0";
+	useVariable = "1";
+		eid = "979";
+		key = "93";
+		state = "done";
+		ebstat = "1";
+		initialized = "1";
+		refreshTarget = "1";
+		TextCheck = "0";
+		refreshFlag = "0";
+		forumCount = "-1";
+		bflag = "4";
+
+	new ShellPaneCtrl(ForumShell) {
+		profile = "ShellPaneProfile";
+		horizSizing = "width";
+		vertSizing = "height";
+		position = "13 46";
+		extent = "620 390";
+		minExtent = "48 92";
+		visible = "1";
+		helpTag = "0";
+		text = "FORUMS";
+		maxLength = "255";
+		noTitleBar = "0";
+
+		new GuiControl(ForumsThreadPane) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "19 26";
+			extent = "582 350";
+			minExtent = "8 8";
+			visible = "0";
+			helpTag = "0";
+
+			new GuiTextCtrl() {
+				profile = "ShellTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "8 3";
+				extent = "36 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "TOPIC:";
+				maxLength = "255";
+			};
+			new GuiTextCtrl(FO_TopicText) {
+				profile = "ShellTopicTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "50 3";
+				extent = "522 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Actual Topic Will Go Here";
+				maxLength = "255";
+			};
+			new GuiFrameSetCtrl(FO_Frame) {
+				profile = "GuiDefaultProfile";
+				horizSizing = "width";
+				vertSizing = "height";
+				position = "2 18";
+				extent = "578 292";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				columns = "0";
+				rows = "0 158";
+				borderWidth = "4";
+				borderColor = "5 199 145 255";
+				borderEnable = "dynamic";
+				borderMovable = "dynamic";
+				autoBalance = "0";
+				fudgeFactor = "4";
+
+				new ShellFancyArrayScrollCtrl(FO_MessagePane) {
+					profile = "ShellServerBrowserProfile";
+					horizSizing = "width";
+					vertSizing = "height";
+					position = "0 0";
+					extent = "578 154";
+					minExtent = "24 72";
+					visible = "1";
+					helpTag = "0";
+					fixedHorizontal = "1";
+					vertSpacerBitmap = "gui/shll_vertspacer";
+					horzSpacerBitmap = "gui/shll_horzspacer";
+
+					new VirtualScrollCtrl() {
+						profile = "ShellServerBrowserProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "0 16";
+						extent = "578 138";
+						minExtent = "8 52";
+						visible = "1";
+						helpTag = "0";
+						willFirstRespond = "0";
+						hScrollBar = "alwaysOff";
+						vScrollBar = "alwaysOn";
+						constantThumbHeight = "0";
+						defaultLineHeight = "15";
+						childMargin = "0 0";
+
+						new VirtualScrollContentCtrl() {
+							profile = "ShellTextArrayProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "4 4";
+							extent = "554 130";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+
+							new GuiControl() {
+								profile = "GuiDefaultProfile";
+								horizSizing = "right";
+								vertSizing = "bottom";
+								position = "0 0";
+								extent = "8 21";
+								minExtent = "8 8";
+								visible = "1";
+								helpTag = "0";
+							};
+						};
+					};
+					new ShellFancyTextList(ForumsMessageList) {
+						profile = "ShellServerBrowserProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "0 0";
+						extent = "558 150";
+						minExtent = "8 20";
+						visible = "1";
+						altCommand = "LinkBrowser(getField(ForumsMessageList.getRowTextById(ForumsMessageList.getSelectedID()),6),\"Warrior\");";
+						helpTag = "0";
+						startScrollRegion = "3 0";
+						headerBitmap = "gui/server_tabs";
+						sortArrowBitmap = "gui/shll_sortarrow";
+						fieldBase = "gui/shll_field";
+						barBase = "gui/shll_bar";
+						glowOffset = "4";
+						rowHeight = "19";
+						headerFontType = "Univers Condensed";
+						headerFontSize = "16";
+						headerFontColor = "8 19 6 255";
+						headerFontColorHL = "25 68 56 255";
+						separatorColor = "192 192 192 255";
+						drawSeparators = "0";
+						headerSort = "0";
+						allowReposition = "0";
+							updateCount = "0";
+							key = "71";
+							state = "replyPost";
+							lastId = "16480";
+							highestUpdate = "16480";
+							bflag = "1";
+					};
+				};
+				new ShellScrollCtrl() {
+					profile = "NewScrollCtrlProfile";
+					horizSizing = "width";
+					vertSizing = "height";
+					position = "0 158";
+					extent = "578 134";
+					minExtent = "24 52";
+					visible = "1";
+					helpTag = "0";
+					willFirstRespond = "1";
+					hScrollBar = "alwaysOff";
+					vScrollBar = "alwaysOn";
+					constantThumbHeight = "0";
+					defaultLineHeight = "15";
+					childMargin = "3 3";
+					fieldBase = "gui/shll_field";
+
+					new GuiScrollContentCtrl() {
+						profile = "GuiDefaultProfile";
+						horizSizing = "width";
+						vertSizing = "height";
+						position = "7 7";
+						extent = "548 120";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+
+						new GuiMLTextCtrl(ForumsText) {
+							profile = "ShellMessageTextProfile";
+							horizSizing = "width";
+							vertSizing = "height";
+							position = "0 0";
+							extent = "532 180";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+							lineSpacing = "2";
+							allowColorChars = "0";
+						};
+					};
+				};
+			};
+			new ShellBitmapButton(FO_EditBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "38 309";
+				extent = "80 38";
+				minExtent = "32 38";
+				visible = "0";
+				command = "ForumsEditPost();";
+				helpTag = "0";
+				text = "EDIT";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(FO_AcceptBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "110 309";
+				extent = "80 38";
+				minExtent = "32 38";
+				visible = "0";
+				command = "ForumsAcceptPost();";
+				accelerator = "alt a";
+				helpTag = "0";
+				text = "ACCEPT";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(FO_RejectBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "182 309";
+				extent = "80 38";
+				minExtent = "32 38";
+				visible = "0";
+				command = "ForumsRejectPost();";
+				accelerator = "delete";
+				helpTag = "0";
+				text = "DELETE";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(FO_ReplyBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "275 309";
+				extent = "80 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "ForumsReply();";
+				accelerator = "alt r";
+				helpTag = "0";
+				text = "REPLY";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(FO_NextBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "405 309";
+				extent = "80 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "ForumsNext();";
+				accelerator = "s";
+				helpTag = "0";
+				text = "NEXT";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(FO_PreviousBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "340 309";
+				extent = "80 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "ForumsPrevious();";
+				accelerator = "w";
+				helpTag = "0";
+				text = "PREVIOUS";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton() {
+				profile = "ShellButtonProfile";
+				horizSizing = "left";
+				vertSizing = "top";
+				position = "470 309";
+				extent = "115 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "ForumsGoTopics();";
+				accelerator = "backspace";
+				helpTag = "0";
+				text = "BACK TO TOPICS";
+				simpleStyle = "0";
+			};
+		};
+		new GuiControl(ForumsTopicsPane) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "15 26";
+			extent = "580 349";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+
+			new ShellScrollCtrl() {
+				profile = "NewScrollCtrlProfile";
+				horizSizing = "right";
+				vertSizing = "height";
+				position = "7 16";
+				extent = "161 291";
+				minExtent = "24 52";
+				visible = "1";
+				helpTag = "0";
+				willFirstRespond = "1";
+				hScrollBar = "alwaysOff";
+				vScrollBar = "alwaysOn";
+				constantThumbHeight = "0";
+				defaultLineHeight = "15";
+				childMargin = "0 2";
+				fieldBase = "gui/shll_field";
+
+				new GuiScrollContentCtrl() {
+					profile = "GuiDefaultProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "4 6";
+					extent = "137 279";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+
+					new ShellTextList(ForumsList) {
+						profile = "ShellTextArrayProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "0 0";
+						extent = "137 1908";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+						enumerate = "1";
+						resizeCell = "1";
+						columns = "0";
+						fitParentWidth = "1";
+						clipColumnText = "0";
+							forum = "58";
+					};
+				};
+			};
+			new ShellFancyArrayScrollCtrl() {
+				profile = "ShellServerBrowserProfile";
+				horizSizing = "width";
+				vertSizing = "height";
+				position = "166 1";
+				extent = "418 306";
+				minExtent = "24 52";
+				visible = "1";
+				helpTag = "0";
+				fixedHorizontal = "1";
+				vertSpacerBitmap = "gui/shll_vertspacer";
+				horzSpacerBitmap = "gui/shll_horzspacer";
+
+				new VirtualScrollCtrl() {
+					profile = "ShellServerBrowserProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "344 16";
+					extent = "74 290";
+					minExtent = "8 52";
+					visible = "1";
+					helpTag = "0";
+					willFirstRespond = "0";
+					hScrollBar = "alwaysOff";
+					vScrollBar = "alwaysOn";
+					constantThumbHeight = "0";
+					defaultLineHeight = "15";
+					childMargin = "0 3";
+
+					new VirtualScrollContentCtrl() {
+						profile = "GuiDefaultProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "4 7";
+						extent = "50 276";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+
+						new GuiControl() {
+							profile = "GuiDefaultProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "0 0";
+							extent = "52 1161";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+						};
+					};
+				};
+				new ShellFancyTextList(ForumsTopicsList) {
+					profile = "ShellServerBrowserProfile";
+					horizSizing = "width";
+					vertSizing = "height";
+					position = "0 0";
+					extent = "398 302";
+					minExtent = "8 20";
+					visible = "1";
+					altCommand = "ForumsOpenThread();";
+					helpTag = "0";
+					startScrollRegion = "3 0";
+					headerBitmap = "gui/server_tabs";
+					sortArrowBitmap = "gui/shll_sortarrow";
+					fieldBase = "gui/shll_field";
+					barBase = "gui/shll_bar";
+					glowOffset = "4";
+					rowHeight = "19";
+					headerFontType = "Univers Condensed";
+					headerFontSize = "16";
+					headerFontColor = "8 19 6 255";
+					headerFontColorHL = "25 68 56 255";
+					separatorColor = "192 192 192 255";
+					drawSeparators = "0";
+					headerSort = "1";
+					allowReposition = "0";
+						key = "43";
+						state = "lines";
+						selId = "0";
+						count = "0";
+						refreshFlag = "0";
+						forum = "0";
+						autoSelect = "1";
+						FirstCount = "0";
+				};
+			};
+			new GuiTextCtrl() {
+				profile = "ShellTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 3";
+				extent = "47 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "FORUMS";
+				maxLength = "255";
+			};
+			new ShellBitmapButton(FM_NewTopic) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "top";
+				position = "160 300";
+				extent = "90 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "ForumsNewTopic();";
+				helpTag = "0";
+				text = "NEW TOPIC";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(FM_TopThreads) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "top";
+				position = "234 300";
+				extent = "117 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "ForumsRefreshTopics();";
+				helpTag = "0";
+				text = "REFRESH TOPICS";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(FM_NextThreads) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "top";
+				position = "406 309";
+				extent = "90 38";
+				minExtent = "32 38";
+				visible = "0";
+				command = "ForumsGoTopics(1);";
+				helpTag = "0";
+				text = "NEXT TOPICS";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(FM_PrevThreads) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "top";
+				position = "324 309";
+				extent = "90 38";
+				minExtent = "32 38";
+				visible = "0";
+				command = "ForumsGoTopics(2);";
+				helpTag = "0";
+				text = "PREV TOPICS";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(RForumsBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "top";
+				position = "1 300";
+				extent = "118 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "GetForumsList();";
+				helpTag = "0";
+				text = "REFRESH FORUMS";
+				simpleStyle = "0";
+			};
+		};
+	};
+};
+//--- OBJECT WRITE END ---

@@ -1,0 +1,140 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(ForumsComposeDlg) {
+	profile = "DlgBackProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+		action = "Reply";
+		parentPost = "18598";
+		forum = "58";
+		post = "12846";
+		topic = "3822";
+
+	new ShellPaneCtrl() {
+		profile = "ShellDlgPaneProfile";
+		horizSizing = "center";
+		vertSizing = "center";
+		position = "70 36";
+		extent = "500 408";
+		minExtent = "48 92";
+		visible = "1";
+		helpTag = "0";
+		text = "FORUMS POST";
+		maxLength = "255";
+		noTitleBar = "0";
+
+		new GuiTextCtrl() {
+			profile = "ShellTextRightProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "22 37";
+			extent = "47 22";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Subject:";
+			maxLength = "255";
+		};
+		new ShellTextEditCtrl(FP_SubjectEdit) {
+			profile = "NewTextEditProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "65 29";
+			extent = "360 38";
+			minExtent = "32 38";
+			visible = "1";
+			variable = "$ForumsSubject";
+			helpTag = "0";
+			maxLength = "255";
+			historySize = "0";
+			password = "0";
+			glowOffset = "9 9";
+		};
+		new ShellScrollCtrl() {
+			profile = "NewScrollCtrlProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "27 63";
+			extent = "448 298";
+			minExtent = "24 52";
+			visible = "1";
+			helpTag = "0";
+			willFirstRespond = "1";
+			hScrollBar = "alwaysOff";
+			vScrollBar = "alwaysOn";
+			constantThumbHeight = "0";
+			defaultLineHeight = "15";
+			childMargin = "3 3";
+			fieldBase = "gui/shll_field";
+
+			new GuiScrollContentCtrl() {
+				profile = "GuiDefaultProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "7 7";
+				extent = "418 284";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+
+				new GuiMLTextEditCtrl(ForumsBodyText) {
+					profile = "ShellMessageTextProfile";
+					horizSizing = "width";
+					vertSizing = "height";
+					position = "0 -130";
+					extent = "418 414";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					lineSpacing = "2";
+					allowColorChars = "1";
+					maxChars = "3600";
+				};
+			};
+		};
+		new ShellBitmapButton() {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "top";
+			position = "239 358";
+			extent = "128 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "Canvas.popDialog(ForumsComposeDlg);";
+			helpTag = "0";
+			text = "CANCEL";
+			simpleStyle = "0";
+		};
+		new ShellBitmapButton() {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "top";
+			position = "351 358";
+			extent = "128 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "ForumsPost();";
+			helpTag = "0";
+			text = "POST";
+			simpleStyle = "0";
+		};
+		new ShellBitmapButton(QuoteBtn) {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "22 357";
+			extent = "172 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "GetQuotedText();";
+			helpTag = "0";
+			text = "INCLUDE TOPIC POST TEXT";
+			simpleStyle = "0";
+		};
+	};
+};
+//--- OBJECT WRITE END ---

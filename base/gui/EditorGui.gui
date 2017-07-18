@@ -1,0 +1,320 @@
+//--- OBJECT WRITE BEGIN ---
+
+new EditManager(Editor)
+{
+   profile = "GuiContentProfile";
+   horizSizing = "right";
+   vertSizing = "top";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   setFirstResponder = "0";
+   modal = "1";
+   helpTag = "0";
+   open = false;
+};
+
+//--- OBJECT WRITE END ---
+
+//------------------------------------------------------------------------------
+// Editor Cursors
+//------------------------------------------------------------------------------
+
+new GuiCursor(Editor_HandCursor)
+{
+   hotSpot = "5 1";
+   bitmapName = "gui/CUR_Hand.png";
+};
+
+new GuiCursor(Editor_RotateCursor)
+{
+   hotSpot = "11 18";
+   bitmapName = "gui/CUR_Rotate.png";
+};
+
+new GuiCursor(Editor_MoveCursor)
+{
+   hotSpot = "9 13";
+   bitmapName = "gui/CUR_Grab.png";
+};
+
+new GuiCursor(Editor_ArrowCursor)
+{
+   hotSpot = "0 0";
+   bitmapName = "gui/CUR_3dArrow.png";
+};
+
+new GuiControl(EmptyControl)
+{
+   profile = "GuiButtonProfile";
+};
+
+
+//------------------------------------------------------------------------------
+// Functions
+//------------------------------------------------------------------------------
+
+function getPrefSetting(%pref, %default)
+{
+   // 
+   if(%pref $= "")
+      return(%default);
+   else
+      return(%pref);
+}
+
+//------------------------------------------------------------------------------
+
+function Editor::getPrefs(%this)
+{
+   %this.currentEditor = getPrefSetting($pref::Editor::currentEditor, "WorldEditor");
+   %this.resolution = getPrefSetting($pref::Editor::screenResolution, getResolution());
+   %this.minToolFrameWidth = getPrefSetting($pref::Editor::minToolFrameWidth, 80);
+}
+
+function Editor::setPrefs(%this)
+{
+   $pref::Editor::currentEditor = %this.currentEditor;
+   $pref::Editor::screenResolution = getResolution();
+   $pref::Editor::minToolFrameWidth = %this.minToolFrameWidth;
+}
+
+function Editor::init(%this)
+{
+   if(%this.initialized)
+      return;
+
+   %this.initialized = true;
+
+   loadGui(EditorToolbarDlg);
+
+   // load in the editors
+   loadGui(WorldEditorGui);
+   loadGui(WorldEditorToolbarDlg);
+   loadGui(WorldEditorStatusbarDlg);
+   loadGui(WorldEditorButtonbarDlg);
+   loadGui(WorldEditorFrameSetDlg);
+   loadGui(WorldEditorSettingsDlg);
+
+   loadGui(TerrainEditorGui);
+   loadGui(TerrainEditorToolbarDlg);
+   loadGui(TerrainEditorExtraToolbarDlg);
+   loadGui(TerrainEditorStatusbarDlg);
+   loadGui(TerrainEditorButtonbarDlg);
+   loadGui(TerrainEditorFrameSetDlg);
+   loadGui(TerrainEditorTextureSelectGui);
+   loadGui(TerrainEditorValuesSettingsGui);
+
+   loadGui(AIEditorGui);
+   loadGui(AIEditorToolBar);
+   loadGui(AIEButtonBarDlg);
+   loadGui(AIEFrameSetDlg);
+   loadGui(AIEWorkingDlg);
+
+   //
+   loadGui(EditorSaveMissionDlg);
+
+   // tools
+   loadGui(EditorToolCreatorGui);
+   loadGui(EditorToolInspectorGui);
+   loadGui(EditorToolMissionAreaGui);
+   loadGui(EditorToolTreeViewGui);
+   loadGui(ObjectBuilderGui);
+
+   // do gui initialization...
+   wEditor.init();
+   tEditor.init();
+   TerraformerGui.init();
+   aiEdit.init();
+
+   //
+   Creator.init();
+   Inspector.init();
+   AreaEditor.init();
+   EditorTree.init();
+   ObjectBuilderGui.init();
+
+   //
+   WorldEditorFrameSetDlg.init();
+   WorldEditorStatusbarDlg.init();
+   WorldEditorButtonbarDlg.init();
+   WorldEditorToolbarDlg.init();
+   WorldEditorSettingsDlg.init();
+
+   //
+   TerrainEditorFrameSetDlg.init();
+   TerrainEditorStatusbarDlg.init();
+   TerrainEditorButtonbarDlg.init();
+   TerrainEditorToolbarDlg.init();
+   TerrainEditorExtraToolbarDlg.init();
+
+   AIEFrameSetDlg.init();
+   AIEButtonBarDlg.init();
+   AIEditorToolBar.init();
+
+   //
+   exec("scripts/editorRender.cs");
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+function Editor::pushDialog(%this, %name)
+{
+   %this.pushedDialogs[%this.numPushedDialogs] = %name;
+   %this.numPushedDialogs++;
+   Canvas.pushDialog(%name);
+}
+
+function Editor::popDialogs(%this)
+{
+   // remove current dialogs
+   for(%i = 0; %i < %this.numPushedDialogs; %i++)
+      Canvas.popDialog(%this.pushedDialogs[%i]);
+   %this.numPushedDialogs = 0;
+}
+
+//------------------------------------------------------------------------------
+
+function Editor::open(%this)
+{
+   if(%this.open)
+      return;
+
+   // get the defaults
+   %this.getPrefs();
+
+   %this.prevResolution = getResolution();
+   %this.prevContent = Canvas.getContent();
+
+   %this.init();
+
+   GlobalActionMap.bind(keyboard, "f11", toggleEditor);
+   GlobalActionMap.bind(keyboard, "f12", GuiEdit);
+
+   //jff: hangs when switching resolutions
+   //   setResolution(getWord(%this.resolution, 0), getWord(%this.resolution, 1));
+   Canvas.setContent(Editor);
+}
+
+function Editor::close(%this)
+{
+   if(!%this.open)
+      return;
+      
+   if(%this.prevResolution $= "")
+      %this.prevResolution = getResolution();
+   if(%this.prevContent == -1 || %this.prevContent == "")
+      %this.prevContent = "PlayGui";
+
+   Canvas.setContent(%this.prevContent);
+
+   //jff: hangs when switching resolutions
+   //   setResolution(getWord(%this.prevResolution, 0), getWord(%this.prevResolution, 1));
+   closeMessageHud();
+}
+
+//------------------------------------------------------------------------------
+
+function Editor::setEditor(%this, %editor)
+{
+   //
+   %this.currentEditor = %editor;
+   %this.popDialogs();
+   
+   switch$(%this.currentEditor)
+   {
+      case "WorldEditor":
+         %this.pushDialog(WorldEditorToolbarDlg);
+         %this.pushDialog(WorldEditorStatusbarDlg);
+         %this.pushDialog(WorldEditorButtonbarDlg);
+         %this.pushDialog(WorldEditorFrameSetDlg);
+
+      case "TerrainEditor":
+         %this.pushDialog(TerrainEditorToolbarDlg);
+         %this.pushDialog(TerrainEditorExtraToolbarDlg);
+         %this.pushDialog(TerrainEditorStatusbarDlg);
+         %this.pushDialog(TerrainEditorButtonbarDlg);
+         %this.pushDialog(TerrainEditorFrameSetDlg);
+
+      case "Terraformer":
+         %this.pushDialog(TerraformerGui);
+
+      case "AIEditor":
+         %this.pushDialog(AIEditorToolBar);
+         %this.pushDialog(WorldEditorStatusbarDlg);
+         %this.pushDialog(AIEButtonBarDlg);
+         %this.pushDialog(AIEFrameSetDlg);
+                             
+      default:
+         error("Editor::setEditor: attempting to set unknown editor '" @ %editor @ "'.");
+         return;
+   }
+
+   %this.pushDialog(EditorToolbarDlg);
+}
+
+//------------------------------------------------------------------------------
+
+function toggleMouse()
+{
+   if(Canvas.isCursorOn())
+      CursorOff();
+   else
+      CursorOn();
+}
+
+function Editor::onWake(%this)
+{  
+   %this.open = true;
+   
+   MoveMap.push();
+   EditorMap.push();
+   GlobalActionMap.bindcmd(keyboard, "tab", "", "toggleMouse();");
+   %this.setEditor(%this.currentEditor);
+}
+
+function Editor::onSleep(%this)
+{
+   %this.open = false;
+   
+   EditorMap.pop();
+   MoveMap.pop();
+   GlobalActionMap.unbind(keyboard, "tab");
+   lockMouse(false);
+   CursorOn();
+   
+   %this.popDialogs();
+
+   %this.setPrefs();
+
+   // only canvas level content gets onWake and onSleep calls..
+   wEditor.setPrefs();
+   tEditor.setPrefs();
+   aiEdit.setPrefs();
+}
+
+//------------------------------------------------------------------------------
+// keys
+new ActionMap(EditorMap);
+
+EditorMap.bindCmd(keyboard, "f2", "editor.setEditor(WorldEditor);", "");
+EditorMap.bindCmd(keyboard, "f3", "editor.setEditor(TerrainEditor);", "");
+EditorMap.bindCmd(keyboard, "f4", "editor.setEditor(Terraformer);", "");   
+EditorMap.bindCmd(keyboard, "f5", "editor.setEditor(AIEditor);", "");   
+
+EditorMap.bindCmd(keyboard, "alt s", "Canvas.pushDialog(EditorSaveMissionDlg);", "");
+EditorMap.bindCmd(keyboard, "alt r", "lightScene(\"\", forceAlways);", "");
+EditorMap.bindCmd(keyboard, "escape", "editor.close();", "");
+
+// Bookmarks
+//------------------------------------------------------------------------------
+
+// alt-#: set bookmark
+for(%i = 0; %i < 9; %i++)
+   EditorMap.bindCmd(keyboard, "alt " @ %i, "editor.setBookmark(" @ %i @ ");", "");
+
+// ctrl-#: goto bookmark
+for(%i = 0; %i < 9; %i++)
+   EditorMap.bindCmd(keyboard, "ctrl " @ %i, "editor.gotoBookmark(" @ %i @ ");", "");

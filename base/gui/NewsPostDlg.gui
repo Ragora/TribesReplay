@@ -1,0 +1,151 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(NewsPostDlg) {
+	profile = "DlgBackProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+
+	new ShellPaneCtrl() {
+		profile = "ShellDlgPaneProfile";
+		horizSizing = "center";
+		vertSizing = "center";
+		position = "90 36";
+		extent = "460 408";
+		minExtent = "48 92";
+		visible = "1";
+		helpTag = "0";
+		text = "POST NEWS";
+		maxLength = "255";
+		noTitleBar = "0";
+
+		new GuiTextCtrl() {
+			profile = "ShellTextRightProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "24 40";
+			extent = "60 22";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Category:";
+			maxLength = "255";
+		};
+		new ShellPopupMenu(NewsCategoryMenu) {
+			profile = "ShellPopupProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "81 31";
+			extent = "175 36";
+			minExtent = "49 36";
+			visible = "1";
+			helpTag = "0";
+			maxLength = "255";
+			maxPopupHeight = "200";
+			buttonBitmap = "gui/shll_pulldown";
+			rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+			selectedBarBitmap = "gui/shll_pulldownbar_act";
+			noButtonStyle = "0";
+		};
+		new GuiTextCtrl() {
+			profile = "ShellTextRightProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "24 70";
+			extent = "60 22";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Title:";
+			maxLength = "255";
+		};
+		new ShellTextEditCtrl() {
+			profile = "NewTextEditProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "80 62";
+			extent = "359 38";
+			minExtent = "32 38";
+			visible = "1";
+			variable = "$NewsTitle";
+			helpTag = "0";
+			maxLength = "48";
+			historySize = "0";
+			password = "0";
+			glowOffset = "9 9";
+		};
+		new ShellScrollCtrl() {
+			profile = "NewScrollCtrlProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "27 97";
+			extent = "407 254";
+			minExtent = "24 52";
+			visible = "1";
+			helpTag = "0";
+			willFirstRespond = "1";
+			hScrollBar = "alwaysOff";
+			vScrollBar = "alwaysOn";
+			constantThumbHeight = "0";
+			defaultLineHeight = "15";
+			childMargin = "3 3";
+			fieldBase = "gui/shll_field";
+
+			new GuiScrollContentCtrl() {
+				profile = "GuiDefaultProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "7 7";
+				extent = "377 240";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+
+				new GuiMLTextEditCtrl(NewsPostBodyText) {
+					profile = "ShellMessageTextProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "0 0";
+					extent = "377 240";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					lineSpacing = "2";
+					allowColorChars = "0";
+					maxChars = "3600";
+				};
+			};
+		};
+		new ShellBitmapButton() {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "top";
+			position = "68 354";
+			extent = "128 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "Canvas.popDialog(NewsPostDlg);";
+			accelerator = "escape";
+			helpTag = "0";
+			text = "CANCEL";
+			simpleStyle = "0";
+		};
+		new ShellBitmapButton() {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "top";
+			position = "264 354";
+			extent = "128 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "PostNewsProcess();";
+			helpTag = "0";
+			text = "POST";
+			simpleStyle = "0";
+		};
+	};
+};
+//--- OBJECT WRITE END ---

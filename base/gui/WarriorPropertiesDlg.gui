@@ -1,0 +1,352 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiChunkedBitmapCtrl(WarriorPropertiesDlg) {
+	profile = "DlgBackProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+	useVariable = "0";
+
+	new ShellDlgFrame(WarriorPropertiesMain) {
+		profile = "ShellDlgProfile";
+		horizSizing = "center";
+		vertSizing = "center";
+		position = "116 50";
+		extent = "408 380";
+		minExtent = "8 8";
+		visible = "1";
+		helpTag = "0";
+		text = "WARRIOR PROPERTIES";
+		maxLength = "255";
+
+		new ShellFieldCtrl() {
+			profile = "ShellFieldProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 34";
+			extent = "385 28";
+			minExtent = "16 18";
+			visible = "1";
+			helpTag = "0";
+
+			new ShellBitmapButton(WP_ProfileBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "-6 -5";
+				extent = "105 38";
+				minExtent = "32 38";
+				visible = "1";
+				helpTag = "0";
+				text = "PROFILE";
+				simpleStyle = "0";
+			};
+		};
+		new ShellBitmapButton(W_OKBtn) {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "312 337";
+			extent = "91 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "WarriorPropertiesDlg.Close();";
+			helpTag = "0";
+			text = "CLOSE";
+			simpleStyle = "0";
+		};
+		new ShellFieldCtrl(W_ProfilePane) {
+			profile = "ShellFieldProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 63";
+			extent = "385 277";
+			minExtent = "16 18";
+			visible = "1";
+			helpTag = "0";
+
+			new ShellFancyArrayScrollCtrl(WGL) {
+				profile = "clockProfile";
+				horizSizing = "width";
+				vertSizing = "height";
+				position = "233 101";
+				extent = "152 148";
+				minExtent = "24 52";
+				visible = "1";
+				helpTag = "0";
+				fixedHorizontal = "1";
+				vertSpacerBitmap = "gui/shll_vertspacer";
+				horzSpacerBitmap = "gui/shll_horzspacer";
+
+				new VirtualScrollCtrl(WL2) {
+					profile = "ShellServerBrowserProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "0 16";
+					extent = "152 132";
+					minExtent = "8 52";
+					visible = "1";
+					helpTag = "0";
+					willFirstRespond = "0";
+					hScrollBar = "alwaysOff";
+					vScrollBar = "alwaysOn";
+					constantThumbHeight = "0";
+					defaultLineHeight = "15";
+					childMargin = "0 3";
+
+					new VirtualScrollContentCtrl(ML3) {
+						profile = "GuiDefaultProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "4 7";
+						extent = "128 118";
+						minExtent = "8 8";
+						visible = "1";
+						helpTag = "0";
+
+						new GuiControl(ML4) {
+							profile = "GuiDefaultProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "0 0";
+							extent = "8 8";
+							minExtent = "8 8";
+							visible = "1";
+							helpTag = "0";
+						};
+					};
+				};
+				new ShellFancyTextList(WarriorGraphicsList) {
+					profile = "clockProfile";
+					horizSizing = "width";
+					vertSizing = "height";
+					position = "0 0";
+					extent = "132 144";
+					minExtent = "8 20";
+					visible = "1";
+					command = "WarriorGraphicsList.onSelect();";
+					helpTag = "0";
+					startScrollRegion = "1 0";
+					headerBitmap = "gui/server_tabs";
+					sortArrowBitmap = "gui/shll_sortarrow";
+					fieldBase = "gui/shll_field";
+					barBase = "gui/shll_bar";
+					glowOffset = "4";
+					rowHeight = "15";
+					headerFontType = "Univers Condensed";
+					headerFontSize = "16";
+					headerFontColor = "8 19 6 255";
+					headerFontColorHL = "25 68 56 255";
+					separatorColor = "192 192 192 255";
+					drawSeparators = "0";
+					headerSort = "1";
+					allowReposition = "1";
+				};
+			};
+			new ShellBitmapButton(WP_SubmitGraphicBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "229 242";
+				extent = "160 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "WarriorPropertiesDlg.SetPlayerGraphic();";
+				helpTag = "0";
+				text = "USE SELECTED GRAPHIC";
+				simpleStyle = "0";
+			};
+			new GuiTextCtrl() {
+				profile = "BrowserProgressProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "9 104";
+				extent = "125 17";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Current Graphic";
+				maxLength = "255";
+			};
+			new GuiBitmapCtrl(PlayerGraphic) {
+				profile = "GuiDefaultProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "6 121";
+				extent = "228 150";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				bitmap = "texticons/twb/twb_Laserrifle.jpg";
+				wrap = "0";
+			};
+			new ShellFieldCtrl() {
+				profile = "ShellFieldProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "3 3";
+				extent = "175 99";
+				minExtent = "16 18";
+				visible = "1";
+				helpTag = "0";
+
+				new GuiTextCtrl() {
+					profile = "ShellTextProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "11 11";
+					extent = "35 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "NAME:";
+					maxLength = "255";
+				};
+				new GuiTextCtrl() {
+					profile = "ShellTextProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "18 38";
+					extent = "27 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "NEW:";
+					maxLength = "255";
+				};
+				new ShellBitmapButton(WP_ChangeNameBtn) {
+					profile = "ShellButtonProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "-2 65";
+					extent = "179 38";
+					minExtent = "32 38";
+					visible = "1";
+					command = "WarriorPropertiesDlg.ChangePlayerName();";
+					helpTag = "0";
+					text = "CHANGE NAME";
+					simpleStyle = "0";
+				};
+				new ShellTextEditCtrl(NewNameEdit) {
+					profile = "NewTextEditProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "39 30";
+					extent = "138 38";
+					minExtent = "32 38";
+					visible = "1";
+					helpTag = "0";
+					maxLength = "16";
+					historySize = "0";
+					password = "0";
+					glowOffset = "9 9";
+				};
+				new GuiTextCtrl(WP_CurrentName) {
+					profile = "BrowserProgressProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "51 13";
+					extent = "113 17";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "EAST";
+					maxLength = "20";
+				};
+			};
+			new ShellFieldCtrl() {
+				profile = "ShellFieldProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "180 37";
+				extent = "201 65";
+				minExtent = "16 18";
+				visible = "1";
+				helpTag = "0";
+
+				new GuiTextCtrl() {
+					profile = "ShellTextProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "8 9";
+					extent = "25 22";
+					minExtent = "8 8";
+					visible = "1";
+					helpTag = "0";
+					text = "URL:";
+					maxLength = "255";
+				};
+				new ShellTextEditCtrl(UrlEdit) {
+					profile = "NewTextEditProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "28 1";
+					extent = "178 38";
+					minExtent = "32 38";
+					visible = "1";
+					helpTag = "0";
+					text = "www.tribes2.com";
+					maxLength = "255";
+					historySize = "0";
+					password = "0";
+					glowOffset = "9 9";
+				};
+				new ShellBitmapButton(WP_ChangeUrl) {
+					profile = "ShellButtonProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "-2 30";
+					extent = "206 38";
+					minExtent = "32 38";
+					visible = "1";
+					command = "WarriorPropertiesDlg.UpdateUrl();";
+					helpTag = "0";
+					text = "CHANGE HOME ADDRESS";
+					simpleStyle = "0";
+				};
+			};
+			new ShellBitmapButton(WP_EditDescriptionBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "317 0";
+				extent = "73 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "WarriorPropertiesDlg.editDescription();";
+				helpTag = "0";
+				text = "EDIT";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton(WP_ClearDescriptionBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "260 0";
+				extent = "72 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "WarriorPropertiesDlg.clearDescription();";
+				helpTag = "0";
+				text = "CLEAR";
+				simpleStyle = "0";
+			};
+			new GuiTextCtrl() {
+				profile = "ShellTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "186 8";
+				extent = "76 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "DESCRIPTION:";
+				maxLength = "255";
+			};
+		};
+	};
+};
+//--- OBJECT WRITE END ---

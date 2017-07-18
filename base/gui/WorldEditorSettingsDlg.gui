@@ -1,0 +1,967 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(WorldEditorSettingsDlg) {
+	profile = "GuiModelessDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+
+	new GuiWindowCtrl() {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "210 93";
+		extent = "233 295";
+		minExtent = "8 8";
+		visible = "1";
+		helpTag = "0";
+		text = "WorldEditor Settings";
+		resizeWidth = "1";
+		resizeHeight = "1";
+		canMove = "1";
+		canClose = "1";
+		canMinimize = "0";
+		canMaximize = "0";
+		minSize = "50 50";
+		closeCommand = "Canvas.popDialog(WorldEditorSettingsDlg);";
+
+		new GuiPopUpMenuCtrl(WESettingsCatagoryPopup) {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "6 26";
+			extent = "106 23";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			maxPopupHeight = "200";
+		};
+		new GuiControl(WESettingsGeneralTab) {
+			profile = "EditorContentProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "6 52";
+			extent = "220 210";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 10";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.planarMovement";
+				command = "wEditor.planarMovement = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Planar Movement";
+			};
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 36";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.boundingBoxCollision";
+				command = "wEditor.boundingBoxCollision = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Collide With Object\'s Bounding Box";
+			};
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 88";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.axisGizmoActive";
+				command = "wEditor.axisGizmoActive = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Axis Gizmo Active";
+			};
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 62";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.objectsUseBoxCenter";
+				command = "wEditor.objectsUseBoxCenter = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Objects Use Box Center";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 123";
+				extent = "83 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Min Scale Factor:";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 146";
+				extent = "83 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Min Scale Factor:";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "104 123";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.minScaleFactor";
+				command = "wEditor.minScaleFactor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "104 146";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.maxScaleFactor";
+				command = "wEditor.maxScaleFactor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 178";
+				extent = "80 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Visible Distance:";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "104 178";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "pref::Editor::visibleDistance";
+				command = "$pref::Editor::visibleDistance = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+		};
+		new GuiControl(WESettingsDisplayTab) {
+			profile = "EditorContentProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "6 52";
+			extent = "220 210";
+			minExtent = "8 8";
+			visible = "0";
+			helpTag = "0";
+
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 10";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.renderPlane";
+				command = "wEditor.renderPlane = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Render Plane";
+			};
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 37";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.renderPlaneHashes";
+				command = "wEditor.renderPlaneHashes = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Render Plane Hashes";
+			};
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 64";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.renderObjText";
+				command = "wEditor.renderObjText = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Render Object Text";
+			};
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 119";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.renderSelectionBox";
+				command = "wEditor.renderSelectionBox = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Render Selection Box";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "93 151";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.planeDim";
+				command = "wEditor.planeDim = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "18 151";
+				extent = "59 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Plane Extent";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "18 175";
+				extent = "44 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Grid Size";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "93 175";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.gridSize";
+				command = "wEditor.gridSize = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 90";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.renderObjHandle";
+				command = "wEditor.renderObjHandle = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Render Object Handle";
+			};
+		};
+		new GuiControl(WESettingsColorsTab) {
+			profile = "EditorContentProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "6 52";
+			extent = "220 210";
+			minExtent = "8 8";
+			visible = "0";
+			helpTag = "0";
+
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "98 31";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.objectTextColor";
+				command = "wEditor.objectTextColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "98 56";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.objSelectColor";
+				command = "wEditor.objSelectColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "98 81";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.objMouseOverSelectColor";
+				command = "wEditor.objMouseOverSelectColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "98 106";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.objMouseOverColor";
+				command = "wEditor.objMouseOverColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "98 131";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.dragRectColor";
+				command = "wEditor.dragRectColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "98 156";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.faceSelectColor";
+				command = "wEditor.faceSelectColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "98 181";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.selectionBoxColor";
+				command = "wEditor.selectionBoxColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "98 6";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.gridColor";
+				command = "wEditor.gridColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 6";
+				extent = "20 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Grid";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 31";
+				extent = "55 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Object Text";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 56";
+				extent = "64 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Object Select";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 81";
+				extent = "77 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Mouse Over Sel";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 106";
+				extent = "59 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Mouse Over";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 131";
+				extent = "48 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Drag Rect";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 156";
+				extent = "57 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Face Select";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "13 181";
+				extent = "66 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Selection Box";
+			};
+		};
+		new GuiControl(WESettingsMouseTab) {
+			profile = "EditorContentProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "6 52";
+			extent = "220 210";
+			minExtent = "8 8";
+			visible = "0";
+			helpTag = "0";
+
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 10";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.showMousePopupInfo";
+				command = "wEditor.showMousePopupInfo = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Show Mouse Popup Info";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 54";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.mouseMoveScale";
+				command = "wEditor.mouseMoveScale = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 79";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.mouseRotateScale";
+				command = "wEditor.mouseRotateScale = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 104";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.mouseScaleScale";
+				command = "wEditor.mouseScaleScale = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 129";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.popupBackgroundColor";
+				command = "wEditor.popupBackgroundColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 154";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.popupTextColor";
+				command = "wEditor.popupTextColor = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "12 54";
+				extent = "56 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Move Scale";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "12 79";
+				extent = "61 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Rotate Scale";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "12 104";
+				extent = "57 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Scale Scale";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "12 129";
+				extent = "81 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Popup Bkgnd Col";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "12 154";
+				extent = "72 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Popup Text Col";
+			};
+		};
+		new GuiControl(WESettingsMiscTab) {
+			profile = "EditorContentProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "6 52";
+			extent = "220 210";
+			minExtent = "8 8";
+			visible = "0";
+			helpTag = "0";
+
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 11";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.selectHandle";
+				command = "wEditor.selectHandle = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 37";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.defaultHandle";
+				command = "wEditor.defaultHandle = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 63";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.lockedHandle";
+				command = "wEditor.lockedHandle = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 89";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.axisGizmoMaxScreenLen";
+				command = "wEditor.axisGizmoMaxScreenLen = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "101 115";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.projectDistance";
+				command = "wEditor.projectDistance = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "9 11";
+				extent = "66 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Select Handle";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "9 37";
+				extent = "70 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Default Handle";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "9 63";
+				extent = "71 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Locked Handle";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "9 89";
+				extent = "89 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Gizmo Screen Len";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "9 115";
+				extent = "78 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Project Distance";
+			};
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "133 267";
+			extent = "80 20";
+			minExtent = "8 8";
+			visible = "1";
+			command = "Canvas.popDialog(WorldEditorSettingsDlg);";
+			helpTag = "0";
+			text = "OK";
+		};
+		new GuiControl(WESettingsSnapTab) {
+			profile = "EditorContentProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "6 52";
+			extent = "220 210";
+			minExtent = "8 8";
+			visible = "0";
+			helpTag = "0";
+
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "22 39";
+				extent = "44 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Grid Size";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "97 39";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.gridSize";
+				command = "wEditor.gridSize = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "10 10";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.snapToGrid";
+				command = "wEditor.snapToGrid = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Snap To Grid";
+			};
+			new GuiCheckBoxCtrl() {
+				profile = "GuiCheckBoxProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "12 66";
+				extent = "200 24";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.snapRotations";
+				command = "wEditor.snapRotations = $ThisControl.getValue();";
+				helpTag = "0";
+				text = "Snap Rotations";
+			};
+			new GuiTextCtrl() {
+				profile = "GuiTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "22 95";
+				extent = "56 18";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Snap Angle";
+			};
+			new GuiTextEditCtrl() {
+				profile = "GuiTextEditProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "97 95";
+				extent = "107 18";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "wEditor.rotationSnap";
+				command = "wEditor.rotationSnap = $ThisControl.getValue();";
+				helpTag = "0";
+				historySize = "0";
+				maxLength = "255";
+				password = "0";
+			};
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+//------------------------------------------------------------------------------
+// Functions
+//------------------------------------------------------------------------------
+
+function WorldEditorSettingsDlg::init(%this)
+{
+   WESettingsCatagoryPopup.clear();
+
+   //   
+   WESettingsCatagoryPopup.add(General, 0);
+   WESettingsCatagoryPopup.add(Display, 1);
+   WESettingsCatagoryPopup.add(Snap, 2);
+   WESettingsCatagoryPopup.add(Colors, 3);
+   WESettingsCatagoryPopup.add(Mouse, 4);
+   WESettingsCatagoryPopup.add(Misc, 5);
+
+   %this.showTab(General);
+}
+
+function WESettingsCatagoryPopup::onSelect(%this, %item)
+{
+   WorldEditorSettingsDlg.showTab(%this.getValue());
+}
+
+function WorldEditorSettingsDlg::showTab(%this, %tab)
+{
+   WESettingsGeneralTab.setVisible(false);
+   WESettingsDisplayTab.setVisible(false);
+   WESettingsSnapTab.setVisible(false);
+   WESettingsColorsTab.setVisible(false);
+   WESettingsMouseTab.setVisible(false);
+   WESettingsMiscTab.setVisible(false);
+
+   WESettingsCatagoryPopup.setText(%tab);
+
+   %tab = "WESettings" @ %tab @ "Tab";
+   %tab.setVisible(true);
+}

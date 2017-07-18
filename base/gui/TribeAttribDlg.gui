@@ -1,0 +1,151 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(TribeAttribDlg) {
+	profile = "DlgBackProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	variable = "$NewTagAppend";
+	helpTag = "0";
+		tribename = "DEV Team";
+
+	new ShellPaneCtrl() {
+		profile = "ShellDlgPaneProfile";
+		horizSizing = "center";
+		vertSizing = "center";
+		position = "155 145";
+		extent = "330 190";
+		minExtent = "48 92";
+		visible = "1";
+		helpTag = "0";
+		text = "CHANGE TRIBE TAG";
+		noTitleBar = "0";
+
+		new GuiTextCtrl() {
+			profile = "ShellTextRightProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "65 41";
+			extent = "80 22";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Current:";
+		};
+		new ShellFieldCtrl() {
+			profile = "ShellFieldProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "151 39";
+			extent = "130 22";
+			minExtent = "16 18";
+			visible = "1";
+			helpTag = "0";
+
+			new GuiTextCtrl(TAD_CurrentTag) {
+				profile = "ShellAltTextCenterProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "1 3";
+				extent = "124 20";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "$CurrentTribeTag";
+				helpTag = "0";
+				text = "TAG";
+			};
+		};
+		new GuiTextCtrl() {
+			profile = "ShellTextRightProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "65 71";
+			extent = "80 22";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "New:";
+		};
+		new ShellTextEditCtrl(TAD_NewTag) {
+			profile = "NewTextEditProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "141 63";
+			extent = "148 38";
+			minExtent = "32 38";
+			visible = "1";
+			variable = "$NewTribeTag";
+			command = "updateNewTagPreview();";
+			helpTag = "0";
+			historySize = "0";
+			maxLength = "8";
+			password = "0";
+			glowOffset = "9 9";
+		};
+		new GuiTextCtrl() {
+			profile = "ShellTextRightProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "29 101";
+			extent = "65 22";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Preview:";
+		};
+		new ShellFieldCtrl() {
+			profile = "ShellFieldProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "100 101";
+			extent = "180 22";
+			minExtent = "16 18";
+			visible = "1";
+			helpTag = "0";
+
+			new GuiTextCtrl(TAD_PreviewTag) {
+				profile = "ShellAltTextCenterProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "0 3";
+				extent = "180 20";
+				minExtent = "8 8";
+				visible = "1";
+				variable = "$NewTagPreview";
+				helpTag = "0";
+				text = "PREVIEW";
+			};
+		};
+		new ShellBitmapButton(TAD_OKBtn) {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "top";
+			position = "187 135";
+			extent = "100 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "TribeAttribDlg.ChangeTribeTag();";
+			accelerator = "Enter";
+			helpTag = "0";
+			text = "OK";
+			simpleStyle = "0";
+		};
+		new ShellBitmapButton(TAD_CancelBtn) {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "top";
+			position = "43 135";
+			extent = "100 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "Canvas.popDialog(TribeAttribDlg);";
+			accelerator = "escape";
+			helpTag = "0";
+			text = "CANCEL";
+			simpleStyle = "0";
+		};
+	};
+};
+//--- OBJECT WRITE END ---

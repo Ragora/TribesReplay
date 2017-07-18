@@ -1,0 +1,535 @@
+//--- OBJECT WRITE BEGIN ---
+new GameTSCtrl(PlayGui) {
+   profile = "GuiContentProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   setFirstResponder = "1";
+   modal = "1";
+   helpTag = "0";
+   beaconBaseTextureName = "gui/beacon_base";
+   beaconTargetTextureName = "gui/crosshairs";
+   beaconTargetPeriod = 4000;
+   beaconsVisible = true;
+   enemyBeaconLineBeginColor = "0 1 0 0.2";
+   enemyBeaconLineEndColor = "0 1 0 0.8";
+   vehicleBeaconLineBeginColor = "1 0 0 0.2";
+   vehicleBeaconLineEndColor = "1 0 0 0.8";
+   friendBeaconLineBeginColor = "1 1 0 0.2";
+   frinedBeaconLineEndColor = "1 1 0 0.8";
+   beaconLineWidth = "2.5";
+   beaconTextYOffset = 14;
+
+   new HudScoreCtrl(objectiveHud) {
+      profile = "HudScoreProfile";
+      horizSizing = "right";
+      vertSizing = "top";
+      position = "8 437";
+      extent = "245 35";
+      minExtent = "8 8";
+      visible = "0";
+   };
+
+   new HudBitmapCtrl(hudClusterBack) {
+      
+      profile = "GuiButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "444 8";
+      extent = "188 81";
+      minExtent = "8 8";
+      visible = "1";
+      frameColor = "0 1 0 1";
+      opacity = "0.9";
+      bitmap = "gui/hud_new_cog.png";
+      
+      new HudBitmapCtrl(hudCompassBack) {
+      
+         profile = "GuiButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "109 2";
+         extent = "77 77";
+         minExtent = "8 8";
+         visible = "1";
+         frameColor = "0 1 0 1";
+         opacity = "0.9";
+         bitmap = "gui/hud_new_compass.png";
+      };
+      
+      new GuiControl( compassHud ) {
+      
+         profile = "GuiDefaultProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "107 2";
+         extent = "81 77";
+         minExtent = "8 8";
+         visible = "1";
+         opacity = "1.0";
+         
+         new HudCompass( compass ) {
+            
+            profile = "clockProfile";
+            horizSizing = "left";
+            vertSizing = "bottom";
+            position = "0 0";
+            extent = "100 100";
+            minExtent = "8 8";
+            visible = "1";
+            opacity = "1.0";
+            textColor = "0 255 0";
+         };
+      };
+      
+      new HudPulsingBitmap( sensorHudBack )
+      {
+         profile = "GuiButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "134 26";
+         extent = "27 29";
+         minExtent = "8 8";
+         visible = "1";
+         frameColor = "0 1 0 1";
+         opacity = "0.9";
+         bitmap = "gui/hud_new_ping.png";
+         pulse = false;
+         color = "3 255 110";
+      };
+
+      new HudPulsingBitmap( sensorHud ) {
+   
+         profile = "GuiDefaultProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "134 26";
+         extent = "27 29";
+         minExtent = "8 8";
+         visible = "1";
+         opacity = "0.9";
+         bitmap = "gui/hud_new_ping.png";
+         pulse = true;
+         pulseRate = 1000;
+         visible = false;
+
+         pingColor = "255 22 22";
+         jamColor = "253 255 2";
+      };
+      
+      new HudEnergy( energyHud ) {
+         
+         profile = "GuiDefaultProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "8 23";
+         extent = "92 5";
+         minExtent = "92 5";
+         visible = "1";
+         setFirstResponder = "0";
+         modal = "1";
+         helpTag = "0";
+         fillColor = "0.353000 0.373000 0.933000 0.800000";
+         frameColor = "0.000000 1.000000 0.000000 1.000000";
+         opacity = "0.8";
+         subRegion = "0 0 92 10";
+         pulseRate = "500";
+         pulseThreshold = "0.3";
+      };
+      
+      new HudDamage( damageHud ) {
+         
+         profile = "GuiDefaultProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "8 5";
+         extent = "92 8";
+         minExtent = "92 8";
+         visible = "1";
+         setFirstResponder = "0";
+         modal = "1";
+         helpTag = "0";
+         fillColor = "0.000 1.000 0.000 0.800000";
+         frameColor = "0.000000 1.000000 0.000000 0.000000";
+         opacity = "0.8";
+         subRegion = "0 0 92 10";
+         pulseRate = "500";
+         pulseThreshold = "0.3";
+      };
+      
+      new HudHeat(HeatHud) {
+         
+         profile = "GuiDefaultProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "8 30";
+         extent = "92 3";
+         minExtent = "92 3";
+         visible = "1";
+         setFirstResponder = "0";
+         modal = "1";
+         helpTag = "0";
+         fillColor = "1.000 0.000 0.000 0.800000";
+         opacity = "0.8";
+         subRegion = "0 0 100 10";
+         pulseRate = "500";
+         pulseThreshold = "0.3";
+         heatWarning = 0.7;  //When does the heat bar flash on the player?
+      };
+   };
+   
+   new HudClock( clockHud ) {
+      profile = "clockProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "559 38";
+      extent = "65 15";
+      minExtent = "8 8";
+      visible = "1";
+      setFirstResponder = "0";
+      modal = "1";
+      helpTag = "0";
+      opacity = "0.9";
+      bitmap = "gui/hud_mistimer.png";
+      autoCenter = "0";
+      autoResize = "0";
+      subRegion = "0 2 65 15";
+   };
+   
+   
+   new HudBitmapCtrl(lagHudIndicator) {
+      profile = "GuiButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "570 38";
+      extent = "35 32";
+      visible = "0";
+      frameColor = "0 1 0 1";
+      opacity = "0.8";
+      bitmap = "gui/hud_disconnect.png";
+   };
+
+   new GuiControl(retCenterHud) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "192 112";
+      extent = "256 256";
+      minExtent = "8 8";
+      visible = "1";
+      setFirstResponder = "0";
+      modal = "1";
+      helpTag = "0";
+      wrap = "0";
+
+      new HudCrosshair(reticleHud) {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "0 0";
+         extent = "256 256";
+         minExtent = "8 8";
+         visible = "1";
+         setFirstResponder = "0";
+         modal = "1";
+         helpTag = "0";
+         fillColor = "0.250000 0.250000 0.250000 0.250000";
+         frameColor = "0.000000 1.000000 0.000000 1.000000";
+         opacity = "0.5";
+         bitmap = "gui/ret_blaster.png";
+         autoCenter = "1";
+         autoResize = "1";
+      };
+
+      new GuiTextCtrl(ammoHud) {
+         profile = "GuiAmmoHudProfile";
+         horizSizing = "left";
+         vertSizing = "top";
+         position = "75 150";
+         extent = "80 30";
+         minExtent = "8 8";
+         visible = "1";
+         setFirstResponder = "0";
+         modal = "1";
+      };
+
+      new HudPulsingBitmap(deploySensor) 
+      {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "94 94";
+         extent = "67 67";
+         minExtent = "8 8";
+         setFirstResponder = "0";
+         modal = "1";
+         helpTag = "0";
+         fillColor = "0.250000 0.250000 0.250000 0.250000";
+         frameColor = "0.000000 1.000000 0.000000 1.000000";
+         opacity = "0.5";
+         bitmap = "gui/hud_ping.png";
+         autoCenter = "1";
+         autoResize = "1";
+         pulse = "false";
+         pulseRate = "1000";
+         visible = false;
+         color = "0 0 0 0";
+      };
+      new HudCrosshair(reticleFrameHud) {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "94 94";
+         extent = "67 67";
+         minExtent = "8 8";
+         visible = "1";
+         setFirstResponder = "0";
+         modal = "1";
+         helpTag = "0";
+         fillColor = "0.250000 0.250000 0.250000 0.250000";
+         frameColor = "0.000000 1.000000 0.000000 1.000000";
+         opacity = "0.5";
+         bitmap = "gui/hud_retrng.png";
+         autoCenter = "1";
+         autoResize = "1";
+      };
+   };
+   new HudInventory(inventoryHud) {
+      profile = "GuiHudCounterProfile";
+      horizSizing = "left";
+      vertSizing = "top";
+      position = "486 434";
+      extent = "115 39";
+      minExtent = "8 8";
+      visible = "1";
+      fillColor = "0.250000 0.250000 0.250000 0.250000";
+      frameColor = "0.000000 1.000000 0.000000 1.000000";
+      opacity = "0.9";
+      ammoOffset = "6 24";
+      backGroundOffset = "0 0";
+      highLightOffset = "0 0";
+      iconOffset = "1 1";
+      backGroundSpace = "2";
+   };
+
+   new GuiBitmapCtrl(backpackFrame) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "left";
+      vertSizing = "top";
+      bitmap = "gui/hud_new_panel.png";
+      position = "457 434";
+      extent = "27 38";
+      minExtent = "8 8";
+      visible = "0";
+
+      new GuiBitmapCtrl(backpackIcon) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "left";
+         vertSizing = "top";
+         position = "0 3";
+         extent = "25 25";
+         minExtent = "8 8";
+         visible = "1";
+      };
+
+      new GuiTextCtrl(backpackText) {
+         profile = "GuiPackTextProfile";
+         horizSizing = "left";
+         vertSizing = "top";
+         position = "1 24";
+         extent = "25 15";
+         minExtent = "8 8";
+         visible = "0";
+      };
+   };
+
+   new HudWeapons(weaponsHud) {
+      profile = "GuiHudCounterProfile";
+      horizSizing = "left";
+      vertSizing = "top";
+      position = "604 194";
+      extent = "27 244";
+      minExtent = "8 8";
+      visible = "1";
+      setFirstResponder = "0";
+      modal = "1";
+      helpTag = "0";
+      fillColor = "0.250000 0.250000 0.250000 0.250000";
+      frameColor = "0.000000 1.000000 0.000000 1.000000";
+      opacity = "0.9";
+      ammoOffset = "6 24";
+      backGroundOffset = "0 0";
+      highLightOffset = "0 0";
+      iconOffset = "1 1";
+      backGroundSpace = "2";
+   };
+
+   new HudNavDisplay(navHud) {
+      profile = "GuiHudNavProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = "0 0";
+      extent = "640 480";
+      minExtent = "8 8";
+      visible = "1";
+      setFirstResponder = "0";
+      modal = "1";
+      helpTag = "0";
+      fillColor = "0.250000 0.250000 0.250000 0.250000";
+      frameColor = "0.000000 1.000000 0.000000 1.000000";
+      opacity = "0.5";
+      autoCenter = "0";
+      autoResize = "0";
+      renderEdgeMarkers = "1";
+      renderXYProjection = "0";
+      markerHitRadius = "2";
+      markerAngle = "30";
+      markerLen = "20";
+      defaultMarkerColor = "0 255 220 220";
+      acquireScreenRadius = "75";
+      playerEyeZOffset = "0.4";
+      damageRectSize = "50 12";
+      infoOffset = "24 24";
+      acquireBoxCheckDistance = "50";
+      damageFrameColor = "255 255 255 255";
+      protectedStatics = false;
+      minMarkerScale = "0.5";
+      markerScaleDistance = "1000";
+      imageOffset = "2";
+      markerImageNames[0] = "small_triangle";   // mission waypoint
+      markerImageNames[1] = "small_square";     // potential task
+      markerImageNames[2] = "small_diamond";    // assigned task
+      markerImageNames[3] = "small_cross";      // client waypoint
+      markerImageNames[4] = "small_circle";     // target
+   };
+
+   new GuiControl(dashboardHud) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "center";
+      vertSizing = "top";
+      position = "0 360";
+      extent = "640 120";
+      minExtent = "8 8";
+      visible = "0";
+      setFirstResponder = "0";
+      modal = "1";
+      helpTag = "0";
+      wrap = "0";
+      new HudVehicleWeapon(vWeaponsBox) {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "top";
+         //position = "225 30";
+         position = "180 25";
+         extent = "70 40";
+         minExtent = "8 8";
+         visible = "1";
+         setFirstResponder = "0";
+         modal = "1";
+         helpTag = "0";
+         fillColor = "0.250000 0.250000 0.250000 0.250000";
+         frameColor = "0.000000 1.000000 0.000000 1.000000";
+         opacity = "0.8";
+         ammoOffset = "10 30";
+         backGroundOffset = "5 4";
+         highLightOffset = "0 0";
+         iconOffset = "7 4";
+         backGroundSpace = "8";
+      };
+   };
+
+   new ShellFieldCtrl(voiceCommHud)
+   {
+      profile = "GuiChatBackProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = "8 110";
+      extent = "160 70";
+      minExtent = "8 8";
+      visible = "0";
+
+      new GuiTextCtrl(vcRecordingHud)
+      {
+         profile = "GuiRecordingHudProfile";
+         position = "0 0";
+         extent = "160 16";
+         text = "Recording";
+         visible = false;
+         horizSizing = "center";
+         vertSizing = "top";
+      };
+   };
+
+   new GuiTextCtrl(controlObjectText)
+   {
+      profile = "ShellBigTextProfile";
+      position = "0 440";
+      extent = "640 40";
+      text = "Press '\c2Escape\cr' to return to game.";
+      visible = false;
+      horizSizing = "center";
+      vertSizing = "top";
+   };
+   
+   new ShellFieldCtrl(CenterPrintDlg)
+   {
+      profile = "GuiChatBackProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "45 200";
+      extent = "550 20";
+      minExtent = "8 8";
+      visible = "0";
+      setFirstResponder = "0";
+
+      new GuiMLTextCtrl(CenterPrintText) {
+         profile = "CenterPrintTextProfile";
+         horizSizing = "center";
+         vertSizing = "center";
+         position = "0 0";
+         extent = "546 20";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         lineSpacing = "2";
+      };
+   };
+   
+   new ShellFieldCtrl(BottomPrintDlg)
+   {
+      profile = "GuiChatBackProfile";
+      horizSizing = "center";
+      vertSizing = "top";
+      position = "45 375";
+      extent = "550 20";
+      minExtent = "8 8";
+      visible = "0";
+      setFirstResponder = "0";
+
+      new GuiMLTextCtrl(BottomPrintText) {
+         profile = "CenterPrintTextProfile";
+         horizSizing = "center";
+         vertSizing = "center";
+         position = "0 0";
+         extent = "546 20";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         lineSpacing = "2";
+      };
+   };
+
+   new HudZoom(ZoomHud)
+   {
+      profile = "ZoomHudProfile";
+      bitmap = "";
+      position = "0 0";
+      extent = "0 0";            
+      minExtent = "8 8";
+      visible = "0";
+   };
+};
+//--- OBJECT WRITE END ---
