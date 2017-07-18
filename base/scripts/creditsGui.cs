@@ -40,7 +40,7 @@ function CreditsGui::onWake(%this)
 
    //build the ML text ctrl...
    exec("scripts/creditsText.cs");
-   if (!isDemo() && !isDemoServer())
+   if (!isDemo())
    {
       $CreditsPicIndex = 1;
       CREDITS_Pic.setBitmap("gui/Cred_" @ $CreditsPicIndex @ ".png");

@@ -3,13 +3,29 @@
 //--------------------------------------
 
 //--------------------------------------------------------------------------
-// Sounds
+// Sounds and feedback effects
 //--------------------------------------
+
+datablock EffectProfile(AASwitchEffect)
+{
+   effectname = "powered/turret_light_activate";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(AAFireEffect)
+{
+   effectname = "powered/turret_aa_fire";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
 datablock AudioProfile(AASwitchSound)
 {
    filename    = "fx/powered/turret_aa_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = AASwitchEffect;
 };
 
 datablock AudioProfile(AAFireSound)
@@ -17,9 +33,8 @@ datablock AudioProfile(AAFireSound)
    filename    = "fx/powered/turret_aa_fire.wav";
    description = AudioDefault3d;
    preload = true;
+   effect = AAFireEffect;
 };
-
-
 
 //--------------------------------------------------------------------------
 // Particle effects
@@ -164,7 +179,7 @@ datablock TurretImageData(AABarrelLarge)
    seekRadius   = 200;
    maxSeekAngle = 6;
    seekTime     = 1.0;
-   minSeekHeat  = 0.7; 
+   minSeekHeat  = 0.6; 
    useTargetAudio = false;
 
    // Turret parameters

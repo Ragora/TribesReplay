@@ -24,12 +24,33 @@
 //--------------------------------------------------------------
 // SOUNDS
 //--------------------------------------------------------------
+datablock EffectProfile(SoftImpactEffect)
+{
+   effectname = "vehicles/crash_soft";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(HardImpactEffect)
+{
+   effectname = "vehicles/crash_hard";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(GravSoftImpactEffect)
+{
+   effectname = "vehicles/crash_ground_vehicle";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
 
 datablock AudioProfile(SoftImpactSound)
 {
    filename    = "fx/vehicles/crash_soft.wav";
    description = AudioClose3d;
    preload = true;
+   effect = SoftImpactEffect;
 };
 
 datablock AudioProfile(HardImpactSound)
@@ -37,6 +58,7 @@ datablock AudioProfile(HardImpactSound)
    filename    = "fx/vehicles/crash_hard.wav";
    description = AudioExplosion3d;
    preload = true;
+   effect = HardImpactEffect;
 };
 
 datablock AudioProfile(GravSoftImpactSound)
@@ -44,6 +66,7 @@ datablock AudioProfile(GravSoftImpactSound)
    filename    = "fx/vehicles/crash_grav_soft.wav";
    description = AudioClose3d;
    preload = true;
+   effect = GravSoftImpactEffect;
 };
 
 datablock AudioProfile(BombExplosionSound)
@@ -1080,15 +1103,15 @@ datablock ExplosionData(VehicleBombExplosion)
    camShakeRadius = 30.0;
 };
 
-//--------------------------------------------------------------
-// VEHICLE SHIELD IMPACT DATA
-//--------------------------------------------------------------
-datablock ShieldImpactData( VehicleShieldImpact )
-{
-   lifetimeMS = 300;
-   startScale = 1.0;
-   endScale = 1.1;
-};
+////--------------------------------------------------------------
+//// VEHICLE SHIELD IMPACT DATA
+////--------------------------------------------------------------
+//datablock ShieldImpactData( VehicleShieldImpact )
+//{
+//   lifetimeMS = 300;
+//   startScale = 1.0;
+//   endScale = 1.1;
+//};
 
 //--------------------------------------------------------------
 // VEHICLE SENSORS
@@ -1206,7 +1229,7 @@ datablock ParticleEmitterData(TankJetEmitter)
    periodVarianceMS = 0;
    ejectionVelocity = 20;
    velocityVariance = 1.0;
-   ejectionOffset   = -0.25;
+   ejectionOffset   = 0.0;
    thetaMin         = 0;
    thetaMax         = 10;
    phiReferenceVel  = 0;

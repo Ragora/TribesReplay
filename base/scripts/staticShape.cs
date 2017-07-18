@@ -413,6 +413,278 @@ function getTerrainAngle(%point)
    //echo("angle is "@%angleDeg);
    return %angleDeg;
 }
+function randomGrove(%organicName, %num, %radius)
+{
+	%minHeight = 0;
+	%maxHeight = 1000;
+	%SPACING = 1.5; //meters between center of organic and another object
+
+	//return help info
+	if(%organicName $="" || !%num || !%radius) {
+		echo("randomOrg(<shape name>, <quantity>[, radius of grove desired]);");
+		return;
+	}
+
+	%organicIndex = -1;
+	for (%i = 0; %i < $NumStaticTSObjects; %i++) {
+		if (getWord($StaticTSObjects[%i], 1) $= %organicName) {
+			%organicIndex = %i;
+			break;
+		}
+	}
+	if (%organicIndex == -1) {
+		error("There is no static shape named" SPC %organicName);
+		return;
+	}
+	%shapeFileName = getWord($StaticTSObjects[%organicIndex], 2);
+
+	%maxSlope = getWord($StaticTSObjects[%organicIndex], 3);
+	if (%maxSlope $= "")
+		%maxSlope = 40;
+
+	%zOffset = getWord($StaticTSObjects[%organicIndex], 4);
+	if (%zOffset $= "")
+		%zOffset = 0;
+
+	%slopeWithTerrain = getWord($StaticTSObjects[%organicIndex], 5);
+	if (%slopeWithTerrain $= "")
+		%slopeWithTerrain = false;
+
+	%minScale = getWord($StaticTSObjects[%organicIndex], 6);
+	%maxScale = getWord($StaticTSObjects[%organicIndex], 7);
+
+	//set up folders in mis file
+	$RandomOrganicsAdded++;  //to keep track of groups
+	if(!isObject(RandomOrganics)) {
+		%randomOrgGroup = new simGroup(RandomOrganics);
+		MissionGroup.add(%randomOrgGroup);
+	}
+	%groupName = "Addition"@$RandomOrganicsAdded@%organicName;
+	%group = new simGroup(%groupName);
+	RandomOrganics.add(%group);
+
+
+	%ctr = LocalClientConnection.camera.getPosition();
+	%areaX = getWord(%ctr, 0) - %radius;
+	%areaY = getWord(%ctr, 1) - %radius;
+
+	%orgCount = %num;
+	while((%orgCount > 0) && (%retries < (15000 / %maxSlope)))  //theoretically, a thorough number of retries 
+	{
+		//find a tile
+		%x = (getRandom(mFloor(%areaX / 8), mFloor((%areaX + (%radius * 2)) / 8)) * 8) + 4;  //tile center			   	
+		%y = (getRandom(mFloor(%areaY / 8), mFloor((%areaY + (%radius * 2)) / 8)) * 8) + 4;		
+
+		%start = %x @ " " @ %y @ " 2000";
+		%end = %x @ " " @ %y @ " -1";
+		%ground = containerRayCast(%start, %end, $TypeMasks::TerrainObjectType, 0);		
+		%z = getWord(%ground, 3);
+
+
+		// elevation test		
+		if ((%z < %minHeight) || (%z > %maxHeight)) 
+		{
+			echo("Broke height range rules.  Readjust allowable elevations.");
+			%retries++;
+			echo("Z is " @ %z);
+			continue;
+		}
+		%z += %zOffset;				
+		%position = %x @ " " @ %y @ " " @ %z;
+
+
+		// get normal from both sides of the square      
+		%start = %x + 2 @ " " @ %y @ " 2000";
+		%end = %x + 2 @ " " @ %y @ " -1";
+		%hit1 = containerRayCast(%start, %end, $TypeMasks::TerrainObjectType, 0);
+
+		%start = %x - 2 @ " " @ %y @ " 2000";
+		%end = %x - 2 @ " " @ %y @ " -1";
+		%hit2 = containerRayCast(%start, %end, $TypeMasks::TerrainObjectType, 0);	  
+
+		%norm1 = getWord(%hit1, 4) @ " " @ getWord(%hit1, 5) @ " " @ getWord(%hit1, 6);
+		%norm2 = getWord(%hit2, 4) @ " " @ getWord(%hit2, 5) @ " " @ getWord(%hit2, 6);
+
+		//if either side of tile has greater slope than allowed, move on.
+		%angNorm1 = getTerrainAngle(%norm1);
+		%angNorm2 = getTerrainAngle(%norm2);
+		if ((getTerrainAngle(%norm1) > %maxSlope) || (getTerrainAngle(%norm2) > %maxslope))
+		{	  	 
+			%retries++;
+			continue;
+		}
+
+		%terrainNormal = VectorAdd(%norm1, %norm2);
+		%terrainNormal = VectorNormalize(%terrainNormal);		  
+
+		//search surroundings for obstacles. If obstructed, move on.		
+		InitContainerRadiusSearch(%position, %spacing,	$TypeMasks::VehicleObjectType | 
+			$TypeMasks::MoveableObjectType |
+			$TypeMasks::StaticShapeObjectType |
+			$TypeMasks::TSStaticShapeObjectType | 
+			$TypeMasks::ForceFieldObjectType |
+			$TypeMasks::TurretObjectType | 
+			$TypeMasks::InteriorObjectType | 
+			$TypeMasks::ItemObjectType);	
+		%this = containerSearchNext();
+		if(%this)
+		{			
+			%retries++;
+			continue;		   
+		}
+
+
+		//rotate it
+		if(%slopeWithTerrain)
+		{
+			%rotAxis = vectorCross(%terrainNormal, "0 0 1");
+			%rotAxis = vectorNormalize(%rotAxis);
+			%rotation = %rotAxis @ " " @ getTerrainAngle(%terrainNormal);					
+		}
+		else %rotation = "1 0 0 0";		
+		%randomAngle = getRandom(360);
+		%zrot = MatrixCreate("0 0 0", "0 0 1 " @ %randomAngle); 
+		%orient = MatrixCreate(%position, %rotation);
+		%finalXForm = MatrixMultiply(%orient, %zrot);
+
+
+		//scale it
+		%scaleMin = 8;	 //default min
+		%scaleMax = 14; //default max
+		if(%minScale)
+			%scaleMin = %minScale * 10;
+		if(%maxScale)
+			%scaleMax = %maxScale * 10;
+		%scaleInt = getRandom(%scaleMin, %scaleMax);
+		%scale = %scaleInt/10;
+		%evenScale = %scale SPC %scale SPC %scale;
+
+		//create it
+
+		%position = %x SPC %y SPC (%z += %zoffset);			
+		%newOrganic = new TSStatic() {
+			position  = %position;
+			rotation  = %rotation;
+			scale     = %evenScale;
+			shapeName = %shapeFileName;
+		};
+		%group.add(%newOrganic);
+		%newOrganic.setTransform(%finalXForm);
+
+		%orgCount--;	//dec number of shapes left to place
+		%retries = 0; //reset retry counter
+	}
+	if (%orgCount > 0)
+	{
+		error("Unable to place all shapes, area saturated.");
+		error("Looking for clear area " @ (%spacing * 2) @ " meters in diameter, with a max slope of " @ %maxSlope);
+	}
+	echo("Placed " @ %num - %orgCount @ " of " @ %num);
+}
+
+
+function randomRock(%rock, %quantity, %radius, %maxElev)
+{
+	if (!%radius || !%quantity || !%rock)
+	{
+		echo("randomRock(<name>, <quantity>, <radius>, [maximum elevation]");
+		return;
+	}
+
+	if (!%maxElev)
+		%maxElev = 2000;
+
+
+	%rotation[0] = "0 0 1 0";
+	%rotation[1] = "0.999378 -0.0145686 -0.0321219 194.406";
+	%rotation[2] = "0.496802 0.867682 0.0177913 176.44";
+	%rotation[3] = "0.991261 0.0933696 0.0931923 181.867";
+	%rotation[4] = "0.246801 0.360329 -0.899584 92.3648";
+	%rotation[5] = "1 0 0 82.59";
+	%rotation[6] = "0.0546955 -0.629383 0.55201 116.103";
+
+	%spacing = 4.0;  //check 4 meters around object for collisions before placing
+	%ctr = localClientConnection.camera.getPosition();
+	%areaX = getWord(%ctr, 0) - %radius;
+	%areaY = getWord(%ctr, 1) - %radius;
+
+	$RandomOrganicsAdded++;
+	if(!isObject(RandomRocks)) {
+		%randomOrgGroup = new simGroup(RandomRocks);
+		MissionGroup.add(%randomOrgGroup);
+	}
+	%groupName = "Addition"@$RandomOrganicsAdded@%rock;
+	%group = new simGroup(%groupName);
+	RandomRocks.add(%group);
+
+	%orgCount = %quantity;
+	while((%orgCount > 0) && (%retries < (15000 / %maxSlope)))  //theoretically, a thorough number of retries 
+	{
+		//find a tile
+		%x = %areaX + getRandom(%radius * 2);
+		%y = %areaY + getRandom(%radius * 2);
+
+		%start = %x @ " " @ %y @ " 2000";
+		%end = %x @ " " @ %y @ " -1";
+		%ground = containerRayCast(%start, %end, $TypeMasks::TerrainObjectType, 0);
+		%position = getWord(%ground, 1) @ " " @ getWord(%ground, 2) @ " " @	getWord(%ground, 3);
+		echo("position =*" @ %position @ "*");	
+		%z = getWord(%position, 2);
+
+
+		// elevation test		
+		if (%z > %maxElev) //65 meters and above only
+		{
+			%retries++;
+			echo("Z is " @ %z);
+			continue;
+		}				
+
+
+		//search surroundings for obstacles. If obstructed, move on.		
+		InitContainerRadiusSearch(%position, %spacing,	$TypeMasks::VehicleObjectType | 
+			$TypeMasks::MoveableObjectType |
+			$TypeMasks::StaticShapeObjectType |
+			$TypeMasks::TSStaticShapeObjectType | 
+			$TypeMasks::ForceFieldObjectType |
+			$TypeMasks::TurretObjectType | 
+			$TypeMasks::InteriorObjectType | 
+			$TypeMasks::ItemObjectType);	
+		%this = containerSearchNext();
+		if(%this)
+		{			
+			%retries++;
+			continue;		   
+		}
+		%primaryRot	= %rotation[getRandom(7)];
+
+		%randomAngle = mDegToRad(getRandom(360));
+		%zrot = MatrixCreate("0 0 0", "0 0 1 " @ %randomAngle); 
+		%orient = MatrixCreate(%position, %primaryRot);
+
+
+		%scale = getRandom(3);
+		%evenScale = %scale @ " " @ %scale @ " " @ %scale;					
+		%newRock = new InteriorInstance() {				
+			scale     = %evenScale;
+			interiorFile = %rock @ ".dif";
+			showTerrainInside = "0";
+		};
+		%group.add(%newRock);
+		%transfrm = MatrixMultiply(%orient, %zrot);
+		echo("Transform = *" @ %transfrm @ "*");
+		%newRock.setTransform(%transfrm);
+
+		%orgCount--;	//dec number of shapes left to place
+		%retries = 0; //reset retry counter
+	}
+	if (%orgCount > 0)
+	{
+		error("Unable to place all shapes, area saturated.");
+		error("Looking for clear area " @ (%spacing * 2) @ " meters in diameter, with a max slope of " @ %maxSlope);
+	}
+	echo("Placed " @ %num - %orgCount @ " of " @ %num);
+}
 
 
 //--------------------------------------------------------------------------
@@ -767,7 +1039,7 @@ function StaticShapeData::damageObject(%data, %targetObject, %sourceObject, %pos
    if(%data.noDamageInSiege && Game.class $= "SiegeGame")
       return;
 
-   if(%sourceObject)
+   if(%sourceObject && %targetObject.isEnabled())
    {
       if(%sourceObject.client)
       {
@@ -799,7 +1071,7 @@ function StaticShapeData::damageObject(%data, %targetObject, %sourceObject, %pos
           %attackerTeam = getVehicleAttackerTeam(%sourceObject);
        else %attackerTeam = %sourceObject.team;
       
-      if (isTargetFriendly(%targetObject.getTarget(), %attackerTeam))
+      if ((%targetObject.getTarget() != -1) && isTargetFriendly(%targetObject.getTarget(), %attackerTeam))
       {
          %curDamage = %targetObject.getDamageLevel();
          %availableDamage = %targetObject.getDataBlock().disabledLevel - %curDamage - 0.05;
@@ -841,6 +1113,7 @@ function StaticShapeData::onDamage(%this,%obj)
          // if object has an explosion damage radius associated with it, apply explosion damage
          if(%this.expDmgRadius)
             RadiusExplosion(%obj, %obj.getWorldBoxCenter(), %this.expDmgRadius, %this.expDamage, %this.expImpulse, %obj, $DamageType::Explosion);
+         %obj.setDamageLevel(%this.maxDamage);
       }
    }
    else
@@ -861,14 +1134,14 @@ function StaticShapeData::onDamage(%this,%obj)
 // --------------------------------------------------------------------
 // Team logos - only the logo projector should be placed in a mission
 
-datablock StaticShapeData(StormLogo)
+datablock StaticShapeData(BaseLogo)  //storm logo
 {
    className = Logo;
    shapeFile = "teamlogo_storm.dts";
    alwaysAmbient = true;
 };
 
-datablock StaticShapeData(InfernoLogo)
+datablock StaticShapeData(BaseBLogo)  //Inferno Logo
 {
    className = Logo;
    shapeFile = "teamlogo_inf.dts";
@@ -882,7 +1155,7 @@ datablock StaticShapeData(BiodermLogo)
    alwaysAmbient = true;
 };
 
-datablock StaticShapeData(BloodEagleLogo)
+datablock StaticShapeData(BEagleLogo)
 {
    className = Logo;
    shapeFile = "teamlogo_be.dts";
@@ -896,14 +1169,14 @@ datablock StaticShapeData(DSwordLogo)
    alwaysAmbient = true;
 };
 
-datablock StaticShapeData(HarbingerLogo)
+datablock StaticShapeData(COTPLogo)
 {
    className = Logo;
    shapeFile = "teamlogo_hb.dts";
    alwaysAmbient = true;
 };
 
-datablock StaticShapeData(StarwolfLogo)
+datablock StaticShapeData(SwolfLogo)
 {
    className = Logo;
    shapeFile = "teamlogo_sw.dts";
@@ -1015,8 +1288,8 @@ $StaticTSObjects[43] = "Stackables Crate9 stackable3s.dts";
 $StaticTSObjects[44] = "Stackables Crate10 stackable4l.dts";
 $StaticTSObjects[45] = "Stackables Crate11 stackable4m.dts";
 $StaticTSObjects[46] = "Stackables Crate12 stackable5l.dts";
-$StaticTSObjects[47] = "VehicleWrecks ScoutWreckageShape vehicle_air_scout_wreck.dts";
-$StaticTSObjects[48] = "VehicleWrecks TankWreckageShape vehicle_land_assault_wreck.dts";
+$StaticTSObjects[47] = "Debris ScoutWreckageShape vehicle_air_scout_wreck.dts";
+$StaticTSObjects[48] = "Debris TankWreckageShape vehicle_land_assault_wreck.dts";
 $StaticTSObjects[49] = "Organics DSPlant16 dorg16.dts 20 -3.0 0 0.8 1.5";
 $StaticTSObjects[50] = "Organics DSPlant17 dorg17.dts 20 -3.0 1 0.8 1.5";
 $StaticTSObjects[51] = "Organics DSPlant18 dorg18.dts 20 -3.0 0 0.8 1.5";
@@ -1045,12 +1318,38 @@ $StaticTSObjects[69] = "Statues HeavyMaleStatue statue_hmale.dts";
 $StaticTSObjects[70] = "Statues LightFemaleStatue statue_lfemale.dts";
 $StaticTSObjects[71] = "Statues LightMaleStatue statue_lmale.dts";
 $StaticTSObjects[72] = "Statues Plaque statue_plaque.dts";
+                                  
+$StaticTSObjects[73] = "Debris BomberDebris1 bdb1.dts";
+$StaticTSObjects[74] = "Debris BomberDebris2 bdb2.dts";
+$StaticTSObjects[75] = "Debris BomberDebris3 bdb3.dts";
+$StaticTSObjects[76] = "Debris BomberDebris4 bdb4.dts";
+$StaticTSObjects[77] = "Debris BomberDebris5 bdb5.dts";
+$StaticTSObjects[78] = "Debris HavocDebris1 hdb1.dts";
+$StaticTSObjects[79] = "Debris HavocDebris2 hdb2.dts";
+$StaticTSObjects[80] = "Debris HavocDebris3 hdb3.dts";
+$StaticTSObjects[81] = "Debris IDebris1  idb.dts";
+$StaticTSObjects[82] = "Debris MPBDebris1 mpbdb1.dts";
+$StaticTSObjects[83] = "Debris MPBDebris2 mpbdb2.dts";
+$StaticTSObjects[84] = "Debris MPBDebris3 mpbdb3.dts";
+$StaticTSObjects[85] = "Debris MPBDebris4 mpbdb4.dts";
+$StaticTSObjects[86] = "Debris ScoutDebris1 sdb1.dts";
+$StaticTSObjects[87] = "Debris TankDebris1 tdb1.dts";
+$StaticTSObjects[88] = "Debris TankDebris2 tdb2.dts";
+$StaticTSObjects[89] = "Debris TankDebris3 tdb3.dts";
+$StaticTSObjects[90] = "Debris GraveMarker1 gravemarker1.dts";
+$StaticTSObjects[91] = "Test Test1 test1.dts";
+$StaticTSObjects[92] = "Test Test2 test2.dts";
+$StaticTSObjects[93] = "Test Test3 test3.dts";
+$StaticTSObjects[94] = "Test Test4 test4.dts";
+$StaticTSObjects[95] = "Test Test5 test5.dts";
 
-$NumStaticTSObjects = 73;
+
+
+$NumStaticTSObjects = 96;
 
 function TSStatic::create(%shapeName)
 {
-   echo("Foo:" SPC %shapeName);
+   //echo("Foo:" SPC %shapeName);
    %obj = new TSStatic() 
    {
       shapeName = %shapeName;
@@ -1061,4 +1360,47 @@ function TSStatic::create(%shapeName)
 function TSStatic::damage(%this)
 {
    // prevent console error spam
+}
+
+function stripFields(%this)
+{
+	if(%this $= "")
+		%this = MissionGroup;
+	for (%i = 0; %i < %this.getCount(); %i++){
+		%obj = %this.getObject(%i);
+		if (%obj.getClassName() $= SimGroup)
+		{
+			%obj.powerCount = "";
+			%obj.team = "";
+			stripFields(%obj);
+		}
+		else 
+		{
+			%obj.threshold = "";				   
+			%obj.team = "";										
+			%obj.powerCount = "";
+			%obj.trigger = "";
+			%obj.hidden = "";
+			%obj.locked = "true";
+			%obj.notReady = "";
+			%obj.inUse = "";
+			%obj.triggeredBy = "";
+			%obj.lastDamagedBy = "";
+			%obj.lastDamagedByTeam ="";
+			%obj.isHome = "";
+			%obj.originalPosition = "";
+			%obj.objectiveCompleted = "";
+			%obj.number = "";        	  							
+			%obj.target = "";        	  							
+			%obj.lockCount = "";        	  							
+			%obj.homingCount = "";        	  							
+			%obj.projector = "";        	  							
+			%obj.holo = "";
+			%obj.waypoint = "";
+			%obj.scoreValue ="";
+			%obj.damageTimeMS = "";        	  							
+			%obj.station = "";
+			%homingCount = "";
+        }
+   	}
 }

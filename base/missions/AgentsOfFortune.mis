@@ -458,6 +458,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_Pulse_1";
 						locked = "true";
+						audioEnvironment = BigRoom;					
 				};
 				new InteriorInstance() {
 					position = "-61.9873 145.333 208.013";
@@ -467,6 +468,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_Pulse_1";
 						locked = "true";
+						audioEnvironment = SmallRoom;					
 				};
 				new InteriorInstance() {
 					position = "203.206 303.487 247.408";
@@ -476,6 +478,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_Pulse_1";
 						locked = "true";
+						audioEnvironment = SmallRoom;					
 				};
 				new StaticShape(Team1StationInventory1) {
 					position = "203.105 290.287 236.41";
@@ -595,6 +598,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_Pulse_1";
 						locked = "true";
+						audioEnvironment = SmallRoom;					
 				};
 				new Item(Nexus) {
 					position = "130.989 125.937 160.988";

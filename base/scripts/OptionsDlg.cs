@@ -11,9 +11,6 @@ $max_TSDetailAdjust = 1.0;
 //------------------------------------------------------------------------------
 function OptionsDlg::onWake( %this )
 {
-   $enableDirectInput = "1";
-   activateDirectInput();
-   
    OP_VideoPane.setVisible( false ); 
    OP_GraphicsPane.setVisible( false );
    OP_TexturesPane.setVisible( false );
@@ -59,6 +56,8 @@ function OptionsDlg::onWake( %this )
       OP_BPPMenu.setActive( false );
 
    OP_GammaSlider.setValue( $pref::OpenGL::gammaCorrection );
+   OP_GammaSlider.setActive( $Video::setGammaCorrectionSupported );
+
    OP_TerrainSlider.setValue( $max_screenerror - $pref::Terrain::screenError );
    OP_ShapeSlider.setValue( ( $max_TSScreenError - $pref::TS::screenError ) / ( $max_TSScreenError - $min_TSScreenError ) );
    OP_ShadowSlider.setValue( $pref::Shadows );
@@ -92,7 +91,9 @@ function OptionsDlg::onWake( %this )
    OP_ShapeTexSlider.setValue( (5 - $pref::OpenGL::mipReduction) / %mipRange );
    OP_BuildingTexSlider.setValue( (5 - $pref::OpenGL::interiorMipReduction) / %mipRange );
    OP_SkyTexSlider.setValue( (5 - $pref::OpenGL::skyMipReduction) / %mipRange );
-
+   if ( !isDemo() )
+      OP_HiResSkinTgl.setValue( $pref::use512PlayerSkins );
+   
    // Initialize the Sound Options controls:
    // provider menu
    %count = alxGetContexti(ALC_PROVIDER_COUNT);
@@ -102,8 +103,12 @@ function OptionsDlg::onWake( %this )
    OP_AudioProviderMenu.setSelected(%selId);
    OP_AudioResetProvider.setActive(false);
 
-   %active = audioIsEnvironmentProvider(alxGetContextstr(ALC_PROVIDER_NAME, %selId));
-   OP_AudioEnvironmentTgl.setActive(%active);
+   // environment provider: disable and uncheck if not an environment provider
+   %envProvider = audioIsEnvironmentProvider(alxGetContextstr(ALC_PROVIDER_NAME, %selId));
+
+   if(!%envProvider)
+      OP_AudioEnvironmentTgl.setValue(false);
+   OP_AudioEnvironmentTgl.setActive(%envProvider);
 
    // speaker menu
    %count = alxGetContexti(ALC_SPEAKER_COUNT);
@@ -121,16 +126,23 @@ function OptionsDlg::onWake( %this )
    %active = !isObject(ServerConnection);
    OP_AudioFrequencyMenu.setActive(%active);
    // Changing these audio settings doesn't help Linux performance
-   if ( $platform $= "linux" ) {
+   if ( $platform $= "linux" ) 
+   {
       OP_AudioBitRateMenu.setActive(false);
       OP_AudioChannelsMenu.setActive(false);
-   } else {
+   } 
+   else 
+   {
       OP_AudioBitRateMenu.setActive(%active);
       OP_AudioChannelsMenu.setActive(%active);
    }
-      OP_AudioProviderMenu.setActive(%active);
+   
+   // only allow for disable
+   if(!%active)
       OP_AudioEnvironmentTgl.setActive(%active);
-      OP_AudioSpeakerMenu.setActive(%active);
+
+   OP_AudioProviderMenu.setActive(%active);
+   OP_AudioSpeakerMenu.setActive(%active);
 
    OP_MasterVolumeSlider.setValue( $pref::Audio::masterVolume );
    OP_EffectsVolumeSlider.setValue( $pref::Audio::effectsVolume );
@@ -150,8 +162,7 @@ function OptionsDlg::onWake( %this )
 
    // Initialize the Control Options controls:
    OP_ControlGroupMenu.init();
-
-   // JOYSTICK SUPPORT WILL BE RE-ENABLED IN THE PATCH
+   
    if ( isJoystickDetected() )
    {      
       OP_JoystickTgl.setValue( $pref::Input::JoystickEnabled );
@@ -222,17 +233,25 @@ function OptionsDlg::deviceDependent( %this )
       OP_VSyncTgl.setActive( false );   
    }
 
-   OP_TexQualityMenu.init();
-   if ( $pref::OpenGL::forcePalettedTexture )
+   if ( isDemo() )
    {
-      $pref::OpenGL::force16bittexture = false;
-      %selId = 1;
+      OP_TexQualityMenu.setText( "Palletized" );
+      OP_TexQualityMenu.setActive( false );
    }
-   else if ( $pref::OpenGL::force16bittexture )
-      %selId = 2;
    else
-      %selId = 3;
-   OP_TexQualityMenu.setSelected( %selId );
+   {
+      OP_TexQualityMenu.init();
+      if ( $pref::OpenGL::forcePalettedTexture )
+      {
+         $pref::OpenGL::force16bittexture = false;
+         %selId = 1;
+      }
+      else if ( $pref::OpenGL::force16bittexture )
+         %selId = 2;
+      else
+         %selId = 3;
+      OP_TexQualityMenu.setSelected( %selId );
+   }
 
    OP_CompressMenu.init();
    if ( $TextureCompressionSupported && !$pref::OpenGL::disableARBTextureCompression )
@@ -286,9 +305,6 @@ function OptionsDlg::deviceDependent( %this )
 //------------------------------------------------------------------------------
 function OptionsDlg::onSleep( %this )
 {
-   $enableDirectInput = "0";
-   deactivateDirectInput();
-   
    OP_VideoDriverMenu.clear();
    OP_ResMenu.clear();
    OP_BPPMenu.clear();
@@ -304,10 +320,10 @@ function OptionsDlg::onSleep( %this )
       %this.resetAudio = "";
       
       // Play the shell hum: (all sources are gone)
-      if($HudHandle['shellScreen'] $= "")
-         alxStop($HudHandle['shellScreen']);
+      if($HudHandle[shellScreen] $= "")
+         alxStop($HudHandle[shellScreen]);
 
-      $HudHandle['shellScreen'] = alxPlay(ShellScreenHumSound, 0, 0, 0);
+      $HudHandle[shellScreen] = alxPlay(ShellScreenHumSound, 0, 0, 0);
    }
 
    if ( isObject( ServerConnection ) && isTextureFlushRequired() )
@@ -342,19 +358,22 @@ function isTextureFlushRequired()
    if ( $AnisotropySupported && $pref::OpenGL::anisotropy != OP_AnisotropySlider.getValue() )
       return( true );
 
-   %id = OP_TexQualityMenu.getSelected();
-   if ( $pref::OpenGL::forcePalettedTexture )
+   if ( !isDemo() )
    {
-      if ( %id != 1 )
+      %id = OP_TexQualityMenu.getSelected();
+      if ( $pref::OpenGL::forcePalettedTexture )
+      {
+         if ( %id != 1 )
+            return( true );
+      }
+      else if ( $pref::OpenGL::force16bittexture )
+      {
+         if ( %id != 2 )
+            return( true );
+      }
+      else if ( %id != 3 )
          return( true );
-   }
-   else if ( $pref::OpenGL::force16bittexture )
-   {
-      if ( %id != 2 )
-         return( true );
-   }
-   else if ( %id != 3 )
-      return( true );
+   }   
 
    if ( $TextureCompressionSupported && !$pref::OpenGL::disableARBTextureCompression )
    {
@@ -423,31 +442,34 @@ function OptionsDlg::saveSettings( %this )
    $pref::Player::renderMyPlayer = %temp & 1;
    $pref::Player::renderMyItems = %temp & 2;
 
-   switch ( OP_TexQualityMenu.getSelected() )
+   if ( !isDemo() )
    {
-      case 1:  // 8-bit
-         if ( !$pref::OpenGL::forcePalettedTexture || $pref::OpenGL::force16bittexture )
-         {
-            $pref::OpenGL::forcePalettedTexture = true;
-            $pref::OpenGL::force16bittexture = false;
-            %flushTextures = true;
-         }
-      case 2:  // 16-bit
-         if ( $pref::OpenGL::forcePalettedTexture || !$pref::OpenGL::force16bittexture )
-         {
-            $pref::OpenGL::forcePalettedTexture = false;
-            $pref::OpenGL::force16bittexture = true;
-            %flushTextures = true;
-         }
-      case 3:  // 32-bit
-         if ( $pref::OpenGL::forcePalettedTexture || $pref::OpenGL::force16bittexture )
-         {
-            $pref::OpenGL::forcePalettedTexture = false;
-            $pref::OpenGL::force16bittexture = false;
-            %flushTextures = true;
-         }
+      switch ( OP_TexQualityMenu.getSelected() )
+      {
+         case 1:  // 8-bit
+            if ( !$pref::OpenGL::forcePalettedTexture || $pref::OpenGL::force16bittexture )
+            {
+               $pref::OpenGL::forcePalettedTexture = true;
+               $pref::OpenGL::force16bittexture = false;
+               %flushTextures = true;
+            }
+         case 2:  // 16-bit
+            if ( $pref::OpenGL::forcePalettedTexture || !$pref::OpenGL::force16bittexture )
+            {
+               $pref::OpenGL::forcePalettedTexture = false;
+               $pref::OpenGL::force16bittexture = true;
+               %flushTextures = true;
+            }
+         case 3:  // 32-bit
+            if ( $pref::OpenGL::forcePalettedTexture || $pref::OpenGL::force16bittexture )
+            {
+               $pref::OpenGL::forcePalettedTexture = false;
+               $pref::OpenGL::force16bittexture = false;
+               %flushTextures = true;
+            }
+      }
+      OP_TexQualityMenu.clear();
    }
-   OP_TexQualityMenu.clear();
 
    $pref::Terrain::texDetail = 6 - mFloor( OP_TerrainTexSlider.getValue() );
 
@@ -530,6 +552,16 @@ function OptionsDlg::saveSettings( %this )
          $pref::OpenGL::anisotropy = %temp;
          setOpenGLAnisotropy( $pref::OpenGL::anisotropy );
          %flushTextures = true;
+      }
+   }
+   
+   if ( !isDemo() )
+   {
+      if ( OP_HiResSkinTgl.getValue() != $pref::use512PlayerSkins )
+      {
+         $pref::use512PlayerSkins = OP_HiResSkinTgl.getValue();
+         if ( Canvas.getContent() == GameGui.getId() && GM_WarriorPane.isVisible() )
+            GMW_PlayerModel.update();
       }
    }
 
@@ -929,6 +961,10 @@ function setAudioProvider(%idx)
    $pref::Audio::provider = alxGetContextstr(ALC_PROVIDER_NAME, %idx);
 
    %active = audioIsEnvironmentProvider($pref::Audio::provider);
+
+   // unset tgl if cannot be environment provider
+   if(!%active)
+      OP_AudioEnvironmentTgl.setValue(false);
    OP_AudioEnvironmentTgl.setActive(%active);
 
    audioUpdateProvider($pref::Audio::provider);
@@ -1566,12 +1602,15 @@ $RemapCount++;
 $RemapName[$RemapCount] = "Toggle Commands";
 $RemapCmd[$RemapCount] = "toggleHudCommands";
 $RemapCount++;
-// $RemapName[$RemapCount] = "Start Demo Record";
-// $RemapCmd[$RemapCount] = "startRecordingDemo";
-// $RemapCount++;
-// $RemapName[$RemapCount] = "Stop Demo Record";
-// $RemapCmd[$RemapCount] = "stopRecordingDemo";
-// $RemapCount++;
+if ( !isDemo() )
+{
+   $RemapName[$RemapCount] = "Start Demo Record";
+   $RemapCmd[$RemapCount] = "startRecordingDemo";
+   $RemapCount++;
+   $RemapName[$RemapCount] = "Stop Demo Record";
+   $RemapCmd[$RemapCount] = "stopRecordingDemo";
+   $RemapCount++;
+}
 $RemapName[$RemapCount] = "Chat Page Up";
 $RemapCmd[$RemapCount] = "pageMessageHudUp";
 $RemapCount++;
@@ -1632,7 +1671,11 @@ function isMapFile( %file )
 //------------------------------------------------------------------------------
 function isValidMapFileSaveName( %file )
 {
-   if ( !isWriteableFileName( "base/" @ %file ) )
+   if (isDemo())
+      %basePath = "demo_base/";
+   else
+      %basePath = "base/";
+   if ( !isWriteableFileName( %basePath @ %file ) )
       return( false );
 
    if ( isFile( %file ) )
@@ -1661,8 +1704,19 @@ function saveActiveMapFile()
 //------------------------------------------------------------------------------
 function saveMapFile( %filename )
 {
+   if ( strcspn( %filename, "\\/?*\"\'<>|" ) < strlen( %filename ) )
+   {
+      MessageBoxOK( "SAVE FAILED", "Filenames may not contain any of the following characters:" NL "\\ / ? * < > \" \' |",
+            "ShellGetSaveFilename( \"SAVE CONTROL CONFIG\", \"prefs/*.cs\", \"isMapFile\", \"saveMapFile\", $pref::Input::ActiveConfig );" );
+      return;      
+   }   
+      
+   if (isDemo())
+      %basePath = "demo_base/";
+   else
+      %basePath = "base/";
    %mapFile = "prefs/" @ %filename @ ".cs";
-   if ( !isWriteableFileName( "base/" @ %mapFile ) )
+   if ( !isWriteableFileName( %basePath @ %mapFile ) )
    {
       MessageBoxOK( "SAVE FAILED", "That is not a writeable file name.  Please choose another file name.",
             "ShellGetSaveFilename( \"SAVE CONTROL CONFIG\", \"prefs/*.cs\", \"isMapFile\", \"saveMapFile\", $pref::Input::ActiveConfig );" );
@@ -1685,8 +1739,11 @@ function saveMapFile( %filename )
    if ( %fObject.openForAppend( %mapFile ) )
    {
       %bind = GlobalActionMap.getBinding( "toggleConsole" );
-      %fObject.writeLine( "GlobalActionMap.bind(keyboard, \"" @ getField( %bind, 1 ) @ "\", toggleConsole);" );
-      %fObject.close();
+      if ( %bind !$= "" )
+      {
+         %fObject.writeLine( "GlobalActionMap.bind(keyboard, \"" @ getField( %bind, 1 ) @ "\", toggleConsole);" );
+         %fObject.close();
+      }
    }
    %fObject.delete();
 
@@ -1860,10 +1917,20 @@ function OP_ConsoleKeyBtn::doRemap( %this )
 //------------------------------------------------------------------------------
 function RemapDlg::onWake( %this )
 {
+   $enableDirectInput = "1";
+   activateDirectInput();
+   
    if ( RemapInputCtrl.mode $= "consoleKey" )
       RemapText.setText( "<just:center>Press a key to assign it to this action" NL "or Esc to cancel..." );
    else
       RemapText.setText( "<just:center>Press a key or button to assign it to this action" NL "or Esc to cancel..." );
+}
+
+//------------------------------------------------------------------------------
+function RemapDlg::onSleep( %this )
+{
+   $enableDirectInput = "1";
+   deactivateDirectInput();
 }
 
 //------------------------------------------------------------------------------
@@ -2144,6 +2211,7 @@ function JoystickConfigDlg::onWake( %this )
          case "U": %tabName = "U Axis"; %tabType = "ryaxis";
          case "V": %tabName = "V Axis"; %tabType = "rzaxis";
          case "S": %tabName = "Slider"; %tabType = "slider";
+         case "L": %tabName = "Slider 2"; %tabType = "slider2";
          default:  %tabName = "";
       }
 
@@ -2233,7 +2301,7 @@ function JoystickConfigDlg::setPane( %this, %pane )
       else
          DeadZoneSlider.setValue( abs( firstWord( %deadZone ) ) / %scale );
       InvertJoyAxisTgl.setValue( moveMap.isInverted( "joystick", %axisType ) ); 
-      JoyAxisRelativeTgl.setValue( moveMap.isRelativeAxis( "joystick", %axisType ) );
+      //JoyAxisRelativeTgl.setValue( moveMap.isRelativeAxis( "joystick", %axisType ) );
    }
    else
    {
@@ -2242,7 +2310,7 @@ function JoystickConfigDlg::setPane( %this, %pane )
       JoyAxisSlider.setValue( 0.5 );
       DeadZoneSlider.setValue( 0.0 );
       InvertJoyAxisTgl.setValue( false );
-      JoyAxisRelativeTgl.setValue( %axisType $= "slider" );
+      //JoyAxisRelativeTgl.setValue( %axisType $= "slider" );
    }
 }
 
@@ -2255,7 +2323,7 @@ function JoyAxisActionMenu::onSelect( %this, %id, %text )
    DeadZoneSlider.setActive( %on );
    DeadZoneText.setVisible( %on );
    InvertJoyAxisTgl.setActive( %on );
-   JoyAxisRelativeTgl.setActive( %on );
+   //JoyAxisRelativeTgl.setActive( %on );
 }
 
 //------------------------------------------------------------------------------
@@ -2293,8 +2361,8 @@ function bindJoystickAxis( %axisIndex, %cmdIndex )
    %flags = "S";
    if ( InvertJoyAxisTgl.getValue() )
       %flags = %flags @ "I";
-   if ( JoyAxisRelativeTgl.getValue() )
-      %flags = %flags @ "L";
+//    if ( JoyAxisRelativeTgl.getValue() )
+//       %flags = %flags @ "L";
    if ( %delta > 0 )
    {
       %deadZone = "-" @ %delta SPC %delta;
@@ -2545,8 +2613,34 @@ function OP_LaunchScreenMenu::init( %this )
 }
 
 //------------------------------------------------------------------------------
+function toggleInvertYAxis()
+{
+   // Catch the case where this is toggled in-game while in a vehicle:
+   if ( isObject( passengerKeys ) )
+   {
+      %bind = passengerKeys.getBinding( pitch );
+      if ( %bind !$= "" )
+      {
+         %device = getField( %bind, 0 );
+         %action = getField( %bind, 1 );
+         %flags = $pref::Vehicle::InvertYAxis ? "SDI" : "SD";
+         %deadZone = passengerKeys.getDeadZone( %device, %action );
+         %scale = passengerKeys.getScale( %device, %action );
+         passengerKeys.bind( %device, %action, %flags, %deadZone, %scale, pitch );
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
 function toggleImmersion()
 {
    MessageBoxOK( "Force Feedback", "This will take effect the next time you start Tribes 2." );
 }
 
+//------------------------------------------------------------------------------
+function toggleVehicleTeleportPref()
+{
+   // If we are in a game, let the server know we've changed;
+   if ( isObject( ServerConnection ) )
+      commandToServer( 'EnableVehicleTeleport', $pref::Vehicle::pilotTeleport );
+}

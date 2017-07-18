@@ -39,9 +39,11 @@ new SimGroup(MissionGroup) {
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
 		visibleDistance = "550";
+		high_visibleDistance = "800";
 		useSkyTextures = "1";
 		SkySolidColor = "0.390000 0.390000 0.390000 0.000000";
 		fogDistance = "150";
+		high_fogDistance = "200";
 		fogColor = "0.800000 0.700000 0.500000 1.000000";
 		fogVolume1 = "0 0 0";
 		fogVolume2 = "0 0 0";
@@ -883,6 +885,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_3";
 						locked = "true";
+						audioEnvironment = SmallRoom;					
 				};
 				new Item(Team1flag1) {
 					position = "-38.2426 -191.302 221.824";
@@ -1194,6 +1197,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_3";
 						locked = "true";
+						audioEnvironment = SmallRoom;					
 				};
 				new Item(Team2flag1) {
 					position = "111.245 444.67 221.86";
@@ -1522,6 +1526,7 @@ new SimGroup(MissionGroup) {
 			interiorFile = "pbunk1.dif";
 			showTerrainInside = "0";
 				locked = "true";
+				audioEnvironment = SmallRoom;					
 		};
 		new Item() {
 			position = "160.305 73.1715 98.508";

@@ -48,12 +48,21 @@ $InvBanList[Hunters, "AABarrelPack"] = 1;
 $InvBanList[Hunters, "MissileBarrelPack"] = 1;
 $InvBanList[Hunters, "Mine"] = 1;
 
+datablock EffectProfile(HuntersFlagPickupEffect)
+{
+   effectname = "misc/hunters_flag_snatch";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
 datablock AudioProfile(HuntersFlagPickupSound)
 {
    filename    = "fx/misc/hunters_flag_snatch.wav";
    description = AudioClose3d;
+   effect      = HuntersFlagPickupEffect;
    preload     = true;
 };
+
 
 //exec the AI script
 exec("scripts/aiHunters.cs");
@@ -84,13 +93,13 @@ function HuntersGame::initGameVars(%game)
 
    %game.teamMode = false;
 
-   if (!isDemo() && !isDemoServer())
+   if (!isDemo())
       %game.greedMode = $Host::HuntersGreedMode;
    else
       %game.greedMode = false;
    %game.greedMinFlags = 8;   //min number of flags you must have before you can cap
 
-   if (!isDemo() && !isDemoServer())
+   if (!isDemo())
       %game.hoardMode = $Host::HuntersHoardMode;
    else
       %game.hoardMode = false;
@@ -473,6 +482,7 @@ function HuntersGame::equip(%game, %player)
 {
    for(%i =0; %i<$InventoryHudCount; %i++)
       %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
+   %player.client.clearBackpackIcon();
 
    //%player.setArmor("Light");
    %player.setInventory(RepairKit,1);
@@ -1056,7 +1066,7 @@ function HuntersGame::sendGameVoteMenu( %game, %client, %key )
       // First send the common options:
       DefaultGame::sendGameVoteMenu( %game, %client, %key );
 
-      if (!isDemo() && !isDemoServer())
+      if (!isDemo())
       {
          if(!%client.isAdmin)
          {

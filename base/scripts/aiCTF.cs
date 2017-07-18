@@ -88,6 +88,10 @@ function CTFGame::onAIKilled(%game, %clVictim, %clAttacker, %damageType, %implem
 
 function CTFGame::onAIFriendlyFire(%game, %clVictim, %clAttacker, %damageType, %implement)
 {
-   if (%clAttacker && %clAttacker.team == %clVictim.team && %clAttacker != %clVictim)
-		AIMessageThread("Sorry", %clAttacker, %clVictim);
+   if (%clAttacker && %clAttacker.team == %clVictim.team && %clAttacker != %clVictim && !%clVictim.isAIControlled())
+   {
+      // The Bot is only a little sorry:
+      if ( getRandom() > 0.9 )
+		   AIMessageThread("ChatSorry", %clAttacker, %clVictim);
+   }
 }

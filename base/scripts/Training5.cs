@@ -37,20 +37,26 @@ $bridgeTime[1] = 30;
 $bridgeTime[2] = 20;
 $bridgeTime[3] = 5;
 
-
-game.targetObject1 = nameToId("ObjectiveGen1");  
-game.targetObject2 = nameToId("ObjectiveGen2");  
-game.tower =  nameToId("MissionGroup/Teams/Team2/tower/tower");
-game.base = nameToId("DBase2");
-game.minimumSafeDistance = 500;
-game.West = nameToId(WestBridgeGen);
-game.East = nameToId(EastBridgeGen);
-game.North = nameToId(NorthBridgeGen);
-game.South = nameToId(SouthBridgeGen);
-
-
 package Training5 {
 //Training5 package functions begin=======================================================
+
+function SinglePlayerGame::initGameVars(%game)
+{
+   // for many of the objectives we are going to periodically
+   // check the players distance vs some object
+   // you could do this much prettier but its going to be very specific
+   // so a cut and paste eyesore will be fine
+   echo("initializing training5 game vars");
+   %game.targetObject1 = nameToId("ObjectiveGen1");  
+   %game.targetObject2 = nameToId("ObjectiveGen2");  
+   %game.tower =  nameToId("MissionGroup/Teams/Team2/tower/tower");
+   %game.base = nameToId("DBase2");
+   %game.minimumSafeDistance = 500;
+   %game.West = nameToId(WestBridgeGen);
+   %game.East = nameToId(EastBridgeGen);
+   %game.North = nameToId(NorthBridgeGen);
+   %game.South = nameToId(SouthBridgeGen);
+}
 
 function MP3Audio::play(%this)
 {
@@ -63,6 +69,16 @@ function toggleScoreScreen(%val)
 	if ( %val )
 		//error("No Score Screen in training.......");
 		messageClient($player, 0, $player.miscMsg[noScoreScreen]);
+}
+
+function toggleNetDisplayHud( %val )
+{
+   // Hello, McFly?  This is training!  There's no net in training!
+}
+
+function voiceCapture( %val )
+{
+   // Uh, who do you think you are talking to?
 }
 
 function ClientCmdSetHudMode(%mode, %type, %node)
@@ -322,7 +338,7 @@ function SinglePlayerGame::equip(%game, %player, %set)
 
 	for(%i =0; %i<$InventoryHudCount; %i++)
 	  %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
-
+   %player.client.clearBackpackIcon();
 
 	%player.setArmor("Medium");
 
@@ -345,7 +361,6 @@ function SinglePlayerGame::equip(%game, %player, %set)
 	%player.use("Disc");
 
 	%player.weaponCount = 4;
-
 }
 
 

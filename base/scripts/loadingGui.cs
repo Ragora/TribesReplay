@@ -13,12 +13,12 @@ function LoadingGui::onAdd(%this)
 //------------------------------------------------------------------------------
 function LoadingGui::onWake(%this)
 {
-   if ( $HudHandle['shellScreen'] !$= "" )
+   if ( $HudHandle[shellScreen] !$= "" )
    {
-      alxStop($HudHandle['shellScreen']);
-      $HudHandle['shellScreen'] = "";   
+      alxStop($HudHandle[shellScreen]);
+      $HudHandle[shellScreen] = "";   
    }
-   $HudHandle['loadingScreen'] = alxPlay(LoadingScreenSound, 0, 0, 0);
+   $HudHandle[loadingScreen] = alxPlay(LoadingScreenSound, 0, 0, 0);
 
 	CloseMessagePopup();
 }
@@ -41,7 +41,7 @@ function LoadingGui::onSleep(%this)
    LOAD_GameText.setText( "" );
    LoadingProgress.setValue( 0 );
 
-   alxStop($HudHandle['loadingScreen']);
+   alxStop($HudHandle[loadingScreen]);
 }
 
 //------------------------------------------------------------------------------
@@ -279,7 +279,7 @@ function handleLoadInfoMessage( %msgType, %msgString, %bitmapName, %mapName, %mi
       LobbyGui.objLine[%line] = "";
    LobbyGui.objLineCount = 0;
 
-   if (!isDemo() && !isDemoServer())
+   if (!isDemo())
       %loadBmp = "gui/load_" @ %bitmapName @ ".png";
    else
       %loadBmp = "gui/load_" @ %bitmapName @ ".bm8";

@@ -2,12 +2,26 @@
 // Targeting laser
 // 
 //--------------------------------------------------------------------------
+datablock EffectProfile(TargetingLaserSwitchEffect)
+{
+   effectname = "weapons/generic_switch";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
+
+datablock EffectProfile(TargetingLaserPaintEffect)
+{
+   effectname = "weapons/targetinglaser_paint";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
 
 datablock AudioProfile(TargetingLaserSwitchSound)
 {
    filename    = "fx/weapons/generic_switch.wav";
    description = AudioClosest3d;
    preload = true;
+   effect = TargetingLaserSwitchEffect;
 };
 
 datablock AudioProfile(TargetingLaserPaintSound)
@@ -15,6 +29,7 @@ datablock AudioProfile(TargetingLaserPaintSound)
    filename    = "fx/weapons/targetinglaser_paint.wav";
    description = CloseLooping3d;
    preload = true;
+   effect = TargetingLaserPaintEffect;
 };
 
 

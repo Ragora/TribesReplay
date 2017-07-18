@@ -399,6 +399,7 @@ new SimGroup(MissionGroup) {
 					interiorFile = "sbunk9.dif";
 					showTerrainInside = "0";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new Item() {
 					position = "-266.535 264.41 110.952";

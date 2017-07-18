@@ -6,13 +6,28 @@
 // range for the repair gun, the user is repaired.
 
 //--------------------------------------------------------------------------
-// Sounds
+// Sounds & feedback effects
+
+datablock EffectProfile(RepairPackActivateEffect)
+{
+   effectname = "packs/packs.repairPackOn";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
+
+datablock EffectProfile(RepairPackFireEffect)
+{
+   effectname = "packs/repair_use";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
 
 datablock AudioProfile(RepairPackActivateSound)
 {
    filename    = "fx/packs/packs.repairPackOn.wav";
    description = AudioClosest3d;
    preload = true;
+   effect = RepairPackActivateEffect;
 };
 
 datablock AudioProfile(RepairPackFireSound)
@@ -20,6 +35,7 @@ datablock AudioProfile(RepairPackFireSound)
    filename    = "fx/packs/repair_use.wav";
    description = CloseLooping3d;
    preload = true;
+   effect = RepairPackFireEffect;
 };
 
 //--------------------------------------------------------------------------
@@ -205,6 +221,8 @@ function RepairPackImage::onDeactivate(%data, %obj, %slot)
 function RepairGunImage::onMount(%this,%obj,%slot)
 {
    %obj.setImageAmmo(%slot,true);
+   if ( !isDemo() )
+      commandToClient( %obj.client, 'setRepairPackIconOn' );
 }
 
 function RepairGunImage::onUnmount(%this,%obj,%slot)
@@ -219,6 +237,8 @@ function RepairGunImage::onUnmount(%this,%obj,%slot)
    // "turn off" the repair pack -- player needs to hit the "pack" key to
    // activate the repair gun again
    %obj.setImageTrigger($BackpackSlot, false);
+   if ( !isDemo() )
+      commandToClient( %obj.client, 'setRepairPackIconOff' );
 }
 
 function RepairGunImage::onActivateReady(%this,%obj,%slot)
@@ -263,7 +283,20 @@ function RepairGunImage::onValidate(%this,%obj,%slot)
       // a target in range was found
       %repTgt = firstWord(%scanTarg);
       // is the prospective target damaged?
-      if(%repTgt.getDamageLevel())
+      if(%repTgt.notRepairable)
+      {
+         // this is an object that cant be repaired at all
+         // -- mission specific flag set on the object
+         if(!%obj.errMsgSent)
+         {
+            messageClient(%obj.client, 'MsgRepairPackIrrepairable', '\c2Target is not repairable.', %repTgt);
+            %obj.errMsgSent = true;
+         }
+         // if player was repairing something, stop the repairs -- we're done
+         if(%obj.repairing)
+            stopRepairing(%obj);
+      }
+      else if(%repTgt.getDamageLevel())
       {
          // yes, it's damaged
          if(%repTgt != %obj.repairing)

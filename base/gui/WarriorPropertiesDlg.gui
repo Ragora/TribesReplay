@@ -181,6 +181,7 @@ new GuiChunkedBitmapCtrl(WarriorPropertiesDlg) {
 					historySize = "0";
 					password = "0";
 					glowOffset = "9 9";
+               IRCName = true;
 				};
 				new GuiTextCtrl(wp_currentname) {
 					profile = "BrowserProgressProfile";

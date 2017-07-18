@@ -62,6 +62,12 @@ function ShapeBaseImageData::onFire(%data, %obj, %slot)
          }
       }   
    }
+
+   if( %obj.client > 0 )
+   {   
+      %obj.setInvincibleMode(0 ,0.00);
+      %obj.setInvincible( false ); // fire your weapon and your invincibility goes away.   
+   }
    
    %vehicle = 0;
    if(%data.usesEnergy)
@@ -391,9 +397,6 @@ function ELFProjectileData::zapTarget(%data, %projectile, %target, %targeter)
 	%target.teamDamageStateOnZap = $teamDamage;
    %teammates = %target.client.team == %targeter.client.team;
 
-   echo("targeter team: " @ %targeter.team );
-   echo("target team: " @ %target.team );
-	
 	if( %target.teamDamageStateOnZap || !%teammates )
 		%target.setRechargeRate(%oldERate - %data.drainEnergy);
 	else	 
@@ -528,7 +531,7 @@ function RadiusExplosion(%explosionSource, %position, %radius, %damage, %impulse
          continue;
 
       //if ( $splashTest )
-         %amount = (1.0 - ((%dist / %radius) * 0.75)) * %coverage * %damage;
+         %amount = (1.0 - ((%dist / %radius) * 0.88)) * %coverage * %damage;
       //else
          //%amount = (1.0 - (%dist / %radius)) * %coverage * %damage;
 

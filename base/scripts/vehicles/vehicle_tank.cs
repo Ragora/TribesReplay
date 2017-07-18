@@ -4,6 +4,54 @@
 //**************************************************************
 // SOUNDS
 //**************************************************************
+datablock EffectProfile(AssaultVehicleEngineEffect)
+{
+   effectname = "vehicles/tank_engine";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(AssaultVehicleThrustEffect)
+{
+   effectname = "vehicles/tank_boost";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(AssaultTurretActivateEffect)
+{
+   effectname = "vehicles/tank_activate";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(AssaultMortarDryFireEffect)
+{
+   effectname = "weapons/mortar_dryfire";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(AssaultMortarFireEffect)
+{
+   effectname = "vehicles/tank_mortar_fire";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(AssaultMortarReloadEffect)
+{
+   effectname = "weapons/mortar_reload";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(AssaultChaingunFireEffect)
+{
+   effectname = "weapons/chaingun_fire";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
 
 datablock AudioProfile(AssaultVehicleSkid)
 {
@@ -17,6 +65,7 @@ datablock AudioProfile(AssaultVehicleEngineSound)
    filename    = "fx/vehicles/tank_engine.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = AssaultVehicleEngineEffect;
 };
 
 datablock AudioProfile(AssaultVehicleThrustSound)
@@ -24,6 +73,7 @@ datablock AudioProfile(AssaultVehicleThrustSound)
    filename    = "fx/vehicles/tank_boost.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = AssaultVehicleThrustEffect;
 };
 
 datablock AudioProfile(AssaultChaingunFireSound)
@@ -31,6 +81,7 @@ datablock AudioProfile(AssaultChaingunFireSound)
    filename    = "fx/vehicles/tank_chaingun.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = AssaultChaingunFireEffect;
 };
 
 datablock AudioProfile(AssaultChaingunReloadSound)
@@ -52,6 +103,7 @@ datablock AudioProfile(AssaultTurretActivateSound)
     filename    = "fx/vehicles/tank_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = AssaultTurretActivateEffect;
 };
 
 datablock AudioProfile(AssaultChaingunDryFireSound)
@@ -73,6 +125,7 @@ datablock AudioProfile(AssaultMortarDryFireSound)
    filename    = "fx/weapons/mortar_dryfire.wav";
    description = AudioClose3d;
    preload = true;
+   effect = AssaultMortarDryFireEffect;
 };
 
 datablock AudioProfile(AssaultMortarFireSound)
@@ -80,6 +133,7 @@ datablock AudioProfile(AssaultMortarFireSound)
    filename    = "fx/vehicles/tank_mortar_fire.wav";
    description = AudioClose3d;
    preload = true;
+   effect = AssaultMortarFireEffect;
 };
 
 datablock AudioProfile(AssaultMortarReloadSound)
@@ -87,6 +141,7 @@ datablock AudioProfile(AssaultMortarReloadSound)
    filename    = "fx/weapons/mortar_reload.wav";
    description = AudioClose3d;
    preload = true;
+   effect = AssaultMortarReloadEffect;
 };
 
 datablock AudioProfile(AssaultMortarIdleSound)
@@ -508,7 +563,7 @@ datablock GrenadeProjectileData(AssaultMortar)
 
    grenadeElasticity = 0.0;
    grenadeFriction   = 0.4;
-   armingDelayMS     = 50;
+   armingDelayMS     = 250;
    muzzleVelocity    = 65;
    drag              = 0.1;
 

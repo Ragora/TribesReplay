@@ -39,9 +39,9 @@ function Observer::onTrigger(%data,%obj,%trigger,%state)
    switch$ (%obj.mode)
    {
       case "justJoined":
-         if ( isDemoServer() )
-            clearCenterPrint( %client );
-            
+         if (isDemo())
+            clearCenterPrint(%client);
+
          //press FIRE
          if (%trigger == 0)
          {
@@ -190,6 +190,9 @@ function Observer::onTrigger(%data,%obj,%trigger,%state)
          %transform = %markerObj.getTransform();
          %obj.setTransform(%transform);
          %obj.setFlyMode();
+         
+      case "observerStaticNoNext":
+         // Non-moving, non-cycling observer camera
       
       case "observerTimeout":
          // Player didn't respawn quickly enough
@@ -376,7 +379,7 @@ function Observer::setMode(%data, %obj, %mode, %targetObj)
          %obj.setTransform(%transform);
          %obj.setFlyMode();
       
-      case "observerStatic":
+      case "observerStatic" or "observerStaticNoNext":
          // Non-moving observer camera
          %markerObj = Game.pickObserverSpawn(%client, true);
          %transform = %markerObj.getTransform();

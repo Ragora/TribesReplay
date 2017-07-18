@@ -53,7 +53,8 @@ function FlipFlop::playerTouch(%data, %flipflop, %player)
    if(%player.team != Game.offenseTeam)
       return;
 
-   %defTeam = %game.offenseTeam == 1 ? 2 : 1;
+   %defTeam = Game.offenseTeam == 1 ? 2 : 1;
+   Game.capPlayer[Game.offenseTeam] = stripChars( getTaggedString( %player.client.name ), "\cp\co\c6\c7\c8\c9" );
 
    // Let the observers know:
    messageTeam( 0, 'MsgSiegeTouchFlipFlop', '\c2%1 captured the %2 base!~wfx/misc/flipflop_taken.wav', %player.client.name, $TeamName[%defTeam] );
@@ -108,6 +109,9 @@ function SiegeGame::claimFlipflopResources(%game, %flipflop, %team)
 
 function SiegeGame::missionLoadDone(%game)
 {
+   if( $Host::timeLimit == 0 )
+      $Host::timeLimit = 999;
+
    //default version sets up teams - must be called first...
    DefaultGame::missionLoadDone(%game);
 
@@ -128,7 +132,7 @@ function SiegeGame::missionLoadDone(%game)
    }
 
    //send the message
-   messageAll('MsgSiegeStart', '\c2%1 is starting on offense', $teamName[%game.offenseTeam]);
+   messageAll('MsgSiegeStart', '\c2Team %1 is starting on offense', $teamName[%game.offenseTeam]);
 
    //if the first offense team is team2, switch the object team designation
    if (%game.offenseTeam == 2)
@@ -153,6 +157,8 @@ function SiegeGame::missionLoadDone(%game)
    %game.firstHalf = true;
    %game.timeLimitMS = $Host::TimeLimit * 60 * 1000;
    %game.secondHalfCountDown = false;
+   %game.capPlayer[1] = "";
+   %game.capPlayer[2] = "";
 
    // save off turret bases' original barrels
    %game.checkTurretBases();
@@ -222,6 +228,16 @@ function SiegeGame::startMatch(%game)
    %game.timeThread = %game.schedule( %game.timeLimitMS, "timeLimitReached");
    //updateClientTimes(%game.timeLimitMS);
    messageAll('MsgSystemClock', "", $Host::TimeLimit, %game.timeLimitMS);
+   
+//    %count = ClientGroup.getCount();
+//    for ( %i = 0; %i < %count; %i++ )
+//    {
+//       %cl = ClientGroup.getObject( %i );
+//       if ( %cl.team == %game.offenseTeam )
+//          centerPrint( %cl, "\nTouch the enemy control switch to capture their base!", 5, 3 );
+//       else
+//          centerPrint( %cl, "\nPrevent the enemy from touching your control switch!", 5, 3 );   
+//    }
 
    //make sure the AI is started
    AISystemEnabled(true);
@@ -235,7 +251,7 @@ function SiegeGame::allObjectivesCompleted(%game)
 
    //store the elapsed time in the teamScore array...
    $teamScore[%game.offenseTeam] = getSimTime() - %game.startTimeMS;
-   messageAll('MsgSiegeCaptured', '\c2%1 captured the base in %2!', $teamName[%game.offenseTeam], %game.formatTime($teamScore[%game.offenseTeam], true));
+   messageAll('MsgSiegeCaptured', '\c2Team %1 captured the base in %2!', $teamName[%game.offenseTeam], %game.formatTime($teamScore[%game.offenseTeam], true));
 
    //set the new timelimit
    %game.timeLimitMS = $teamScore[%game.offenseTeam];
@@ -243,8 +259,7 @@ function SiegeGame::allObjectivesCompleted(%game)
    if (%game.firstHalf)
    {
       // it's halftime, let everyone know
-      messageAll('MsgSiegeSwitchSides', "");
-      CenterPrintAll( "Switching Sides", 3 );
+      messageAll( 'MsgSiegeHalftime' );
    }
    else
    {
@@ -265,18 +280,19 @@ function SiegeGame::timeLimitReached(%game)
 
    // if time has run out, the offense team gets no score (note, %game.timeLimitMS doesn't change)
    $teamScore[%game.offenseTeam] = 0;
-   messageAll('MsgSiegeFailed', '\c2%1 failed to capture the base.', $teamName[%game.offenseTeam]);
+   messageAll('MsgSiegeFailed', '\c2Team %1 failed to capture the base.', $teamName[%game.offenseTeam]);
    
    if (%game.firstHalf)
    {
       // it's halftime, let everyone know
-      CenterPrintAll( "Switching Sides", 3 );
+      messageAll( 'MsgSiegeHalftime' );
    }
    else
    {
       // game is over
       messageAll('MsgSiegeMisDone', '\c2Mission complete.');
    }
+   
    logEcho("time limit reached");
    %game.halftime('time');
 }
@@ -342,6 +358,10 @@ function SiegeGame::startSecondHalf(%game)
          %cl.observerMode = "";
          %cl.setControlObject( %cl.player );
          commandToClient(%cl, 'setHudMode', 'Standard');
+//          if ( %client.team == %game.offenseTeam )
+//             centerPrint( %cl, "\nTouch the enemy control switch to capture their base!", 5, 3 );
+//          else
+//             centerPrint( %cl, "\nPrevent the enemy from touching your control switch!", 5, 3 );   
       }
    }
    
@@ -362,13 +382,14 @@ function SiegeGame::halftime(%game, %reason)
    {
       //switch the game variables
       %game.firstHalf = false;
+      %oldOffenseTeam = %game.offenseTeam;
       if (%game.offenseTeam == 1)
          %game.offenseTeam = 2;
       else
          %game.offenseTeam = 1;
 
       //send the message
-      messageAll('MsgSiegeRolesSwitched', '\c2%1 is now on offense.', $teamName[%game.offenseTeam], %game.offenseTeam);
+      messageAll('MsgSiegeRolesSwitched', '\c2Team %1 is now on offense.', $teamName[%game.offenseTeam], %game.offenseTeam);
 
       //reset stations and vehicles that players were using
       %game.resetPlayers();
@@ -398,22 +419,62 @@ function SiegeGame::halftime(%game, %reason)
          %client = ClientGroup.getObject(%cl);
          if( !%client.isAIControlled() )
          {
+            // Put everybody in observer mode:
+            %client.camera.getDataBlock().setMode( %client.camera, "observerStaticNoNext" );
+            %client.setControlObject( %client.camera );
+            
+            // Send the halftime result info:
+            if ( %client.team == %oldOffenseTeam )
+            {
+               if ( $teamScore[%oldOffenseTeam] > 0 )
+                  messageClient( %client, 'MsgSiegeResult', "", '%1 captured the %2 base in %3!', %game.capPlayer[%oldOffenseTeam], $teamName[%game.offenseTeam], %game.formatTime( $teamScore[%oldOffenseTeam], true ) );
+               else
+                  messageClient( %client, 'MsgSiegeResult', "", 'Your team failed to capture the %1 base.', $teamName[%game.offenseTeam] );   
+            }
+            else if ( $teamScore[%oldOffenseTeam] > 0 )
+               messageClient( %client, 'MsgSiegeResult', "", '%1 captured your base in %3!', %game.capPlayer[%oldOffenseTeam], %game.formatTime( $teamScore[%oldOffenseTeam], true ) );
+            else
+               messageClient( %client, 'MsgSiegeResult', "", 'Your team successfully held off team %1!', $teamName[%oldOffenseTeam] );   
+            
+            // List out the team rosters:
+            messageClient( %client, 'MsgSiegeAddLine', "", '<spush><color:00dc00><font:univers condensed:18><clip%%:50>%1</clip><lmargin%%:50><clip%%:50>%2</clip><spop>', $TeamName[1], $TeamName[2] );
+            %max = $TeamRank[1, count] > $TeamRank[2, count] ? $TeamRank[1, count] : $TeamRank[2, count];
+            for ( %line = 0; %line < %max; %line++ )
+            {
+               %plyr1 = $TeamRank[1, %line] $= "" ? "" : $TeamRank[1, %line].name;
+               %plyr2 = $TeamRank[2, %line] $= "" ? "" : $TeamRank[2, %line].name;
+               messageClient( %client, 'MsgSiegeAddLine', "", '<lmargin:0><clip%%:50> %1</clip><lmargin%%:50><clip%%:50> %2</clip>', %plyr1, %plyr2 );
+            }
+
+            // Show observers:
+            %header = false;
+            for ( %i = 0; %i < %count; %i++ )
+            {
+               %obs = ClientGroup.getObject( %i );
+               if ( %obs.team <= 0 )
+               {
+                  if ( !%header )
+                  {
+                     messageClient( %client, 'MsgSiegeAddLine', "", '\n<lmargin:0><spush><color:00dc00><font:univers condensed:18>OBSERVERS<spop>' );
+                     %header = true;
+                  }
+
+                  messageClient( %client, 'MsgSiegeAddLine', "", ' %1', %obs.name );
+               }
+            }
+            
+            commandToClient( %client, 'SetHalftimeClock', $Host::Siege::Halftime / 60000 );
+            
+            // Get the HUDs right:
+            commandToClient( %client, 'setHudMode', 'SiegeHalftime' );
+            commandToClient( %client, 'ControlObjectReset' );
+            
             clientResetTargets(%client, true);
             %client.notReady = true;
          }
       }
-
-      // drop all players into mission
-      %game.dropPlayers();
-
-      //setup the AI for the second half
-      %game.aiHalfTime();
       
-      // start the mission again (release players)
-      %game.halfTimeCountDown($Host::warmupTime);
-
-		//redo the objective waypoints
-		%game.findObjectiveWaypoints();
+      %game.schedule( $Host::Siege::Halftime, halftimeOver );
    }
    else
    {
@@ -421,6 +482,21 @@ function SiegeGame::halftime(%game, %reason)
       %game.gameOver();
       cycleMissions();
    }
+}
+
+function SiegeGame::halftimeOver( %game )
+{
+   // drop all players into mission
+   %game.dropPlayers();
+
+   //setup the AI for the second half
+   %game.aiHalfTime();
+   
+   // start the mission again (release players)
+   %game.halfTimeCountDown( $Host::warmupTime );
+
+	//redo the objective waypoints
+	%game.findObjectiveWaypoints();
 }
 
 function SiegeGame::dropPlayers( %game )
@@ -709,8 +785,13 @@ function siegeGame::findObjectiveWaypoints(%game, %group)
 function siegeGame::initializeWaypointAtObjective(%game, %object)
 {
 	// out with the old...jic
-	if(%object.waypoint)
-		%object.waypoint.delete();
+	if ( %object.waypoint )
+   {
+      if ( isObject( %object.waypoint ) )
+		   %object.waypoint.delete();
+      else
+         %object.waypoint = "";   
+   }
 
 	if(%object.team == %game.offenseTeam)
 		%team = %game.offenseTeam;
@@ -731,7 +812,7 @@ function siegeGame::initializeWaypointAtObjective(%game, %object)
 		scale = "1 1 1";
 		dataBlock = "WayPointMarker";
 		team = %team;
-		name = %object.nameTag SPC %append;
+		name = getTaggedString(%object.nameTag) SPC %append;
 	};
 	MissionCleanup.add(%object.waypoint);
 }
@@ -743,7 +824,6 @@ function siegeGame::switchWaypoint(%game, %waypoint)
 	
 	%waypoint.team = %newTeam; 
 }
-
 
 
 function SiegeGame::gameOver(%game)
@@ -795,21 +875,21 @@ function SiegeGame::sendDebriefing( %game, %client )
       if (%winner == 1)
       {  
          if ($teamScore[2] == 0)
-            messageClient(%client, 'MsgDebriefResult', "", '<just:center>%1 wins!', $TeamName[1]);
+            messageClient(%client, 'MsgDebriefResult', "", '<just:center>Team %1 wins!', $TeamName[1]);
          else
          {
             %timeDiffMS = $teamScore[2] - $teamScore[1];
-            messageClient(%client, 'MsgDebriefResult', "", '<just:center>%1 won by capturing the base %2 faster!', $TeamName[1], %game.formatTime(%timeDiffMS, true));
+            messageClient(%client, 'MsgDebriefResult', "", '<just:center>Team %1 won by capturing the base %2 faster!', $TeamName[1], %game.formatTime(%timeDiffMS, true));
          }
       }
       else
       {
          if ($teamScore[1] == 0)
-            messageClient(%client, 'MsgDebriefResult', "", '<just:center>%1 wins!', $TeamName[2]);
+            messageClient(%client, 'MsgDebriefResult', "", '<just:center>Team %1 wins!', $TeamName[2]);
          else
          {
             %timeDiffMS = $teamScore[1] - $teamScore[2];
-            messageClient(%client, 'MsgDebriefResult', "", '<just:center>%1 won by capturing the base %2 faster!', $TeamName[2], %game.formatTime(%timeDiffMS, true));
+            messageClient(%client, 'MsgDebriefResult', "", '<just:center>Team %1 won by capturing the base %2 faster!', $TeamName[2], %game.formatTime(%timeDiffMS, true));
          }
       }
    }
@@ -818,24 +898,26 @@ function SiegeGame::sendDebriefing( %game, %client )
 
    // Game summary:
    messageClient( %client, 'MsgDebriefAddLine', "", '<spush><color:00dc00><font:univers condensed:18>SUMMARY:<spop>' );
-   if ( $teamScore[1] > 0 )
+   %team1 = %game.offenseTeam == 1 ? 2 : 1;
+   %team2 = %game.offenseTeam;
+   if ( $teamScore[%team1] > 0 )
    {  
-      %timeStr = %game.formatTime($teamScore[1], true);
-      messageClient( %client, 'MsgDebriefAddLine', "", ' %1 captured the base in %2.', $TeamName[1],  %timeStr);
+      %timeStr = %game.formatTime($teamScore[%team1], true);
+      messageClient( %client, 'MsgDebriefAddLine', "", '<bitmap:bullet_2><lmargin:24>%1 captured the %2 base for Team %3 in %4.<lmargin:0>', %game.capPlayer[%team1], $TeamName[%team2], $TeamName[%team1], %timeStr);
    }
    else
-      messageClient( %client, 'MsgDebriefAddLine', "", ' %1 failed to capture the base.', $TeamName[1]);
+      messageClient( %client, 'MsgDebriefAddLine', "", '<bitmap:bullet_2><lmargin:24>Team %1 failed to capture the base.<lmargin:0>', $TeamName[%team1]);
 
-   if ( $teamScore[2] > 0 )
+   if ( $teamScore[%team2] > 0 )
    {  
-      %timeStr = %game.formatTime($teamScore[2], true);
-      messageClient( %client, 'MsgDebriefAddLine', "", ' %1 captured the base in %2.', $TeamName[2],  %timeStr);
+      %timeStr = %game.formatTime($teamScore[%team2], true);
+      messageClient( %client, 'MsgDebriefAddLine', "", '<bitmap:bullet_2><lmargin:24>%1 captured the %2 base for Team %3 in %4.<lmargin:0>', %game.capPlayer[%team2], $TeamName[%team1], $TeamName[%team2], %timeStr);
    }
    else
-      messageClient( %client, 'MsgDebriefAddLine', "", ' %1 failed to capture the base.', $TeamName[2]);
+      messageClient( %client, 'MsgDebriefAddLine', "", '<bitmap:bullet_2><lmargin:24>Team %1 failed to capture the base.<lmargin:0>', $TeamName[%team2]);
 
    // List out the team rosters:
-   messageClient( %client, 'MsgDebriefAddLine', "", '\n<spush><color:00dc00><font:univers condensed:18>%1<lmargin%%:50>%2<spop>', $TeamName[1], $TeamName[2] );
+   messageClient( %client, 'MsgDebriefAddLine', "", '\n<spush><color:00dc00><font:univers condensed:18><clip%%:50>%1</clip><lmargin%%:50><clip%%:50>%2</clip><spop>', $TeamName[1], $TeamName[2] );
    %max = $TeamRank[1, count] > $TeamRank[2, count] ? $TeamRank[1, count] : $TeamRank[2, count];
    for ( %line = 0; %line < %max; %line++ )
    {
@@ -880,6 +962,7 @@ function SiegeGame::clientMissionDropReady(%game, %client)
 function SiegeGame::assignClientTeam(%game, %client, %respawn)
 {
    DefaultGame::assignClientTeam(%game, %client, %respawn);
+   
    // if player's team is not on top of objective hud, switch lines
    messageClient(%client, 'MsgCheckTeamLines', "", %client.team);
 }
@@ -1038,10 +1121,10 @@ function SiegeGame::updateScoreHud(%game, %client, %tag)
 
    // Send header:
    if (%game.firstHalf)
-      messageClient( %client, 'SetScoreHudHeader', "", '<just:center>%1 has %2 to capture the base.', 
+      messageClient( %client, 'SetScoreHudHeader', "", '<just:center>Team %1 has %2 to capture the base.', 
             $teamName[%game.offenseTeam], %curTimeLeftStr ); 
    else
-      messageClient( %client, 'SetScoreHudHeader', "", '<just:center>%1 must capture the base within %2 to win.', 
+      messageClient( %client, 'SetScoreHudHeader', "", '<just:center>Team %1 must capture the base within %2 to win.', 
             $teamName[%game.offenseTeam], %curTimeLeftStr );
 
    // Send subheader:

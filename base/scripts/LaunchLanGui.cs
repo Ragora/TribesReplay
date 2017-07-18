@@ -62,10 +62,11 @@ function LaunchToolbarMenu::onSelect(%this, %id, %text)
          LaunchBrowser();
 		case 7: // Options
 			Canvas.pushDialog(OptionsDlg);
-      //case 8: // Play Recording
-      //   Canvas.pushDialog(RecordingsDlg);
+      case 8: // Play Recording
+         Canvas.pushDialog(RecordingsDlg);
       case 9: // Quit
-         IRCClient::quit();
+         if(isObject($IRCClient.tcp))
+            IRCClient::quit();
          LaunchTabView.closeAllTabs();
          if (!isDemo())
             quit();
@@ -86,8 +87,8 @@ function LaunchToolbarMenu::onSelect(%this, %id, %text)
 function LaunchToolbarDlg::onWake(%this)
 {
    // Play the shell hum:
-   if ( $HudHandle['shellScreen'] $= "" )
-      $HudHandle['shellScreen'] = alxPlay( ShellScreenHumSound, 0, 0, 0 );
+   if ( $HudHandle[shellScreen] $= "" )
+      $HudHandle[shellScreen] = alxPlay( ShellScreenHumSound, 0, 0, 0 );
 
    LaunchToolbarMenu.clear();
 
@@ -96,10 +97,6 @@ function LaunchToolbarDlg::onWake(%this)
       LaunchToolbarMenu.add( 1, "TRAINING" );
       LaunchToolbarMenu.add( 0, "GAME" );
       LaunchToolbarMenu.add( 2, "NEWS" );
-   }
-   else if ( isDemoServer() )
-   {
-      LaunchToolbarMenu.add( 0, "GAME" );
    }
    else if ( $PlayingOnline )
    {
@@ -118,15 +115,11 @@ function LaunchToolbarDlg::onWake(%this)
 
    LaunchToolbarMenu.addSeparator();
    LaunchToolbarMenu.add( 7, "SETTINGS" );
-//    LaunchToolbarMenu.add( 8, "RECORDINGS" );
+   if ( !isDemo() )
+      LaunchToolbarMenu.add( 8, "RECORDINGS" );
    LaunchToolbarMenu.add( 12, "CREDITS" );
 
    LaunchToolbarMenu.addSeparator();
-
-//    if ( $PlayingOnline )
-//       LaunchToolbarMenu.add( 10, "LOG OFF" );
-//    else
-//       LaunchToolbarMenu.add( 11, "LOG ON" );
    LaunchToolbarMenu.add( 9, "QUIT" );
 
    %on = false;
@@ -162,12 +155,7 @@ function OpenLaunchTabs( %gotoWarriorSetup )
       LaunchTabView.addLaunchTab( "EMAIL",      "", true );
       LaunchTabView.addLaunchTab( "CHAT",       "", true );
       LaunchTabView.addLaunchTab( "BROWSER",    "", true );
-      %launchGui = GameGui;
-   }
-   else if ( isDemoServer() )
-   {
-      LaunchTabView.addLaunchTab( "GAME",       GameGui );
-      %launchGui = GameGui;
+      %launchGui = NewsGui;
    }
    else if ( $PlayingOnline )
    {
@@ -199,6 +187,12 @@ function OpenLaunchTabs( %gotoWarriorSetup )
       LaunchGame( "WARRIOR" );
    else
       LaunchTabView.viewTab( "", %launchGui, 0 );
+   
+   if ( $IssueVoodooWarning && !$pref::SawVoodooWarning )
+   {
+      $pref::SawVoodooWarning = 1;
+      schedule( 0, 0, MessageBoxOK, "WARNING", "A Voodoo card has been detected.  If you experience any graphical oddities, you should try the WickedGl drivers available at www.wicked3d.com" );
+   }
 }
 
 //--------------------------------------------------------
@@ -328,7 +322,7 @@ function LaunchGui::onWake(%this)
    if ( !$FirstLaunch )
       LaunchTabView.viewLastTab();
 
-	if ( !isDemo() && !isDemoServer() )
+	if ( !isDemo() )
    	checkNamesAndAliases();
 	else
 		OpenLaunchTabs();

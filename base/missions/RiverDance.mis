@@ -38,10 +38,12 @@ new SimGroup(MissionGroup) {
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
 		visibleDistance = "425";
+		high_visibleDistance = "500";
 		useSkyTextures = "1";
 		renderBottomTexture = "0";
 		SkySolidColor = "0.420000 0.420000 0.420000 0.000000";
 		fogDistance = "200";
+		high_fogDistance = "300";
 		fogColor = "0.420000 0.420000 0.420000 1.000000";
 		fogVolume1 = "300 0 71";
 		fogVolume2 = "0 0 0";
@@ -119,6 +121,7 @@ new SimGroup(MissionGroup) {
 		envMapIntensity = "0.1";
 		removeWetEdges = "1";
 			locked = "true";
+			AudioEnvironment = Underwater;
 	};
 	new SimGroup(ObserverDropPoints) {
 
@@ -178,6 +181,7 @@ new SimGroup(MissionGroup) {
 				showTerrainInside = "0";
 				AudioProfile = "Universal_Base_2";
 					locked = "true";
+					AudioEnvironment = BigRoom;
 			};
 			new InteriorInstance() {
 				position = "-251.998 -243.486 142.611";
@@ -895,6 +899,7 @@ new SimGroup(MissionGroup) {
 				showTerrainInside = "0";
 				AudioProfile = "Universal_Base_2";
 					locked = "true";
+					AudioEnvironment = BigRoom;
 			};
 			new SimGroup(AIObjectives) {
 

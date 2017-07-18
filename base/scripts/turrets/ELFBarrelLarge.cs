@@ -5,12 +5,26 @@
 //--------------------------------------------------------------------------
 // Sounds
 //--------------------------------------------------------------------------
+datablock EffectProfile(EBLSwitchEffect)
+{
+   effectname = "powered/turret_light_activate";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(EBLFireEffect)
+{
+   effectname = "weapons/ELF_fire";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
 
 datablock AudioProfile(EBLSwitchSound)
 {
    filename    = "fx/powered/turret_light_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = EBLSwitchEffect;
 };
 
 datablock AudioProfile(EBLFireSound)
@@ -18,6 +32,7 @@ datablock AudioProfile(EBLFireSound)
    filename    = "fx/weapons/ELF_fire.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = EBLFireEffect;
 };
 
 //--------------------------------------------------------------------------

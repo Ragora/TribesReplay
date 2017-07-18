@@ -8,18 +8,21 @@ datablock EffectProfile(ShockLanceSwitchEffect)
 {
    effectname = "weapons/shocklance_activate";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(ShockLanceFireEffect)
 {
    effectname = "weapons/shocklance_fire";
-   minDistance = 5.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(ShockLanceReloadEffect)
 {
    effectname = "weapons/shocklance_reload";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock AudioProfile(ShockLanceSwitchSound)

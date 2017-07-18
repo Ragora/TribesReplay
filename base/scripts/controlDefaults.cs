@@ -914,20 +914,21 @@ moveMap.bind( keyboard, F2, toggleScoreScreen );
 // DEMO RECORD FUNCTIONS:
 function startRecordingDemo( %val )
 {
-//    if ( %val )
-//       beginDemoRecord();
-   error( "** This function has temporarily been disabled! **" );
+    if ( %val )
+       beginDemoRecord();
 }
 
 function stopRecordingDemo( %val )
 {
-//    if ( %val )
-//       stopRecord();
-   error( "** This function has temporarily been disabled! **" );
+    if ( %val )
+       stopDemoRecord();
 }
 
-//moveMap.bind( keyboard, F3, startRecordingDemo );
-//moveMap.bind( keyboard, F4, stopRecordingDemo );
+if ( !isDemo() )
+{
+   moveMap.bind( keyboard, F3, startRecordingDemo );
+   moveMap.bind( keyboard, F4, stopRecordingDemo );
+}
 
 //------------------------------------------------------------------------------
 // NAV HUD DISPLAY FUNCTIONS:
@@ -1033,6 +1034,11 @@ observerMap.bind( keyboard, space, jump );
 observerMap.bind( mouse, button0, mouseFire );
 observerMap.bind( mouse, button1, mouseJet );
 
+if(!isDemo())
+{
+   observerMap.copyBind(moveMap, startRecordingDemo);
+   observerMap.copyBind(moveMap, stopRecordingDemo);
+}
 
 ///////////////////////
 // Vehicle Keys
@@ -1170,6 +1176,10 @@ function clientCmdSetDefaultVehicleKeys(%inVehicle)
       passengerKeys.copyBind( moveMap, fnDeclineTask );
       passengerKeys.copyBind( moveMap, fnTaskCompleted );
       passengerKeys.copyBind( moveMap, fnResetTaskList );
+
+      // grab the demo recorder binds
+      passengerKeys.copyBind( moveMap, startRecordingDemo );
+      passengerKeys.copyBind( moveMap, stopRecordingDemo );
    }
    else if ( isObject( passengerKeys ) )
    {

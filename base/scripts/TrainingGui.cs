@@ -158,7 +158,7 @@ function TrainingMissionList::onSelect( %this, %id, %text )
 	else
 		error( "Failed to open Single Player mission file " @ %fileName @ "!" );
 
-   if (!isDemo() && !isDemoServer())
+   if (!isDemo())
       %bmp = "gui/" @ %briefPic @ ".png";
    else
       %bmp = "gui/" @ %briefPic @ ".bm8";

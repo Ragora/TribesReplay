@@ -97,6 +97,7 @@ new SimGroup(MissionGroup) {
 		envMapIntensity = "0.4";
 		removeWetEdges = "1";
 			locked = "true";
+			AudioEnvironment = Underwater;
 	};
 	new SimGroup(ObserverDropPoints) {
 

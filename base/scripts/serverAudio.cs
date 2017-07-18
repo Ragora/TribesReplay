@@ -3,17 +3,6 @@
 // Audio Descriptions
 //
 
-//datablock AudioDescription(TestLooping3d)
-//{
-//   volume   = 0.5;
-//   isLooping= true;
-//
-//   is3D     = true;
-//   minDistance= 10.0;
-//   MaxDistance= 640.0;
-//   type     = $EffectAudioType;
-//};
-
 datablock AudioDescription(ProjectileLooping3d)
 {
    volume   = 1.0;
@@ -112,7 +101,7 @@ datablock AudioDescription(AudioExplosion3d)
 };
 
 datablock AudioDescription(AudioBomb3d)
-// Regular weapon explosions
+// Bomber Bombs
 {
    volume   = 1.0;
    isLooping= false;
@@ -163,17 +152,20 @@ datablock AudioEnvironment(Underwater)
 {
    useRoom = true;
    room = UNDERWATER;
+   effectVolume = 0.6;
 };
 
 datablock AudioEnvironment(BigRoom)
 {
    useRoom = true;
-   room = CAVE;
+   room = AUDITORIUM;
+   effectVolume = 0.4;
 };
 
 datablock AudioEnvironment(SmallRoom)
 {
    useRoom = true;
-   room = HALLWAY;
+   room = STONEROOM;
+   effectVolume = 0.4;
 };
 

@@ -72,6 +72,7 @@ new GuiControl(CreateTribeDlg) {
 			historySize = "0";
 			password = "0";
 			glowOffset = "9 9";
+         IRCName = true;
 		};
 		new ShellTextEditCtrl(CT_TagText) {
 			profile = "NewTextEditProfile";
@@ -88,6 +89,7 @@ new GuiControl(CreateTribeDlg) {
 			historySize = "0";
 			password = "0";
 			glowOffset = "9 9";
+         IRCName = true;
 		};
 		new ShellToggleButton(rbAppendTag) {
 			profile = "ShellRadioProfile";

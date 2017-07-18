@@ -616,6 +616,7 @@ new SimGroup(MissionGroup) {
 				showTerrainInside = "0";
 				AudioProfile = "Universal_Base_2";
 					locked = "true";
+				audioEnvironment = BigRoom;					
 			};
 			new InteriorInstance() {
 				position = "-104 96 52.7925";

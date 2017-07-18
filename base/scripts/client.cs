@@ -34,6 +34,8 @@ function clientCmdSetPlayContent()
 {
    if ( $LaunchMode $= "InteriorView" )
       Canvas.setContent( interiorPreviewGui );
+   else if ( $LaunchMode $= "TSShow" ) 
+      Canvas.setContent( TSShowGui );
    else
       Canvas.setContent( Playgui );
 } 
@@ -41,8 +43,8 @@ function clientCmdSetPlayContent()
 function clientCmdPickTeamMenu( %teamA, %teamB )
 {
    ClientCmdSetHudMode("PickTeam");
-   PickTeamAButton.text = %teamA;
-   PickTeamBButton.text = %teamB;
+   PickTeamAButton.text = getTaggedString( %teamA );
+   PickTeamBButton.text = getTaggedString( %teamB );
    PickTeamFrame.setTitle( "Pick Team" );
    
    Canvas.pushDialog( PickTeamDlg );
@@ -220,10 +222,10 @@ function toggleNetDisplayHud(%val)
 function PlayGui::onWake(%this)
 {
    // Make sure the shell hum is off:
-   if ( $HudHandle['shellScreen'] !$= "" )
+   if ( $HudHandle[shellScreen] !$= "" )
    {
-      alxStop( $HudHandle['shellScreen'] );
-      $HudHandle['shellScreen'] = "";
+      alxStop( $HudHandle[shellScreen] );
+      $HudHandle[shellScreen] = "";
    }
 
    $enableDirectInput = "1";
@@ -1404,7 +1406,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   profile = "GuiDashBoxProfile";
                   horizSizing = "right";
                   vertSizing = "bottom";
-                  position = "10 11";
+                  position = "40 11";
                   extent = "80 44";
                   minExtent = "8 8";
                   visible = "1";
@@ -1415,7 +1417,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   profile = "GuiDashBoxProfile";
                   horizSizing = "right";
                   vertSizing = "bottom";
-                  position = "103 11";
+                  position = "118 11";
                   extent = "80 44";
                   minExtent = "8 8";
                   visible = "0";
@@ -1695,6 +1697,13 @@ addMessageCallback( 'msgPackIconOff', clientPackIconOff );
 addMessageCallback( 'MsgForceObserver', HandleForceObserver );
 addMessageCallback( 'MsgPlayerMuted', handlePlayerMuted );
 
+//------------------------------------------------------------------------------
+// Siege-specific callbacks:
+addMessageCallback( 'MsgSiegeHalftime', handleSiegeHalftimeMessage );
+addMessageCallback( 'MsgSiegeResult', handleSiegeResultMessage );
+addMessageCallback( 'MsgSiegeAddLine', handleSiegeLineMessage );
+//------------------------------------------------------------------------------
+
 function HandleForceObserver( %msgType, %msgString )
 {
    
@@ -1931,6 +1940,7 @@ function sceneLightingComplete()
 
    clientCmdResetHud();
    commandToServer('SetVoiceInfo', $pref::Audio::voiceChannels, $pref::Audio::decodingMask, $pref::Audio::encodingLevel);
+   commandToServer('EnableVehicleTeleport', $pref::Vehicle::pilotTeleport );
    commandToServer('MissionStartPhase3Done', $MSeq);
 }
 
@@ -2034,12 +2044,64 @@ function GameConnection::initialControlSet(%this)
       return;
    }
 
+   if( $LaunchMode $= "TSShow" )
+   {
+      Canvas.setContent( TSShowGui );
+      return;
+   }
+   
    if( Canvas.getContent() != PlayGui.getId() )
    {
       Canvas.setContent( PlayGui );
       Canvas.pushDialog( MainChatHud );
       CommandToServer('PlayContentSet');
    }
+}
+
+//------------------------------------------------------------------------------
+// Siege-specific client functions:
+//------------------------------------------------------------------------------
+function handleSiegeHalftimeMessage( %msgType, %msgString )
+{
+   alxPlay( SiegeSwitchSides, 0, 0, 0 );
+   showTaskHudDlg( false );
+   SiegeHalftimeText.setText( "" );
+}
+
+//------------------------------------------------------------------------------
+function handleSiegeResultMessage( %msgType, %msgString, %result )
+{
+   SiegeHalftimeHeaderText.setText( "<just:center>" @ detag( %result ) );
+}
+
+//------------------------------------------------------------------------------
+function handleSiegeLineMessage( %msgType, %msgString, %line )
+{
+   %text = SiegeHalftimeText.getText();
+   if ( %text $= "" )
+      %newText = detag( %line );
+   else
+      %newText = %text NL detag( %line );
+   SiegeHalftimeText.setText( %newText );   
+}
+
+//------------------------------------------------------------------------------
+function clientCmdSetHalftimeClock( %time )
+{
+   SiegeHalftimeClock.setTime( %time );
+}
+
+//------------------------------------------------------------------------------
+function SiegeHalftimeHeaderText::onResize( %this, %width, %height )
+{
+   %w = firstWord( SiegeHalftimeHeader.getExtent() );
+   SiegeHalftimeHeader.setExtent( %w, %height + 6 );
+   %paneHeight = getWord( siegeHalftimeHud.getExtent(), 1 );
+   %x = firstWord( SiegeHalftimeScroll.getPosition() );
+   %y = %height + 40;
+   %w = firstWord( SiegeHalftimeScroll.getExtent() );
+   %h = %paneHeight - %height - 59;
+   SiegeHalftimeScroll.resize( %x, %y, %w, %h );
 }
 
 

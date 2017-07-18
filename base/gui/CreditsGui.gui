@@ -66,7 +66,7 @@ new GuiChunkedBitmapCtrl(CreditsGui) {
 				minExtent = "8 8";
 				visible = "1";
 				helpTag = "0";
-				bitmap = "gui/loading.png";
+				bitmap = "gui/loading";
 				useVariable = "0";
 			};
 		};

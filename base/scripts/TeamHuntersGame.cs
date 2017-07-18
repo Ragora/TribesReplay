@@ -277,12 +277,6 @@ function TeamHuntersGame::onClientKilled(%game, %clVictim, %clKiller, %damageTyp
    messageClient(%clVictim, 'MsgHuntYouHaveFlags', "", 0);
 }
 
-function TeamHuntersGame::onAIFriendlyFire(%game, %clVictim, %clAttacker, %damageType, %implement)
-{
-   if (%clAttacker && %clAttacker.team == %clVictim.team && %clAttacker != %clVictim)
-		AIMessageThread("Sorry", %clAttacker, %clVictim);
-}
-
 function TeamHuntersGame::updateKillScores(%game, %clVictim, %clKiller, %damageType, %implement)
 {
 	if (%game.testKill(%clVictim, %clKiller)) //verify victim was an enemy

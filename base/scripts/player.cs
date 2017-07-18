@@ -84,35 +84,72 @@ datablock EffectProfile(CorpseLootingEffect)
 {
    effectname = "weapons/generic_switch";
    minDistance = 2.5;
+	maxDistance = 2.5;
 };
 
 datablock EffectProfile(MountVehicleEffect)
 {
    effectname = "vehicles/mount_dis";
-   minDistance = 20;
+   minDistance = 5;
+   maxDistance = 20;
 };
 
 datablock EffectProfile(UnmountVehicleEffect)
 {
    effectname = "weapons/generic_switch";
-   minDistance = 20;
+   minDistance = 5;
+   maxDistance = 20;
+};
+
+datablock EffectProfile(GenericPainEffect)
+{
+   effectname = "misc/generic_pain";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
+
+datablock EffectProfile(GenericDeathEffect)
+{
+   effectname = "misc/generic_death";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
+
+datablock EffectProfile(ImpactHeavyWaterEasyEffect)
+{
+   effectname = "armor/general_water_smallsplash";
+   minDistance = 5;
+   maxDistance = 15;
+};
+
+datablock EffectProfile(ImpactHeavyMediumWaterEffect)
+{
+   effectname = "armor/general_water_medsplash";
+   minDistance = 5;
+   maxDistance = 15;
+};
+
+datablock EffectProfile(ImpactHeavyWaterHardEffect)
+{
+   effectname = "armor/general_water_bigsplash";
+   minDistance = 5;
+   maxDistance = 15;
 };
 
 //----------------------------------------------------------------------------
-
-datablock AudioProfile( DeathCrySound )
-{
-   fileName = "";
-   description = AudioClose3d;
-   preload = true;
-};
-
-datablock AudioProfile( PainCrySound )
-{
-   fileName = "";
-   description = AudioClose3d;
-   preload = true;
-};
+//datablock AudioProfile( DeathCrySound )
+//{
+//   fileName = "";
+//   description = AudioClose3d;
+//   preload = true;
+//};
+//
+//datablock AudioProfile( PainCrySound )
+//{
+//   fileName = "";
+//   description = AudioClose3d;
+//   preload = true;
+//};
 
 datablock AudioProfile(ArmorJetSound)
 {
@@ -1202,12 +1239,12 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
 
    aiAvoidThis = true;
 
-   minLookAngle = -1.4;
-   maxLookAngle = 1.4;
+   minLookAngle = -1.5;
+   maxLookAngle = 1.5;
    maxFreelookAngle = 3.0;
 
    mass = 90;
-   drag = 0.3;
+   drag = 0.275;
    maxdrag = 0.4;
    density = 10;
    maxDamage = 0.66;
@@ -1216,24 +1253,24 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    energyPerDamagePoint = 75.0; // shield energy required to block one point of damage
 
    rechargeRate = 0.256;
-   jetForce = 27.51 * 90;
-   underwaterJetForce = 27.51 * 90 * 2.0;
+   jetForce = 26.21 * 90;
+   underwaterJetForce = 26.21 * 90 * 1.5;
    underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  0.8;
-   underwaterJetEnergyDrain = 0.5;
+   underwaterJetEnergyDrain = 0.6;
    minJetEnergy = 1;
    maxJetHorizontalPercentage = 0.8;
 
    runForce = 55.20 * 90;
    runEnergyDrain = 0;
    minRunEnergy = 0;
-   maxForwardSpeed = 14;
+   maxForwardSpeed = 15;
    maxBackwardSpeed = 13;
    maxSideSpeed = 13;
 
-   maxUnderwaterForwardSpeed = 8.4;
-   maxUnderwaterBackwardSpeed = 7.8;
-   maxUnderwaterSideSpeed = 7.8;
+   maxUnderwaterForwardSpeed = 11;
+   maxUnderwaterBackwardSpeed = 10;
+   maxUnderwaterSideSpeed = 10;
 
 
    jumpForce = 8.3 * 90;
@@ -1304,7 +1341,7 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    upResistFactor = 0.3;
    
    // heat inc'ers and dec'ers
-   heatDecayPerSec      = 1.0 / 3.0; // takes 3 seconds to clear heat sig.
+   heatDecayPerSec      = 1.0 / 4.0; // takes 4 seconds to clear heat sig.
    heatIncreasePerSec   = 1.0 / 3.0; // takes 3.0 seconds of constant jet to get full heat sig.
 
    footstepSplashHeight = 0.35;
@@ -1379,9 +1416,6 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    max[RepairPack]         = 1;
    max[ShieldPack]         = 1;
    max[AmmoPack]           = 1;
-   //max[ReflectionPack]      = 1;
-   //max[RepulsorPack]        = 1;
-   //max[EnvironmentPack]     = 1;
    max[SatchelCharge]      = 1;
    max[MortarBarrelPack]   = 0;
    max[MissileBarrelPack]  = 0;
@@ -1389,23 +1423,18 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    max[PlasmaBarrelPack]   = 0;
    max[ELFBarrelPack]      = 0;
    max[InventoryDeployable]= 0;
-   //max[AmmoDeployable]      = 0;
    max[MotionSensorDeployable]   = 1;
    max[PulseSensorDeployable]    = 1;
    max[TurretOutdoorDeployable]  = 0;
    max[TurretIndoorDeployable]   = 0;
-   //max[MineAir]          = 3;
-   //max[MineLand]            = 3;
-   //max[MineSticky]       = 3;
    max[FlashGrenade]       = 5;
    max[ConcussionGrenade]  = 5;
    max[FlareGrenade]       = 5;
    max[TargetingLaser]     = 1;
    max[ELFGun]             = 1;
    max[ShockLance]         = 1;
-   max[CameraGrenade]      = 5;
+   max[CameraGrenade]      = 2;
    max[Beacon]             = 3;
-   //max[Rock]          = 1;
    
    observeParameters = "0.5 4.5 4.5";
 
@@ -1460,12 +1489,12 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
 
    aiAvoidThis = true;
 
-   minLookAngle = -1.4;
-   maxLookAngle = 1.4;
+   minLookAngle = -1.5;
+   maxLookAngle = 1.5;
    maxFreelookAngle = 3.0;
 
    mass = 130;
-   drag = 0.4;
+   drag = 0.3;
    maxdrag = 0.5;
    density = 10;
    maxDamage = 1.1;
@@ -1474,30 +1503,30 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    energyPerDamagePoint = 75.0; // shield energy required to block one point of damage
 
    rechargeRate = 0.256;
-   jetForce = 25.83 * 130;
-   underwaterJetForce = 25.83 * 130 * 2.0;
+   jetForce = 25.22 * 130;
+   underwaterJetForce = 25.22 * 130 * 1.5;
    underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  1.0;
-   underwaterJetEnergyDrain =  0.5;
+   underwaterJetEnergyDrain =  0.6;
    minJetEnergy = 1;
    maxJetHorizontalPercentage = 0.8;
 
    runForce = 46 * 130;
    runEnergyDrain = 0;
    minRunEnergy = 0;
-   maxForwardSpeed = 11;
+   maxForwardSpeed = 12;
    maxBackwardSpeed = 10;
    maxSideSpeed = 10;
 
-   maxUnderwaterForwardSpeed = 6.6;
-   maxUnderwaterBackwardSpeed = 6;
-   maxUnderwaterSideSpeed = 6;
+   maxUnderwaterForwardSpeed = 8.5;
+   maxUnderwaterBackwardSpeed = 7.5;
+   maxUnderwaterSideSpeed = 7.5;
 
    recoverDelay = 9;
    recoverRunForceScale = 1.2;
    
    // heat inc'ers and dec'ers
-   heatDecayPerSec      = 1.0 / 3.0; // takes 3 seconds to clear heat sig.
+   heatDecayPerSec      = 1.0 / 4.0; // takes 4 seconds to clear heat sig.
    heatIncreasePerSec   = 1.0 / 3.0; // takes 3.0 seconds of constant jet to get full heat sig.
 
    jumpForce = 8.3 * 130;
@@ -1637,9 +1666,6 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    max[RepairPack]         = 1;
    max[ShieldPack]         = 1;
    max[AmmoPack]           = 1;
-   //max[ReflectionPack]      = 1;
-   //max[RepulsorPack]        = 1;
-   //max[EnvironmentPack]     = 1;
    max[SatchelCharge]      = 1;
    max[MortarBarrelPack]   = 1;
    max[MissileBarrelPack]  = 1;
@@ -1647,23 +1673,18 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    max[PlasmaBarrelPack]   = 1;
    max[ELFBarrelPack]      = 1;
    max[InventoryDeployable]= 1;
-   //max[AmmoDeployable]      = 1;
    max[MotionSensorDeployable]   = 1;
    max[PulseSensorDeployable] = 1;
    max[TurretOutdoorDeployable]     = 1;
    max[TurretIndoorDeployable]   = 1;
-   //max[MineAir]          = 3;
-   //max[MineLand]            = 3;
-   //max[MineSticky]       = 3;
    max[FlashGrenade]       = 6;
    max[ConcussionGrenade]  = 6;
    max[FlareGrenade]       = 6;
    max[TargetingLaser]         = 1;
    max[ELFGun]             = 1;
    max[ShockLance]         = 1;
-   max[CameraGrenade]      = 6;
+   max[CameraGrenade]      = 3;
    max[Beacon]             = 3;
-   //max[Rock]          = 1;
    
    observeParameters = "0.5 4.5 4.5";
 
@@ -1716,12 +1737,12 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
 
    aiAvoidThis = true;
 
-   minLookAngle = -1.4;
-   maxLookAngle = 1.4;
+   minLookAngle = -1.5;
+   maxLookAngle = 1.5;
    maxFreelookAngle = 3.0;
 
    mass = 180;
-   drag = 0.5;
+   drag = 0.33;
    maxdrag = 0.6;
    density = 10;
    maxDamage = 1.32;
@@ -1731,21 +1752,21 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
 
    rechargeRate = 0.256;
    jetForce = 22.47 * 180;
-   underwaterJetForce = 22.47 * 180 * 2.0;
+   underwaterJetForce = 22.47 * 180 * 1.5;
    underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  1.1;
-   underwaterJetEnergyDrain =  0.55;
+   underwaterJetEnergyDrain =  0.65;
    minJetEnergy = 1;
    maxJetHorizontalPercentage = 0.8;
 
    runForce = 40.25 * 180;
    runEnergyDrain = 0;
    minRunEnergy = 0;
-   maxForwardSpeed = 6.5;
+   maxForwardSpeed = 7;
    maxBackwardSpeed = 5;
    maxSideSpeed = 5;
 
-   maxUnderwaterForwardSpeed = 3.9;
+   maxUnderwaterForwardSpeed = 4.5;
    maxUnderwaterBackwardSpeed = 3;
    maxUnderwaterSideSpeed = 3;
 
@@ -1758,7 +1779,7 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    jumpDelay = 0;
    
    // heat inc'ers and dec'ers
-   heatDecayPerSec      = 1.0 / 3.0; // takes 3 seconds to clear heat sig.
+   heatDecayPerSec      = 1.0 / 4.0; // takes 4 seconds to clear heat sig.
    heatIncreasePerSec   = 1.0 / 3.0; // takes 3.0 seconds of constant jet to get full heat sig.
 
    // Controls over slope of runnable/jumpable surfaces
@@ -1890,9 +1911,6 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    max[RepairPack]         = 1;
    max[ShieldPack]         = 1;
    max[AmmoPack]           = 1;
-   //max[ReflectionPack]      = 1;
-   //max[RepulsorPack]        = 1;
-   //max[EnvironmentPack]     = 1;
    max[SatchelCharge]      = 1;
    max[MortarBarrelPack]   = 1;
    max[MissileBarrelPack]  = 1;
@@ -1900,23 +1918,18 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    max[PlasmaBarrelPack]   = 1;
    max[ELFBarrelPack]      = 1;
    max[InventoryDeployable]= 1;
-   //max[AmmoDeployable]      = 1;
    max[MotionSensorDeployable]   = 1;
    max[PulseSensorDeployable] = 1;
    max[TurretOutdoorDeployable]     = 1;
    max[TurretIndoorDeployable]   = 1;
-   //max[MineAir]          = 3;
-   //max[MineLand]            = 3;
-   //max[MineSticky]       = 3;
    max[FlashGrenade]       = 8;
    max[ConcussionGrenade]  = 8;
    max[FlareGrenade]       = 8;
    max[TargetingLaser]     = 1;
    max[ELFGun]             = 1;
    max[ShockLance]         = 1;
-   max[CameraGrenade]      = 8;
+   max[CameraGrenade]      = 3;
    max[Beacon]             = 3;
-   //max[Rock]          = 1;
    
    observeParameters = "0.5 4.5 4.5";
 
@@ -2101,7 +2114,11 @@ function Armor::onMount(%this,%obj,%vehicle,%node)
 
       // update the vehicle's team
       if((%vehicle.getTarget() != -1) && %vehicle.getDatablock().cantTeamSwitch $= "")
+      {   
          setTargetSensorGroup(%vehicle.getTarget(), %obj.client.getSensorGroup());
+         if( %vehicle.turretObject > 0 )
+            setTargetSensorGroup(%vehicle.turretObject.getTarget(), %obj.client.getSensorGroup());
+      }
 
       // Send a message to the client so they can decide if they want to change view or not:
       commandToClient( %obj.client, 'VehicleMount' );

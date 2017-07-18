@@ -261,6 +261,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+					audioEnvironment = BigRoom;					
 				};
 				new InteriorInstance() {
 					position = "-313.981 363.606 86.674";
@@ -288,6 +289,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+					audioEnvironment = SmallRoom;					
 				};
 				new StaticShape() {
 					position = "-196.748 158.992 172.52";
@@ -308,6 +310,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+					audioEnvironment = SmallRoom;					
 				};
 				new Item() {
 					position = "-420.82 396.034 160.568";
@@ -515,6 +518,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+					audioEnvironment = BigRoom;					
 				};
 				new InteriorInstance() {
 					position = "306.892 -17.224 86.6738";
@@ -542,6 +546,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+					audioEnvironment = SmallRoom;					
 				};
 				new StaticShape() {
 					position = "208.101 187.045 171.71";
@@ -562,6 +567,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+					audioEnvironment = SmallRoom;					
 				};
 				new Item() {
 					position = "431.93 -49.3341 159.168";
@@ -617,6 +623,7 @@ new SimGroup(MissionGroup) {
 		envMapIntensity = "0.7";
 		removeWetEdges = "1";
 			locked = "true";
+		audioEnvironment = Underwater;					
 	};
 	new SimGroup(RandomOrganics) {
 

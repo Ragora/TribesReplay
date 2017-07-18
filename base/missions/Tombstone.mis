@@ -160,6 +160,7 @@ new SimGroup(MissionGroup) {
 					interiorFile = "pbunk1.dif";
 					showTerrainInside = "0";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new StaticShape() {
 					position = "-450.816 340.977 169.772";
@@ -178,6 +179,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new WayPoint() {
 					position = "-363.986 -401.484 155.401";
@@ -1232,6 +1234,7 @@ new SimGroup(MissionGroup) {
 					interiorFile = "pbunk1.dif";
 					showTerrainInside = "0";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new Turret() {
 					position = "221.813 436.197 185.219";
@@ -1295,6 +1298,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new WayPoint() {
 					position = "227.997 449.227 177.42";

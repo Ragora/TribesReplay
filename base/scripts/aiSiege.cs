@@ -80,6 +80,10 @@ function SiegeGame::onAIKilledClient(%game, %clVictim, %clAttacker, %damageType,
 
 function SiegeGame::onAIFriendlyFire(%game, %clVictim, %clAttacker, %damageType, %implement)
 {
-   if (%clAttacker && %clAttacker.team == %clVictim.team && %clAttacker != %clVictim)
-		AIMessageThread("Sorry", %clAttacker, %clVictim);
+   if (%clAttacker && %clAttacker.team == %clVictim.team && %clAttacker != %clVictim && !%clVictim.isAIControlled())
+   {
+      // The Bot is only a little sorry:
+      if ( getRandom() > 0.9 )
+		   AIMessageThread("ChatSorry", %clAttacker, %clVictim);
+   }
 }

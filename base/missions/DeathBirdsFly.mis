@@ -34,14 +34,19 @@ new SimGroup(MissionGroup) {
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
 		visibleDistance = "600";
+		high_visibleDistance = "700";
 		useSkyTextures = "0";
 		renderBottomTexture = "0";
 		SkySolidColor = "0.500000 0.500000 0.630000 0.000000";
 		fogDistance = "400";
+		high_fogDistance = "675";
 		fogColor = "0.600000 0.500000 0.430000 1.000000";
 		fogVolume1 = "100 0 53";
 		fogVolume2 = "300 53 58";
 		fogVolume3 = "1000 58 200";
+		high_fogVolume1 = "200 0 53";
+		high_fogVolume2 = "500 53 58";
+		high_fogVolume3 = "1500 58 200";
 		materialList = "sky_desert_brown.dml";
 		windVelocity = "1 0 0";
 		windEffectPrecipitation = "0";
@@ -220,6 +225,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+					audioEnvironment = BigRoom;					
 				};
 				new StaticShape() {
 					position = "-506.612 646.525 119.97";
@@ -291,6 +297,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						audioEnvironment = SmallRoom;					
 				};
 				new WayPoint() {
 					position = "224.29 207.998 103.266";
@@ -481,6 +488,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						audioEnvironment = BigRoom;					
 				};
 				new StaticShape(Team2generatorLarge1) {
 					position = "514.059 -556.669 74.9267";
@@ -576,6 +584,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						audioEnvironment = SmallRoom;					
 				};
 				new InteriorInstance() {
 					position = "-347.162 -308.107 65.4496";

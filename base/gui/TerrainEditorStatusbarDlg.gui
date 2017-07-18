@@ -57,8 +57,8 @@ new GuiControl(TerrainEditorStatusbarDlg) {
 
 function TerrainEditorStatusbarDlg::init(%this)
 {
-   MouseBrushInfo.setValue("Mouse Brush Info");
-   SelectionInfo.setValue("Selection Info");
+   TEMouseBrushInfo.setValue("Mouse Brush Info");
+   TESelectionInfo.setValue("Selection Info");
 }
 
 function TerrainEditorStatusbarDlg::update(%this, %info)

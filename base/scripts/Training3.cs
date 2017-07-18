@@ -29,18 +29,24 @@ $Shrike = nameToId("Ride");
 $Shrike.playThread($ActivateThread, "activate");
 
 // for the distance checking
-game.base = nameToId("Shield");
-game.baseLocation = game.base.getTransform();
-game.base.threshold = 400;
-game.end = nameToId("PlayerDropPoint");
-game.endLocation = game.end.getTransform();
-
 addMessageCallback('MsgWeaponMount', playerMountWeapon);
-
-
 
 package training3 {
 //===============================================begin the training 3 package stuff====
+
+function SinglePlayerGame::initGameVars(%game)
+{
+   // for many of the objectives we are going to periodically
+   // check the players distance vs some object
+   // you could do this much prettier but its going to be very specific
+   // so a cut and paste eyesore will be fine
+   echo("initializing training3 game vars");
+   %game.base = nameToId("Shield");
+   %game.baseLocation = game.base.getTransform();
+   %game.base.threshold = 400;
+   %game.end = nameToId("PlayerDropPoint");
+   %game.endLocation = game.end.getTransform();
+}
 
 function MP3Audio::play(%this)
 {
@@ -65,7 +71,6 @@ function singlePlayerGame::onAIRespawn(%game, %client)
 		}
 	}
 	
-
 	// error("Forcing AI Scope!!!!!!!!!!!!!");
 	// %client.player.scopeToClient($player);
 
@@ -88,6 +93,22 @@ function toggleCommanderMap(%val)
 {
 	if ( %val )
 	messageClient($player, 0, $player.miscMsg[noCC]);
+}
+
+function toggleTaskListDlg( %val )
+{
+   if ( %val )
+      messageClient( $player, 0, $player.miscMsg[noTaskListDlg] );
+}
+
+function toggleNetDisplayHud( %val )
+{
+   // Hello, McFly?  This is training!  There's no net in training!
+}
+
+function voiceCapture( %val )
+{
+   // Uh, who do you think you are talking to?
 }
 
 function giveall()
@@ -161,27 +182,27 @@ function SinglePlayerGame::equip(%game, %player)
 
    for(%i =0; %i<$InventoryHudCount; %i++)
       %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
+   %player.client.clearBackpackIcon();
 
-		//echo("Light Assassin Config");
+	//echo("Light Assassin Config");
 
-		%player.setArmor("Light");
-	   
-		%player.setInventory(CloakingPack, 1);
-	   
-		%player.setInventory(RepairKit,1);
-		%player.setInventory(FlashGrenade,5);
-		%player.setInventory(Mine,3);
+	%player.setArmor("Light");
+	
+	%player.setInventory(CloakingPack, 1);
+	
+	%player.setInventory(RepairKit,1);
+	%player.setInventory(FlashGrenade,5);
+	%player.setInventory(Mine,3);
 
-		%player.setInventory(Plasma, 1);
-		%player.setInventory(PlasmaAmmo, 20);
-		%player.setInventory(Disc,1);
-		%player.setInventory(DiscAmmo, 15);
-		%player.setInventory(TargetingLaser, 1);
-		%player.setInventory(ShockLance,1);
+	%player.setInventory(Plasma, 1);
+	%player.setInventory(PlasmaAmmo, 20);
+	%player.setInventory(Disc,1);
+	%player.setInventory(DiscAmmo, 15);
+	%player.setInventory(TargetingLaser, 1);
+	%player.setInventory(ShockLance,1);
+	%player.weaponCount = 3;
 
-		%player.use("Disc");
-
-		%player.weaponCount = 3;
+	%player.use("Disc");
 }                  
 
 // ============================================================================

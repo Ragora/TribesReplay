@@ -4,12 +4,33 @@
 //**************************************************************
 // SOUNDS
 //**************************************************************
+datablock EffectProfile(ScoutFlyerThrustEffect)
+{
+   effectname = "vehicles/shrike_boost";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(ScoutFlyerEngineEffect)
+{
+   effectname = "vehicles/shrike_engine";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(ShrikeBlasterFireEffect)
+{
+   effectname = "vehicles/shrike_blaster";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
 
 datablock AudioProfile(ScoutFlyerThrustSound)
 {
    filename    = "fx/vehicles/shrike_boost.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = ScoutFlyerThrustEffect;
 };
 
 datablock AudioProfile(ScoutFlyerEngineSound)
@@ -24,6 +45,7 @@ datablock AudioProfile(ShrikeBlasterFire)
    filename    = "fx/vehicles/shrike_blaster.wav";
    description = AudioDefault3d;
    preload = true;
+   effect = ScoutFlyerEngineEffect;
 };
 
 datablock AudioProfile(ShrikeBlasterProjectile)
@@ -31,6 +53,7 @@ datablock AudioProfile(ShrikeBlasterProjectile)
    filename    = "fx/weapons/shrike_blaster_projectile.wav";
    description = ProjectileLooping3d;
    preload = true;
+   effect = ShrikeBlasterFireEffect;
 };
 
 datablock AudioProfile(ShrikeBlasterDryFireSound)
@@ -113,15 +136,16 @@ datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
    maxSteeringAngle = 5;    // Max radiens you can rotate the wheel. Smaller number is more maneuverable.
    horizontalSurfaceForce = 6;   // Horizontal center "wing" (provides "bite" into the wind for climbing/diving and turning)
    verticalSurfaceForce = 4;     // Vertical center "wing" (controls side slip. lower numbers make MORE slide.)
-   maneuveringForce = 2500;      // Horizontal jets (W,S,D,A key thrust)
+   maneuveringForce = 3000;      // Horizontal jets (W,S,D,A key thrust)
    steeringForce = 1200;         // Steering jets (force applied when you move the mouse)
    steeringRollForce = 400;      // Steering jets (how much you heel over when you turn)
    rollForce = 4;                // Auto-roll (self-correction to right you after you roll/invert)
    hoverHeight = 5;        // Height off the ground at rest
    createHoverHeight = 3;  // Height off the ground when created
+   maxForwardSpeed = 100;  // speed in which forward thrust force is no longer applied (meters/second)
 
    // Turbo Jet
-   jetForce = 1750;      // Afterburner thrust (this is in addition to normal thrust)
+   jetForce = 2000;      // Afterburner thrust (this is in addition to normal thrust)
    minJetEnergy = 28;     // Afterburner can't be used if below this threshhold.
    jetEnergyDrain = 2.8;       // Energy use of the afterburners (low number is less drain...can be fractional)                                                                                                                                                                                                                                                                                          // Auto stabilize speed
    vertThrustMultiple = 3.0;
@@ -221,7 +245,10 @@ datablock ShapeBaseImageData(ScoutChaingunPairImage)
    projectile = ScoutChaingunBullet;
    projectileType = TracerProjectile;
    mountPoint = 10;
-   offset = ".73 0 0";
+//**original**   offset = ".73 0 0";
+   offset = "1.93 -0.52 0.044";
+
+   projectileSpread = 1.0 / 1000.0;
    
    usesEnergy = true;
    useMountEnergy = true;
@@ -230,6 +257,7 @@ datablock ShapeBaseImageData(ScoutChaingunPairImage)
    fireEnergy = 5;
    fireTimeout = 125;
 
+   
    //--------------------------------------
    stateName[0]             = "Activate";
    stateSequence[0]         = "Activate";
@@ -296,7 +324,8 @@ datablock ShapeBaseImageData(ScoutChaingunPairImage)
 
 datablock ShapeBaseImageData(ScoutChaingunImage) : ScoutChaingunPairImage
 {
-   offset = "-.73 0 0";
+//**original**   offset = "-.73 0 0";
+   offset = "-1.93 -0.52 0.044";
    stateScript[3]           = "onTriggerDown";
    stateScript[5]           = "onTriggerUp";
    stateScript[6]           = "onTriggerUp";

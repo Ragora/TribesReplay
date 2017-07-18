@@ -100,6 +100,7 @@ new SimGroup(MissionGroup) {
 		envMapIntensity = "0.7";
 		removeWetEdges = "1";
 			locked = "true";
+			AudioEnvironment = Underwater;
 	};
 	new SimGroup(environment) {
 
@@ -205,6 +206,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_3";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new InteriorInstance() {
 					position = "-102.796 21.1962 139.043";
@@ -214,6 +216,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new InteriorInstance() {
 					position = "-58.1054 -111.149 132.645";
@@ -223,6 +226,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new Item() {
 					position = "-209.9 -44.7356 105.823";

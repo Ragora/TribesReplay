@@ -12,6 +12,12 @@ function VerifyCDCheck(%func)
       call(%func);
 }
 
+function logEcho(%msg)
+{
+	if($LogEchoEnabled)
+		echo("LOG: " @ %msg);
+}
+
 function CreateServer(%mission, %missionType)
 {
    DestroyServer();
@@ -77,6 +83,8 @@ function CreateServer(%mission, %missionType)
    {
       exec("scripts/DefaultGame.cs");
       exec("scripts/SinglePlayerGame.cs");
+      exec("scripts/CTFGame.cs");
+      exec("scripts/HuntersGame.cs");
    }
    
    $missionSequence = 0;
@@ -92,11 +100,11 @@ function CreateServer(%mission, %missionType)
       %missionType = $HostTypeName[0];
    }
 
-   if ( $HostGameType $= "Online" && $pref::Net::DisplayOnMaster !$= "Never" )
+   if ( ( isDemo() && $HostGameType !$= "SinglePlayer" ) || ( $HostGameType $= "Online" && $pref::Net::DisplayOnMaster !$= "Never" ) )
       schedule(0,0,startHeartbeat);
 
    // setup the bots for this server
-   if( $Host::BotsEnabled )
+   if( !isDemo() && $Host::BotsEnabled )
       initGameBots( %mission, %missionType ); 
       
    // load the mission...
@@ -231,6 +239,9 @@ function Disconnect()
 
 function DisconnectedCleanup()
 {
+   $CurrentMissionType = "";
+   $CurrentMission = "";
+   
    // Make sure we're not still waiting for the loading info:
    cancelLoadInfoCheck();
 
@@ -384,38 +395,73 @@ function addDemoAlias( %name )
    $DemoNameCount++;
 }
 
-addDemoAlias( "Amateur" );
-addDemoAlias( "Bullseye" );
-addDemoAlias( "Casualty" );
-addDemoAlias( "Dogfood" );
-addDemoAlias( "Extinct" );
-addDemoAlias( "Fodder" );
-addDemoAlias( "Grunt" );
-addDemoAlias( "Helpless" );
-addDemoAlias( "Itchy" );
-addDemoAlias( "Joker" );
-addDemoAlias( "Kibble" );
-addDemoAlias( "Learner" );
-addDemoAlias( "Meat" );
-addDemoAlias( "Newbie" );
-addDemoAlias( "Owned" );
-addDemoAlias( "Poser" );
-addDemoAlias( "Quaker" );
-addDemoAlias( "Roadkill" );
-addDemoAlias( "Skid Mark" );
-addDemoAlias( "Easy Target" );
-addDemoAlias( "Underdog" );
-addDemoAlias( "Vegetable" );
-addDemoAlias( "Weakling" );
-addDemoAlias( "Flatline" );
-addDemoAlias( "Yo-yo" );
-addDemoAlias( "Zero" );
-addDemoAlias( "Apprentice" );
-addDemoAlias( "Bonehead" );
-addDemoAlias( "Clown" );
-addDemoAlias( "Dodo" );
-addDemoAlias( "Endangered" );
-addDemoAlias( "Feeble" );
+if ( isDemo() )
+{
+   addDemoAlias( "Butterfingers" );
+   addDemoAlias( "Bullseye" );
+   addDemoAlias( "Casualty" );
+   addDemoAlias( "Dogfood" );
+   addDemoAlias( "Extinct" );
+   addDemoAlias( "Fodder" );
+   addDemoAlias( "Grunt" );
+   addDemoAlias( "Helpless" );
+   addDemoAlias( "Itchy" );
+   addDemoAlias( "Bait" );
+   addDemoAlias( "Kibble" );
+   addDemoAlias( "MonkeyBoy" );
+   addDemoAlias( "Meat" );
+   addDemoAlias( "Newbie" );
+   addDemoAlias( "Owned" );
+   addDemoAlias( "Poser" );
+   addDemoAlias( "Quaker" );
+   addDemoAlias( "Roadkill" );
+   addDemoAlias( "SkidMark" );
+   addDemoAlias( "EZTarget" );
+   addDemoAlias( "Underdog" );
+   addDemoAlias( "Vegetable" );
+   addDemoAlias( "Weakling" );
+   addDemoAlias( "Flatline" );
+   addDemoAlias( "Spud" );
+   addDemoAlias( "Zero" );
+   addDemoAlias( "WetNose" );
+   addDemoAlias( "Chowderhead" );
+   addDemoAlias( "Clown" );
+   addDemoAlias( "Dodo" );
+   addDemoAlias( "Endangered" );
+   addDemoAlias( "Feeble" );
+   addDemoAlias( "Gimp" );
+   addDemoAlias( "Inky" );
+   addDemoAlias( "Pinky" );
+   addDemoAlias( "Blinky" );
+   addDemoAlias( "Clyde" );
+   addDemoAlias( "Loopy" );
+   addDemoAlias( "Masochist" );
+   addDemoAlias( "Pancake" );
+   addDemoAlias( "Rubbish" );
+   addDemoAlias( "Sickly" );
+   addDemoAlias( "Terminal" );
+   addDemoAlias( "Ugly Duckling" );
+   addDemoAlias( "Sheepish" );
+   addDemoAlias( "Whiplash" );
+   addDemoAlias( "KickMe" );
+   addDemoAlias( "Yellow Belly" );
+   addDemoAlias( "Bits" );
+   addDemoAlias( "Doofus" );
+   addDemoAlias( "Fluffy Bunny" );
+   addDemoAlias( "Lollipop" );
+   addDemoAlias( "Troglodyte" );
+   addDemoAlias( "Carcass" );
+   addDemoAlias( "Noodle" );
+   addDemoAlias( "Spastic" );
+   addDemoAlias( "Wimpy" );
+   addDemoAlias( "Sweet Pea" );
+   addDemoAlias( "Abused" );
+   addDemoAlias( "Happy Camper" );
+   addDemoAlias( "FreakShow" );
+   addDemoAlias( "Bumpkin" );
+   addDemoAlias( "Mad Cow" );
+   addDemoAlias( "Cud" );
+}
 
 function pickDemoName()
 {
@@ -474,7 +520,7 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
    sendLoadInfoToClient( %client );
 
    //%client.setSimulatedNetParams(0.1, 30);
-	if ( isDemoServer() )
+	if (isDemo() && $CurrentMissionType !$= "SinglePlayer")
 	{
    	%client.armor = "Light";
       %client.sex = "Male";
@@ -542,6 +588,62 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
 	   if ( strcmp( %name, %realName ) == 0 )
 	   {
 	      %client.isSmurf = false;
+
+         //make sure the name is unique - that a smurf isn't using this name...
+         %dup = -1;
+         %count = ClientGroup.getCount();
+         for (%i = 0; %i < %count; %i++)
+         {
+	         %test = ClientGroup.getObject( %i );
+            if (%test != %client)
+            {
+	            %rawName = stripChars( detag( getTaggedString( %test.name ) ), "\cp\co\c6\c7\c8\c9" );
+               if (%realName $= %rawName)
+               {
+                  %dup = %test;
+                  %dupName = %rawName;
+                  break;
+               }
+            }
+         }
+
+         //see if we found a duplicate name
+         if (isObject(%dup))
+         {
+            //change the name of the dup
+            %isUnique = false;
+            %suffixCount = 1;
+            while (!%isUnique)
+            {
+               %found = false;
+               %testName = %dupName @ "." @ %suffixCount;
+               for (%i = 0; %i < %count; %i++)
+               {
+                  %cl = ClientGroup.getObject(%i);
+	               %rawName = stripChars( detag( getTaggedString( %cl.name ) ), "\cp\co\c6\c7\c8\c9" );
+                  if (%rawName $= %testName)
+                  {
+                     %found = true;
+                     break;
+                  }
+               }
+
+               if (%found)
+                  %suffixCount++;
+               else
+                  %isUnique = true;
+            }
+
+            //%testName will now have the new unique name...
+            %oldName = %dupName;
+            %newName = %testName;
+
+            MessageAll( 'MsgSmurfDupName', '\c2The real \"%1\" has joined the server.', %dupName );
+            MessageAll( 'MsgClientNameChanged', '\c2The smurf \"%1\" is now called \"%2\".', %oldName, %newName, %dup );
+
+            %dup.name = addTaggedString(%newName);
+            setTargetName(%dup.target, %dup.name);
+         }
 
 	      // Add the tribal tag:
 	      %tag = getField( %authInfo, 1 );
@@ -670,15 +772,30 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
 
    if ( $CurrentMissionType !$= "SinglePlayer" ) 
    {
-      messageClient(%client, 'MsgClientJoin', '\c2Welcome to Tribes2 %1.', 
-            %client.name, 
-            %client, 
-            %client.target, 
-            false,   // isBot 
-            %client.isAdmin, 
-            %client.isSuperAdmin, 
-            %client.isSmurf, 
-            %client.sendGuid );
+      if ( isDemo() )
+      {
+         messageClient(%client, 'MsgClientJoin', '\c2Welcome to the Tribes 2 Demo!', 
+               %client.name, 
+               %client, 
+               %client.target, 
+               false,   // isBot 
+               %client.isAdmin, 
+               %client.isSuperAdmin, 
+               %client.isSmurf, 
+               %client.sendGuid );
+      }
+      else
+      {
+         messageClient(%client, 'MsgClientJoin', '\c2Welcome to Tribes2 %1.', 
+               %client.name, 
+               %client, 
+               %client.target, 
+               false,   // isBot 
+               %client.isAdmin, 
+               %client.isSuperAdmin, 
+               %client.isSmurf, 
+               %client.sendGuid );
+      }
 
       messageAllExcept(%client, -1, 'MsgClientJoin', '\c1%1 joined the game.', 
             %client.name, 
@@ -714,17 +831,21 @@ function GameConnection::onDrop(%client, %reason)
 {
    if(isObject(Game))
       Game.onClientLeaveGame(%client);
-   
+
+   // make sure that tagged string of player name is not used
    if ( $CurrentMissionType $= "SinglePlayer" ) 
-      messageAllExcept(%client, -1, 'MsgClientDrop', "", %client.name, %client);
+      messageAllExcept(%client, -1, 'MsgClientDrop', "", getTaggedString(%client.name), %client);
    else
-      messageAllExcept(%client, -1, 'MsgClientDrop', '\c1%1 has left the game.', %client.name, %client);
+      messageAllExcept(%client, -1, 'MsgClientDrop', '\c1%1 has left the game.', getTaggedString(%client.name), %client);
 
    if ( isObject( %client.camera ) )
       %client.camera.delete();
 
-   freeClientTarget(%client);
    removeTaggedString(%client.name);
+   removeTaggedString(%client.voiceTag);
+   removeTaggedString(%client.skin);
+   freeClientTarget(%client);
+
    echo("CDROP: " @ %client @ " " @ %client.getAddress());
    $HostGamePlayerCount--;
    
@@ -750,6 +871,20 @@ function dismountPlayers()
 
 function loadMission( %missionName, %missionType, %firstMission )
 {
+   //ensure the demo server is using appropriate missions
+   if (isDemo() && %missionType !$= "SinglePlayer")
+   {
+      if (%missionName $= "Slapdash")
+         %missionType = "CTF";
+      else if (%missionName $= "Rasp")
+         %missionType = "Hunters";
+      else
+      {
+         %missionName = "Slapdash";
+         %missionType = "CTF";
+      }
+   }
+
    $LoadingMission = true;
    disableCyclingConnections(true);
    if (!$pref::NoClearConsole)
@@ -762,7 +897,7 @@ function loadMission( %missionName, %missionType, %firstMission )
    ClearCenterPrintAll();
    ClearBottomPrintAll();
    
-   if( $Host::TournamentMode )
+   if( !isDemo() && $Host::TournamentMode )
       resetTournamentPlayers();
    
    // Send load info to all the connected clients:
@@ -891,13 +1026,15 @@ function loadMissionStage2()
    AISystemEnabled( false );
 
    // Set the team damage here so that the game type can override it:
-   if ( $Host::TournamentMode )
+   if ( isDemo() )
+      $TeamDamage = 0;
+   else if ( $Host::TournamentMode )
       $TeamDamage = 1;
    else
       $TeamDamage = $Host::TeamDamageOn;
 
    //the demo version always has team damage off
-   if (isDemo() || isDemoServer())
+   if (isDemo())
       $TeamDamage = 0;
 
    Game.missionLoadDone();
@@ -909,7 +1046,7 @@ function loadMissionStage2()
       
    if(!$MatchStarted && $LaunchMode !$= "NavBuild" && $LaunchMode !$= "SpnBuild" )
    {
-      if( $Host::TournamentMode )
+      if( !isDemo() && $Host::TournamentMode )
          checkTourneyMatchStart();
       else if( $currentMissionType !$= "SinglePlayer" )
          checkMissionStart();
@@ -1066,7 +1203,7 @@ function serverSetClientTeamState( %client )
    MissionCleanup.add( %client.camera ); // we get automatic cleanup this way.
    
    %observer = false;
-   if( !$Host::TournamentMode )
+   if( isDemo() || !$Host::TournamentMode )
    {
       if( %client.justConnected )
       {
@@ -1172,6 +1309,16 @@ function clientCmdSetFirstPerson(%value)
       ammoHud.setVisible(true);
    else
       ammoHud.setVisible(false);
+}
+
+function clientCmdGetFirstPerson()
+{
+   commandToServer('FirstPersonValue', $firstPerson);
+}
+
+function serverCmdFirstPersonValue(%client, %firstPerson)
+{
+   %client.player.firstPerson = %firstPerson;
 }
 
 function clientCmdVehicleMount()
@@ -1387,6 +1534,14 @@ function serverCmdAddBot( %client )
 
 function serverCmdClientJoinTeam( %client, %team )
 {
+   if( %team == -1 )
+   {
+      if( %client.team == 1 )
+         %team = 2;
+      else
+         %team = 1;
+   }
+
    if ( isObject( Game ) && Game.kickClient != %client)
    {   
       if(%client.team != %team)   
@@ -1424,7 +1579,7 @@ function serverCmdClientAddToGame( %client, %targetClient )
       %targetClient.setControlObject( %targetClient.camera );
    }
    
-   if($Host::TournamentMode && !$CountdownStarted)
+   if( !isDemo() && $Host::TournamentMode && !$CountdownStarted)
    {   
       %targetClient.notReady = true;
       centerprint( %targetClient, "\nPress FIRE when ready.", 0, 3 );
@@ -1460,7 +1615,7 @@ function serverCmdChangePlayersTeam( %clientRequesting, %client, %team)
          %client.camera.getDataBlock().setMode( %client.camera, "pre-game", %client.player );
          %client.setControlObject( %client.camera );
          
-         if($Host::TournamentMode && !$CountdownStarted)
+         if( !isDemo() && $Host::TournamentMode && !$CountdownStarted)
          {   
             %client.notReady = true;
             centerprint( %client, "\nPress FIRE when ready.", 0, 3 );
@@ -1473,7 +1628,7 @@ function serverCmdChangePlayersTeam( %clientRequesting, %client, %team)
       if(%multiTeam)
       {
          messageClient( %client, 'MsgClient', '\c1The Admin has changed your team.');
-         messageAllExcept( %client, -1, 'MsgClient', '\c1The Admin forced %1 to join the %2 team.', %client.name, $teamName[%client.team]);
+         messageAllExcept( %client, -1, 'MsgClient', '\c1The Admin forced %1 to join the %2 team.', %client.name, game.getTeamName(%client.team) );
       }
       else
       {
@@ -1597,7 +1752,7 @@ function playerPickTeam( %client )
    if(%numTeams > 1)
    {
       %client.camera.mode = "PickingTeam";
-      schedule( 0, 0, "commandToClient", %client, 'pickTeamMenu', getTaggedString($TeamName[1]), getTaggedString($TeamName[2]));
+      schedule( 0, 0, "commandToClient", %client, 'pickTeamMenu', Game.getTeamName(1), Game.getTeamName(2));
    }
    else
    {
@@ -1612,7 +1767,7 @@ function playerPickTeam( %client )
 
 function serverCmdPlayContentSet( %client )
 {
-   if( $Host::TournamentMode && !$CountdownStarted && !$MatchStarted )
+   if( !isDemo() && $Host::TournamentMode && !$CountdownStarted && !$MatchStarted )
       playerPickTeam( %client );
 }
 
@@ -2008,34 +2163,37 @@ function resetServerDefaults()
    exec( "scripts/ServerDefaults.cs" );
    exec( $serverprefs );
 
-   //convert the team skin and name vars to tags...
-   %index = 0;
-   while ($Host::TeamSkin[%index] !$= "")
+   if ( !isDemo() )
    {
-      $TeamSkin[%index] = addTaggedString($Host::TeamSkin[%index]);
-      %index++;
-   }
+      //convert the team skin and name vars to tags...
+      %index = 0;
+      while ($Host::TeamSkin[%index] !$= "")
+      {
+         $TeamSkin[%index] = addTaggedString($Host::TeamSkin[%index]);
+         %index++;
+      }
 
-   %index = 0;
-   while ($Host::TeamName[%index] !$= "")
-   {
-      $TeamName[%index] = addTaggedString($Host::TeamName[%index]);
-      %index++;
-   }
+      %index = 0;
+      while ($Host::TeamName[%index] !$= "")
+      {
+         $TeamName[%index] = addTaggedString($Host::TeamName[%index]);
+         %index++;
+      }
    
-   // Get the hologram names from the prefs...
-   %index = 1;
-   while ( $Host::holoName[%index] !$= "" )
-   {
-      $holoName[%index] = $Host::holoName[%index];
-      %index++;
+      // Get the hologram names from the prefs...
+      %index = 1;
+      while ( $Host::holoName[%index] !$= "" )
+      {
+         $holoName[%index] = $Host::holoName[%index];
+         %index++;
+      }
    }
 
    // kick all bots...
    removeAllBots();
    
    // add bots back if they were there before..
-   if( $Host::botsEnabled )
+   if( !isDemo() && $Host::botsEnabled )
       initGameBots( $Host::Map, $Host::MissionType );
    
    // load the missions

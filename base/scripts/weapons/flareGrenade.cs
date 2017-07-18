@@ -135,3 +135,11 @@ datablock ItemData(FlareGrenade)
 
 };
 
+//------------------------------------------------------------------------------
+// Functions:
+//------------------------------------------------------------------------------
+function FlareGrenadeThrown::onCollision( %data, %obj, %col )
+{
+   // Do nothing...
+}
+

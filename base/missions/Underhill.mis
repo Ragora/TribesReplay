@@ -643,6 +643,7 @@ new SimGroup(MissionGroup) {
 				showTerrainInside = "0";
 				AudioProfile = "Universal_Base_2";
 					locked = "true";
+					AudioEnvironment = BigRoom;
 			};
 			new TSStatic() {
 				position = "-207.892 -225.915 63.64";

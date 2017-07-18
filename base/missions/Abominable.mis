@@ -1560,6 +1560,7 @@ new SimGroup(MissionGroup) {
 						AudioProfile = "Universal_Base_Pulse_2";
 							locked = "true";
 							team = "0";
+						audioEnvironment = SmallRoom;					
 					};
 					new StaticShape(Team0flipflop1) {
 						position = "120.531 595.532 58.8337";
@@ -1778,6 +1779,7 @@ new SimGroup(MissionGroup) {
 						AudioProfile = "Universal_Base_Pulse_2";
 							locked = "true";
 							team = "0";
+						audioEnvironment = SmallRoom;					
 					};
 					new StaticShape() {
 						position = "-387.637 -689.558 218.178";

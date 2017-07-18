@@ -1,9 +1,24 @@
 //------------------------------------------------------------------------------
+datablock EffectProfile(VehicleAppearEffect)
+{
+   effectname = "vehicles/inventory_pad_appear";
+   minDistance = 5;
+   maxDistance = 10;
+};
+
+datablock EffectProfile(ActivateVehiclePadEffect)
+{
+   effectname = "powered/vehicle_pad_on";
+   minDistance = 20;
+   maxDistance = 30;
+};
+
 datablock AudioProfile(VehicleAppearSound)
 {
    filename    = "fx/vehicles/inventory_pad_appear.wav";
    description = AudioClosest3d;
    preload = true;
+   effect = VehicleAppearEffect;
 };
 
 datablock AudioProfile(ActivateVehiclePadSound)
@@ -11,6 +26,7 @@ datablock AudioProfile(ActivateVehiclePadSound)
    filename = 	"fx/powered/vehicle_pad_on.wav";
    description = AudioClose3d;
    preload = true;
+   effect = ActivateVehiclePadEffect;
 };
 
 datablock StationFXVehicleData( VehicleInvFX )
@@ -69,8 +85,8 @@ function serverCmdBuyVehicle(%client, %blockName)
          %p = vectorAdd(%pos,vectorScale(%yrot, -3));
          %p =  getWords(%p,0, 1) @ " " @ getWord(%p,2) + 4;
 
-         error(%blockName);
-         error(%blockName.spawnOffset);
+//         error(%blockName);
+//         error(%blockName.spawnOffset);
 
          %p = vectorAdd(%p, %blockName.spawnOffset);
          %rot = getWords(%trans, 3, 5);
@@ -121,11 +137,6 @@ function createVehicle(%client, %station, %blockName, %team , %pos, %rot, %angle
    %obj = %blockName.create(%team);   
    if(%obj)
    {
-      if ( %blockName $= "MobileBaseVehicle" )
-      {
-         %station.station.teleporter.MPB = %obj;
-         %obj.teleporter = %station.station.teleporter;
-      }
       %station.ready = false;
       %obj.team = %team;
       %obj.useCreateHeight(true);
@@ -168,7 +179,8 @@ function createVehicle(%client, %station, %blockName, %team , %pos, %rot, %angle
          stationObject = %station;
       };
 
-      %obj.getDataBlock().schedule(5000, "mountDriver", %obj, %client.player);
+      if ( %client.isVehicleTeleportEnabled() )
+         %obj.getDataBlock().schedule(5000, "mountDriver", %obj, %client.player);
    }
    if(%obj.getTarget() != -1)
       setTargetSensorGroup(%obj.getTarget(), %client.getSensorGroup());
@@ -286,4 +298,9 @@ function VehicleHud::clearHud( %obj, %client, %tag, %count )
    for ( %i = 0; %i < %count; %i++ )
       messageClient( %client, 'RemoveLineHud', "", %tag, %i );
 }
-																							  
+
+//------------------------------------------------------------------------------
+function serverCmdEnableVehicleTeleport( %client, %enabled )
+{
+   %client.setVehicleTeleportEnabled( %enabled );
+}																							  

@@ -8,18 +8,21 @@ datablock EffectProfile(SniperRifleSwitchEffect)
 {
    effectname = "weapons/sniper_activate";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(SniperRifleFireEffect)
 {
    effectname = "weapons/sniper_fire";
-   minDistance = 4.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(SniperRifleFireWetEffect)
 {
    effectname = "weapons/sniper_underwater";
-   minDistance = 4.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock AudioProfile(SniperRifleSwitchSound)

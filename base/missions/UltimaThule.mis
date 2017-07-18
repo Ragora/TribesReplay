@@ -94,6 +94,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 						locked = "true";
 						team = "2";
+						AudioEnvironment = BigRoom;
 				};
 				new StaticShape() {
 					position = "41.78 -224.046 45.55";
@@ -489,6 +490,7 @@ new SimGroup(MissionGroup) {
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
 						team = "2";
+						AudioEnvironment = SmallRoom;
 				};
 				new SimGroup(FFAlpha) {
 						powerCount = "2";

@@ -363,10 +363,6 @@ new GuiControl(terraineditorbuttonbardlg) {
 
 function TerrainEditorButtonBarDlg::init(%this)
 {
-   // set the default
-   TerrainActionsMenu.setText(tEditor.getActionName(0));
-   for(%i = 0; %i < tEditor.getNumActions(); %i++)
-      TerrainActionsMenu.add(tEditor.getActionName(%i), %i);
 }
 
 //------------------------------------------------------------------------------

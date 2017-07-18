@@ -87,6 +87,7 @@ function DMGame::equip(%game, %player)
 {
    for(%i =0; %i<$InventoryHudCount; %i++)
       %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
+   %player.client.clearBackpackIcon();
 
    //%player.setArmor("Light");
    %player.setInventory(RepairKit, 1);

@@ -2,9 +2,6 @@
 // helper function for creating targets
 function createTarget(%obj, %nameTag, %skinTag, %voiceTag, %typeTag, %sensorGroup, %voicePitch)
 {
-   if(%obj.nameTag !$= "")
-      %nameTag = addTaggedString(%obj.nameTag);
-
    if (%voicePitch $= "" || %voicePitch == 0)
       %voicePitch = 1.0;
    %data = (%obj.getType() & $TypeMasks::ShapeBaseObjectType) ? %obj.getDataBlock() : 0;

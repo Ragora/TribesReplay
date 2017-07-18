@@ -2250,18 +2250,18 @@ function Heightfield::resetTabs()
    tab_terrainFile.reset();
    tab_fbm.reset();
    tab_rmf.reset();
-   tab_canyon.reset();
-   tab_smooth.reset();
-   tab_smoothWater.reset();
-   tab_smoothRidge.reset();
-   tab_filter.reset();
-   tab_turbulence.reset();
-   tab_thermal.reset();
-   tab_hydraulic.reset();
-   tab_general.reset();
-   tab_bitmap.reset();
+//   tab_canyon.reset();
+//   tab_smooth.reset();
+//   tab_smoothWater.reset();
+//   tab_smoothRidge.reset();
+//   tab_filter.reset();
+//   tab_turbulence.reset();
+//   tab_thermal.reset();
+//   tab_hydraulic.reset();
+//   tab_general.reset();
+//   tab_bitmap.reset();
    tab_blend.reset();
-   tab_sinus.reset();
+//   tab_sinus.reset();
 }
 
 //--------------------------------------

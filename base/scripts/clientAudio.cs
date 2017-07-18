@@ -4,6 +4,13 @@
 // 
 //--------------------------------------------------------------------------
 
+datablock EffectProfile(BountyBellEffect)
+{
+   effectname = "misc/bounty_bonus";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
 // ordered list of providers
 $AudioProviders[0, name]               = "Creative Labs EAX 2 (TM)";
 $AudioProviders[0, isHardware]         = true;
@@ -54,7 +61,7 @@ function audioUpdateProvider(%provider)
          if($AudioProviders[%i, isHardware])
          {
             alxDisableOuterFalloffs(true);
-            alxSetInnerFalloffScale($Audio::innerFalloffScale);
+            alxSetInnerFalloffScale(0.4);
          }
 
          // environment
@@ -124,6 +131,9 @@ function MP3Audio::stop(%this)
 
 function getRandomTrack()
 {
+   if ( isDemo() )
+      return( "desert" );
+      
    %val = mFloor(getRandom(0, 4));
    switch(%val)
    {
@@ -151,7 +161,12 @@ function MP3Audio::playTrack(%this, %trackName)
 {
    %this.currentTrack = %trackName;
    if($pref::Audio::musicEnabled)
-      alxPlayMusic("base\\music\\" @ %trackName @ ".mp3");
+   {
+      if ( isDemo() )
+         alxPlayMusic("demo_base\\music\\" @ %trackName @ ".mp3");
+      else   
+         alxPlayMusic("base\\music\\" @ %trackName @ ".mp3");
+   }
 }
 
 function finishedMusicStream(%stopped)
@@ -177,6 +192,19 @@ function clientCmdStopMusic()
 //--------------------------------------
 // Audio Profiles
 //
+
+new EffectProfile(eButtonDown)
+{
+   effectname = "gui/buttonDown";
+   minDistance = 10;
+};
+
+new EffectProfile(eButtonOver)
+{
+   effectname = "gui/buttonOver";
+   minDistance = 10;
+};
+
 new AudioDescription(AudioGui)
 {
    volume   = 1.0;
@@ -205,14 +233,16 @@ new AudioProfile(sButtonDown)
 {
    filename = "gui/buttonDown.wav";
    description = "audioGui";
-	  preload = true;
+	preload = true;
+   effect = eButtonDown;
 };
 
 new AudioProfile(sButtonOver)
 {
    filename = "gui/buttonOver.wav";
    description = "audioGui";
-	  preload = true;
+	preload = true;
+   effect = eButtonOver;
 };
 
 new AudioProfile(sGotMail)
@@ -222,18 +252,26 @@ new AudioProfile(sGotMail)
 	  preload = true;
 };
 
+new EffectProfile(eLaunchMenuOpen)
+{
+   effectname = "gui/launchMenuOpen";
+   minDistance = 10;
+};
+
 new AudioProfile(sLaunchMenuOpen)
 {
    filename = "gui/launchMenuOpen.wav";
    description = "audioGui";
-	  preload = true;
+	preload = true;
+   effect = eLaunchMenuOpen;
 };
 
 new AudioProfile(sLaunchMenuOver)
 {
    filename = "gui/buttonOver.wav";
    description = "audioGui";
-	  preload = true;
+	preload = true;
+   effect = eButtonOver;
 };
 
 new AudioProfile(VoteForSound)
@@ -319,25 +357,40 @@ new AudioProfile(sMissileHomingWarningTone)
 };
 
 //--------------------------------------------------------------------------
+
 new AudioProfile(HudInventoryHumSound)
 {
    filename    = "gui/inventory_hum.wav";
    description = "AudioGuiLoop";
-	  preload = true;
+	preload = true;
+};
+
+new EffectProfile(HudInventoryActivateEffect)
+{
+   effectname = "gui/inventory_on";
+   minDistance = 10;
 };
 
 new AudioProfile(HudInventoryActivateSound)
 {
    filename    = "gui/inventory_on.wav";
    description = "AudioGui";
-	  preload = true;
+	preload = true;
+   effect      = HudInventoryActivateEffect;
+};
+
+new EffectProfile(HudInventoryDeactivateEffect)
+{
+   effectname = "gui/inventory_off";
+   minDistance = 10;
 };
 
 new AudioProfile(HudInventoryDeactivateSound)
 {
    filename    = "gui/inventory_off.wav";
    description = "AudioGui";
-	  preload = true;
+	preload = true;
+   effect = HudInventoryDeactivateEffect;
 };
 
 new AudioProfile(CommandMapHumSound)
@@ -347,18 +400,32 @@ new AudioProfile(CommandMapHumSound)
 	  preload = true;
 };
 
+new EffectProfile(CommandMapActivateEffect)
+{
+   effectname = "gui/command_on";
+   minDistance = 10;
+};
+
 new AudioProfile(CommandMapActivateSound)
 {
    filename    = "gui/command_on.wav";
    description = "AudioGui";
-	  preload = true;
+   effect      = CommandMapActivateEffect;
+	preload = true;
+};
+
+new EffectProfile(CommandMapDeactivateEffect)
+{
+   effectname = "gui/command_off";
+   minDistance = 10;
 };
 
 new AudioProfile(CommandMapDeactivateSound)
 {
    filename    = "gui/command_off.wav";
    description = "AudioGui";
-	  preload = true;
+	preload = true;
+   effect = CommandMapDeactivateEffect;
 };
 
 new AudioProfile(ShellScreenHumSound)
@@ -386,21 +453,21 @@ new AudioProfile(VoteNotPassSound)
 {
    filename    = "fx/misc/vote_fails.wav";
    description = "AudioGui";
-	  preload = true;
+	preload = true;
 };
 
 new AudioProfile(AdminForceSound)
 {
    filename    = "fx/misc/bounty_completed.wav";
    description = "AudioGui";
-	  preload = true;
+	preload = true;
 };
 
 new AudioProfile(VoteInitiatedSound)
 {
    filename    = "fx/misc/vote_initiated.wav";
    description = "AudioGui";
-	  preload = true;
+	preload = true;
 };
 
 // Tinman - not being used anymore...
@@ -415,20 +482,27 @@ new AudioProfile(BountyBellSound)
 {
    filename    = "fx/misc/bounty_bonus.wav";
    description = "AudioGui";
-	  preload = true;
+	preload = true;
 };
 
 new AudioProfile(SiegeSwitchSides)
 {
    filename    = "fx/misc/siege_switching.wav";
    description = "AudioGui";
-	  preload = true;
+	preload = true;
+};
+
+new EffectProfile(ObjectiveCompletedEffect)
+{
+   effectname = "misc/bounty_bonus";
+   minDistance = 10;
 };
 
 new AudioProfile(ObjectiveCompleted)
 {
    filename    = "fx/misc/bounty_bonus.wav";
    description = "AudioGui";
-	  preload = true;
+   effect      = ObjectiveCompletedEffect;
+   preload = true;
 };
 

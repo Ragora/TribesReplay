@@ -11,7 +11,8 @@ function MessageBoxOK( %title, %message, %callback )
 {
 	MBOKFrame.setTitle( %title );
    MBOKText.setText( "<just:center>" @ %message );
-   MessageBoxOKDlg.callback = %callback;
+   //MessageBoxOKDlg.callback = %callback;
+   MBOKButton.command = %callback SPC "Canvas.popDialog(MessageBoxOKDlg);";
    Canvas.pushDialog( MessageBoxOKDlg );
 }
 
@@ -33,8 +34,11 @@ function MessageBoxOKCancel( %title, %message, %callback, %cancelCallback )
 {
 	MBOKCancelFrame.setTitle( %title );
    MBOKCancelText.setText( "<just:center>" @ %message );
-	MessageBoxOKCancelDlg.callback = %callback;
-	MessageBoxOKCancelDlg.cancelCallback = %cancelCallback;
+	//MessageBoxOKCancelDlg.callback = %callback;
+	//MessageBoxOKCancelDlg.cancelCallback = %cancelCallback;
+	MBOKCancelButtonOK.command = %callback SPC "Canvas.popDialog(MessageBoxOKCancelDlg);";
+	MBOKCancelButtonCancel.command = %cancelCallback SPC "Canvas.popDialog(MessageBoxOKCancelDlg);";
+
    Canvas.pushDialog( MessageBoxOKCancelDlg );
 }
 
@@ -56,8 +60,11 @@ function MessageBoxYesNo( %title, %message, %yesCallback, %noCallback )
 {
 	MBYesNoFrame.setTitle( %title );
    MBYesNoText.setText( "<just:center>" @ %message );
-	MessageBoxYesNoDlg.yesCallBack = %yesCallback;
-	MessageBoxYesNoDlg.noCallback = %noCallBack;
+
+	//MessageBoxYesNoDlg.yesCallBack = %yesCallback;
+	//MessageBoxYesNoDlg.noCallback = %noCallBack;
+	MBYesNoButtonYes.command = %yesCallback SPC "Canvas.popDialog(MessageBoxYesNoDlg);";
+	MBYesNoButtonNo.command = %noCallback SPC "Canvas.popDialog(MessageBoxYesNoDlg);";
    Canvas.pushDialog( MessageBoxYesNoDlg );
 }
 
@@ -112,6 +119,9 @@ function PickTeamDlg::onSleep( %this )
 function ShellGetLoadFilename( %title, %fileSpec, %validate, %callback )
 {
    $loadFileCommand = %callback @ "( getField( LOAD_FileList.getValue(), 0 ) );";
+	LOAD_FileList.altCommand = $loadFileCommand SPC "Canvas.popDialog(ShellLoadFileDlg);";
+   LOAD_LoadBtn.command = $loadFileCommand SPC "Canvas.popDialog(ShellLoadFileDlg);";
+
    if ( %title $= "" )
       LOAD_Title.setTitle( "LOAD FILE" );
    else
@@ -157,6 +167,9 @@ function ShellGetSaveFilename( %title, %fileSpec, %validate, %callback, %current
 {
    SAVE_FileName.setValue( %current );
    $saveFileCommand = "if ( SAVE_FileName.getValue() !$= \"\" ) " @ %callback @ "( SAVE_FileName.getValue() );";
+	SAVE_FileName.altCommand = $saveFileCommand SPC "Canvas.popDialog(ShellSaveFileDlg);";
+	SAVE_SaveBtn.command = $saveFileCommand SPC "Canvas.popDialog(ShellSaveFileDlg);";
+
    if ( %title $= "" )
       SAVE_Title.setTitle( "SAVE FILE" );
    else
@@ -181,6 +194,7 @@ function SAVE_FileList::onDoubleClick( %this )
    %id = %this.getSelectedId();
    if ( %this.isRowActive( %id ) )
    {
+      error("D'oh - double clicking is broken for PURE/DEMO executables");
       eval( $saveFileCommand ); 
       Canvas.popDialog( ShellSaveFileDlg );
    }

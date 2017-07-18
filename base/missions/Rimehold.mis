@@ -302,6 +302,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 						locked = "true";
 						team = "0";
+						AudioEnvironment = BigRoom;
 				};
 				new Item(Nexus) {
 					position = "-23.8753 84.0586 81.555";

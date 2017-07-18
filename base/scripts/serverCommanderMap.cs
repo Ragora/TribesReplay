@@ -225,4 +225,6 @@ function serverCmdScopeCommanderMap(%client, %scope)
    if(%scope)
       resetControlObject(%client);
    %client.scopeCommanderMap(%scope);
+
+   commandToClient(%client, 'ScopeCommanderMap', %scope);
 }

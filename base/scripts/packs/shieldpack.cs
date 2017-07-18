@@ -3,11 +3,19 @@
 // can be used by any armor type
 // while activated, absorbs damage at cost of energy
 
+datablock EffectProfile(ShieldPackActivateEffect)
+{
+   effectname = "packs/shield_on";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
+
 datablock AudioProfile(ShieldPackActivateSound)
 {
 	filename = "fx/packs/shield_on.wav";
 	description = ClosestLooping3d;
-    preload = true;
+   preload = true;
+   effect = ShieldPackActivateEffect;
 };
 
 datablock ShapeBaseImageData(ShieldPackImage)
@@ -66,6 +74,8 @@ function ShieldPackImage::onActivate(%data, %obj, %slot)
 {
    messageClient(%obj.client, 'MsgShieldPackOn', '\c2Shield pack on.');
    %obj.isShielded = true;
+   if ( !isDemo() )
+      commandToClient( %obj.client, 'setShieldIconOn' );
 }
 
 function ShieldPackImage::onDeactivate(%data, %obj, %slot)
@@ -73,6 +83,8 @@ function ShieldPackImage::onDeactivate(%data, %obj, %slot)
    messageClient(%obj.client, 'MsgShieldPackOff', '\c2Shield pack off.');
 	%obj.setImageTrigger(%slot,false);
    %obj.isShielded = "";
+   if ( !isDemo() )
+      commandToClient( %obj.client, 'setShieldIconOff' );
 }
 
 function ShieldPack::onPickup(%this, %obj, %shape, %amount)

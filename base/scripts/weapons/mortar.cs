@@ -9,24 +9,28 @@ datablock EffectProfile(MortarSwitchEffect)
 {
    effectname = "weapons/mortar_activate";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(MortarFireEffect)
 {
    effectname = "weapons/mortar_fire";
-   minDistance = 5.0;
+   minDistance = 2.5;
+   maxDistance = 5.0;
 };
 
 datablock EffectProfile(MortarReloadEffect)
 {
    effectname = "weapons/mortar_reload";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(MortarDryFireEffect)
 {
    effectname = "weapons/mortar_dryfire";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(MortarExplosionEffect)
@@ -761,7 +765,7 @@ datablock ShapeBaseImageData(MortarImage)
    stateName[2] = "Ready";
    stateTransitionOnNoAmmo[2] = "NoAmmo";
    stateTransitionOnTriggerDown[2] = "Fire";
-   stateSound[2] = MortarIdleSound;
+   //stateSound[2] = MortarIdleSound;
 
    stateName[3] = "Fire";
    stateSequence[3] = "Recoil";

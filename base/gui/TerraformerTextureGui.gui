@@ -706,6 +706,76 @@ new GuiControl(TerraformerTextureGui) {
 								text = "Use Fractal Distortion";
 							};
 						};
+						new GuiControl(tab_ShorelineMask) {
+							profile = "GuiDefaultProfile";
+							horizSizing = "right";
+							vertSizing = "bottom";
+							position = "0 0";
+							extent = "261 200";
+							minExtent = "8 8";
+							visible = "0";
+							setFirstResponder = "1";
+							modal = "1";
+							helpTag = "0";
+
+							new GuiTextCtrl() {
+								profile = "GuiTextProfile";
+								horizSizing = "right";
+								vertSizing = "bottom";
+								position = "4 1";
+								extent = "131 18";
+								minExtent = "8 8";
+								visible = "1";
+								setFirstResponder = "1";
+								modal = "1";
+								helpTag = "0";
+								text = "Shoreline Mask Settings:";
+							};
+							new GuiTextCtrl() {
+								profile = "GuiTextProfile";
+								horizSizing = "right";
+								vertSizing = "bottom";
+								position = "20 46";
+								extent = "10 18";
+								minExtent = "8 8";
+								visible = "1";
+								setFirstResponder = "1";
+								modal = "1";
+								helpTag = "0";
+								text = "Tolerance (meters):";
+							};
+							new GuiTextEditSliderCtrl(shorelineTolerance) {
+								profile = "GuiTextEditProfile";
+								horizSizing = "right";
+								vertSizing = "bottom";
+								position = "168 46";
+								extent = "78 18";
+								minExtent = "8 8";
+								visible = "1";
+								setFirstResponder = "1";
+								modal = "1";
+								helpTag = "0";
+								historySize = "0";
+								maxLength = "255";
+								format = "%3.1f";
+								range = "0 100";
+								increment = "1.0";
+							};
+							new GuiCheckBoxCtrl(shorelineDistort) {
+								profile = "GuiCheckBoxProfile";
+								horizSizing = "right";
+								vertSizing = "bottom";
+								position = "63 165";
+								extent = "129 20";
+								minExtent = "8 8";
+								visible = "1";
+								setFirstResponder = "1";
+								modal = "1";
+								command = "Texture::saveOperation();Texture::previewOperation();";
+								helpTag = "0";
+								text = "Use Fractal Distortion";
+							};
+						};
 					};
 				};
 			};
@@ -1183,6 +1253,7 @@ function TerraformerTextureGui::init(%this)
    Texture_operation_menu.add("Place by Height", 2);
    Texture_operation_menu.add("Place by Slope", 3);
    Texture_operation_menu.add("Place by Water Level", 4);
+   Texture_operation_menu.add("Place by Shoreline", 5);
 
    %this.refresh();
 }
@@ -1300,6 +1371,9 @@ function Texture_operation_menu::onSelect(%this, %id, %text)
 
       case "Place by Water Level":
          %id = Texture::addOperation("Place by Water Level\ttab_WaterMask\t" @ $nextTextureRegister++ @ "\t" @ %dreg @ "\twaterDistort\ttrue");
+
+      case "Place by Shoreline":
+         %id = Texture::addOperation("Place by Shoreline\ttab_ShorelineMask\t" @ $nextTextureRegister++ @ "\t" @ %dreg @ "\tshorelineTolerance\t10\tshorelineDistort\ttrue");
    }
 
    // select it
@@ -1483,7 +1557,6 @@ function Texture::evalOperationData(%data, %row)
       return;
    }
 
-   myecho("label = " @ %label);
    switch$ (%label)
    {
       case "Fractal Distortion":
@@ -1500,6 +1573,9 @@ function Texture::evalOperationData(%data, %row)
 
       case "Place by Water Level":
          terraformer.maskWater( $HeightfieldSrcRegister, %reg, getField(%data,5), %dreg );
+
+      case "Place by Shoreline":
+         terraformer.maskShoreline( $HeightfieldSrcRegister, %reg, getField(%data,5), getField(%data, 7), %dreg );
    }
 
 
@@ -1763,6 +1839,7 @@ function Texture::hideTab()
    tab_HeightMask.setVisible(false);   
    tab_SlopeMask.setVisible(false);   
    tab_waterMask.setVisible(false);   
+   tab_shorelineMask.setVisible(false);
 }   
 
 

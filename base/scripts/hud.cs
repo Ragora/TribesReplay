@@ -1,84 +1,3 @@
-// function createObserverMoveMap()
-// {
-//    if ( isObject( flyingCameraMove ) )
-//       flyingCameraMove.delete();
-// 
-//    new ActionMap( flyingCameraMove );
-//    flyingCameraMove.bind( keyboard, s, moveleft );
-//    flyingCameraMove.bind( keyboard, f, moveright );
-//    flyingCameraMove.bind( keyboard, e, moveforward );
-//    flyingCameraMove.bind( keyboard, d, movebackward );
-//    flyingCameraMove.bind( keyboard, t, moveup );
-//    flyingCameraMove.bind( keyboard, b, movedown );
-// 
-//    // allow hud activation
-//    flyingCameraMove.copyBind( moveMap, toggleScoreScreen );
-//    flyingCameraMove.copyBind( moveMap, toggleCommanderMap );
-//    flyingCameraMove.copyBind( moveMap, TeamMessageHud );
-//    flyingCameraMove.copyBind( moveMap, toggleMessageHud );
-//    flyingCameraMove.copyBind( moveMap, toggleInventoryHud );
-//    flyingCameraMove.copyBind( moveMap, voteYes );
-//    flyingCameraMove.copyBind( moveMap, voteNo );
-//    flyingCameraMove.copyBind( moveMap, activateChatMenuHud );
-// 
-//    // Bind the command assignment/response keys as well:
-//    flyingCameraMove.copyBind( moveMap, toggleTaskListDlg );
-//    flyingCameraMove.copyBind( moveMap, fnAcceptTask );
-//    flyingCameraMove.copyBind( moveMap, fnDeclineTask );
-//    flyingCameraMove.copyBind( moveMap, fnTaskCompleted );
-//    flyingCameraMove.copyBind( moveMap, fnResetTaskList );
-// 
-//    // misc
-//    flyingCameraMove.copyBind( moveMap, voiceCapture );
-//    
-//    // inventory binds
-//    flyingCameraMove.copyBind( moveMap, toggleInventoryHud );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite1 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite2 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite3 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite4 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite5 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite6 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite7 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite8 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite9 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite10 );
-// 
-//    flyingCameraMove.copyBind( moveMap, selectFavorite11 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite12 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite13 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite14 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite15 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite16 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite17 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite18 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite19 );
-//    flyingCameraMove.copyBind( moveMap, selectFavorite20 );
-// 
-//    flyingCameraMove.copyBind( moveMap, quickPackEnergyPack );
-//    flyingCameraMove.copyBind( moveMap, quickPackRepairPack );
-//    flyingCameraMove.copyBind( moveMap, quickPackShieldPack );
-//    flyingCameraMove.copyBind( moveMap, quickPackCloakPack );
-//    flyingCameraMove.copyBind( moveMap, quickPackJammerPack );
-//    flyingCameraMove.copyBind( moveMap, quickPackAmmoPack );
-//    flyingCameraMove.copyBind( moveMap, quickPackSatchelCharge );
-//    flyingCameraMove.copyBind( moveMap, quickPackDeployableStation );
-//    flyingCameraMove.copyBind( moveMap, quickPackIndoorTurret );
-//    flyingCameraMove.copyBind( moveMap, quickPackOutdoorTurret );
-//    flyingCameraMove.copyBind( moveMap, quickPackMotionSensor );
-//    flyingCameraMove.copyBind( moveMap, quickPackPulse  );
-// 
-//    //preserve the fire, jump, and jet buttons
-//    flyingCameraMove.copyBind( moveMap, mouseFire );
-//    flyingCameraMove.copyBind( moveMap, mouseJet );
-//    flyingCameraMove.copyBind( moveMap, jump );
-//    flyingCameraMove.copyBind( moveMap, yaw );
-//    flyingCameraMove.copyBind( moveMap, pitch );
-// 
-//    flyingCameraMove.bindCmd( keyboard, escape, "", "escapeFromGame();" );
-// }
-// createObserverMoveMap();
-
 //--------------------------------------------------------------------------
 function GameConnection::sensorPing(%this, %ping)
 {
@@ -119,17 +38,6 @@ function clientCmdResetHud()
    sensorHud.jam = false;
    sensorHud.ping = false;
    sensorHud.update();
-}
-
-//--------------------------------------------------------------------------
-function GameConnection::syncHudClock(%client, %time)
-{
-   commandToClient(%client, 'syncHudClock', %time);
-}
-
-function clientCmdSyncHudClock(%time)
-{
-   clockHud.setTime(%time);
 }
 
 //--------------------------------------------------------------------------
@@ -377,11 +285,6 @@ function clientCmdSetWeaponsHudClearAll()
    weaponsHud.clearAll();
 }
 
-function GameConnection::clearBackpackIcon(%client)
-{
-   commandToClient(%client, 'setBackpackHudItem', 0, 0);
-}
-
 //----------------------------------------------------------------------------
 //   Ammo Hud
 //----------------------------------------------------------------------------
@@ -439,8 +342,15 @@ $BackpackHudData[16, itemDataName] = "ELFBarrelPack";
 $BackpackHudData[16, bitmapName] = "gui/hud_new_packturret";
 $BackpackHudData[17, itemDataName] = "MortarBarrelPack";
 $BackpackHudData[17, bitmapName] = "gui/hud_new_packturret";
+$BackpackHudData[18, itemDataName] = "SatchelUnarmed";
+$BackpackHudData[18, bitmapName] = "gui/hud_satchel_unarmed";
 
-$BackpackHudCount = 18;
+$BackpackHudCount = 20;
+
+function GameConnection::clearBackpackIcon(%client)
+{
+   commandToClient(%client, 'setBackpackHudItem', 0, 0);
+}
 
 function GameConnection::setBackpackHudItem(%client, %name, %addItem)
 {
@@ -456,7 +366,7 @@ function clientCmdSetBackpackHudItem(%num, %addItem)
       backpackIcon.setBitmap($BackpackHudData[%num, bitmapName]);
       backpackFrame.setVisible(true);
       backpackIcon.setVisible(true);
-     backpackFrame.pack = true;
+      backpackFrame.pack = true;
    }
    else
    {
@@ -464,7 +374,7 @@ function clientCmdSetBackpackHudItem(%num, %addItem)
       backpackFrame.setVisible(false);
       backpackText.setValue("");
       backpackText.setVisible(false);
-     backpackFrame.pack = false;
+      backpackFrame.pack = false;
    }
 }
 
@@ -482,6 +392,53 @@ function clientCmdUpdatePackText(%num)
       backpackText.setVisible(true);
 }
 
+// Pack Icons Activate / Deactivate
+function clientCmdSetSatchelArmed()
+{
+   backpackIcon.setBitmap( "gui/hud_satchel_armed" );
+}
+
+function clientCmdsetCloakIconOn()
+{
+   backpackIcon.setBitmap( "gui/hud_new_packcloak_armed" );
+}
+
+function clientCmdsetCloakIconOff()
+{
+   backpackIcon.setBitmap( "gui/hud_new_packcloak" );
+}
+
+function clientCmdsetRepairPackIconOn()
+{
+   backpackIcon.setBitmap( "gui/hud_new_packrepair_armed" );
+}
+
+function clientCmdsetRepairPackIconOff()
+{
+   backpackIcon.setBitmap( "gui/hud_new_packrepair" );
+}
+
+function clientCmdsetShieldIconOn()
+{
+   backpackIcon.setBitmap( "gui/hud_new_packshield_armed" );
+}
+
+function clientCmdsetShieldIconOff()
+{
+   backpackIcon.setBitmap( "gui/hud_new_packshield" );
+}
+
+function clientCmdsetSenJamIconOn()
+{
+   backpackIcon.setBitmap( "gui/hud_new_packsensjam_armed" );
+}
+
+function clientCmdsetSenJamIconOff()
+{
+   backpackIcon.setBitmap( "gui/hud_new_packsensjam" );
+}
+
+
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 $InventoryHudData[0, bitmapName]   = "gui/hud_handgren";
@@ -496,11 +453,11 @@ $InventoryHudData[2, bitmapName]   = "gui/hud_medpack";
 $InventoryHudData[2, itemDataName] = RepairKit;
 $InventoryHudData[2, ammoDataName] = RepairKit;
 $InventoryHudData[2, slot]         = 3;
-$InventoryHudData[3, bitmapName]   = "gui/hud_handgren";
+$InventoryHudData[3, bitmapName]   = "gui/hud_whiteout_gren";
 $InventoryHudData[3, itemDataName] = FlashGrenade;
 $InventoryHudData[3, ammoDataName] = FlashGrenade;
 $InventoryHudData[3, slot]         = 0;
-$InventoryHudData[4, bitmapName]   = "gui/hud_handgren";
+$InventoryHudData[4, bitmapName]   = "gui/hud_concuss_gren";
 $InventoryHudData[4, itemDataName] = ConcussionGrenade;
 $InventoryHudData[4, ammoDataName] = ConcussionGrenade;
 $InventoryHudData[4, slot]         = 0;
@@ -518,6 +475,7 @@ $InventoryHudData[7, ammoDataName] = Beacon;
 $InventoryHudData[7, slot]         = 2;
 
 $InventoryHudCount = 8;
+
 
 //----------------------------------------------------------------------------
 //   Inventory Hud
@@ -596,10 +554,12 @@ function GameConnection::setInventoryHudClearAll(%client)
 function clientCmdSetInventoryHudClearAll()
 {
    inventoryHud.clearAll();
-   backpackIcon.setBitmap("");
-   backpackFrame.setVisible(false);
+   backpackIcon.setBitmap( "" );
+   backpackFrame.setVisible( false );
+   backpackText.setValue( "" );
+   backpackText.setVisible(false);
+   backpackFrame.pack = false;
 }
-
 
 //----------------------------------------------------------------------------
 // MessageHud
@@ -924,9 +884,9 @@ function setControlObjectReticle(%type)
 function updateActionMaps()
 {
    //pop the action maps...
-   if (isObject(moveMap))
+   if ( isObject( moveMap ) )
       moveMap.pop();
-   if (isObject(passengerKeys))
+   if ( isObject( passengerKeys ) )
       passengerKeys.pop();
    if ( isObject( observerBlockMap ) )
       observerBlockMap.pop();
@@ -934,6 +894,8 @@ function updateActionMaps()
       observerMap.pop();
    if ( isObject( pickTeamMap ) )
       pickTeamMap.pop();
+   if ( isObject( halftimeMap ) )
+      halftimeMap.delete();
 
    //if (isObject(flyingCameraMove))
    //   flyingCameraMove.pop();
@@ -978,6 +940,18 @@ function updateActionMaps()
             new ActionMap( pickTeamMap );
          pickTeamMap.copyBind( moveMap, toggleMessageHud );
          pickTeamMap.push();        
+         
+      case "SiegeHalftime":
+         new ActionMap( halftimeMap );
+         halftimeMap.bindCmd( keyboard, escape, "", "escapeFromGame();" );
+         halftimeMap.copyBind( moveMap, toggleMessageHud );
+         halftimeMap.copyBind( moveMap, teamMessageHud );
+         halftimeMap.copyBind( moveMap, activateChatMenuHud );
+         halftimeMap.copyBind( moveMap, resizeChatHud );
+         halftimeMap.copyBind( moveMap, pageMessageHudUp );
+         halftimeMap.copyBind( moveMap, pageMessageHudDown );
+         halftimeMap.copyBind( moveMap, voiceCapture );
+         halftimeMap.push();
 
       //case 'Standard':
       default:
@@ -993,10 +967,10 @@ function ClientCmdDisplayHuds()
 
    // only update action maps if playGui is current content
    %content = Canvas.getContent();
-   if(isObject(%content) && (%content.getName() $= "PlayGui"))
-   {   
+   %PlayGuiActive = isObject(%content) && ( %content.getName() $= "PlayGui" );
+   if ( %PlayGuiActive )
       updateActionMaps();
-   }
+
    ammoHud.setVisible(false);
    objectiveHud.setVisible(false);
    inventoryHud.setVisible(false);
@@ -1007,13 +981,17 @@ function ClientCmdDisplayHuds()
    outerChatHud.setVisible(false);
    clockHud.setVisible(false);
    controlObjectText.setVisible(false);
+   siegeHalftimeHud.setVisible(false);
    clientCmdToggleDashHud(false);
+   %hideCursor = true;
 
    switch$ ($HudMode)
    {
       case "Pilot":
          clientCmdShowVehicleGauges($HudModeType, $HudModeNode);
          clientCmdToggleDashHud(true);
+         objectiveHud.setVisible(true);
+         dashBoardHud.setposition(0, 0);
          retCenterHud.setVisible(true);
          HudClusterBack.setVisible(true);
          outerChatHud.setVisible(true);
@@ -1022,6 +1000,8 @@ function ClientCmdDisplayHuds()
       case "Passenger":
          clientCmdShowVehicleGauges($HudModeType, $HudModeNode);
          clientCmdToggleDashHud(true);
+         objectiveHud.setVisible(true);
+         dashBoardHud.setPosition(0, 0);
          ammoHud.setVisible(true);
          objectiveHud.setVisible(true);
          inventoryHud.setVisible(true);
@@ -1047,6 +1027,15 @@ function ClientCmdDisplayHuds()
          HudClusterBack.setVisible(true);
          outerChatHud.setVisible(true);
          clockHud.setVisible(true);
+         
+      case "SiegeHalftime":
+         closeHud( "", "", 'scoreScreen' );
+         closeHud( "", "", 'inventoryScreen' );
+         closeHud( "", "", 'vehicleHud' );
+         objectiveHud.setVisible(true);
+         outerChatHud.setVisible(true);
+         siegeHalftimeHud.setVisible(true);
+         %hideCursor = false;
          
       case "PickTeam":
          ammoHud.setVisible(false);
@@ -1079,6 +1068,53 @@ function ClientCmdDisplayHuds()
             mainVoteHud.setVisible(0);   
          
    }
+   
+   if ( PlayGui.hideCursor != %hideCursor )
+   {
+      PlayGui.hideCursor = %hideCursor;
+      if ( %PlayGuiActive )
+         Canvas.updateCursorState();
+   }
+}
+
+function dashboardHud::onResize(%this, %width, %height)
+{
+   %currentWidth = getWord(dashboardHud.getPosition(), 0);
+   %currentHeight = getWord(dashboardHud.getPosition(), 1);
+
+   %screenWidth = getWord(getResolution(), 0);
+   %screenHeight = getWord(getResolution(), 1);
+
+   switch$ ($HudMode)
+   {
+      case "Pilot":
+         if(%screenHeight <= 480)
+         {  
+            if($HudModeNode == 0)
+               {  %xVal = 0; %yVal = 339; }
+            else
+               {  %xVal = 0; %yVal = 320; }
+         }
+         else if(%screenHeight <= 600)
+         {  
+            if($HudModeNode == 0)
+               {  %xVal = 80; %yVal = 455; }
+            else
+               {  %xVal = 80; %yVal = 440; }
+         }
+         else
+         {
+            %xVal = (%screenWidth - 640) / 2;
+            %yVal = (%screenheight - 480) + 360;   
+         }
+
+      case "Passenger":
+         %xVal = (%screenWidth - 640) / 2;
+         %yVal = (%screenheight - 480) + 360;   
+   }
+
+   if(%currentWidth != %xVal || %currentHeight != %yVal)
+      dashBoardHud.setPosition(%xVal, %yVal);
 }
 
 function clientcmdTogglePlayHuds(%val)
@@ -1232,16 +1268,19 @@ function clearHud(%msgType, %msgString, %tag, %a0)
       %height = 0;
       %guiCtrl = $Hud[%tag].childGui;
 
-      //set the new extent to be the position + extent of the last element...
-      %height = 0;
-      if (%guiCtrl.getCount() > 0)
+      if(isObject(%guiCtrl))
       {
-         %lastCtrl = %guiCtrl.getObject(%guiCtrl.getCount() - 1);
-         %height = getWord(%lastCtrl.position, 1) + getWord(%lastCtrl.extent, 1);
-      }
+         //set the new extent to be the position + extent of the last element...
+         %height = 0;
+         if (%guiCtrl.getCount() > 0)
+         {
+            %lastCtrl = %guiCtrl.getObject(%guiCtrl.getCount() - 1);
+            %height = getWord(%lastCtrl.position, 1) + getWord(%lastCtrl.extent, 1);
+         }
 
-      //now reset the extent
-      %guiCtrl.resize(getWord(%guiCtrl.position, 0), getWord(%guiCtrl.position, 1), getWord(%guiCtrl.extent, 0), %height);
+         //now reset the extent
+         %guiCtrl.resize(getWord(%guiCtrl.position, 0), getWord(%guiCtrl.position, 1), getWord(%guiCtrl.extent, 0), %height);
+      }
    }
 }
 

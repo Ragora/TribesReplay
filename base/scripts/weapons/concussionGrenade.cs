@@ -5,12 +5,14 @@ datablock EffectProfile(ConcussionGrenadeThrowEffect)
 {
    effectname = "weapons/grenade_throw";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(ConcussionGrenadeSwitchEffect)
 {
    effectname = "weapons/generic_switch";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(ConcussionGrenadeExplosionEffect)
@@ -18,6 +20,14 @@ datablock EffectProfile(ConcussionGrenadeExplosionEffect)
    effectname = "explosions/grenade_explode";
    minDistance = 10;
    maxDistance = 50;
+};
+
+datablock AudioProfile(ConcussionGrenadeExplosionSound)
+{
+   filename = "fx/weapons/grenade_explode.wav";
+   description = AudioExplosion3d;
+   preload = true;
+   effect = ConcussionGrenadeExplosionEffect;
 };
 
 datablock AudioProfile(ConcussionGrenadeExplosionSound)
@@ -185,4 +195,12 @@ datablock ItemData(ConcussionGrenade)
 	pickUpName = "some concussion grenades";
 	isGrenade = true;
 };
+
+//--------------------------------------------------------------------------
+// Functions:
+//--------------------------------------------------------------------------
+function ConcussionGrenadeThrown::onCollision( %data, %obj, %col )
+{
+   // Do nothing...
+}
 

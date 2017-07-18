@@ -139,6 +139,7 @@ new GuiControl(CreateAccountDlg) {
 			maxLength = "16";
 			password = "0";
 			glowOffset = "9 9";
+         IRCName = true;
 		};
 		new ShellTextEditCtrl() {
 			profile = "NewTextEditProfile";

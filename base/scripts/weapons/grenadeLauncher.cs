@@ -9,24 +9,28 @@ datablock EffectProfile(GrenadeSwitchEffect)
 {
    effectname = "weapons/generic_switch";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(GrenadeFireEffect)
 {
    effectname = "weapons/grenadelauncher_fire";
-   minDistance = 4.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(GrenadeDryFireEffect)
 {
    effectname = "weapons/grenadelauncher_dryfire";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(GrenadeReloadEffect)
 {
    effectname = "weapons/generic_switch";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(GrenadeExplosionEffect)

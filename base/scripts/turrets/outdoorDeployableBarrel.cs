@@ -5,12 +5,26 @@
 // --------------------------------------------------------------
 // Sound datablocks
 // --------------------------------------------------------------
+datablock EffectProfile(OBLSwitchEffect)
+{
+   effectname = "powered/turret_light_activate";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(OBLFireEffect)
+{
+   effectname = "powered/turret_outdoor_fire";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
 
 datablock AudioProfile(OBLSwitchSound)
 {
    filename    = "fx/powered/turret_light_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = OBLSwitchEffect;
 };
 
 datablock AudioProfile(OBLFireSound)
@@ -18,6 +32,7 @@ datablock AudioProfile(OBLFireSound)
    filename    = "fx/powered/turret_outdoor_fire.wav";
    description = AudioDefault3d;
    preload = true;
+   effect = OBLFireEffect;
 };
 
 // --------------------------------------------------------------
@@ -129,6 +144,9 @@ datablock TurretData(TurretDeployedOutdoor) : TurretDamageProfile
    thetaMin = 0;
    thetaMax = 145;
    thetaNull = 90;
+
+   yawVariance          = 30.0; // these will smooth out the elf tracking code.
+   pitchVariance        = 30.0; // more or less just tolerances
 
    isShielded = true;
    energyPerDamagePoint = 110;

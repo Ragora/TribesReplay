@@ -5,18 +5,34 @@ datablock EffectProfile(StationInventoryActivateEffect)
 {
    effectname = "powered/inv_pad_on";
    minDistance = 5.0;
+   maxDistance = 7.5;
 };
 
 datablock EffectProfile(StationVehicleAcitvateEffect)
 {
    effectname = "powered/vehicle_screen_on2";
    minDistance = 3.0;
+   maxDistance = 5.0;
 };
 
 datablock EffectProfile(StationVehicleDeactivateEffect)
 {
    effectname = "powered/vehicle_screen_off";
    minDistance = 3.0;
+   maxDistance = 5.0;
+};
+
+//datablock EffectProfile(MobileBaseInventoryActivateEffect)
+//{
+//   effectname = "misc/diagnostic_on";
+//   minDistance = 3.0;
+//};
+
+datablock EffectProfile(StationAccessDeniedEffect)
+{
+   effectname = "powered/station_denied";
+   minDistance = 3.0;
+   maxDistance = 5.0;
 };
 
 datablock AudioProfile(StationInventoryActivateSound)
@@ -32,6 +48,7 @@ datablock AudioProfile(MobileBaseInventoryActivateSound)
    filename    = "fx/vehicles/mpb_inv_station.wav";
    description = AudioClose3d;
    preload = true;
+   effect = StationInventoryActivateEffect;
 };
 
 datablock AudioProfile(DepInvActivateSound)
@@ -39,6 +56,7 @@ datablock AudioProfile(DepInvActivateSound)
    filename = 	"fx/powered/dep_inv_station.wav";
    description = AudioClose3d;
    preload = 	 true;
+   effect = StationInventoryActivateEffect;
 };
 
 datablock AudioProfile(StationVehicleAcitvateSound)
@@ -62,6 +80,7 @@ datablock AudioProfile(StationAccessDeniedSound)
    filename    = "fx/powered/station_denied.wav";
    description = AudioClosest3d;
    preload = true;
+   effect = StationAccessDeniedEffect;
 };
 
 datablock AudioProfile(StationVehicleHumSound)
@@ -150,6 +169,41 @@ datablock StaticShapeData(StationInventory) : StaticShapeDamageProfile
    cmdIcon = CMDStationIcon;
    cmdMiniIconName = "commander/MiniIcons/com_inventory_grey";
    targetNameTag = 'Inventory';
+   targetTypeTag = 'Station';
+
+   debrisShapeName = "debris_generic.dts";
+   debris = StationDebris;
+};
+   
+datablock StaticShapeData(StationAmmo) : StaticShapeDamageProfile
+{  
+   className = Station;
+   catagory = "Stations";
+//   shapeFile = "station_ammo.dts";
+   shapeFile = "station_inv_human.dts";
+   maxDamage = 1.00;
+   destroyedLevel = 1.00;
+   disabledLevel = 0.70;
+   explosion      = ShapeExplosion;
+	expDmgRadius = 8.0;
+	expDamage = 0.4;
+	expImpulse = 1500.0;
+	// don't allow this object to be damaged in non-team-based
+	// mission types (DM, Rabbit, Bounty, Hunters)
+	noIndividualDamage = true;
+
+   dynamicType = $TypeMasks::StationObjectType;
+	isShielded = true;
+	energyPerDamagePoint = 75;
+	maxEnergy = 50;
+	rechargeRate = 0.35;
+   doesRepair = true;
+   humSound = StationInventoryHumSound;
+
+   cmdCategory = "Support";
+   cmdIcon = CMDStationIcon;
+   cmdMiniIconName = "commander/MiniIcons/com_inventory_grey";
+   targetNameTag = 'Ammo';
    targetTypeTag = 'Station';
 
    debrisShapeName = "debris_generic.dts";
@@ -346,6 +400,102 @@ function StationInventory::setPlayersPosition(%data, %obj, %trigger, %colObj)
    return false;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+/// -Ammo- ////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+function StationAmmo::onAdd(%this, %obj)
+{
+   Parent::onAdd(%this, %obj);
+
+   %obj.setRechargeRate(%obj.getDatablock().rechargeRate);
+   %trigger = new Trigger()
+   {
+      dataBlock = stationTrigger;
+      polyhedron = "-0.75 0.75 0.1 1.5 0.0 0.0 0.0 -1.5 0.0 0.0 0.0 2.3";
+   };             
+   MissionCleanup.add(%trigger);
+   %trigger.setTransform(%obj.getTransform());
+
+   %trigger.station = %obj;
+   %trigger.mainObj = %obj;
+   %trigger.disableObj = %obj;
+   %obj.trigger = %trigger;
+}
+
+//-------------------------------------------------------------------------------
+function StationAmmo::stationReady(%data, %obj)
+{
+    //error("StationAmmo::stationReady");
+    %obj.notReady = 1;
+    %obj.inUse = "Down";
+    %obj.setThreadDir($ActivateThread, true);
+    %obj.schedule(100, "playThread", $ActivateThread, "activate1");
+    %player = %obj.triggeredBy;
+    %energy = %player.getEnergyLevel();
+    //%player.setCloaked(true);
+    //%player.schedule(500, "setCloaked", false);              
+    
+    
+    if (!%player.client.isAIControlled())
+        getAmmoStationLovin(%player.client);
+    //%data.schedule( 500, "beginPersonalInvEffect", %obj );
+}
+
+//-------------------------------------------------------------------------------
+function StationAmmo::onEndSequence(%data, %obj, %thread)
+{
+    if(%thread == $ActivateThread)
+    {
+        %obj.setThreadDir($ActivateThread, false);
+        %obj.playThread( $ActivateThread, "activate1");
+        if(%obj.inUse $= "Up")
+        {
+            %data.stationReady(%obj);
+            %player = %obj.triggeredBy;
+            if(%data.doesRepair && !%player.stationRepairing && %player.getDamageLevel() != 0) {
+                %oldRate = %player.getRepairRate();
+                %player.setRepairRate(%oldRate + 0.00625);
+                %player.stationRepairing = 1;
+            }
+        }
+    }
+   //Parent::onEndSequence(%data, %obj, %thread);
+}
+
+//-------------------------------------------------------------------------------
+function StationAmmo::stationFinished(%data, %obj)
+{
+   //Hide the Inventory Station GUI
+}
+
+//-------------------------------------------------------------------------------
+function StationAmmo::getSound(%data, %forward)
+{
+   if(%forward)
+      return "StationInventoryActivateSound";
+   else
+      return false;
+}
+
+//-------------------------------------------------------------------------------
+function StationAmmo::setPlayersPosition(%data, %obj, %trigger, %colObj)
+{
+   %vel = getWords(%colObj.getVelocity(), 0, 1) @ " 0";
+   if((VectorLen(%vel) < 22) && (%obj.triggeredBy != %colObj))
+   {
+      %pos = %trigger.position;
+      %colObj.setvelocity("0 0 0");
+	   %rot = getWords(%colObj.getTransform(),3, 6);
+      %colObj.setTransform(getWord(%pos,0) @ " " @ getWord(%pos,1) @ " " @ getWord(%pos,2) + 0.8 @ " " @ %rot);//center player on object
+      %colObj.setMoveState(true);
+      %colObj.schedule(1600,"setMoveState", false);
+      %colObj.setvelocity("0 0 0");
+      return true;
+   }
+   return false;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// -Vehicle- //////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -398,7 +548,11 @@ function StationVehicle::stationReady(%data, %obj)
 function StationVehicle::stationFinished(%data, %obj)
 {
    //Hide the Vehicle Station GUI
-	commandToClient(%obj.triggeredBy.client, 'StationVehicleHideHud');
+   if(!%obj.triggeredBy.isMounted())
+      commandToClient(%obj.triggeredBy.client, 'StationVehicleHideHud');
+   else
+      commandToClient(%obj.triggeredBy.client, 'StationVehicleHideJustHud');
+   
 }
 
 /// -Vehicle- //////////////////////////////////////////////////////////////////
@@ -480,7 +634,6 @@ function StationVehiclePad::onAdd(%this, %obj)
    if(%obj.mobileBaseVehicle !$= "Removed")
 	{
       %sv.vehicle[mobileBasevehicle] = true;
-//      createTeleporter(%sv.getDataBlock(), %sv);
    }
    if(%obj.scoutFlyer !$= "Removed")
 	   %sv.vehicle[scoutFlyer] = true;
@@ -645,8 +798,8 @@ function stationTrigger::onEnterTrigger(%data, %obj, %colObj)
       //verify station.team is team associated and isn't on player's team
       if((%obj.mainObj.team != %colObj.client.team) && (%obj.mainObj.team != 0))
       {
-         %obj.station.playAudio(2, StationAccessDeniedSound);
-         messageClient(%colObj.client, 'msgStationDenied', '\c2Access Denied -- Wrong team.');
+         //%obj.station.playAudio(2, StationAccessDeniedSound);
+         messageClient(%colObj.client, 'msgStationDenied', '\c2Access Denied -- Wrong team.~wfx/powered/station_denied.wav');
       }
       else if(%obj.disableObj.isDisabled())
       {
@@ -725,35 +878,32 @@ function stationTrigger::onLeaveTrigger(%data, %obj, %colObj)
 ////////////////////////////////////////////////////////////////////////////////
 function Station::stationTriggered(%data, %obj, %isTriggered)
 {
-   if(%data.teleporter $= "")
-   {   
-      if(%isTriggered)
+   
+   
+   if(%isTriggered)
+   {
+      %obj.setThreadDir($ActivateThread, TRUE);
+      %obj.playThread($ActivateThread,"activate");	
+      %obj.playAudio($ActivateSound, %data.getSound(true));
+      %obj.inUse = "Up";
+   }
+   else
+   {
+      if(%obj.getDataBlock().getName() !$= StationVehicle)
       {
-         %obj.setThreadDir($ActivateThread, TRUE);
-         %obj.playThread($ActivateThread,"activate");	
-         %obj.playAudio($ActivateSound, %data.getSound(true));
-         %obj.inUse = "Up";
+         %obj.stopThread($ActivateThread);
+         if(%obj.getObjectMount())
+            %obj.getObjectMount().stopThread($ActivateThread);
+         %obj.inUse = "Down";
       }
       else
       {
-         if(%obj.getDataBlock().getName() !$= StationVehicle)
-         {
-            %obj.stopThread($ActivateThread);
-            if(%obj.getObjectMount())
-               %obj.getObjectMount().stopThread($ActivateThread);
-            %obj.inUse = "Down";
-         }
-         else
-         {
-            %obj.setThreadDir($ActivateThread, FALSE);
-            %obj.playThread($ActivateThread,"activate");
-            %obj.playAudio($ActivateSound, %data.getSound(false));
-            %obj.inUse = "Down";
-         }                            
-      }
+         %obj.setThreadDir($ActivateThread, FALSE);
+         %obj.playThread($ActivateThread,"activate");
+         %obj.playAudio($ActivateSound, %data.getSound(false));
+         %obj.inUse = "Down";
+      }                            
    }
-   else
-      %data.tryTeleport(%obj);
 }
                                 
 ////-Station-///////////////////////////////////////////////////////////////////
@@ -936,334 +1086,5 @@ function DeployedStationInventory::getSound(%data, %forward)
       return "DepInvActivateSound";
    else
       return false;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-/// -Mobile Base Teleporter DATA- //////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-datablock AudioProfile(StationTeleportAcitvateSound)
-{
-   filename    = "fx/powered/vehicle_screen_on2.wav";
-   description = AudioClosest3d;
-   preload = true;
-   effect = StationVehicleAcitvateEffect;
-};
-
-datablock AudioProfile(StationTeleportHumSound)
-{
-   filename    = "fx/powered/station_hum.wav";
-   description = CloseLooping3d;
-   preload = true;
-};
-
-datablock AudioProfile(StationTeleportDeactivateSound)
-{
-   filename    = "fx/powered/vehicle_screen_off.wav";
-   description = AudioClose3d;
-   preload = true;
-   effect = StationVehicleDeactivateEffect;
-};
-
-datablock AudioProfile(TeleportSound)
-{
-   filename    = "fx/powered/vehicle_screen_on2.wav";
-   description = AudioClosest3d;
-   preload = true;
-   effect = StationVehicleAcitvateEffect;
-};
-
-datablock AudioProfile(UnTeleportSound)
-{
-   filename    = "fx/powered/vehicle_screen_off.wav";
-   description = AudioClose3d;
-   preload = true;
-   effect = StationVehicleDeactivateEffect;
-};
-                          
-datablock StaticShapeData(MPBTeleporter) : StaticShapeDamageProfile
-{  
-   className = Station;
-   catagory = "Stations";
-   shapeFile = "station_teleport.dts";
-   maxDamage = 1.20;
-   destroyedLevel = 1.20;
-   disabledLevel = 0.84;
-   explosion      = ShapeExplosion;
-	expDmgRadius = 10.0;
-	expDamage = 0.4;
-	expImpulse = 1500.0;
-   dynamicType = $TypeMasks::StationObjectType;
-	isShielded = true;
-	energyPerDamagePoint = 33;
-	maxEnergy = 250;
-	rechargeRate = 0.31;
-   humSound = StationTeleportHumSound;
-	// don't let these be damaged in Siege missions
-	noDamageInSiege = true;
-
-   cmdCategory = "Support";
-   cmdIcon = CMDVehicleStationIcon;
-   cmdMiniIconName = "commander/MiniIcons/com_vehicle_pad_inventory";
-   targetTypeTag = 'Teleport Station';
-   teleporter = 1;
-};
-                                
-////////////////////////////////////////////////////////////////////////////////
-/// -Mobile Base Teleport- /////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-/// -Mobile Base- //////////////////////////////////////////////////////////////
-//Function -- onAdd (%this, %obj)
-//                %this = Object data block 
-//                %obj = Object being added
-//Decription -- Called when the object is added to the mission 
-////////////////////////////////////////////////////////////////////////////////
-function MPBTeleporter::onAdd(%this, %obj)
-{
-   Parent::onAdd(%this, %obj);
-}
-
-function MPBTeleporter::createTrigger(%this, %obj)
-{
-//   createTarget(%obj, 'Inventory Station', "", "", 'Station', 0, 0);
-
-	%obj.setRechargeRate(%obj.getDatablock().rechargeRate);
-   %trigger = new Trigger()
-   {
-      dataBlock = stationTrigger;
-      polyhedron = "-0.75 0.75 0.1 1.5 0.0 0.0 0.0 -1.5 0.0 0.0 0.0 2.3";
-   };             
-   MissionCleanup.add(%trigger);
-   %trigger.setTransform(%obj.getTransform());
-
-   %trigger.station = %obj;
-   %trigger.mainObj = %obj.vStation;
-   %trigger.disableObj = %obj;
-   
-   %obj.trigger = %trigger;
-}
-
-/// -Mobile Base- //////////////////////////////////////////////////////////////
-//Function -- stationReady(%data, %obj)
-//                %data = Station Data Block 
-//                %obj = Station Object 
-//Decription -- Called when station has been triggered and animation is 
-//              completed
-////////////////////////////////////////////////////////////////////////////////
-function MPBTeleporter::stationReady(%data, %obj)
-{
-   //Display the Inventory Station GUI here
-   %obj.notReady = 1;
-   %obj.inUse = "Down";
-   %obj.schedule(200,"playThread",$ActivateThread,"activate1");
-   %obj.getObjectMount().playThread($ActivateThread,"Activate");
-   %player = %obj.triggeredBy;
-   %energy = %player.getEnergyLevel();
-   %player.setCloaked(true);
-   %player.schedule(900, "setCloaked", false);
-	if (!%player.client.isAIControlled())
-	   buyFavorites(%player.client);
-   
-   %player.setEnergyLevel(%energy);
-}
-
-/// -Mobile Base- //////////////////////////////////////////////////////////////
-//Function -- stationFinished(%data, %obj)
-//                %data = Station Data Block 
-//                %obj = Station Object 
-//Decription -- Called when player has left the station
-////////////////////////////////////////////////////////////////////////////////
-function MPBTeleporter::stationFinished(%data, %obj)
-{
-   //Hide the Inventory Station GUI
-}
-
-/// -Mobile Base- //////////////////////////////////////////////////////////////
-//Function -- getSound(%data, %forward)
-//                %data = Station Data Block 
-//                %forward = direction the animation is playing
-//Decription -- This sound will be played at the same time as the activate 
-//              animation. 
-////////////////////////////////////////////////////////////////////////////////
-function MPBTeleporter::getSound(%data, %forward)
-{
-   if(%forward)
-      return "MobileBaseInventoryActivateSound";
-   else
-      return false;
-}
-
-/// -Mobile Base- //////////////////////////////////////////////////////////////
-//Function -- setPlayerPosition(%data, %obj, %trigger, %colObj)
-//                %data = Station Data Block 
-//                %obj = Station Object
-//                %trigger = Stations trigger
-//                %colObj = Object that is at the station 
-//Decription -- Called when player enters the trigger.  Used to set the player
-//              in the center of the station.
-////////////////////////////////////////////////////////////////////////////////
-function MPBTeleporter::setPlayersPosition(%data, %obj, %trigger, %colObj)
-{
-   %vel = getWords(%colObj.getVelocity(), 0, 1) @ " 0";
-   if((VectorLen(%vel) < 22) && (%obj.triggeredBy != %colObj))
-   {
-      %pos = %trigger.position;
-      %colObj.setvelocity("0 0 0");
-	   %rot = getWords(%colObj.getTransform(),3, 6);
-      %colObj.setTransform(getWord(%pos,0) @ " " @ getWord(%pos,1) @ " " @ getWord(%pos,2)+0.8 @ " " @ %rot);//center player on object
-      %colObj.setvelocity("0 0 0");
-      return true;
-   }
-   return false;
-}
-
-function MPBTeleporter::tryTeleport(%data, %obj)
-{
-   if(isObject(%obj.MPB) && %obj.MPB.fullyDeployed && %obj.triggeredBy !$= "")
-   {
-      %trans = %obj.MPB.getTransform();
-      %vX = getWord(%trans, 0);
-      %vY = getWord(%trans, 1);
-      %vZ = getWord(%trans, 2);
-      %rot= getWords(%trans, 3,6);
-
-      %obj.triggeredBy.teleporting = 1;
-      %obj.triggeredBy.startFade( 1000, 0, true );
-      %obj.triggeredBy.playAudio($PlaySound, TeleportSound);
-      %obj.triggeredBy.setMoveState(true);
-      %data.schedule(4500,"teleportingDone", %obj.triggeredBy);
-
-      %data.schedule(2000, "teleportout", %obj, %obj.triggeredBy, %vX @ " " @ %vY @ " " @ %vZ + 3 @ " " @ %rot);
-      
-   }
-   else if(%obj.triggeredBy !$= "")
-      MessageClient(%obj.triggeredBy.client, "", 'MPB is not deployed.'); 
-}
-
-
-function MPBTeleporter::onEndSequence(%data, %obj, %thread)
-{
-}
-
-function MPBTeleporter::teleportOut(%data, %obj, %player, %trans)
-{
-   if(isObject(%obj.MPB))
-   {
-      %index = -1;
-      for(%x=0; %x < %obj.MPB.spawnPosCount; %x++)
-      {
-         %index = mFloor(getRandom() * %obj.MPB.spawnPosCount);
-
-         InitContainerRadiusSearch(%MPB.spawnPos[%index], 2, $TypeMasks::MoveableObjectType);
-         if(ContainerSearchNext() == 0)
-            break;
-         else
-            %index = -1;
-      }
-      
-      if(%index >= 0)
-         %player.setTransform(%obj.MPB.spawnPos[%index] @ " " @ getWords(%obj.MPB.getTransform(), 3, 6));   
-      else
-      {
-         messageClient(%player.client, "", 'No Valid teleporting positions.');
-         %player.teleporting = 0;
-      }
-   }
-   else
-   {
-      messageClient(%player.client, "", 'No Valid teleporting positions because MPB was destroyed');
-      %player.teleporting = 0;
-   }
-   %data.schedule(1000, "teleportIn", %player);
-}
-
-function MPBTeleporter::teleportIn(%data, %player, %trans)
-{
-   %player.startFade(1000, 0, false );
-   %player.playAudio($PlaySound, UnTeleportSound);
-}
-
-function MPBTeleporter::teleportingDone(%data, %player)
-{
-   %player.setMoveState(false);
-   %player.teleporting = 0;
-   %player.station = "";
-	if(%player.getMountedImage($WeaponSlot) == 0)
-	{
-	   if(%player.inv[%player.lastWeapon])
-	      %player.use(%player.lastWeapon);
-	   
-      if(%player.getMountedImage($WeaponSlot) == 0) 
-         %player.selectWeaponSlot( 0 );
-	}
-}
-
-for(%y = -1; %y < 1; %y += 0.25)
-{
-   %xCount=0;
-   for(%x = -1; %x < 1; %x += 0.25)
-   {
-      $MPBSpawnPos[(%yCount * 8) + %xCount] = %x @ " " @ %y; 
-      %xCount++;
-   }
-   %yCount++;
-}      
-
-function checkSpawnPos(%MPB, %radius)
-{
-   %count = -1;
-   for(%x = 0; %x < 64; %x++)
-   {
-      %pPos = getWords(%MPB.getTransform(), 0, 2);
-      %pPosX = getWord(%pPos, 0);
-      %pPosY = getWord(%pPos, 1);
-      %pPosZ = getWord(%pPos, 2);
-      
-      %posX = %pPosX + ( getWord($MPBSpawnPos[%x],0) * %radius);
-      %posY = %pPosY + (getWord($MPBSpawnPos[%x],1) * %radius);
-      
-      %terrHeight = getTerrainHeight(%posX @ " " @ %posY);
-
-      if(mAbs(%terrHeight - %pPosZ) < %radius )
-      {
-         %mask = $TypeMasks::VehicleObjectType     | $TypeMasks::MoveableObjectType   |
-                 $TypeMasks::StaticShapeObjectType | $TypeMasks::StaticTSObjectType   | 
-                 $TypeMasks::ForceFieldObjectType  | $TypeMasks::ItemObjectType       | 
-                 $TypeMasks::PlayerObjectType      | $TypeMasks::TurretObjectType     |
-                 $TypeMasks::InteriorObjectType;
-
-         InitContainerRadiusSearch(%posX @ " " @ %posY @ " " @ %terrHeight, 2, %mask);
-         if(ContainerSearchNext() == 0)
-            %MPB.spawnPos[%count++] = %posX @ " " @ %posY @ " " @ %terrHeight;                  
-      }
-   }   
-   %MPB.spawnPosCount = %count;
-}
-
-function createTeleporter(%data, %obj)
-{
-   %Teleporter = new StaticShape() {
-      scale = "1 1 1";
-      dataBlock = "MPBTeleporter";
-      lockCount = "0";
-      homingCount = "0";
-      team = %obj.team;
-   };                
-   %obj.teleporter = %Teleporter;
-   %Teleporter.vStation = %obj.pad;
-   MissionCleanup.add(%Teleporter);
-
-   %trans = %obj.getTransform();
-   %vSPos = getWords(%trans,0,2);
-   %vRot =  getWords(%trans,3,5);
-   %vAngle = getWord(%trans,6);
-   %matrix = VectorOrthoBasis(%vRot @ " " @ %vAngle + 0.36);
-   %yRot = getWords(%matrix, 3, 5);
-   %pos = vectorAdd(%vSPos, vectorScale(%yRot, -31.5));
-   
-   %Teleporter.setTransform(%pos @ " " @ %vRot @ " " @ %vAngle);
-   %Teleporter.getDataBlock().createTrigger(%Teleporter);
 }
 

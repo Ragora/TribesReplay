@@ -149,6 +149,7 @@ new SimGroup(MissionGroup) {
 					interiorFile = "pbunk1.dif";
 					showTerrainInside = "0";
 						team = "1";
+						audioEnvironment = SmallRoom;					
 				};
 				new InteriorInstance() {
 					position = "364.62 325.1 110.527";
@@ -308,6 +309,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 						team = "1";
 						Hidden = "false";
+						audioEnvironment = SmallRoom;					
 				};
 			};
 			new SimGroup(spawnspheres) {

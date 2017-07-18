@@ -323,6 +323,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_3";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new StaticShape(PitInventory) {
 					position = "-187.186 353.598 187.307";

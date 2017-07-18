@@ -7,11 +7,33 @@
 //--------------------------------------------------------------------------
 // Sounds
 
+datablock EffectProfile(SatchelChargeActivateEffect)
+{
+   effectname = "packs/satchel_pack_activate";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
+
+datablock EffectProfile(SatchelChargeExplosionEffect)
+{
+   effectname = "packs/satchel_pack_detonate";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(SatchelChargePreExplosionEffect)
+{
+   effectname = "explosions/explosion.xpl03";
+   minDistance = 10.0;
+   maxDistance = 30.0;
+};
+
 datablock AudioProfile(SatchelChargeActivateSound)
 {
    filename    = "fx/packs/satchel_pack_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = SatchelChargeActivateEffect;
 };
 
 datablock AudioProfile(SatchelChargeExplosionSound)
@@ -19,6 +41,7 @@ datablock AudioProfile(SatchelChargeExplosionSound)
    filename = "fx/packs/satchel_pack_detonate.wav";
    description = AudioBIGExplosion3d;
    preload = true;
+   effect = SatchelChargeExplosionEffect;
 };
 
 datablock AudioProfile(SatchelChargePreExplosionSound)
@@ -26,6 +49,7 @@ datablock AudioProfile(SatchelChargePreExplosionSound)
    filename    = "fx/explosions/explosion.xpl03.wav";
    description = AudioBIGExplosion3d;
    preload = true;
+   effect = SatchelChargePreExplosionEffect;
 };
 
 datablock AudioProfile(UnderwaterSatchelChargeExplosionSound)
@@ -33,8 +57,8 @@ datablock AudioProfile(UnderwaterSatchelChargeExplosionSound)
    filename    = "fx/weapons/mortar_explode_UW.wav";
    description = AudioBIGExplosion3d;
    preload = true;
+   effect = SatchelChargeExplosionEffect;
 };
-
 
 //----------------------------------------------------------------------------
 // Satchel Debris
@@ -121,6 +145,7 @@ datablock ParticleData(SatchelBubbleParticle)
    times[1]      = 0.8;
    times[2]      = 1.0;
 };
+
 datablock ParticleEmitterData(SatchelBubbleEmitter)
 {
    ejectionPeriodMS = 10;
@@ -165,7 +190,6 @@ datablock ParticleData(SatchelExplosionSmoke)
    times[0]      = 0.0;
    times[1]      = 0.4;
    times[2]      = 1.0;
-
 };
 
 datablock ParticleEmitterData(SatchelExplosionSmokeEmitter)
@@ -212,7 +236,6 @@ datablock ParticleData(UnderwaterSatchelExplosionSmoke)
    times[0]      = 0.0;
    times[1]      = 0.2;
    times[2]      = 1.0;
-
 };
 
 datablock ParticleEmitterData(UnderwaterSatchelExplosionSmokeEmitter)
@@ -588,6 +611,7 @@ function initArmSatchelCharge(%satchel)
 function armSatchelCharge(%satchel)
 {
    %satchel.armed = true;
+   commandToClient( %satchel.sourceObject.client, 'setSatchelArmed' );
 }
 
 function detonateSatchelCharge(%player)
@@ -600,10 +624,16 @@ function detonateSatchelCharge(%player)
    //error("Detonating satchel charge #" @ %satchelCharge @ " for player #" @ %player);
 
    if(%satchelCharge.getDamageState() !$= Destroyed)
+   {   
       %satchelCharge.setDamageState(Destroyed);
-
+      %satchelCharge.blowup(); 
+   }
+   
    if(isObject(%player))   
       %player.thrownChargeId = 0;
+   
+   // Clear the player's HUD:
+   %player.client.clearBackpackIcon();   
 }
 
 function SatchelChargeThrown::onEnterLiquid(%data, %obj, %coverage, %type)
@@ -648,6 +678,7 @@ function SatchelChargeThrown::onDestroyed(%this, %object, %lastState)
       // than detonated. A less damaging explosion, but visually the same scale.
       if(%object.thwart)
       {
+         messageClient(%object.sourceObject.client, 'msgSatchelChargeDetonate', "\c2Satchel charge destroyed.");
          %dmgRadius = 10;
          %dmgMod = 0.3;
          %expImpulse = 1000;
@@ -665,12 +696,13 @@ function SatchelChargeThrown::onDestroyed(%this, %object, %lastState)
       %object.blowingUp = true;
       RadiusExplosion(%object, %object.getPosition(), %dmgRadius, %dmgMod, %expImpulse, %object.sourceObject, %dmgType);
 
-      %object.schedule(500, "delete");
+      %object.schedule(1000, "delete");
    }
 }
 
 function SatchelChargeThrown::onCollision(%data,%obj,%col)
 {
+   // Do nothing...
 }
 
 function SatchelChargeThrown::damageObject(%data, %targetObject, %sourceObject, %position, %amount, %damageType)
@@ -681,9 +713,13 @@ function SatchelChargeThrown::damageObject(%data, %targetObject, %sourceObject, 
 
       if(%targetObject.damaged >= %targetObject.getDataBlock().maxDamage && 
          %targetObject.getDamageState() !$= Destroyed)
-      {
+      {   
          %targetObject.thwart = true;
          %targetObject.setDamageState(Destroyed);
+         %targetObject.blowup(); 
+         
+         // clear the player's HUD:
+         %targetObject.sourceObject.client.clearBackPackIcon();
       }
    }
 }

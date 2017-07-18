@@ -25,6 +25,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 		bypassHideCursor = "0";
 		helpTag = "0";
 		text = "GAME";
+		longTextBuffer = "0";
 		maxLength = "255";
 		noTitleBar = "0";
 
@@ -83,6 +84,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "FILTER:";
+				longTextBuffer = "0";
 				maxLength = "255";
 			};
 			new GuiControl() {
@@ -109,6 +111,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "All Servers";
+					longTextBuffer = "0";
 					maxLength = "255";
 				};
 			};
@@ -124,6 +127,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Status Text...";
+				longTextBuffer = "0";
 				maxLength = "255";
 			};
 			new GuiProgressCtrl(GMJ_ProgressBar) {
@@ -204,7 +208,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							horizSizing = "right";
 							vertSizing = "bottom";
 							position = "0 0";
-							extent = "810 8";
+							extent = "840 8";
 							minExtent = "8 8";
 							visible = "1";
 							hideCursor = "0";
@@ -355,6 +359,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Game Type:";
+					longTextBuffer = "0";
 					maxLength = "255";
 				};
 				new ShellPopupMenu(GMH_MissionType) {
@@ -369,6 +374,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "GAME TYPE";
+					longTextBuffer = "0";
 					maxLength = "255";
 					maxPopupHeight = "200";
 					buttonBitmap = "gui/shll_pulldown";
@@ -388,6 +394,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Mission Name:";
+					longTextBuffer = "0";
 					maxLength = "255";
 				};
 				new ShellScrollCtrl() {
@@ -465,6 +472,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						bypassHideCursor = "0";
 						helpTag = "0";
 						text = "Server Name:";
+						longTextBuffer = "0";
 						maxLength = "255";
 					};
 					new ShellTextEditCtrl() {
@@ -479,9 +487,11 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						bypassHideCursor = "0";
 						variable = "$Host::GameName";
 						helpTag = "0";
+						longTextBuffer = "0";
 						maxLength = "24";
 						historySize = "0";
 						password = "0";
+						IRCName = "0";
 						tabComplete = "0";
 						deniedSound = "InputDeniedSound";
 						glowOffset = "9 9";
@@ -498,6 +508,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						bypassHideCursor = "0";
 						helpTag = "0";
 						text = "Password:";
+						longTextBuffer = "0";
 						maxLength = "255";
 					};
 					new ShellTextEditCtrl() {
@@ -512,9 +523,11 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						bypassHideCursor = "0";
 						variable = "$Host::Password";
 						helpTag = "0";
+						longTextBuffer = "0";
 						maxLength = "16";
 						historySize = "0";
 						password = "0";
+						IRCName = "0";
 						tabComplete = "0";
 						deniedSound = "InputDeniedSound";
 						glowOffset = "9 9";
@@ -531,6 +544,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						bypassHideCursor = "0";
 						helpTag = "0";
 						text = "Max Players:";
+						longTextBuffer = "0";
 						maxLength = "255";
 					};
 					new ShellTextEditCtrl(GMH_MaxPlayersTE) {
@@ -545,10 +559,12 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						bypassHideCursor = "0";
 						variable = "$Host::MaxPlayers";
 						helpTag = "0";
+						longTextBuffer = "0";
 						maxLength = "3";
 						validate = "validateMaxPlayers();";
 						historySize = "0";
 						password = "0";
+						IRCName = "0";
 						tabComplete = "0";
 						deniedSound = "InputDeniedSound";
 						glowOffset = "9 9";
@@ -581,6 +597,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 						variable = "$Host::BotsEnabled";
 						helpTag = "0";
 						text = "ENABLE BOTS";
+						longTextBuffer = "0";
 						maxLength = "255";
 					};
 					new GuiControl(GMH_EnableBotsGroup) {
@@ -607,6 +624,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "Number of Bots:";
+							longTextBuffer = "0";
 							maxLength = "255";
 						};
 						new GuiTextCtrl(GMH_BotCountText) {
@@ -621,6 +639,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "(0)";
+							longTextBuffer = "0";
 							maxLength = "255";
 						};
 						new ShellSliderCtrl(GMH_MinCombatantSlider) {
@@ -638,7 +657,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							helpTag = "0";
 							range = "0.000000 1.000000";
 							ticks = "15";
-							value = "0.00333333";
+							value = "0.27";
 							usePlusMinus = "1";
 						};
 						new GuiTextCtrl(GMH_BotDiffText) {
@@ -653,6 +672,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "Bot Difficulty:";
+							longTextBuffer = "0";
 							maxLength = "255";
 						};
 						new GuiTextCtrl(GMH_BotMinText) {
@@ -667,6 +687,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "Min:";
+							longTextBuffer = "0";
 							maxLength = "255";
 						};
 						new ShellSliderCtrl(GMH_BotMinSlider) {
@@ -699,6 +720,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 							bypassHideCursor = "0";
 							helpTag = "0";
 							text = "Max:";
+							longTextBuffer = "0";
 							maxLength = "255";
 						};
 						new ShellSliderCtrl(GMH_BotMaxSlider) {
@@ -762,6 +784,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Warrior:";
+				longTextBuffer = "0";
 				maxLength = "255";
 			};
 			new ShellPopupMenu(GMW_WarriorPopup) {
@@ -776,6 +799,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Warrior";
+				longTextBuffer = "0";
 				maxLength = "255";
 				maxPopupHeight = "200";
 				buttonBitmap = "gui/shll_pulldown";
@@ -787,8 +811,8 @@ new GuiChunkedBitmapCtrl(GameGui) {
 				profile = "GuiDefaultProfile";
 				horizSizing = "left";
 				vertSizing = "center";
-				position = "290 22";
-				extent = "257 300";
+				position = "290 15";
+				extent = "257 322";
 				minExtent = "8 8";
 				visible = "1";
 				hideCursor = "0";
@@ -799,7 +823,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellButtonProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "94 12";
+					position = "94 4";
 					extent = "152 38";
 					minExtent = "32 38";
 					visible = "1";
@@ -814,7 +838,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellTextRightProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "18 63";
+					position = "18 55";
 					extent = "80 22";
 					minExtent = "8 8";
 					visible = "1";
@@ -822,13 +846,14 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Race/Gender:";
+					longTextBuffer = "0";
 					maxLength = "255";
 				};
 				new ShellPopupMenu(GMW_RaceGenderPopup) {
 					profile = "ShellPopupProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "95 54";
+					position = "95 46";
 					extent = "152 38";
 					minExtent = "49 36";
 					visible = "1";
@@ -836,6 +861,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Select Race/Gender";
+					longTextBuffer = "0";
 					maxLength = "255";
 					maxPopupHeight = "200";
 					buttonBitmap = "gui/shll_pulldown";
@@ -847,7 +873,42 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellTextRightProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "18 99";
+					position = "18 92";
+					extent = "80 22";
+					minExtent = "8 8";
+					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
+					helpTag = "0";
+					text = "Show:";
+					longTextBuffer = "0";
+					maxLength = "255";
+				};
+				new ShellPopupMenu(GMW_SkinPrefPopup) {
+					profile = "ShellPopupProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "95 83";
+					extent = "152 38";
+					minExtent = "49 36";
+					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
+					helpTag = "0";
+					text = "All Skins";
+					longTextBuffer = "0";
+					maxLength = "255";
+					maxPopupHeight = "200";
+					buttonBitmap = "gui/shll_pulldown";
+					rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+					selectedBarBitmap = "gui/shll_pulldownbar_act";
+					noButtonStyle = "0";
+				};
+				new GuiTextCtrl() {
+					profile = "ShellTextRightProfile";
+					horizSizing = "left";
+					vertSizing = "bottom";
+					position = "18 129";
 					extent = "80 22";
 					minExtent = "8 8";
 					visible = "1";
@@ -855,13 +916,14 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Skin:";
+					longTextBuffer = "0";
 					maxLength = "255";
 				};
 				new ShellPopupMenu(GMW_SkinPopup) {
 					profile = "ShellPopupProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "95 90";
+					position = "95 120";
 					extent = "152 38";
 					minExtent = "49 36";
 					visible = "1";
@@ -869,6 +931,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Select Skin";
+					longTextBuffer = "0";
 					maxLength = "255";
 					maxPopupHeight = "200";
 					buttonBitmap = "gui/shll_pulldown";
@@ -880,7 +943,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellTextRightProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "18 136";
+					position = "18 166";
 					extent = "80 22";
 					minExtent = "8 8";
 					visible = "1";
@@ -888,13 +951,14 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Voice:";
+					longTextBuffer = "0";
 					maxLength = "255";
 				};
 				new ShellPopupMenu(GMW_VoicePopup) {
 					profile = "ShellPopupProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "95 127";
+					position = "95 157";
 					extent = "152 38";
 					minExtent = "49 36";
 					visible = "1";
@@ -902,6 +966,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Select Voice";
+					longTextBuffer = "0";
 					maxLength = "255";
 					maxPopupHeight = "200";
 					buttonBitmap = "gui/shll_pulldown";
@@ -914,7 +979,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellTextRightProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "114 168";
+					position = "114 198";
 					extent = "100 22";
 					minExtent = "8 8";
 					visible = "1";
@@ -922,13 +987,14 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					bypassHideCursor = "0";
 					helpTag = "0";
 					text = "Test Voice:";
+					longTextBuffer = "0";
 					maxLength = "255";
 				};
 				new ShellBitmapButton(GMW_VoiceTestBtn) {
 					profile = "SoundTestButtonProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "214 165";
+					position = "214 195";
 					extent = "24 24";
 					minExtent = "24 24";
 					visible = "1";
@@ -942,7 +1008,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellButtonProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "94 206";
+					position = "94 236";
 					extent = "152 38";
 					minExtent = "32 38";
 					visible = "1";
@@ -957,7 +1023,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					profile = "ShellButtonProfile";
 					horizSizing = "left";
 					vertSizing = "bottom";
-					position = "94 243";
+					position = "94 273";
 					extent = "152 38";
 					minExtent = "32 38";
 					visible = "1";
@@ -1006,6 +1072,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					command = "GMW_PlayerModel.update();";
 					helpTag = "0";
 					text = "LIGHT";
+					longTextBuffer = "0";
 					maxLength = "255";
 					groupNum = "1";
 				};
@@ -1022,6 +1089,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					command = "GMW_PlayerModel.update();";
 					helpTag = "0";
 					text = "MEDIUM";
+					longTextBuffer = "0";
 					maxLength = "255";
 					groupNum = "1";
 				};
@@ -1038,6 +1106,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 					command = "GMW_PlayerModel.update();";
 					helpTag = "0";
 					text = "HEAVY";
+					longTextBuffer = "0";
 					maxLength = "255";
 					groupNum = "1";
 				};
@@ -1054,6 +1123,7 @@ new GuiChunkedBitmapCtrl(GameGui) {
 			hideCursor = "0";
 			bypassHideCursor = "0";
 			helpTag = "0";
+			longTextBuffer = "0";
 			maxLength = "255";
 		};
 	};

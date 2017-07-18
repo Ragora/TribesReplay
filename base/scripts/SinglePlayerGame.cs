@@ -1,10 +1,17 @@
 // Training Script
 //echo("Running Training Script");
 
+datablock EffectProfile(TrainingHudUpdateEffect)
+{
+   effectname = "gui/objective_notification";
+   minDistance = 10;
+};
+
 datablock AudioProfile(TrainingHudUpdateSound)
 {
    filename    = "gui/objective_notification.wav";
    description = AudioDefault3d;
+   effect = TrainingHudUpdateEffect;
    preload = true;
 };
 
@@ -289,9 +296,9 @@ function spawnWaveTimer(%wave, %reset)
 	if(%reset)
 	{
 		cancel(game.spawnWaveTimer);
-		%timeForAction = 60000 * 5;   //5 min
+		%timeForAction = 60000 * 2;   //2 min
 	}
-	else %timeForAction = 60000 * 5;   //5 min
+	else %timeForAction = 60000 * 4;   //4 min
 	
 	game.spawnWaveTimer = schedule(%timeForAction, game, destroyWave, %wave);
 }
@@ -451,6 +458,7 @@ function SinglePlayerGame::clientMissionDropReady(%game, %client)
 	$player.team = $playerTeam;
 	$player.setTeam($playerTeam);
 	setTargetSkin($teammate[%i].target, $teamSkin[$playerTeam]);
+   $player.clearBackpackIcon();
 
 	createText($player);
 	HUDMessageVector.clear();
@@ -522,7 +530,6 @@ function setFlipFlopSkins(%group)
 
 function singlePlayerGame::gameOver(%game)
 {
-
 	moveMap.push();
 
    ServerConnection.setBlackOut(false, 0);
@@ -532,8 +539,9 @@ function singlePlayerGame::gameOver(%game)
 	game.missionOver = true;
 
 	// clear the inventory and weapons hud
-	error("clearing Inv HUD");
-	$player.SetInventoryHudClearAll();
+   // BH: This doesn't actually DO anything...
+	//error("clearing Inv HUD for client " @ $player);
+	//$player.SetInventoryHudClearAll();
 	
 	// im gonna try dropping all the clients
 	%count = clientGroup.getCount();
@@ -598,7 +606,7 @@ function doText(%name, %extraTime, %priority)
 	else addToQueueEnd(%name);
 	
 	$player.text[%name, extraTime] = %extraTime;
-	processText();
+	processText(false);
 }
 
 function processText(%cont)
@@ -606,7 +614,7 @@ function processText(%cont)
 	//we may need to fudge everysound to get it timed right
 	%universalSoundFudgingConstant = 400;
 
-	if($currentlyPlaying && !%cont)
+	if(isEventPending($currentlyPlaying) && !%cont)
 		return;
 
 	%name = $player.Textque0;
@@ -615,7 +623,12 @@ function processText(%cont)
 
 	//echo("processing: "@%name);
 	if($player.Text[%name, eval] !$= "")
-		eval($player.text[%name, eval]);
+   {
+      if (!isPureServer())
+		   eval($player.text[%name, eval]);
+      else
+         processTextEval($player.text[%name, eval]);
+   }
 	if($player.Text[%name, text] !$= "") {
 		// the old way: messageClient($player, 0, '\c2%1: %2',$trainerName, $player.Text[%name, line]);
 		messageClient($player, 0, "\c5"@$player.Text[%name, text]);
@@ -630,15 +643,130 @@ function processText(%cont)
 	removeFromQueue();
 	
 	%wavLen = alxGetWaveLen($player.text[%name, wav]);
-	//echo("got wave length of: "@%wavLen);
 	//if(%wavLen < 400)
 	//	%wavLen = 400; // you cant go back in time, vge
 
-	 %time =  %wavLen + $player.text[%name, extraTime] + %universalSoundFudgingConstant;
-	 //echo("total delay time of"@%time);
-	$currentlyPlaying = schedule(%time , $player.player, processText, true);
-	schedule(%time, 0, eval, "$currentlyPlaying = false;");
+   %time =  %wavLen + $player.text[%name, extraTime] + %universalSoundFudgingConstant;
+   //echo("total delay time of"@%time);
+
+   $currentlyPlaying = schedule(%time, $player.player, processText, true);
+   //if (!isPureServer())
+	//   schedule(%time, 0, eval, "$currentlyPlaying = false;");
+   //else
+	//   schedule(%time, 0, SPUnsetCurrentlyPlaying);
 }
+
+function SPUnsetCurrentlyPlaying()
+{
+	$currentlyPlaying = "";
+error(getSimTime() SPC "DEBUG setting currentlyPlaying null");
+}
+
+function processTextEval(%evalStmt)
+{
+   switch$ (%evalStmt)
+   {
+	   case "singlePlayerPlayGuiCheck();":
+	      singlePlayerPlayGuiCheck();
+      
+      case "schedule(3000, 0, disconnect);":
+         schedule(3000, 0, disconnect);
+
+      case "lockArmorHack();autoToggleHelpHud(true);":
+         lockArmorHack();autoToggleHelpHud(true);
+
+      case "flashMessage();":
+         flashMessage();
+
+      case "flashObjective();":
+         flashObjective();
+   	
+      case "flashCompass();":
+         flashCompass();
+
+      case "flashHealth();":
+         flashHealth();
+
+      case "flashEnergy();":
+         flashEnergy();
+
+      case "flashInventory();":
+         flashInventory();
+
+      case "flashSensor();":
+         flashSensor();
+
+      case "autoToggleHelpHud(false);":
+         autoToggleHelpHud(false);
+   	
+      case "setWaypointAt(\"-287.5 393.1 76.2\", \"Health Patches\");movemap.push();$player.player.setMoveState(false);":
+         setWaypointAt("-287.5 393.1 76.2", "Health Patches");movemap.push();$player.player.setMoveState(false);
+
+      case "$player.hurryUp = schedule(40000, 0, hurryPlayerUp); endOpeningSpiel(); updateTrainingObjectiveHud(obj8);":
+         $player.hurryUp = schedule(40000, 0, hurryPlayerUp); endOpeningSpiel(); updateTrainingObjectiveHud(obj8);
+
+      case "updateTrainingObjectiveHud(obj7);":
+         updateTrainingObjectiveHud(obj7);
+   	
+      case "flashWeapon(0);":
+         flashWeapon(0);
+
+      case "flashWeapon(2);":
+         flashWeapon(2);
+
+      case "flashWeapon(3); ":
+         flashWeapon(3); 
+
+      case "flashWeaponsHud();":
+         flashWeaponsHud();
+
+      case "use(Blaster);":
+         use(Blaster);
+
+      case "queEnemySet(0); activatePackage(singlePlayerMissionAreaEnforce);":
+         queEnemySet(0); activatePackage(singlePlayerMissionAreaEnforce);
+
+      case "setWaypointat(nameToId(Tower).position, \"BE Tower\"); updateTrainingObjectiveHud(obj4);":
+         setWaypointat(nameToId(Tower).position, "BE Tower"); updateTrainingObjectiveHud(obj4);
+
+      case "flashPack();":
+         flashPack();
+   	
+      case "updateTrainingObjectiveHud(obj3);":
+         updateTrainingObjectiveHud(obj3);
+   	
+      case "setWaypointAt(\"-8.82616 -131.779 119.756\", \"Control Switch\");":
+         setWaypointAt("-8.82616 -131.779 119.756", "Control Switch");
+
+      case "setWaypointAt(nameToId(InitialPulseSensor).position, \"Sensor\");":
+         setWaypointAt(nameToId(InitialPulseSensor).position, "Sensor");
+
+      case "setWaypointAt(\"-8.82616 -131.779 119.756\", \"Tower\");":
+         setWaypointAt("-8.82616 -131.779 119.756", "Tower");
+
+      case "setWaypointAt(\"380.262 -298.625 98.9719\", \"Tower\");":
+         setWaypointAt("380.262 -298.625 98.9719", "Tower");
+   	
+      case "firstPersonQuickPan();":
+         firstPersonQuickPan();
+   	
+      case "ThreeAEval();":
+         ThreeAEval();
+   	
+      case "game.ExpectiongSupportButton = true;":
+         game.ExpectiongSupportButton = true;
+   	
+      case "game.expectingRepairOrder = true;":
+         game.expectingRepairOrder = true;
+   	
+      case "$random = getRandom(20,40);schedule($random, 0, doText, T4_TipDefense06);":
+         $random = getRandom(20,40);schedule($random, 0, doText, T4_TipDefense06);
+
+      case "training5addSafeDistance();":
+         training5addSafeDistance();
+   }
+}
+
 
 function removeFromQueue()
 {
@@ -716,7 +844,11 @@ function updateTrainingObjectiveHud( %objectiveNum )
 
 	//sound
 	objectiveHud.setVisible(false);
-	schedule(400, game, eval, "objectiveHud.setVisible(true);"); 
+   if (!isPureServer())
+	   schedule(400, game, eval, "objectiveHud.setVisible(true);"); 
+   else
+	   schedule(400, game, setObjHudVisible); 
+
 	serverPlay2d(TrainingHudUpdateSound);
 
 	//clear old text
@@ -733,6 +865,11 @@ function updateTrainingObjectiveHud( %objectiveNum )
 	messageClient($player, 'MsgSPCurrentObjective1', "", %newObjectiveLine1);
 	if(%newObjectiveLine2 !$= "")
 		messageClient($player, 'MsgSPCurrentObjective2', "", %newObjectiveLine2);
+}
+
+function setObjHudVisible()
+{
+	objectiveHud.setVisible(true);
 }
 
 
@@ -867,6 +1004,8 @@ function missionFailed(%text)
 	MessageBoxYesNo("Failure", %text, "reloadMission();", "forceFinish();");
 
 	//AI stop
+   cancel($Player.T1OpeningSpielSchedule);
+   cancel($Player.distanceCheckSchedule);
 	clearQueue();
 	AIMissionEnd();
 	$objectiveQ[$enemyTeam].clear();
@@ -876,6 +1015,7 @@ function reloadMission()
 {
 	cancel($player.endMission);
 	Game.gameOver();
+   Canvas.setContent( LoadingGui );
 	loadMission($currentMission, singlePlayer);
 	debriefContinue();
 }

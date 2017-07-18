@@ -11,12 +11,19 @@ activatePackage(Training1);
 
 addMessageCallback('MsgWeaponMount', playerMountWeapon);
 
+datablock EffectProfile(HudFlashEffect)
+{
+   effectname = "gui/buttonOver";
+   minDistance = 10;
+};
+
 // additional mission Audio
 datablock AudioProfile(HudFlashSound)
 {
    filename    = "gui/buttonover.wav";
    description = AudioDefault3d;
    preload = true;
+   effect = HudFlashEffect;
 };
 
 // additional mission Audio
@@ -37,9 +44,6 @@ $missionBotSkill[1] = 0.0;
 $missionBotSkill[2] = 0.4;
 $missionBotSkill[3] = 0.7;
 
-game.pilotName = "McWatt";
-game.bombardierName = "Yossarian";
-
 //------------------------------------------------------------------------------
 function getTeammateGlobals()
 {
@@ -56,9 +60,6 @@ function getTeammateGlobals()
 	$teammateGender1 = Male;
 }
 
-game.tower = nameToId("Tower");
-game.tower.threshold1 = 330;
-game.tower.threshold2 = 80;
 
 $victimSet[1] = "0 7 10 11";
 $victimSet[2] = "1 8 12";
@@ -68,6 +69,17 @@ package Training1 {
 //BEGIN TRAINING1 PACKAGE =======================================================================
 
 //------------------------------------------------------------------------------
+
+function SinglePlayerGame::initGameVars(%game)
+{
+   echo("initializing training1 game vars");
+   %game.pilotName = "McWatt";
+   %game.bombardierName = "Yossarian";
+
+   %game.tower = nameToId("Tower");
+   %game.tower.threshold1 = 330;
+   %game.tower.threshold2 = 80;
+}
 
 //scriptlet
 //we have to jump through a lot of hoops to get those dead bodies in training1
@@ -104,7 +116,29 @@ function toggleScoreScreen(%val)
 function toggleCommanderMap(%val)
 {
    if ( %val )
-   messageClient($player, 0, $player.miscMsg[noCC]);
+      messageClient($player, 0, $player.miscMsg[noCC]);
+}
+
+function toggleTaskListDlg( %val )
+{
+   if ( %val )
+      messageClient( $player, 0, $player.miscMsg[noTaskListDlg] );
+}
+
+function toggleInventoryHud( %val )
+{
+   if ( %val )
+      messageClient( $player, 0, $player.miscMsg[noInventoryHUD] );
+}
+
+function toggleNetDisplayHud( %val )
+{
+   // Hello, McFly?  This is training!  There's no net in training!
+}
+
+function voiceCapture( %val )
+{
+   // Uh, who do you think you are talking to?
 }
 
 function giveall()
@@ -145,6 +179,7 @@ function SinglePlayerGame::equip(%game, %player)
    %player.clearInventory();
    for(%i =0; %i<$InventoryHudCount; %i++)
       %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
+   %player.client.clearBackpackIcon();
 
    %set = %player.client.equipment;
    //error("equping Player "@%player@" with set"@%set);
@@ -153,9 +188,6 @@ function SinglePlayerGame::equip(%game, %player)
    case 0:
       echo("using default equipment");
 
-      for(%i =0; %i<$InventoryHudCount; %i++)
-         %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
-
       %player.setArmor("Light");
       %player.setInventory(RepairKit,1);
       %player.setInventory(Blaster,1);
@@ -163,15 +195,12 @@ function SinglePlayerGame::equip(%game, %player)
       %player.setInventory(Chaingun, 1);
       %player.setInventory(ChaingunAmmo, 100);
       %player.setInventory(DiscAmmo, 20);
+      %player.weaponCount = 3;
 
       %player.use(Disc);
-      %player.weaponCount = 3;
 
    case 1:
       echo("using case 1 equipment");
-
-      for(%i =0; %i<$InventoryHudCount; %i++)
-         %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
 
       %player.setArmor("Light");
       %player.setInventory(RepairKit,1);
@@ -181,7 +210,6 @@ function SinglePlayerGame::equip(%game, %player)
       %player.setInventory(ChaingunAmmo, 100);
       %player.setInventory(DiscAmmo, 20);
       %player.setInventory(EnergyPack, 1);
-
       %player.weaponCount = 3;
 
    case 2: 
@@ -201,6 +229,7 @@ function SinglePlayerGame::equip(%game, %player)
       %player.setInventory(MissileLauncherAmmo, 10);
       %player.setInventory(TargetingLaser, 1);
       %player.weaponCount = 4;
+      
       %player.use(Disc);
    }
 }                  
@@ -417,7 +446,6 @@ function singlePlayerGame::onAIRespawn(%game, %client)
 function missionClientKilled(%victim, %killer)
 {
    // this is just a bit messy as I added the training difficulty stuff late
-
    %skill = $pref::trainingDifficulty;
    
    if(%victim == $player) {
@@ -513,6 +541,7 @@ function findVictimSet(%victim)
          }
       }
    }
+   return 0;
 }
 
 // hokay...we have gone away from the default ai so we have to keep our forced-task
@@ -538,7 +567,16 @@ function singlePlayerGame::playerSpawned(%game, %player)
 //------------------------------------------------------------------------------
 function singlePlayerGame::gameOver(%game)
 {
+   //enable the voice chat menu again...
+   if (isObject(training1BlockMap))
+   {
+      training1BlockMap.pop();
+      training1BlockMap.delete();
+   }
+
    //moveMap.bindCmd( keyboard, "backspace", "", game.returnBinding );
+   //allow the observer cam to move again...
+   $Camera::movementSpeed = 40;
 	$AIDisableChatResponse = "";
    cancel($Training1Blackout);
    cancel($Training1HitGround);
@@ -711,12 +749,25 @@ function flashEnergy()
 {
    %time = 1000;
    %num = 6;
-   for(%i=0; %i<%num; %i++) {
-      schedule(%time*%i, $player.player, "eval", "energyHud.setVisible(false);" );
-      
-      schedule(%time*%i + %time/2, $player.player, "eval", "energyHud.setVisible(true);" );
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule(%time*%i, $player.player, "eval", "energyHud.setVisible(false);" );
+         schedule(%time*%i + %time/2, $player.player, "eval", "energyHud.setVisible(true);" );
+      }
+      else
+      {
+         schedule(%time*%i, $player.player, toggleEnergyHudVis, false);
+         schedule(%time*%i + %time/2, $player.player, toggleEnergyHudVis, true);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function toggleEnergyHudVis(%value)
+{
+   energyHud.setVisible(%value);
 }
 
 //------------------------------------------------------------------------------
@@ -724,12 +775,25 @@ function flashHealth()
 {
    %time = 900;
    %num = 5;
-   for(%i=0; %i<%num; %i++) {
-      schedule( %time*%i, $player.player, "eval", "damageHud.setVisible(false);");
-      
-      schedule(%time*%i + %time/2, $player.player, "eval", "damageHud.setVisible(true);");
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule( %time*%i, $player.player, "eval", "damageHud.setVisible(false);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "damageHud.setVisible(true);");
+      }
+      else
+      {
+         schedule( %time*%i, $player.player, toggleDamageHudVis, false);
+         schedule(%time*%i + %time/2, $player.player, toggleDamageHudVis, true);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function toggleDamageHudVis(%value)
+{
+   damageHud.setVisible(%value);
 }
 
 //------------------------------------------------------------------------------
@@ -738,12 +802,25 @@ function flashWeapon(%slot)
    schedule(300, $player.player, use, $WeaponNames[%slot]);
    %time = 1000;
    %num = 6;
-   for(%i=0; %i<%num; %i++) {
-      schedule(%time*%i, $player.player, "eval", "weaponsHud.setActiveWeapon(-1);");
-      
-      schedule(%time*%i + %time/2, $player.player, "eval", "weaponsHud.setActiveWeapon("@%slot@");");
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule(%time*%i, $player.player, "eval", "weaponsHud.setActiveWeapon(-1);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "weaponsHud.setActiveWeapon("@%slot@");");
+      }
+      else
+      {
+         schedule(%time*%i, $player.player, toggleWeaponSlot, -1);
+         schedule(%time*%i + %time/2, $player.player, toggleWeaponSlot, %slot);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function toggleWeaponSlot(%slot)
+{
+   weaponsHud.setActiveWeapon(%slot);
 }
 
 //------------------------------------------------------------------------------
@@ -751,12 +828,25 @@ function flashWeaponsHud()
 {
    %time = 1000;
    %num = 6;
-   for(%i=0; %i<%num; %i++) {
-      schedule( %time*%i, $player.player, "eval", "weaponsHud.setVisible(false);");
-      
-      schedule(%time*%i + %time/2, $player.player, "eval", "weaponsHud.setVisible(true);");
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule( %time*%i, $player.player, "eval", "weaponsHud.setVisible(false);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "weaponsHud.setVisible(true);");
+      }
+      else
+      {
+         schedule( %time*%i, $player.player, toggleWeaponHudVis, false);
+         schedule(%time*%i + %time/2, $player.player, toggleWeaponHudVis, true);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function toggleWeaponHudVis(%value)
+{
+   weaponsHud.setVisible(%value);
 }
 
 //------------------------------------------------------------------------------
@@ -764,14 +854,29 @@ function flashCompass()
 {
    %time = 900;
    %num = 5;
-   for(%i=0; %i<%num; %i++) {
-      schedule(%time*%i, $player.player, "eval", "HudCompassBack.setVisible(false);");
-      schedule(%time*%i, $player.player, "eval", "compass.setVisible(false);");
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule(%time*%i, $player.player, "eval", "HudCompassBack.setVisible(false);");
+         schedule(%time*%i, $player.player, "eval", "compass.setVisible(false);");
 
-      schedule(%time*%i + %time/2, $player.player, "eval", "HudCompassBack.setVisible(true);");
-      schedule(%time*%i + %time/2, $player.player, "eval", "compass.setVisible(true);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "HudCompassBack.setVisible(true);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "compass.setVisible(true);");
+      }
+      else
+      {
+         schedule(%time*%i, $player.player, toggleCompassVis, false);
+         schedule(%time*%i + %time/2, $player.player, toggleCompassVis, true);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function toggleCompassVis(%value)
+{
+   HudCompassBack.setVisible(%value);
+   compass.setVisible(%value);
 }
 
 //------------------------------------------------------------------------------
@@ -779,12 +884,25 @@ function flashInventory()
 {
    %time = 1000;
    %num = 6;
-   for(%i=0; %i<%num; %i++) {
-      schedule(%time*%i, $player.player, "eval", "inventoryHud.setVisible(false);");
-      
-      schedule(%time*%i + %time/2, $player.player, "eval", "inventoryHud.setVisible(true);");
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule(%time*%i, $player.player, "eval", "inventoryHud.setVisible(false);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "inventoryHud.setVisible(true);");
+      }
+      else
+      {
+         schedule(%time*%i, $player.player, toggleInvVis, false);
+         schedule(%time*%i + %time/2, $player.player, toggleInvVis, true);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function toggleInvVis(%value)
+{
+   inventoryHud.setVisible(%value);
 }
 
 //------------------------------------------------------------------------------
@@ -792,12 +910,25 @@ function flashPack()
 {
    %time = 1000;
    %num = 6;
-   for(%i=0; %i<%num; %i++) {
-      schedule(%time*%i, $player.player, "eval", "backPackFrame.setVisible(false);");
-      
-      schedule(%time*%i + %time/2, $player.player, "eval", "backPackFrame.setVisible(true);");
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule(%time*%i, $player.player, "eval", "backPackFrame.setVisible(false);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "backPackFrame.setVisible(true);");
+      }
+      else
+      {
+         schedule(%time*%i, $player.player, togglePackVis, false);
+         schedule(%time*%i + %time/2, $player.player, togglePackVis, true);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function togglePackVis(%value)
+{
+   backPackFrame.setVisible(%value);
 }
 
 //------------------------------------------------------------------------------
@@ -805,12 +936,25 @@ function flashSensor()
 {
    %time = 1000;
    %num = 6;
-   for(%i=0; %i<%num; %i++) {
-      schedule(%time*%i, $player.player, "eval", "sensorHudBack.setVisible(false);");
-      
-      schedule(%time*%i + %time/2, $player.player, "eval", "sensorHudBack.setVisible(true);");
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule(%time*%i, $player.player, "eval", "sensorHudBack.setVisible(false);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "sensorHudBack.setVisible(true);");
+      }
+      else
+      {
+         schedule(%time*%i, $player.player, toggleSensorVis, false);
+         schedule(%time*%i + %time/2, $player.player, toggleSensorVis, true);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function toggleSensorVis(%value)
+{
+   sensorHudBack.setVisible(%value);
 }
 
 //------------------------------------------------------------------------------
@@ -818,12 +962,25 @@ function flashMessage()
 {
    %time = 1000;
    %num = 6;
-   for(%i=0; %i<%num; %i++) {
-      schedule(%time*%i, $player.player, "eval", "outerChatHud.setVisible(false);");
-      
-      schedule(%time*%i + %time/2, $player.player, "eval", "outerChatHud.setVisible(true);");
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule(%time*%i, $player.player, "eval", "outerChatHud.setVisible(false);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "outerChatHud.setVisible(true);");
+      }
+      else
+      {
+         schedule(%time*%i, $player.player, toggleMessageVis, false);
+         schedule(%time*%i + %time/2, $player.player, toggleMessageVis, true);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function toggleMessageVis(%value)
+{
+   outerChatHud.setVisible(%value);
 }
 
 //------------------------------------------------------------------------------
@@ -831,12 +988,25 @@ function flashObjective()
 {
    %time = 1000;
    %num = 6;
-   for(%i=0; %i<%num; %i++) {
-      schedule(%time*%i, $player.player, "eval", "objectiveHud.setVisible(false);");
-      
-      schedule(%time*%i + %time/2, $player.player, "eval", "objectiveHud.setVisible(true);");
+   for(%i=0; %i<%num; %i++)
+   {
+      if (!isPureServer())
+      {
+         schedule(%time*%i, $player.player, "eval", "objectiveHud.setVisible(false);");
+         schedule(%time*%i + %time/2, $player.player, "eval", "objectiveHud.setVisible(true);");
+      }
+      else
+      {
+         schedule(%time*%i, $player.player, toggleObjectiveHudVis, false);
+         schedule(%time*%i + %time/2, $player.player, toggleObjectiveHudVis, true);
+      }
       $player.schedule(%time*%i, "play2d", HudFlashSound);
    }
+}
+
+function toggleObjectiveHudVis(%value)
+{
+   objectiveHud.setVisible(%value);
 }
 
 //------------------------------------------------------------------------------
@@ -885,7 +1055,6 @@ function setTeammatesCMapInvisible(%on)
    setTargetNeverVisMask(nameToId(MPB).getTarget(), %arg);
    setTargetNeverVisMask($teammate0.player.getTarget(), %arg);
    setTargetNeverVisMask($teammate1.player.getTarget(), %arg);
-
 }
 
 
@@ -897,7 +1066,17 @@ function beginTraining1Intro()
    //messageClient($player, 0, $player.miscMsg[skip]);
    //moveMap.bindCmd( keyboard, "backspace", "", "skipIntroCinematic();" );
 
+   //block the voice chat
+   if (isObject(training1BlockMap))
+      training1BlockMap.delete();
+   new ActionMap(training1BlockMap);
+   training1BlockMap.blockBind(moveMap, toggleMessageHud);
+   training1BlockMap.blockBind(moveMap, TeamMessageHud);
+   training1BlockMap.blockBind(moveMap, activateChatMenuHud);
+   training1BlockMap.push();
+
    //set the intro started bools
+   $Camera::movementSpeed = 0;
 	$AIDisableChatResponse = true;
    game.playedIntro = true;
    game.trainingIntro = true;
@@ -982,11 +1161,20 @@ function beginTraining1Intro()
 //------------------------------------------------------------------------------
 function trainingIntroFlightEnd()
 {
+   //enable the voice chat menu again...
+   if (isObject(training1BlockMap))
+   {
+      training1BlockMap.pop();
+      training1BlockMap.delete();
+   }
+
    //put the player back in his body, give him control back,
    //a little dramatic flash, start the rest of the mission
+   $Camera::movementSpeed = 40;
 	$AIDisableChatResponse = "";
    game.trainingIntro = false;
    $player.player.invincible = false;
+   $player.player.setDamageLevel(0.3);
    serverConnection.setBlackout(false, 5000);
    $player.player.setActionThread(cel1);
    $player.player.schedule(2000, use, Disc);
@@ -999,11 +1187,12 @@ function trainingIntroFlightEnd()
    if(!$firstPerson)
       toggleFirstPerson($player);
 
+   $player.player.setMoveState( false );
    $player.player.setVelocity("0 0 0");
    $player.player.setTransform(nameToId(DP).getTransform());
    moveMap.push();
    //$player.player.setDamageLevel(0.3);
-   schedule(10000, game, openingspiel);
+   $player.T1OpeningSpielSchedule = schedule(10000, game, openingspiel);
    objectiveDistanceChecks();
    
    //moveMap.bindCmd( keyboard, "backspace", "", "skipFlashingHud();" );
@@ -1016,7 +1205,6 @@ function trainingIntroFlightEnd()
 function ClientCmdSetHudMode(%mode, %type, %node)
 {
    parent::ClientCmdSetHudMode(%mode, %type, %node);
-   //TrainingMap.push();
    getTrainingPacifistMap();
    if(game.trainingIntro)
       trainingPacifistMap.push();
@@ -1042,7 +1230,6 @@ function checkForTraining1Intro()
       beginTraining1Intro();
    else
    {
-error("DEBUG checkForTraining1Intro() failed!!!");
       schedule(50, game, checkForTraining1Intro);   
    }
 }
@@ -1163,10 +1350,10 @@ function forcedCinematicPlayerDismount()
 	%velX = getWord(%velocity, 0);
 	%velY = getWord(%velocity, 1);
 	$player.player.setVelocity(%velX SPC %velY SPC "20");
+   $player.player.setMoveState( true );
 	$player.player.schedule(300, setDamageFlash, 0.3);
    playTargetAudio( $player.target, 'avo.deathCry_01', AudioClose3d, false );
    $player.player.setActionThread(Death1, true);
-   $player.player.setDamageLevel(0.3);
    //$player.flyer.pilot.player.setActionThread(Death10, true);
    //$player.flyer.bombardier.player.setActionThread(Death11, true);
 
@@ -1176,7 +1363,7 @@ function forcedCinematicPlayerDismount()
    LightMaleHumanArmor.minImpactSpeed = 10000;
    trainingPlayerHitGround();
    Game.playGrunt = true;
-	game.expectingImpact = true;
+	//game.expectingImpact = true;
 }
 
 function MissileDudeAimAtTarget(%client, %percent)
@@ -1210,10 +1397,13 @@ function MissileDudeFireMissile(%Client)
    %client.clearStep();
    %client.setEngageTarget(-1);
    %client.setTargetObject($player.flyer, 300, "Missile");
-      
+     
+   if (isDemo())
+      %wav = "fx/misc/derm2.woohoo.WAV";
+   else
       %wav = "voice/derm2/gbl.woohoo.WAV";
-      %audio = alxCreateSource( AudioChat, %wav );
-      alxPlay( %audio );
+   %audio = alxCreateSource( AudioChat, %wav );
+   alxPlay( %audio );
 
    
    schedule(4000, 0, cinematicEvent, 7); 

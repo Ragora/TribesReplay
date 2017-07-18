@@ -62,25 +62,28 @@ addMessageCallback('msgEnterInvStation', StationInvEnter);
 //addMessageCallback('MsgShieldPackOn', playerTurnsOnShield);
 
 
-// for many of the objectives we are going to periodically
-// check the players distance vs some object
-// you could do this much prettier but its going to be very specific
-// so a cut and paste eyesore will be fine
-game.sensor = nameToID("MissionGroup/Teams/team2/base1/initialPulseSensor");
-game.base1 = nameToID("MissionGroup/Teams/team2/base1/base");
-game.base1.threshold1 = 240;
-game.base1.threshold2 = 190;
-game.base2 = nameToID("MissionGroup/Teams/team2/base2/base");
-game.base2.threshold1 = 300;
-game.base2.threshold2 = 250;
-game.base3 = nameToID("MissionGroup/Teams/team2/base3/base");
-game.base3.threshold1 = 330;
-game.base3.threshold2 = 130;
-
-
 
 package training2 {
 //--Training2 package begin -----------------------------------------------------------------
+function SinglePlayerGame::initGameVars(%game)
+{
+   // for many of the objectives we are going to periodically
+   // check the players distance vs some object
+   // you could do this much prettier but its going to be very specific
+   // so a cut and paste eyesore will be fine
+   echo("initializing training2 game vars");
+   %game.sensor = nameToID("MissionGroup/Teams/team2/base1/initialPulseSensor");
+   %game.base1 = nameToID("MissionGroup/Teams/team2/base1/base");
+   %game.base1.threshold1 = 240;
+   %game.base1.threshold2 = 190;
+   %game.base2 = nameToID("MissionGroup/Teams/team2/base2/base");
+   %game.base2.threshold1 = 300;
+   %game.base2.threshold2 = 250;
+   %game.base3 = nameToID("MissionGroup/Teams/team2/base3/base");
+   %game.base3.threshold1 = 330;
+   %game.base3.threshold2 = 130;
+}
+
 function toggleScoreScreen(%val)
 {
 	if ( %val )
@@ -92,6 +95,22 @@ function toggleCommanderMap(%val)
 {
 	if ( %val )
 	messageClient($player, 0, $player.miscMsg[noCC]);
+}
+
+function toggleTaskListDlg( %val )
+{
+   if ( %val )
+      messageClient( $player, 0, $player.miscMsg[noTaskListDlg] );
+}
+
+function toggleNetDisplayHud( %val )
+{
+   // Hello, McFly?  This is training!  There's no net in training!
+}
+
+function voiceCapture( %val )
+{
+   // Uh, who do you think you are talking to?
 }
 
 function MP3Audio::play(%this)
@@ -206,7 +225,10 @@ function getTeammateGlobals()
 {
 	$TeammateWarnom0 = "Dogkiller";
 	$teammateskill0 = 0.7;
-	$teammateVoice0 = Male5;
+   if ( isDemo() )
+      $teammateVoice0 = Male1;
+   else   
+	   $teammateVoice0 = Male5;
 	$teammateEquipment0 = 2;
 	$teammateGender0 = Male;
 }
@@ -228,6 +250,7 @@ function SinglePlayerGame::equip(%game, %player)
 
    for(%i =0; %i<$InventoryHudCount; %i++)
       %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
+   %player.client.clearBackpackIcon();
 
 	%set = %player.client.equipment;
 	//error("equping Player "@%player@" with set"@%set);

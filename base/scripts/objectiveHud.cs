@@ -25,6 +25,7 @@ function clearObjHudMSG(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6)
 
 function setupObjHud(%gameType)
 {
+   objectiveHud.gameType = %gameType;
    switch$ (%gameType)
 	{
 		case BountyGame:
@@ -162,7 +163,7 @@ function setupObjHud(%gameType)
 
 		case CTFGame:
 			// set separators
-			objectiveHud.setSeparators("72 97 130");
+			objectiveHud.setSeparators("75 100 133");
 			objectiveHud.enableHorzSeparator();
 
 			// Team names
@@ -171,7 +172,7 @@ function setupObjHud(%gameType)
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "4 3";
-				extent = "65 16";
+				extent = "68 16";
 				visible = "1";
 			};
 			objectiveHud.teamName[2] = new GuiTextCtrl() {
@@ -179,7 +180,7 @@ function setupObjHud(%gameType)
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "4 19";
-				extent = "65 16";
+				extent = "68 16";
 				visible = "1";
 			};
 			// Team scores
@@ -187,16 +188,16 @@ function setupObjHud(%gameType)
 				profile = "GuiTextObjGreenCenterProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "75 3";
-				extent = "20 16";
+				position = "78 3";
+				extent = "22 16";
 				visible = "1";
 			};
 			objectiveHud.teamScore[2] = new GuiTextCtrl() {
 				profile = "GuiTextObjHudCenterProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "75 19";
-				extent = "20 16";
+				position = "78 19";
+				extent = "22 16";
 				visible = "1";
 			};
 			// Flag label ("FLAG")
@@ -204,7 +205,7 @@ function setupObjHud(%gameType)
 				profile = "GuiTextObjGreenCenterProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "100 3";
+				position = "103 3";
 				extent = "30 16";
 				visible = "1";
 				text = "FLAG";
@@ -213,7 +214,7 @@ function setupObjHud(%gameType)
 				profile = "GuiTextObjHudCenterProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "100 19";
+				position = "103 19";
 				extent = "30 16";
 				visible = "1";
 				text = "FLAG";
@@ -223,16 +224,16 @@ function setupObjHud(%gameType)
 				profile = "GuiTextObjGreenLeftProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "135 3";
-				extent = "105 16";
+				position = "138 3";
+				extent = "102 16";
 				visible = "1";
 			};
 			objectiveHud.flagLocation[2] = new GuiTextCtrl() {
 				profile = "GuiTextObjHudLeftProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "135 19";
-				extent = "105 16";
+				position = "138 19";
+				extent = "102 16";
 				visible = "1";
 			};
 
@@ -989,13 +990,6 @@ function siegeRolesSwitched(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6)
 	objectiveHud.roleLabel[%newOff].setValue("CAPTURE");
 	//objectiveHud.objectives[%newDef].setValue("1");
 	//objectiveHud.objectives[%newOff].setValue("0");
-}
-
-addMessageCallback('MsgSiegeSwitchSides', siegeSwitchSides);
-
-function siegeSwitchSides(%msgType, %msgString, %a1, %a2)
-{
-   alxPlay( SiegeSwitchSides, 0, 0, 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -41,7 +41,7 @@ new GuiControl(ShellSaveFileDlg) {
 			minExtent = "32 38";
 			visible = "1";
 			command = "SAVE_FileName.checkValid();";
-         altCommand = "eval($saveFileCommand); Canvas.popDialog(ShellSaveFileDlg);";
+         altCommand = "Canvas.popDialog(ShellSaveFileDlg);";
 			helpTag = "0";
 			historySize = "0";
 			maxLength = "32";
@@ -70,7 +70,7 @@ new GuiControl(ShellSaveFileDlg) {
 			extent = "128 38";
 			minExtent = "32 38";
 			visible = "1";
-			command = "eval($saveFileCommand); Canvas.popDialog(ShellSaveFileDlg);";
+			command = "Canvas.popDialog(ShellSaveFileDlg);";
 			helpTag = "0";
 			text = "SAVE";
 			simpleStyle = "0";

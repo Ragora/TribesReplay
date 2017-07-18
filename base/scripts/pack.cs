@@ -1,14 +1,31 @@
 //----------------------------------------------------------------------------
 
+datablock EffectProfile(TurretPackActivateEffect)
+{
+   effectname = "packs/generic_deploy";
+    minDistance = 2.5;
+	maxDistance = 2.5;
+};
+
 datablock AudioProfile(TurretPackActivateSound)
 {
 	filename = "fx/packs/turret_place.wav";
 	description = AudioClose3D;
    preload = true;
+   effect = TurretPackActivateEffect;
 };
 
 
 //----------------------------------------------------------------------------
+
+function Pack::onCollision(%data, %obj, %col)
+{
+   // Don't pick up a new pack if you have a satchel charge deployed:
+   if ( %col.thrownChargeId > 0 )
+      return;
+      
+   ItemData::onCollision(%data, %obj, %col);
+}
 
 function Pack::onUse(%data,%obj)
 {
@@ -43,8 +60,13 @@ function Pack::onInventory(%data,%obj,%amount)
       %obj.mountImage(%data.image,$BackpackSlot);
 	   %obj.client.setBackpackHudItem(%data.getName(), 1);   
 	}
-	if(%amount == 0)
-	   %obj.client.setBackpackHudItem(%data.getName(), 0);
+	if(%amount == 0 )
+   {
+      if ( %data.getName() $= "SatchelCharge" )
+         %obj.client.setBackpackHudItem( "SatchelUnarmed", 1 );
+      else   
+	      %obj.client.setBackpackHudItem(%data.getName(), 0);
+   }   
    ItemData::onInventory(%data,%obj,%amount);
 }   
 

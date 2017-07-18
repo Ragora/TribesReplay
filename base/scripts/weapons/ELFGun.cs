@@ -5,18 +5,21 @@ datablock EffectProfile(ELFGunSwitchEffect)
 {
    effectname = "weapons/generic_switch";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(ELFGunFireEffect)
 {
    effectname = "weapons/ELF_fire";
-   minDistance = 10.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
-datablock EffectProfile(ElfFireWetEffect)
+datablock EffectProfile(ELFGunFireWetEffect)
 {
    effectname = "weapons/ELF_underwater";
-   minDistance = 10.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock AudioProfile(ELFGunSwitchSound)
@@ -47,6 +50,7 @@ datablock AudioProfile(ELFHitTargetSound)
    filename    = "fx/weapons/ELF_hit.wav";
    description = CloseLooping3d;
    preload = true;
+   effect = ELFGunFireEffect;
 };
 
 //--------------------------------------

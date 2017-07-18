@@ -11,11 +11,11 @@ new GuiControl(MainChatHud) {
 	setFirstResponder = "0";
 
 	new GuiNoMouseCtrl() {
-      profile = "defaultGuiProfile";
+      profile = "GuiDefaultProfile";
 		horizSizing = "relative";
 		vertSizing = "bottom";
 		position = "0 0";
-		extent = "400 300";
+		extent = "300 300";
 		minExtent = "8 8";
 		visible = "1";
       
@@ -47,7 +47,7 @@ new GuiControl(MainChatHud) {
 	         extent = "5 10";
 	         minExtent = "1 1";
 	         visible = "1";
-		      bitmap = "gui/voteMeterPassBar.png";
+		      bitmap = "gui/voteMeterPassBar";
 	      };
 	   };
       
@@ -71,7 +71,7 @@ new GuiControl(MainChatHud) {
 	         extent = "13 13";
 	         minExtent = "8 8";
 	         visible = "0";
-		      bitmap = "gui/hud_chatPageDown.png";
+		      bitmap = "gui/hud_chatPageDown";
 	      };
 		   
          new GuiScrollCtrl(ChatScrollHud) 

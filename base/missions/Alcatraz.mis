@@ -35,11 +35,15 @@ new SimGroup(MissionGroup) {
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
 		visibleDistance = "400";
+		high_visibleDistance = "450";
 		useSkyTextures = "1";
 		renderBottomTexture = "0";
 		SkySolidColor = "0.365000 0.390000 0.420000 0.000000";
 		fogDistance = "130";
+		high_fogDistance = "200";
 		fogColor = "0.450000 0.500000 0.500000 1.000000";
+		high_fogVolume1 = "50 0 245";
+		high_fogVolume2 = "75 245 258";
 		fogVolume1 = "40 0 258";
 		fogVolume2 = "0 0 0";
 		fogVolume3 = "0 0 0";
@@ -97,6 +101,7 @@ new SimGroup(MissionGroup) {
 		envMapIntensity = "0.15";
 		removeWetEdges = "0";
 			locked = "true";
+		audioEnvironment = Underwater;					
 	};
 	new AudioEmitter() {
 		position = "788.243 -120.742 93.2821";
@@ -373,6 +378,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						audioEnvironment = BigRoom;					
 				};
 				new TSStatic(Plug) {
 					position = "66.0336 -62.8706 290.539";

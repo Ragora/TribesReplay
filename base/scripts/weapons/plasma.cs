@@ -9,18 +9,21 @@ datablock EffectProfile(PlasmaSwitchEffect)
 {
    effectname = "weapons/plasma_rifle_activate";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(PlasmaFireEffect)
 {
    effectname = "weapons/plasma_fire";
-   minDistance = 10.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(PlasmaDryFireEffect)
 {
    effectname = "weapons/plasma_dryfire";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(PlasmaIdleEffect)
@@ -33,6 +36,7 @@ datablock EffectProfile(PlasmaReloadEffect)
 {
    effectname = "weapons/plasma_rifle_reload";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(PlasmaExpEffect)

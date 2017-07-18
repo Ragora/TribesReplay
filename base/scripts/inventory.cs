@@ -125,6 +125,9 @@ function ShapeBase::throwPack(%this)
 
 function ShapeBase::throw(%this,%data)
 {
+   if(!isObject(%data))
+      return false;
+
    if (%this.inv[%data.getName()] > 0) {
       
       // save off the ammo count on this item

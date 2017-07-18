@@ -294,7 +294,7 @@ function chatMessageAll( %sender, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7,
 		else
 		{
 			// message sender is an observer -- only send message to other observers
-			if(%obj.team == %sender.team)
+			if(%obj.team == %sender.team || %obj.isAdmin || %obj.isSuperAdmin)
 		      chatMessageClient( %obj, %sender, %sender.voiceTag, %sender.voicePitch, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10 );
 		}
 	}
@@ -362,41 +362,24 @@ function messageAllExcept(%client, %team, %msgtype, %msgString, %a1, %a2, %a3, %
    }
 }
 
-//#####################################################
-////--------------------------------------------------------------------------- 
-////	Command Message
-////--------------------------------------------------------------------------- 
-//
-//function clientCmdServerCommandMessage(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10)
-//{
-//   commandMsgHud.addLine(detag(%msgString));
-//}
-//
-//function commandMessageClient(%client, %msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10)
-//{
-//   commandToClient(%client, 'ServerCommandMessage', %msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10);
-//}
-//
-//function commandMessageTeam(%team, %msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10)
-//{
-//   %count = ClientGroup.getCount();
-//   for(%cl= 0; %cl < %count; %cl++)
-//   {
-//      %recipient = ClientGroup.getObject(%cl);
-//	  if(%recipient.team == %team)
-//	      commandMessageClient(%recipient, %msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10);
-//   }
-//}
-//
-//function commandMessageTeamExcept(%client, %msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10)
-//{
-//   %team = %client.team;
-//   %count = ClientGroup.getCount();
-//   for(%cl= 0; %cl < %count; %cl++)
-//   {
-//      %recipient = ClientGroup.getObject(%cl);
-//	  if((%recipient.team == %team) && (%recipient != %client))
-//	      commandMessageClient(%recipient, %msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10);
-//   }
-//}
-//#####################################################
+//---------------------------------------------------------------------------
+// functions to support repair messaging
+//---------------------------------------------------------------------------
+function clientCmdTeamRepairMessage(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6)
+{
+   if(!$pref::ignoreTeamRepairMessages)
+      clientCmdServerMessage(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6);
+}
+
+function teamRepairMessage(%client, %msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6)
+{
+   %team = %client.team;
+
+   %count = ClientGroup.getCount();
+   for(%i = 0; %i < %count; %i++)
+   {
+      %recipient = ClientGroup.getObject(%cl);
+      if((%recipient.team == %team) && (%recipient != %client))
+         commandToClient(%client, 'TeamRepairMessage', %msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6);
+   }
+}

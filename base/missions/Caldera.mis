@@ -441,6 +441,7 @@ new SimGroup(MissionGroup) {
 							showTerrainInside = "0";
 							AudioProfile = "Universal_Base_Pulse_1";
 								locked = "true";
+								AudioEnvironment = BigRoom;
 						};
 					};
 					new StaticShape(Inv5) {

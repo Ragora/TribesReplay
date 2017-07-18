@@ -2,7 +2,18 @@
 function GameBaseData::onAdd(%data, %obj)
 {
    if(%data.targetTypeTag !$= "")
-   	%obj.target = createTarget(%obj, %data.targetNameTag, "", "", %data.targetTypeTag, 0, 0);
+   {
+      // use the name given to the object in the mission file
+      if(%obj.nameTag !$= "")
+      {
+         %obj.nameTag = addTaggedString(%obj.nameTag);
+         %nameTag = %obj.nameTag;
+      }
+      else
+         %nameTag = %data.targetNameTag;
+
+   	%obj.target = createTarget(%obj, %nameTag, "", "", %data.targetTypeTag, 0, 0);
+   }
    else
       %obj.target = -1;
 }
@@ -13,7 +24,11 @@ function GameBaseData::onRemove(%data, %obj)
 
    // first 32 targets are team targets
    if(%target >= 32)
+   {
+      if(%obj.nameTag !$= "")
+         removeTaggedString(%obj.nameTag);
       freeTarget(%target);
+   }
 }
 
 function InteriorInstance::damage()

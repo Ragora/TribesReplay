@@ -1,10 +1,24 @@
 // Sound datablocks
+datablock EffectProfile(SentryTurretSwitchEffect)
+{
+   effectname = "powered/turret_sentry_activate";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(SentryTurretFireEffect)
+{
+   effectname = "powered/turret_sentry_fire";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
 
 datablock AudioProfile(SentryTurretSwitchSound)
 {
    filename    = "fx/powered/turret_sentry_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = SentryTurretSwitchEffect;
 };
 
 datablock AudioProfile(SentryTurretFireSound)
@@ -12,6 +26,7 @@ datablock AudioProfile(SentryTurretFireSound)
    filename    = "fx/powered/turret_sentry_fire.wav";
    description = AudioDefault3d;
    preload = true;
+   effect = SentryTurretFireEffect;
 };
 
 datablock AudioProfile(SentryTurretExpSound)

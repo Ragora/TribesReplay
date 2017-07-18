@@ -38,4 +38,14 @@ function TeamHuntersGame::onAIDamaged(%game, %clVictim, %clAttacker, %damageType
    }
 }
 
+function TeamHuntersGame::onAIFriendlyFire(%game, %clVictim, %clAttacker, %damageType, %implement)
+{
+   if (%clAttacker && %clAttacker.team == %clVictim.team && %clAttacker != %clVictim && !%clVictim.isAIControlled())
+   {
+      // The Bot is only a little sorry:
+      if ( getRandom() > 0.9 )
+		   AIMessageThread("ChatSorry", %clAttacker, %clVictim);
+   }
+}
+
 

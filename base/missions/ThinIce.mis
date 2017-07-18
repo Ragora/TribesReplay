@@ -83,6 +83,7 @@ new SimGroup(MissionGroup) {
 		envMapIntensity = "0.1";
 		removeWetEdges = "0";
 			locked = "true";
+			AudioEnvironment = Underwater;
 	};
 	new NavigationGraph(NavGraph) {
 		conjoinAngleDev = "45";
@@ -161,6 +162,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new StaticShape(Team1StationInventory1) {
 					position = "308.001 684.065 127.448";
@@ -1512,6 +1514,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new InteriorInstance() {
 					position = "-302.112 -814.273 125.202";

@@ -679,8 +679,9 @@ function FlashGrenadeThrown::onThrow(%this, %gren)
 
 function detonateFlashGrenade(%hg)
 {
+   %maxWhiteout = %hg.getDataBlock().maxWhiteout;
    %thrower = %hg.sourceObject.client;
-   %hg.setDamageState(Destroyed);
+   %hg.setDamageState(Destroyed);   
    %hgt = %hg.getTransform();
    %plX = firstword(%hgt);
    %plY = getWord(%hgt, 1);
@@ -728,19 +729,26 @@ function detonateFlashGrenade(%hg)
          %dotFactor = ((1.0 - ((%difAcos - 45.0) / 15.0)) * 0.5) + 0.5;
 
       %totalFactor = %dotFactor * %distFactor;
+              
 	  %prevWhiteOut = %damage.getWhiteOut();
 
 		if(!%prevWhiteOut)
 			if(!$teamDamage)
 			{
-				error("checking for message");
 				if(%damage.client != %thrower && %damage.client.team == %thrower.team)
 					messageClient(%damage.client, 'teamWhiteOut', '\c1You were hit by %1\'s whiteout grenade.', getTaggedString(%thrower.name)); 
 			}
 		
-      %damage.setWhiteOut( %prevWhiteOut + %totalFactor);
+      %whiteoutVal = %prevWhiteOut + %totalFactor;
+      if(%whiteoutVal > %maxWhiteout)
+      {
+        //error("whitout at max");
+        %whiteoutVal = %maxWhiteout;
+      }
+      
+      %damage.setWhiteOut( %whiteoutVal );
    }
-   %hg.schedule(500, "delete");
+   %hg.schedule( 500, "delete" );
 }
 
 // ----------------------------------------------
@@ -883,7 +891,9 @@ function MineDeployed::damageObject(%data, %targetObject, %sourceObject, %positi
    %targetObject.damaged += %amount;
 
    if(%targetObject.damaged >= %data.maxDamage)
+   {   
       %targetObject.setDamageState(Destroyed);
+   }
 }
 
 function MineDeployed::onDestroyed(%data, %obj, %lastState)

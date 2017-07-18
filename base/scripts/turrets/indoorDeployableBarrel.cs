@@ -1,8 +1,23 @@
+datablock EffectProfile(IBLSwitchEffect)
+{
+   effectname = "powered/turret_light_activate";
+   minDistance = 5.0;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(IBLFireEffect)
+{
+   effectname = "powered/turret_indoor_fire";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
 datablock AudioProfile(IBLSwitchSound)
 {
    filename    = "fx/powered/turret_light_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = IBLSwitchEffect;
 };
 
 datablock AudioProfile(IBLFireSound)
@@ -10,6 +25,7 @@ datablock AudioProfile(IBLFireSound)
    filename    = "fx/powered/turret_indoor_fire.wav";
    description = AudioDefault3d;
    preload = true;
+   effect = IBLFireEffect;
 };
 
 datablock SensorData(DeployedIndoorTurretSensor)

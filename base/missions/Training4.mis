@@ -233,6 +233,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_Pulse_1";
 							locked = "true";
+						AudioEnvironment = BigRoom;
 					};
 					new StaticShape(Team1SensorLargePulse1) {
 						position = "47.9218 143.781 145.73";

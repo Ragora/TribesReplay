@@ -72,18 +72,19 @@ function FlipFlop::playerTouch(%data, %flipflop, %player)
    if(%flipTeam == %client.team)
       return false;
    
+   %teamName = game.getTeamName(%client.team);
    // Let the observers know:
-   messageTeam( 0, 'MsgClaimFlipFlop', '\c2%1 claimed %2 for %3.~wfx/misc/flipflop_taken.wav', %client.name, Game.cleanWord( %flipflop.name ), $TeamName[%client.team] );
+   messageTeam( 0, 'MsgClaimFlipFlop', '\c2%1 claimed %2 for %3.~wfx/misc/flipflop_taken.wav', %client.name, Game.cleanWord( %flipflop.name ), %teamName );
    // Let the teammates know:
-   messageTeam( %client.team, 'MsgClaimFlipFlop', '\c2%1 claimed %2 for %3.~wfx/misc/flipflop_taken.wav', %client.name, Game.cleanWord( %flipflop.name ), $TeamName[%client.team] );
+   messageTeam( %client.team, 'MsgClaimFlipFlop', '\c2%1 claimed %2 for %3.~wfx/misc/flipflop_taken.wav', %client.name, Game.cleanWord( %flipflop.name ), %teamName );
    // Let the other team know:
    %losers = %client.team == 1 ? 2 : 1;
-   messageTeam( %losers, 'MsgClaimFlipFlop', '\c2%1 claimed %2 for %3.~wfx/misc/flipflop_lost.wav', %client.name, Game.cleanWord( %flipflop.name ), $TeamName[%client.team] );
+   messageTeam( %losers, 'MsgClaimFlipFlop', '\c2%1 claimed %2 for %3.~wfx/misc/flipflop_lost.wav', %client.name, Game.cleanWord( %flipflop.name ), %teamName );
 
    logEcho(%client.nameBase@" (pl "@%player@"/cl "@%client@") claimed flipflop "@%flipflop@" for team "@%client.team);
 
    //change the skin on the switch to claiming team's logo
-   setTargetSkin(%flipflop.getTarget(), $teamSkin[%player.team]);
+   setTargetSkin(%flipflop.getTarget(), game.getTeamSkin(%player.team));
    setTargetSensorGroup(%flipflop.getTarget(), %player.team);
 
    // if there is a "projector" associated with this flipflop, put the claiming team's logo there
@@ -93,7 +94,8 @@ function FlipFlop::playerTouch(%data, %flipflop, %player)
       // axe the old projected holo, if one exists
       if(%projector.holo > 0)
          %projector.holo.delete();
-      %newHolo = $holoName[%client.team] @ "Logo";
+          
+      %newHolo = getTaggedString(game.getTeamSkin(%client.team)) @ "Logo";
 
       %projTransform = %projector.getTransform();
       // below two functions are from deployables.cs
@@ -387,6 +389,7 @@ function DefaultGame::equip(%game, %player)
 {
    for(%i =0; %i<$InventoryHudCount; %i++)
       %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
+   %player.client.clearBackpackIcon();
 
    //%player.setArmor("Light");
    %player.setInventory(RepairKit,1);
@@ -583,6 +586,10 @@ function DefaultGame::gameOver( %game )
          messageClient( %client, 'SetScoreHudHeader', "", "" );
          messageClient( %client, 'SetScoreHudSubheader', "", "");
          messageClient( %client, 'ClearHud', "", 'scoreScreen', 0 );
+         
+         // clean up the players' HUDs:
+         %client.setWeaponsHudClearAll();
+         %client.setInventoryHudClearAll();
       }
    }
 
@@ -640,9 +647,9 @@ function DefaultGame::sendDebriefing( %game, %client )
 
       // Mission result:
       if ( %topCount == 1 )
-         messageClient( %client, 'MsgDebriefResult', "", '<just:center>Team %1 wins!', $TeamName[%firstTeam] );
+         messageClient( %client, 'MsgDebriefResult', "", '<just:center>Team %1 wins!', %game.getTeamName(%firstTeam) );
       else if ( %topCount == 2 )
-         messageClient( %client, 'MsgDebriefResult', "", '<just:center>Team %1 and Team %2 tie!', $TeamName[%firstTeam], $TeamName[%secondTeam] );
+         messageClient( %client, 'MsgDebriefResult', "", '<just:center>Team %1 and Team %2 tie!', %game.getTeamName(%firstTeam), %game.getTeamName(%secondTeam) );
       else
          messageClient( %client, 'MsgDebriefResult', "", '<just:center>The mission ended in a tie.' );
 
@@ -654,7 +661,7 @@ function DefaultGame::sendDebriefing( %game, %client )
             %score = 0;
          else
             %score = $TeamScore[%team];
-         messageClient( %client, 'MsgDebriefAddLine', "", '<lmargin:0><clip%%:60> %1</clip><lmargin%%:60><clip%%:40> %2</clip>', $TeamName[%team], %score );
+         messageClient( %client, 'MsgDebriefAddLine', "", '<lmargin:0><clip%%:60> %1</clip><lmargin%%:60><clip%%:40> %2</clip>', %game.getTeamName(%team), %score );
       }
 
       // Player scores:
@@ -680,7 +687,7 @@ function DefaultGame::sendDebriefing( %game, %client )
          %cl = $TeamRank[%highTeam, %count[%highTeam]];
          %score = %cl.score $= "" ? 0 : %cl.score;
          %kills = %cl.kills $= "" ? 0 : %cl.kills;
-         messageClient( %client, 'MsgDebriefAddLine', "", '<lmargin:0><clip%%:40> %1</clip><lmargin%%:40><clip%%:30> %2</clip><lmargin%%:70><clip%%:17> %3</clip><lmargin%%:87><clip%%:13> %4</clip>', %cl.name, $TeamName[%cl.team], %score, %kills );
+         messageClient( %client, 'MsgDebriefAddLine', "", '<lmargin:0><clip%%:40> %1</clip><lmargin%%:40><clip%%:30> %2</clip><lmargin%%:70><clip%%:17> %3</clip><lmargin%%:87><clip%%:13> %4</clip>', %cl.name, %game.getTeamName(%cl.team), %score, %kills );
 
          %count[%highTeam]++;
          %notDone = false;
@@ -983,13 +990,13 @@ function DefaultGame::forceObserver( %game, %client, %reason )
    {
       case "playerChoose":
          %client.camera.getDataBlock().setMode( %client.camera, "observerFly" );
-         messageClient(%client, 'MsgClientJoinTeam', '\c2You have become an observer.', %client.name, $teamName[0], %client, 0 );
+         messageClient(%client, 'MsgClientJoinTeam', '\c2You have become an observer.', %client.name, %game.getTeamName(0), %client, 0 );
          logEcho(%client.nameBase@" (cl "@%client@") entered observer mode");
          %client.lastTeam = %client.team;
       
       case "AdminForce":
          %client.camera.getDataBlock().setMode( %client.camera, "observerFly" );
-         messageClient(%client, 'MsgClientJoinTeam', '\c2You have been forced into observer mode by the admin.', %client.name, $teamName[0], %client, 0 );
+         messageClient(%client, 'MsgClientJoinTeam', '\c2You have been forced into observer mode by the admin.', %client.name, %game.getTeamName(0), %client, 0 );
          logEcho(%client.nameBase@" (cl "@%client@") was forced into observer mode by admin");
          %client.lastTeam = %client.team;
          %adminForce = 1;
@@ -1013,7 +1020,7 @@ function DefaultGame::forceObserver( %game, %client, %reason )
          
       case "spawnTimeout":
          %client.camera.getDataBlock().setMode( %client.camera, "observerTimeout" );
-         messageClient(%client, 'MsgClientJoinTeam', '\c2You have been placed in observer mode due to delay in respawning.', %client.name, $teamName[0], %client, 0 );
+         messageClient(%client, 'MsgClientJoinTeam', '\c2You have been placed in observer mode due to delay in respawning.', %client.name, %game.getTeamName(0), %client, 0 );
          logEcho(%client.nameBase@" (cl "@%client@") was placed in observer mode due to spawn delay");
          // save the team the player was on - only if this was a delay in respawning
          %client.lastTeam = %client.team;
@@ -1036,9 +1043,9 @@ function DefaultGame::forceObserver( %game, %client, %reason )
    
    // message everyone about this event
    if( !%adminForce )
-      messageAllExcept(%client, -1, 'MsgClientJoinTeam', '\c2%1 has become an observer.', %client.name, $teamName[0], %client, 0 );
+      messageAllExcept(%client, -1, 'MsgClientJoinTeam', '\c2%1 has become an observer.', %client.name, %game.getTeamName(0), %client, 0 );
    else
-      messageAllExcept(%client, -1, 'MsgClientJoinTeam', '\c2The admin has forced %1 to become an observer.', %client.name, $teamName[0], %client, 0 );
+      messageAllExcept(%client, -1, 'MsgClientJoinTeam', '\c2The admin has forced %1 to become an observer.', %client.name, %game.getTeamName(0), %client, 0 );
 
    updateCanListenState( %client );
    
@@ -1192,6 +1199,7 @@ function DefaultGame::displayDeathMessages(%game, %clVictim, %clKiller, %damageT
 
 function DefaultGame::assignClientTeam(%game, %client, %respawn )
 {
+//error("DefaultGame::assignClientTeam");
    // this function is overwritten in non-team mission types (e.g. DM)
    // so these lines won't do anything
    //if(!%game.numTeams)
@@ -1246,22 +1254,39 @@ function DefaultGame::assignClientTeam(%game, %client, %respawn )
       }
    }
    else
-      setTargetSkin( %client.target, $teamSkin[%client.team] );
+      setTargetSkin( %client.target, %game.getTeamSkin(%client.team) );
       //setTargetSkin( %client.target, %client.skin );
 
    // might as well standardize the messages
    //messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1%1 joined %2.', %client.name, $teamName[%leastTeam], %client, %leastTeam );
    //messageClient( %client, 'MsgClientJoinTeam', '\c1You joined the %2 team.', $client.name, $teamName[%client.team], %client, %client.team );
-   messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1%1 joined %2.', %client.name, $teamName[%client.team], %client, %client.team );
-   messageClient( %client, 'MsgClientJoinTeam', '\c1You joined the %2 team.', %client.name, $teamName[%client.team], %client, %client.team );
+   messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1%1 joined %2.', %client.name, %game.getTeamName(%client.team), %client, %client.team );
+   messageClient( %client, 'MsgClientJoinTeam', '\c1You joined the %2 team.', %client.name, %game.getTeamName(%client.team), %client, %client.team );
 
    updateCanListenState( %client );
 
    logEcho(%client.nameBase@" (cl "@%client@") joined team "@%client.team);
 }
 
+function DefaultGame::getTeamSkin(%game, %team)
+{
+    //error("DefaultGame::getTeamSkin");
+    %skin = $teamSkin[%team];
+    //error("%skin = " SPC getTaggedString(%skin));
+    return %skin;
+}
+
+function DefaultGame::getTeamName(%game, %team)
+{
+    //error("DefaultGame::getTeamName");
+    %name = $teamName[%team];
+    //error("name = " SPC getTaggedString(%name));
+    return %name;
+}
+
 function DefaultGame::clientJoinTeam( %game, %client, %team, %respawn )
 {
+//error("DefaultGame::clientJoinTeam");
    if ( %team < 1 || %team > %game.numTeams )
       return;
 
@@ -1270,15 +1295,15 @@ function DefaultGame::clientJoinTeam( %game, %client, %team, %respawn )
       
    %client.team = %team;
    %client.lastTeam = %team;
-   setTargetSkin( %client.target, $teamSkin[%team] );
+   setTargetSkin( %client.target, %game.getTeamSkin(%team) );
    setTargetSensorGroup( %client.target, %team );
    %client.setSensorGroup( %team );
 
    // Spawn the player:
    %game.spawnPlayer( %client, %respawn );
 
-   messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1%1 joined %2.', %client.name, $teamName[%team], %client, %team );
-   messageClient( %client, 'MsgClientJoinTeam', '\c1You joined the %2 team.', $client.name, $teamName[%client.team], %client, %client.team );
+   messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1%1 joined %2.', %client.name, %game.getTeamName(%team), %client, %team );
+   messageClient( %client, 'MsgClientJoinTeam', '\c1You joined the %2 team.', $client.name, %game.getTeamName(%client.team), %client, %client.team );
    
    updateCanListenState( %client );
 
@@ -1334,11 +1359,12 @@ function DefaultGame::AIChangeTeam(%game, %client, %newTeam)
       }
    }
    
-   messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1bot %1 has switched to team %2.', %client.name, $teamName[%client.team], %client, %client.team );
+   messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1bot %1 has switched to team %2.', %client.name, %game.getTeamName(%client.team), %client, %client.team );
 }
 
 function DefaultGame::clientChangeTeam(%game, %client, %team, %fromObs)
 {
+//error("DefaultGame::clientChangeTeam");
    //first, remove the client from the team rank array
    //the player will be added to the new team array as soon as he respawns...
    %game.removeFromTeamRankArray(%client);
@@ -1367,7 +1393,7 @@ function DefaultGame::clientChangeTeam(%game, %client, %team, %fromObs)
 
    // Set the client's skin:
    if (!%client.isAIControlled())
-      setTargetSkin( %client.target, $teamSkin[%client.team] );
+      setTargetSkin( %client.target, %game.getTeamSkin(%client.team) );
    setTargetSensorGroup( %client.target, %client.team );
    %client.setSensorGroup( %client.team );
 
@@ -1389,13 +1415,13 @@ function DefaultGame::clientChangeTeam(%game, %client, %team, %fromObs)
 
    if(%fromObs $= "" || !%fromObs)
    {   
-      messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1%1 switched to team %2.', %client.name, $teamName[%client.team], %client, %client.team );
-      messageClient( %client, 'MsgClientJoinTeam', '\c1You switched to team %2.', $client.name, $teamName[%client.team], %client, %client.team );
+      messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1%1 switched to team %2.', %client.name, %game.getTeamName(%client.team), %client, %client.team );
+      messageClient( %client, 'MsgClientJoinTeam', '\c1You switched to team %2.', $client.name, %game.getTeamName(%client.team), %client, %client.team );
    }
    else
    {
-      messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1%1 joined team %2.', %client.name, $teamName[%team], %client, %team );
-      messageClient( %client, 'MsgClientJoinTeam', '\c1You joined team %2.', $client.name, $teamName[%client.team], %client, %client.team );
+      messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1%1 joined team %2.', %client.name, %game.getTeamName(%client.team), %client, %team );
+      messageClient( %client, 'MsgClientJoinTeam', '\c1You joined team %2.', $client.name, %game.getTeamName(%client.team), %client, %client.team );
    }
 
    updateCanListenState( %client );
@@ -1565,7 +1591,7 @@ function DefaultGame::clientMissionDropReady(%game, %client)
    %client.matchStartReady = true;
    echo("Client" SPC %client SPC "is ready.");
    
-   if ( isDemoServer() )
+   if ( isDemo() )
    {
       if ( %client.demoJustJoined )
       {   
@@ -1584,7 +1610,7 @@ function DefaultGame::sendClientTeamList(%game, %client)
       if ( %i > 0 )
          %teamList = %teamList @ "\n";
 
-      %teamList = %teamList @ detag( getTaggedString( $teamName[%i + 1] ) );
+      %teamList = %teamList @ detag( getTaggedString( %game.getTeamName(%i + 1) ) );
    }
    messageClient( %client, 'MsgTeamList', "", %teamCount, %teamList );
 }
@@ -1595,7 +1621,11 @@ function DefaultGame::setupClientHuds(%game, %client)
    for(%i =0; %i<$WeaponsHudCount; %i++)
       %client.setWeaponsHudBitmap(%i, $WeaponsHudData[%i, itemDataName], $WeaponsHudData[%i, bitmapName]);
    for(%i =0; %i<$InventoryHudCount; %i++)
-      %client.setInventoryHudBitmap($InventoryHudData[%i, slot], $InventoryHudData[%i, itemDataName], $InventoryHudData[%i, bitmapName]);
+   {
+      if ( $InventoryHudData[%i, slot] != 0 )
+         %client.setInventoryHudBitmap($InventoryHudData[%i, slot], $InventoryHudData[%i, itemDataName], $InventoryHudData[%i, bitmapName]);
+   }
+   %client.setInventoryHudBitmap( 0, "", "gui/hud_handgren" );
       
    %client.setWeaponsHudBackGroundBmp("gui/hud_new_panel");
    %client.setWeaponsHudHighLightBmp("gui/hud_new_weaponselect");
@@ -1792,8 +1822,12 @@ function SimGroup::setTeam(%this, %team)
       {
          // eeck.. please go away when scripts get cleaned...
          if(%obj.getDataBlock().getName() $= "StationVehiclePad")
+         {
+            %team = %obj.team;
             %obj = %obj.station;
-
+            %obj.team = %team;
+            //%obj.teleporter.team = %team;
+         }
          %target = %obj.getTarget();
          if(%target != -1)
             setTargetSensorGroup(%target, %team);
@@ -1967,12 +2001,6 @@ function listplayers()
    }
 }
 
-function logEcho(%msg)
-{
-	if($LogEchoEnabled)
-		echo("LOG: " @ %msg);
-}
-
 function DefaultGame::clearTeamRankArray(%game, %team)
 {
    %count = $TeamRank[%team, count];
@@ -2041,8 +2069,9 @@ function DefaultGame::removeFromTeamRankArray(%game, %client)
             $TeamRank[%team, %j - 1] = %cl;
             messageClient(%cl, 'MsgYourRankIs', "", %j);
          }
+         $TeamRank[%team, %count - 1] = "";
 
-         //now decriment the team rank array count, and break
+         //now decrement the team rank array count, and break
          $TeamRank[%team, count] = $TeamRank[%team, count] - 1;
          break;
       }
@@ -2412,7 +2441,7 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
    else if ( %client.isAdmin )
       %outrankTarget = !%targetClient.isAdmin;
    
-   if( %client.isSuperAdmin && %targetClient.guid != 0 && !isDemo() && !isDemoServer())
+   if( %client.isSuperAdmin && %targetClient.guid != 0 && !isDemo() )
    {   
       messageClient( %client, 'MsgPlayerPopupItem', "", %key, "addAdmin", "", 'Add to Server Admin List', 10);
       messageClient( %client, 'MsgPlayerPopupItem', "", %key, "addSuperAdmin", "", 'Add to Server SuperAdmin List', 11);
@@ -2441,7 +2470,7 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
    // regular vote options on players
    if ( %game.scheduleVote $= "" && !%isAdmin && !%isTargetAdmin )
    {
-      if ( $Host::allowAdminPlayerVotes && !%isTargetBot && !isDemo() && !isDemoServer())
+      if ( $Host::allowAdminPlayerVotes && !%isTargetBot && !isDemo() )
          messageClient( %client, 'MsgPlayerPopupItem', "", %key, "AdminPlayer", "", 'Vote to Make Admin', 2 );
       
       if ( !%isTargetSelf )
@@ -2452,7 +2481,7 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
 
 
    // Admin only options on players:
-   else if ( %isAdmin && !isDemo() && !isDemoServer())
+   else if ( %isAdmin && !isDemo() )
    {
       if ( !%isTargetBot && !%isTargetAdmin )
          messageClient( %client, 'MsgPlayerPopupItem', "", %key, "AdminPlayer", "", 'Make Admin', 2 );
@@ -2479,8 +2508,8 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
             if ( %isTargetObserver )
             {
                %action = %isTargetSelf ? "Join " : "Change to ";
-               %str1 = %action @ getTaggedString( $TeamName[1] );      
-               %str2 = %action @ getTaggedString( $TeamName[2] );      
+               %str1 = %action @ getTaggedString( %game.getTeamName(1) );      
+               %str2 = %action @ getTaggedString( %game.getTeamName(2) );      
             
                messageClient( %client, 'MsgPlayerPopupItem', "", %key, "ChangeTeam", "", %str1, 6 );
                messageClient( %client, 'MsgPlayerPopupItem', "", %key, "ChangeTeam", "", %str2, 7 );
@@ -2488,7 +2517,7 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
             else
             {
                %changeTo = %targetClient.team == 1 ? 2 : 1;   
-               %str = "Switch to " @ getTaggedString( $TeamName[%changeTo] );
+               %str = "Switch to " @ getTaggedString( %game.getTeamName(%changeTo) );
                %caseId = 5 + %changeTo;      
             
                messageClient( %client, 'MsgPlayerPopupItem', "", %key, "ChangeTeam", "", %str, %caseId );
@@ -2534,7 +2563,7 @@ function DefaultGame::sendGameVoteMenu( %game, %client, %key )
    if( !%client.canVote && !%isAdmin )
       return;
 
-   if (isDemo() || isDemoServer())
+   if (isDemo())
       return;
    
    if ( %game.scheduleVote $= "" )
@@ -2612,7 +2641,7 @@ function DefaultGame::sendGameTeamList( %game, %client, %key )
    }
 
    for ( %team = 1; %team - 1 < %teamCount; %team++ )
-      messageClient( %client, 'MsgVoteItem', "", %key, %team, "", detag( getTaggedString( $teamName[%team] ) ) );
+      messageClient( %client, 'MsgVoteItem', "", %key, %team, "", detag( getTaggedString( %game.getTeamName(%team) ) ) );
 }
 
 //------------------------------------------------------------------------------
@@ -2625,7 +2654,7 @@ function DefaultGame::sendTimeLimitList( %game, %client, %key )
    messageClient( %client, 'MsgVoteItem', "", %key, 30, "", '30 minutes' );
    messageClient( %client, 'MsgVoteItem', "", %key, 45, "", '45 minutes' );
    messageClient( %client, 'MsgVoteItem', "", %key, 60, "", '60 minutes' );
-   messageClient( %client, 'MsgVoteItem', "", %key, 999, "", 'No time limit' );
+   messageClient( %client, 'MsgVoteItem', "", %key, 200, "", 'No time limit' );
 }
 
 //------------------------------------------------------------------------------
@@ -2874,10 +2903,15 @@ function DefaultGame::voteFFAMode( %game, %admin, %client )
 //------------------------------------------------------------------------------
 function DefaultGame::voteChangeTimeLimit( %game, %admin, %newLimit )
 {
+   if( %newLimit == 999 )
+      %display = "unlimited";
+   else
+      %display = %newLimit;
+      
    %cause = "";
    if ( %admin )
    {
-      messageAll( 'MsgAdminForce', '\c2The Admin changed the mission time limit to %1 minutes.', %newLimit );
+      messageAll( 'MsgAdminForce', '\c2The Admin changed the mission time limit to %1 minutes.', %display );
       $Host::TimeLimit = %newLimit;
       %cause = "(admin)";
    }
@@ -2886,7 +2920,7 @@ function DefaultGame::voteChangeTimeLimit( %game, %admin, %newLimit )
       %totalVotes = %game.totalVotesFor + %game.totalVotesAgainst;
       if(%totalVotes > 0 && (%game.totalVotesFor / (ClientGroup.getCount() - $HostGameBotCount)) > ($Host::VotePasspercent / 100)) 
       {
-         messageAll('MsgVotePassed', '\c2The mission time limit was set to %1 minutes by vote.', %newLimit);   
+         messageAll('MsgVotePassed', '\c2The mission time limit was set to %1 minutes by vote.', %display);   
          $Host::TimeLimit = %newLimit;
          %cause = "(vote)";
       }
@@ -2897,7 +2931,7 @@ function DefaultGame::voteChangeTimeLimit( %game, %admin, %newLimit )
    //if the time limit was actually changed...
    if(%cause !$= "")
    {
-      logEcho("time limit set to "@%newLimit SPC %cause);
+      logEcho("time limit set to "@%display SPC %cause);
 
       //if the match has been started, reset the end of match countdown
       if ($matchStarted)
@@ -2905,9 +2939,10 @@ function DefaultGame::voteChangeTimeLimit( %game, %admin, %newLimit )
          //schedule the end of match countdown
          %elapsedTimeMS = getSimTime() - $missionStartTime;
          %curTimeLeftMS = ($Host::TimeLimit * 60 * 1000) - %elapsedTimeMS;
-			//error("time limit="@$Host::TimeLimit@", elapsed="@(%elapsedTimeMS / 60000)@", curtimeleftms="@%curTimeLeftMS);
+			error("time limit="@$Host::TimeLimit@", elapsed="@(%elapsedTimeMS / 60000)@", curtimeleftms="@%curTimeLeftMS);
          CancelEndCountdown();
          EndCountdown(%curTimeLeftMS);
+         cancel(%game.timeSync);
          %game.checkTimeLimit(true);
       }
    }
@@ -2952,7 +2987,7 @@ function DefaultGame::voteKickPlayer(%game, %admin, %client)
    }
    else 
    {
-      //%team = %client.team;
+      %team = %client.team;
       %totalVotes = %game.votesFor[%game.kickTeam] + %game.votesAgainst[%game.kickTeam];
       if(%totalVotes > 0 && (%game.votesFor[%game.kickTeam] / %totalVotes) > ($Host::VotePasspercent / 100)) 
       {
@@ -2960,7 +2995,15 @@ function DefaultGame::voteKickPlayer(%game, %admin, %client)
          %cause = "(vote)";
       }
       else
-         messageAll('MsgVoteFailed', '\c2Kick player vote did not pass');
+      {   
+         for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ ) 
+         {
+            %cl = ClientGroup.getObject( %idx );
+
+            if (%cl.team == %game.kickTeam && !%cl.isAIControlled())
+               messageClient( %cl, 'MsgVoteFailed', '\c2Kick player vote did not pass' ); 
+         }
+      }
    }
    
    %game.kickTeam = "";
@@ -3021,8 +3064,13 @@ function DefaultGame::processGameLink(%game, %client, %arg1, %arg2, %arg3, %arg4
    if ((%client.team == 0) && isObject(%targetClient) && (%targetClient.team != 0))
    {
       %prevObsClient = %client.observeClient;
+      
+      // update the observer list for this client
+      observerFollowUpdate( %client, %targetClient, %prevObsClient !$= "" );
+      
       serverCmdObserveClient(%client, %targetClient);
       displayObserverHud(%client, %targetClient);
+      
       if (%targetClient != %prevObsClient)
       {
          messageClient(%targetClient, 'Observer', '\c1%1 is now observing you.', %client.name);  
@@ -3039,7 +3087,7 @@ function DefaultGame::updateScoreHud(%game, %client, %tag)
    {
       // Send header:
       messageClient( %client, 'SetScoreHudHeader', "", '<tab:15,315>\t%1<rmargin:260><just:right>%2<rmargin:560><just:left>\t%3<just:right>%4', 
-            $TeamName[1], $TeamScore[1], $TeamName[2], $TeamScore[2] );
+            %game.getTeamName(1), $TeamScore[1], %game.getTeamName(2), $TeamScore[2] );
 
       // Send subheader:
       messageClient( %client, 'SetScoreHudSubheader', "", '<tab:15,315>\tPLAYERS (%1)<rmargin:260><just:right>SCORE<rmargin:560><just:left>\tPLAYERS (%2)<just:right>SCORE',
@@ -3048,27 +3096,46 @@ function DefaultGame::updateScoreHud(%game, %client, %tag)
       %index = 0;
       while ( true )
       {
-         if ( %index >= $TeamRank[1, count] && %index >= $TeamRank[2, count] )
+         if ( %index >= $TeamRank[1, count]+2 && %index >= $TeamRank[2, count]+2 )
             break;
 
          //get the team1 client info
          %team1Client = "";
          %team1ClientScore = "";
+         %col1Style = "";
          if ( %index < $TeamRank[1, count] )
          {
             %team1Client = $TeamRank[1, %index];
             %team1ClientScore = %team1Client.score $= "" ? 0 : %team1Client.score;
             %col1Style = %team1Client == %client ? "<color:dcdcdc>" : "";
+            %team1playersTotalScore += %team1Client.score;
          }
-
+         else if( %index == $teamRank[1, count] && $teamRank[1, count] != 0 && !isDemo() && %game.class $= "CTFGame")
+         {
+            %team1ClientScore = "--------------";
+         }
+         else if( %index == $teamRank[1, count]+1 && $teamRank[1, count] != 0 && !isDemo() && %game.class $= "CTFGame")
+         {
+            %team1ClientScore = %team1playersTotalScore != 0 ? %team1playersTotalScore : 0;
+         }
          //get the team2 client info
          %team2Client = "";
          %team2ClientScore = "";
+         %col2Style = "";
          if ( %index < $TeamRank[2, count] )
          {
             %team2Client = $TeamRank[2, %index];
             %team2ClientScore = %team2Client.score $= "" ? 0 : %team2Client.score;
             %col2Style = %team2Client == %client ? "<color:dcdcdc>" : "";
+            %team2playersTotalScore += %team2Client.score;
+         }
+         else if( %index == $teamRank[2, count] && $teamRank[2, count] != 0 && !isDemo() && %game.class $= "CTFGame")
+         {
+            %team2ClientScore = "--------------";
+         }
+         else if( %index == $teamRank[2, count]+1 && $teamRank[2, count] != 0 && !isDemo() && %game.class $= "CTFGame")
+         {
+            %team2ClientScore = %team2playersTotalScore != 0 ? %team2playersTotalScore : 0;
          }
 
          //if the client is not an observer, send the message
@@ -3276,7 +3343,7 @@ function DefaultGame::getServerStatusString(%game)
    for ( %team = 1; %team - 1 < %game.numTeams; %team++ )
    {
       %score = isObject( $teamScore[%team] ) ? $teamScore[%team] : 0;
-      %teamStr = getTaggedString( $teamName[%team] ) TAB %score;
+      %teamStr = getTaggedString( %game.getTeamName(%team) ) TAB %score;
       %status = %status NL %teamStr;
    }
 
@@ -3285,7 +3352,7 @@ function DefaultGame::getServerStatusString(%game)
    {
       %cl = ClientGroup.getObject( %i );
       %score = %cl.score $= "" ? 0 : %cl.score;
-      %playerStr = getTaggedString( %cl.name ) TAB getTaggedString( $teamName[%cl.team] ) TAB %score;
+      %playerStr = getTaggedString( %cl.name ) TAB getTaggedString( %game.getTeamName(%cl.team) ) TAB %score;
       %status = %status NL %playerStr;
    }
    return( %status );
@@ -3297,3 +3364,7 @@ function DefaultGame::OptionsDlgSleep( %game )
    // ignore in the default game...
 }
 
+//------------------------------------------------------------------------------
+function DefaultGame::endMission( %game )
+{
+}

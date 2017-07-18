@@ -145,6 +145,16 @@ function toggleScoreScreen(%val)
 		messageClient($player, 0, $player.miscMsg[noScoreScreen]);
 }
 
+function toggleNetDisplayHud( %val )
+{
+   // Hello, McFly?  This is training!  There's no net in training!
+}
+
+function voiceCapture( %val )
+{
+   // Uh, who do you think you are talking to?
+}
+
 function singlePlayerGame::pickTeamSpawn(%game, %client)
 {
 	if(%client.team == $player.team)
@@ -560,6 +570,7 @@ function SinglePlayerGame::equip(%game, %player, %set)
 
 	for(%i =0; %i<$InventoryHudCount; %i++)
 	  %player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
+   %player.client.clearBackpackIcon();
 
 	//error("equping Player "@%player@" with set"@%set);
 	switch (%set)

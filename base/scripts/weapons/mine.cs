@@ -307,7 +307,7 @@ datablock ItemData(MineDeployed)
    maxDamage = 0.2;
    explosion = MineExplosion;
    underwaterExplosion = UnderwaterMineExplosion;
-   indirectDamage = 0.6;
+   indirectDamage = 0.55;
    damageRadius = 6.0;
    radiusDamageType = $DamageType::Mine;
    kickBackStrength = 1500;
@@ -326,7 +326,7 @@ datablock ItemData(Mine)
 {     
    className = HandInventory;
    catagory = "Handheld";
-   shapeFile = "mine.dts";
+   shapeFile = "ammo_mine.dts";
    mass = 1;
    elasticity = 0.2;
    friction = 0.7;

@@ -507,6 +507,7 @@ function buyFavorites(%client)
    %client.player.setDamageLevel(%curDmgPct * %newArmor.maxDamage);
    %weaponCount = 0;
    
+
    // weapons
    for(%i = 0; %i < getFieldCount( %client.weaponIndex ); %i++)
    {
@@ -565,7 +566,12 @@ function buyFavorites(%client)
 
    // grenades
    for ( %i = 0; %i < getFieldCount( %client.grenadeIndex ); %i++ )
-      %client.player.setInventory( $NameToInv[%client.favorites[getField( %client.grenadeIndex,%i )]], 30 );
+   {
+      if ( !($InvBanList[%cmt, $NameToInv[%client.favorites[getField( %client.grenadeIndex, %i )]]]) )
+        %client.player.setInventory( $NameToInv[%client.favorites[getField( %client.grenadeIndex,%i )]], 30 );
+   }
+      
+    %client.player.lastGrenade = $NameToInv[%client.favorites[getField( %client.grenadeIndex,%i )]];
 
    // if player is buying cameras, show how many are already deployed
    if(%client.favorites[%client.grenadeIndex] $= "Deployable Camera")
@@ -640,8 +646,10 @@ function buyDeployableFavorites(%client)
    for ( %i = 0; %i < getFieldCount( %client.grenadeIndex ); %i++)
    {   
       %GInv = $NameToInv[%client.favorites[getField( %client.grenadeIndex, %i )]];
+      %client.player.lastGrenade = %GInv;
       if ( !($InvBanList[DeployInv, %GInv]) )
          %player.setInventory( %GInv, 30 );
+        
    }
 
    // if player is buying cameras, show how many are already deployed
@@ -705,6 +713,81 @@ function buyDeployableFavorites(%client)
    if(%packChoice $= "AmmoPack")
       invAmmoPackPass(%client);
 }
+
+//-------------------------------------------------------------------------------------
+function getAmmoStationLovin(%client)
+{
+    //error("Much ammo station lovin applied");
+    %cmt = $CurrentMissionType;
+    
+    // weapons
+    for(%i = 0; %i < %client.player.weaponSlotCount; %i++)
+    {
+        %weapon = %client.player.weaponSlot[%i];
+        switch$ ( %weapon )
+        {
+            case Plasma:
+                %client.player.setInventory( PlasmaAmmo, 400 );  
+            case Disc:
+                %client.player.setInventory( DiscAmmo, 400 );
+            case GrenadeLauncher:
+                %client.player.setInventory( GrenadeLauncherAmmo, 400 );
+            case Mortar:
+                %client.player.setInventory( MortarAmmo, 400 );
+            case MissileLauncher:
+                %client.player.setInventory( MissileLauncherAmmo, 400 );
+            case Chaingun:
+                %client.player.setInventory( ChaingunAmmo, 400 );
+        }
+    }
+    
+    // miscellaneous stuff -- Repair Kit, Beacons, Targeting Laser
+    if ( !($InvBanList[%cmt, RepairKit]) )
+        %client.player.setInventory( RepairKit, 1 );
+    if ( !($InvBanList[%cmt, Beacon]) )
+        %client.player.setInventory( Beacon, 400 );
+    if ( !($InvBanList[%cmt, TargetingLaser]) )
+        %client.player.setInventory( TargetingLaser, 1 );
+    // Do we want to allow mines?  Ammo stations in T1 didnt dispense mines.
+//     if ( !($InvBanList[%cmt, Mine]) )
+//         %client.player.setInventory( Mine, 400 );
+    
+    // grenades
+    // we need to get rid of any grenades the player may have picked up
+    %client.player.setInventory( Grenade, 0 );
+    %client.player.setInventory( ConcussionGrenade, 0 );
+    %client.player.setInventory( CameraGrenade, 0 );
+    %client.player.setInventory( FlashGrenade, 0 );
+    %client.player.setInventory( FlareGrenade, 0 );
+    
+    // player should get the last type they purchased
+    %grenType = %client.player.lastGrenade;
+    
+    // if the player hasnt been to a station they get regular grenades
+    if(%grenType $= "")
+    {
+        //error("no gren type, using default...");
+        %grenType = Grenade;
+    } 
+    if ( !($InvBanList[%cmt, %grenType]) )
+        %client.player.setInventory( %grenType, 30 );
+
+    // if player is buying cameras, show how many are already deployed
+    if(%grenType $= "Deployable Camera")
+    {
+        %maxDep = $TeamDeployableMax[DeployedCamera];
+        %depSoFar = $TeamDeployedCount[%client.player.team, DeployedCamera];
+        if(Game.numTeams > 1)
+            %msTxt = "Your team has "@%depSoFar@" of "@%maxDep@" Deployable Cameras placed.";
+        else
+            %msTxt = "You have placed "@%depSoFar@" of "@%maxDep@" Deployable Cameras.";
+        messageClient(%client, 'MsgTeamDepObjCount', %msTxt);
+    }
+
+    if( %client.player.getMountedImage($BackpackSlot) $= "AmmoPack" )
+        invAmmoPackPass(%client);
+}
+
 
 function invAmmoPackPass(%client)
 {
@@ -944,10 +1027,10 @@ function getArmorDatablock(%client, %size)
 //------------------------------------------------------------------------------
 function InventoryScreen::onWake(%this)
 {
-   if ( $HudHandle['inventoryScreen'] !$= "" )
-      alxStop( $HudHandle['inventoryScreen'] );
+   if ( $HudHandle[inventoryScreen] !$= "" )
+      alxStop( $HudHandle[inventoryScreen] );
    alxPlay(HudInventoryActivateSound, 0, 0, 0);
-   $HudHandle['inventoryScreen'] = alxPlay(HudInventoryHumSound, 0, 0, 0);
+   $HudHandle[inventoryScreen] = alxPlay(HudInventoryHumSound, 0, 0, 0);
 
    if ( isObject( hudMap ) )
    {
@@ -966,9 +1049,9 @@ function InventoryScreen::onSleep()
 {
    hudMap.pop();
    hudMap.delete();   
-   alxStop($HudHandle['inventoryScreen']);
+   alxStop($HudHandle[inventoryScreen]);
    alxPlay(HudInventoryDeactivateSound, 0, 0, 0);
-   $HudHandle['inventoryScreen'] = "";
+   $HudHandle[inventoryScreen] = "";
 }
 
 //------------------------------------------------------------------------------

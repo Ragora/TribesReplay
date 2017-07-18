@@ -4,12 +4,26 @@
 //**************************************************************
 // SOUNDS
 //**************************************************************
+datablock EffectProfile(MPBEngineEffect)
+{
+   effectname = "vehicles/mpb_thrust";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(MPBThrustEffect)
+{
+   effectname = "vehicles/mpb_boost";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
 
 datablock AudioProfile(MPBEngineSound)
 {
    filename    = "fx/vehicles/mpb_thrust.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = MPBEngineEffect;
 };
 
 datablock AudioProfile(MPBThrustSound)
@@ -17,6 +31,7 @@ datablock AudioProfile(MPBThrustSound)
    filename    = "fx/vehicles/mpb_boost.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = MPBThrustEffect;
 };
 
 datablock AudioProfile(MobileBaseDeploySound)
@@ -193,7 +208,7 @@ datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
    squeelSound = AssaultVehicleSkid;
    softImpactSound = GravSoftImpactSound;
    hardImpactSound = HardImpactSound;
-   wheelImpactSound = WheelImpactSound;
+   //wheelImpactSound = WheelImpactSound;
 
    //
    softSplashSoundVelocity = 5.0; 

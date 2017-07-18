@@ -205,14 +205,13 @@ function Editor::close(%this)
       
    if(%this.prevResolution $= "")
       %this.prevResolution = getResolution();
-   if(%this.prevContent == -1 || %this.prevContent == "")
+   if(%this.prevContent == -1 || %this.prevContent $= "")
       %this.prevContent = "PlayGui";
 
    Canvas.setContent(%this.prevContent);
 
    //jff: hangs when switching resolutions
    //   setResolution(getWord(%this.prevResolution, 0), getWord(%this.prevResolution, 1));
-   closeMessageHud();
 }
 
 //------------------------------------------------------------------------------

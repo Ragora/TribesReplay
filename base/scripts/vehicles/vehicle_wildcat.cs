@@ -4,6 +4,19 @@
 //**************************************************************
 // SOUNDS
 //**************************************************************
+datablock EffectProfile(ScoutEngineEffect)
+{
+   effectname = "vehicles/outrider_engine";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(ScoutThrustEffect)
+{
+   effectname = "vehicles/outrider_boost";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
 
 datablock AudioProfile(ScoutSqueelSound)
 {
@@ -18,6 +31,7 @@ datablock AudioProfile(ScoutEngineSound)
    filename    = "fx/vehicles/outrider_engine.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = ScoutEngineEffect;
 };
 
 datablock AudioProfile(ScoutThrustSound)
@@ -25,6 +39,7 @@ datablock AudioProfile(ScoutThrustSound)
    filename    = "fx/vehicles/outrider_boost.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = ScoutThrustEffect;
 };
 
 //**************************************************************
@@ -120,7 +135,7 @@ datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
    vertFactor           = 0.0;
    floatingThrustFactor = 0.35;
 
-   mainThrustForce    = 25;
+   mainThrustForce    = 30;
    reverseThrustForce = 10;
    strafeThrustForce  = 8;
    turboFactor        = 1.5;
@@ -129,14 +144,14 @@ datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
    brakingActivationSpeed = 4;
 
    stabLenMin = 2.25;
-   stabLenMax = 3.25;
+   stabLenMax = 3.75;
    stabSpringConstant  = 30;
-   stabDampingConstant = 12;
+   stabDampingConstant = 16;
 
    gyroDrag = 16;
    normalForce = 30;
    restorativeForce = 20;
-   steeringForce = 25;
+   steeringForce = 30;
    rollForce  = 15;
    pitchForce = 7;
 
@@ -153,7 +168,7 @@ datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
    floatSound       = ScoutThrustSound;
    softImpactSound  = GravSoftImpactSound;
    hardImpactSound  = HardImpactSound;
-   wheelImpactSound = WheelImpactSound;
+   //wheelImpactSound = WheelImpactSound;
 
    //
    softSplashSoundVelocity = 10.0; 

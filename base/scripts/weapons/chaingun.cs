@@ -9,30 +9,35 @@ datablock EffectProfile(ChaingunSwitchEffect)
 {
    effectname = "weapons/chaingun_activate";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(ChaingunFireEffect)
 {
    effectname = "weapons/chaingun_fire";
-   minDistance = 4.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(ChaingunSpinUpEffect)
 {
    effectname = "weapons/chaingun_spinup";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(ChaingunSpinDownEffect)
 {
    effectname = "weapons/chaingun_spindown";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(ChaingunDryFire)
 {
    effectname = "weapons/chaingun_dryfire";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 //--------------------------------------------------------------------------
@@ -516,8 +521,8 @@ datablock TracerProjectileData(ScoutChaingunBullet)
    dryVelocity       = 425.0;
    wetVelocity       = 100.0;
    velInheritFactor  = 1.0;
-   fizzleTimeMS      = 3000;
-   lifetimeMS        = 3000;
+   fizzleTimeMS      = 1000;
+   lifetimeMS        = 1000;
    explodeOnDeath    = false;
    reflectOnWaterImpactAngle = 0.0;
    explodeOnWaterImpact      = false;

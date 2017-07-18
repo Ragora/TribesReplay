@@ -1,18 +1,34 @@
 // ------------------------------------------------------------------------
 // grenade (thrown by hand) script
 // ------------------------------------------------------------------------
+datablock EffectProfile(GrenadeThrowEffect)
+{
+   effectname = "weapons/grenade_throw";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
+
+datablock EffectProfile(GrenadeSwitchEffect)
+{
+   effectname = "weapons/generic_switch";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
+
 datablock AudioProfile(GrenadeThrowSound)
 {
 	filename = "fx/weapons/throw_grenade.wav";
 	description = AudioClose3D;
-    preload = true;
+   preload = true;
+	effect = GrenadeThrowEffect;
 };
 
 datablock AudioProfile(GrenadeSwitchSound)
 {
 	filename = "fx/weapons/generic_switch.wav";
 	description = AudioClosest3D;
-    preload = true;
+   preload = true;
+	effect = GrenadeSwitchEffect;
 };
 
 //**************************************************************************

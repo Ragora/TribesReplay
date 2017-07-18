@@ -8,31 +8,36 @@
 datablock EffectProfile(DiscFireEffect)
 {
    effectname = "weapons/spinfusor_fire";
-   MinDistance = 4.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(DiscSwitchEffect)
 {
    effectname = "weapons/spinfusor_activate";
-   MinDistance = 2.5;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(DiscDryFireEffect)
 {
    effectname = "weapons/spinfusor_dryfire";
-   MinDistance = 2.5;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(DiscIdleEffect)
 {
    effectname = "weapons/spinfusor_idle";
-   MinDistance = 2.5;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(DiscReloadEffect)
 {
    effectname = "weapons/spinfusor_reload";
-   MinDistance = 2.5;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(DiscExpEffect)
@@ -401,19 +406,6 @@ datablock ItemData(DiscAmmo)
 //--------------------------------------------------------------------------
 // Weapon
 //--------------------------------------
-datablock ItemData(Disc)
-{
-   className = Weapon;
-   catagory = "Spawn Items";
-   shapeFile = "weapon_disc.dts";
-   image = DiscImage;
-   mass = 1;
-   elasticity = 0.2;
-   friction = 0.6;
-   pickupRadius = 2;
-	pickUpName = "a spinfusor";
-   emap = true;
-};
 
 datablock ShapeBaseImageData(DiscImage)
 {
@@ -423,6 +415,8 @@ datablock ShapeBaseImageData(DiscImage)
    ammo = DiscAmmo;
    offset = "0 0 0";
    emap = true;
+
+   projectileSpread = 1.0 / 1000.0;
 
    projectile = DiscProjectile;
    projectileType = LinearProjectile;
@@ -472,4 +466,18 @@ datablock ShapeBaseImageData(DiscImage)
    stateTimeoutValue[6]             = 1.0;
    stateTransitionOnTimeout[6]      = "NoAmmo";
 
+};
+
+datablock ItemData(Disc)
+{
+   className = Weapon;
+   catagory = "Spawn Items";
+   shapeFile = "weapon_disc.dts";
+   image = DiscImage;
+   mass = 1;
+   elasticity = 0.2;
+   friction = 0.6;
+   pickupRadius = 2;
+	pickUpName = "a spinfusor";
+   emap = true;
 };

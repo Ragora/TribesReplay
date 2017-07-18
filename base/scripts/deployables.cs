@@ -38,6 +38,37 @@ $NotDeployableReason::InventoryTooClose         =  11;
 $MinDeployableDistance                       =  2.5;
 $MaxDeployableDistance                       =  5.0;  //meters from body
 
+// --------------------------------------------
+// effect datablocks
+// --------------------------------------------
+
+datablock EffectProfile(TurretDeployEffect)
+{
+   effectname = "packs/generic_deploy";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(SensorDeployEffect)
+{
+   effectname = "powered/sensor_activate";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(MotionSensorDeployEffect)
+{
+   effectname = "powered/motion_sensor_activate";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(StationDeployEffect)
+{
+   effectname = "packs/inventory_deploy";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
 
 // --------------------------------------------
 // sound datablocks
@@ -48,6 +79,7 @@ datablock AudioProfile(TurretDeploySound)
    fileName = "fx/packs/turret_place.wav";
    description = AudioClose3d;
    preload = true;
+   effect = TurretDeployEffect;
 };
 
 datablock AudioProfile(SensorDeploySound)
@@ -55,6 +87,8 @@ datablock AudioProfile(SensorDeploySound)
    fileName = "fx/powered/sensor_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = SensorDeployEffect;
+   effect = MotionSensorDeployEffect;
 };
 
 datablock AudioProfile(MotionSensorDeploySound)
@@ -69,6 +103,7 @@ datablock AudioProfile(StationDeploySound)
    fileName = "fx/packs/inventory_deploy.wav";
    description = AudioClose3d;
    preload = true;
+   effect = StationDeployEffect;
 };
 
 // --------------------------------------------
@@ -562,12 +597,13 @@ function ShapeBaseImageData::testSelfTooClose(%item, %plyr)
 //-------------------------------------------------
 function ShapeBaseImageData::testObjectTooClose(%item)
 {
-   InitContainerRadiusSearch( %item.surfacePt, $MinDeployDistance,
-               $TypeMasks::VehicleObjectType     | $TypeMasks::MoveableObjectType   |
-               $TypeMasks::StaticShapeObjectType | $TypeMasks::StaticTSObjectType   | 
+   %mask =    ($TypeMasks::VehicleObjectType     | $TypeMasks::MoveableObjectType   |
+               $TypeMasks::StaticShapeObjectType |
                $TypeMasks::ForceFieldObjectType  | $TypeMasks::ItemObjectType       | 
                $TypeMasks::PlayerObjectType      | $TypeMasks::TurretObjectType);
-
+ 
+   InitContainerRadiusSearch( %item.surfacePt, $MinDeployDistance, %mask );
+               
    %test = containerSearchNext();
    return %test;
 }

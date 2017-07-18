@@ -18,7 +18,7 @@ function GameGui::onWake( %this )
 {
    Canvas.pushDialog( LaunchToolbarDlg );
 
-	if ( isDemo() || isDemoServer() || $PlayingOnline )
+	if ( isDemo() || $PlayingOnline )
    	GM_Frame.setTitle( "GAME" );
 	else
    	GM_Frame.setTitle( "LAN GAME" );
@@ -29,12 +29,8 @@ function GameGui::onWake( %this )
       if ( isDemo() )
       {
          GM_TabView.addTab( 1, "JOIN" );
-         %this.pane = "Join";
-      }
-      else if ( isDemoServer() )
-      {
          GM_TabView.addTab( 2, "HOST" );
-         %this.pane = "Host";
+         %this.pane = "Join";
       }
 		else
 		{
@@ -125,7 +121,7 @@ function GM_JoinPane::onActivate( %this )
       GMJ_StopBtn.setActive( false );
 
       %this.onceOnly = 1;
-		if ( isDemo() || isDemoServer() )
+		if ( isDemo() )
 			GMJ_Browser.lastQuery = "Demo";
 		else
       	GMJ_Browser.lastQuery = $PlayingOnline ? "Master" : "LanServers";
@@ -207,6 +203,9 @@ if ( !isDemo() )
 	$BrowserColumnRange[10] = "25 200";
 	$BrowserColumnCount++;
 }
+$BrowserColumnName[11] = "Visibility";
+$BrowserColumnRange[11] = "25 120";
+$BrowserColumnCount++;
 
 //------------------------------------------------------------------------------
 function GMJ_Browser::onAdd( %this )
@@ -747,13 +746,16 @@ function GM_HostPane::onActivate( %this )
    $HostGameType = $PlayingOnline ? "Online" : "LAN";
    
    buildMissionTypePopup( GMH_MissionType );
-   GMH_BotMinSlider.setValue( $Host::MinBotDifficulty );
-   GMH_BotMaxSlider.setValue( $Host::MaxBotDifficulty );
-   GMH_BotsEnabledTgl.setValue( $Host::BotsEnabled );
-   GMH_BotsEnabledTgl.onAction();
+   if ( !isDemo() )
+   {
+      GMH_BotMinSlider.setValue( $Host::MinBotDifficulty );
+      GMH_BotMaxSlider.setValue( $Host::MaxBotDifficulty );
+      GMH_BotsEnabledTgl.setValue( $Host::BotsEnabled );
+      GMH_BotsEnabledTgl.onAction();
 
-	//clamp and set the bot count slider
-	setBotCountSlider();
+	   //clamp and set the bot count slider
+	   setBotCountSlider();
+   }
 
    // Select the saved-off prefs:
    if ( $Host::MissionType !$= "" )
@@ -992,22 +994,25 @@ function GMH_MissionType::onSelect( %this, %id, %text )
    GMH_MissionList.setSelectedById( %lastAdded );
    $Host::MissionType = $HostTypeName[%id];
 
-   // Disable all non bot-enabled maps if bots are enabled:
-   if ( GMH_BotsEnabledTgl.getValue() )
-      GMH_BotsEnabledTgl.onAction();
+   if ( !isDemo() )
+   {
+      // Disable all non bot-enabled maps if bots are enabled:
+      if ( GMH_BotsEnabledTgl.getValue() )
+         GMH_BotsEnabledTgl.onAction();
+   }   
 }
 
 //------------------------------------------------------------------------------
 function GMH_MissionList::onSelect( %this, %id, %text )
 {
-   if ( GMH_BotsEnabledTgl.getValue() )
+   if ( !isDemo() && GMH_BotsEnabledTgl.getValue() )
       GMH_StartGameBtn.setActive( $BotEnabled[%id] );
 }
 
 //------------------------------------------------------------------------------
 function tryToStartHostedGame()
 {
-   if ( GMH_BotsEnabledTgl.getValue() )
+   if ( !isDemo() && GMH_BotsEnabledTgl.getValue() )
    {
       %selId = GMH_MissionList.getSelectedId();
       if ( !$BotEnabled[%selId] )
@@ -1023,7 +1028,7 @@ function StartHostedGame()
    %selId = GMH_MissionList.getSelectedId();
    %misFile = $HostMissionFile[%selId];
 
-   if ( $Host::BotsEnabled )
+   if ( !isDemo() && $Host::BotsEnabled )
 	{
 		validateMaxPlayers();
       $HostGameBotCount = $Host::BotCount;
@@ -1071,7 +1076,10 @@ function StartHostedGame()
 //------------------------------------------------------------------------------
 function tryToLaunchDedicatedServer( %pure )
 {
-   %numBots = $Host::BotsEnabled ? $Host::BotCount : 0;
+   if ( isDemo() )
+      %numBots = 0;
+   else   
+      %numBots = $Host::BotsEnabled ? $Host::BotCount : 0;
    if ( launchDedicatedServer( $Host::MissionType, $Host::Map, %numBots, %pure ) )
       quit();
    else
@@ -1170,8 +1178,11 @@ function validateMaxPlayers()
 	//reset the value back into the TE
 	GMH_MaxPlayersTE.setValue(%maxPlayers);
 
-	//and make sure the bot sliders reflect the changes..
-	setBotCountSlider();
+   if ( !isDemo() )
+   {
+	   //and make sure the bot sliders reflect the changes..
+	   setBotCountSlider();
+   }
 }
 
 function setBotCountSlider()
@@ -1207,8 +1218,13 @@ function AdvancedHostDlg::onWake( %this )
 {
    // Set all of the controls to the current pref states:
    AH_HostPort.setText( $Host::Port );
+   if ( $Host::HiVisibility )
+      AH_HiVisibilityRdo.setValue( true );
+   else
+      AH_HiFPSRdo.setValue( true );   
    AH_DedicatedTgl.setValue( $Host::Dedicated );
    AH_DedicatedTgl.onAction();
+   AH_TeamDamageTgl.setValue( $Host::TeamDamageOn );
    AH_TournamentTgl.setValue( $Host::TournamentMode );
    AH_AdminVoteTgl.setValue( $Host::allowAdminPlayerVotes );
    AH_AllowSmurfTgl.setValue( !$Host::NoSmurfs );
@@ -1226,9 +1242,11 @@ function AdvancedHostDlg::accept( %this )
 {
    // Apply all of the changes:
    $Host::Port = AH_HostPort.getValue();
+   $Host::HiVisibility = AH_HiVisibilityRdo.getValue();
    $Host::Dedicated = AH_DedicatedTgl.getValue();
    if ( $Host::Dedicated )
       $Host::PureServer = AH_PureServerTgl.getValue();
+   $Host::TeamDamageOn = AH_TeamDamageTgl.getValue();   
    $Host::TournamentMode = AH_TournamentTgl.getValue();
    $Host::allowAdminPlayerVotes = AH_AdminVoteTgl.getValue();
    $Host::NoSmurfs = !AH_AllowSmurfTgl.getValue();
@@ -1326,8 +1344,9 @@ function GM_WarriorPane::onActivate( %this )
 			} 
 		}
 
-		// Fill the race/gender list:
+		// Fill the static menus:
 		GMW_RaceGenderPopup.fillList();
+      GMW_SkinPrefPopup.fillList();
 
 		// Select the current player:
 		GMW_WarriorPopup.setSelected( $pref::Player::Current );
@@ -1450,11 +1469,14 @@ function GMW_WarriorPopup::onSelect( %this, %id, %text )
 		%selId = 0;
 
 	GMW_RaceGenderPopup.setSelected( %selId );
-	GMW_SkinPopup.fillList( %selId );
 	GMW_VoicePopup.fillList( %selId );
 
 	// Select the skin:
    %skin = getField( $pref::Player[%id], 2 );
+   %baseSkin = isDynamixSkin( %skin );
+   GMW_SkinPrefPopup.setSelected( !%baseSkin );
+	GMW_SkinPopup.fillList( %selId );
+   
    %selId = -1;
    for ( %i = 0; %i < GMW_SkinPopup.size(); %i++ )
    {
@@ -1489,7 +1511,9 @@ function GMW_WarriorPopup::onSelect( %this, %id, %text )
 //------------------------------------------------------------------------------
 function GMW_RaceGenderPopup::fillList( %this )
 {
-	%this.clear();
+   if ( %this.size() )
+      return;
+      
 	%this.add( "Human Male", 0 );
 	%this.add( "Human Female", 1 );
 	%this.add( "Bioderm", 2 );
@@ -1522,6 +1546,32 @@ function GMW_RaceGenderPopup::onSelect( %this, %id, %text )
 }
 
 //------------------------------------------------------------------------------
+function GMW_SkinPrefPopup::fillList( %this )
+{
+   if ( %this.size() )
+      return;
+      
+   %this.add( "Dynamix Skins", 0 );
+   %this.add( "Custom Skins", 1 );
+}
+
+//------------------------------------------------------------------------------
+function GMW_SkinPrefPopup::onSelect( %this, %id, %text )
+{
+   %curSkin = GMW_SkinPopup.getText();
+   GMW_SkinPopup.fillList( GMW_RaceGenderPopup.getSelected() ); 
+   %selId = GMW_SkinPopup.findText( %curSkin );
+   if ( %selId == -1 )
+      %selId = 0;
+   
+   if ( GMW_SkinPopup.size() )
+   {   
+      GMW_SkinPopup.setSelected( %selId );
+      GMW_SkinPopup.onSelect( %selId, GMW_SkinPopup.getTextById( %selId ) );   
+   }
+}
+
+//------------------------------------------------------------------------------
 $SkinCount = 0;
 $Skin[$SkinCount, name] = "Blood Eagle";
 $Skin[$SkinCount, code] = "beagle";
@@ -1546,6 +1596,18 @@ $Skin[$SkinCount, code] = "horde";
 $SkinCount++;
 
 //------------------------------------------------------------------------------
+function isDynamixSkin( %skin )
+{
+   for ( %i = 0; %i < $SkinCount; %i++ )
+   {
+      if ( %skin $= $Skin[%i, code] )
+         return( true );
+   }
+   
+   return( false );
+}
+
+//------------------------------------------------------------------------------
 function GMW_SkinPopup::fillList( %this, %raceGender )
 {
    for ( %i = 0; %i < %this.size(); %i++ )
@@ -1563,6 +1625,7 @@ function GMW_SkinPopup::fillList( %this, %raceGender )
          %pattern = ".lbioderm.png";
    }
 
+   %customSkins = GMW_SkinPrefPopup.getSelected();
    %count = 0;
    for ( %file = findFirstFile( %path @ "*" @ %pattern ); %file !$= ""; %file = findNextFile( %path @ "*" @ %pattern ) )
    {
@@ -1572,18 +1635,24 @@ function GMW_SkinPopup::fillList( %this, %raceGender )
       if ( %skin !$= "basebot" && %skin !$= "basebbot" )
       {
          // See if this skin has an alias:
+         %baseSkin = false;
          for ( %i = 0; %i < $SkinCount; %i++ )
          {
             if ( %skin $= $Skin[%i, code] ) 
             {
+               %baseSkin = true;
                %skin = $Skin[%i, name];
-               %this.realSkin[%count] = $Skin[%i, code];
                break;
             }
          }
 
-         %this.add( %skin, %count );
-         %count++;
+         if ( %customSkins != %baseSkin )
+         {
+            if ( %baseSkin )
+               %this.realSkin[%count] = $Skin[%i, code];
+            %this.add( %skin, %count );
+            %count++;
+         }
       }
    }
    

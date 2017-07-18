@@ -283,12 +283,6 @@ function ForumsAcceptPost()
    $NewsTitle = getRecord(%text, 3);
    ForumsMessageList.state = "newsAccept";
    Canvas.pushDialog(NewsPostDlg);
-   NewsCategoryMenu.clear();
-   NewsCategoryMenu.add( "General", 0 );
-   NewsCategoryMenu.add( "Announcements", 1 );
-   NewsCategoryMenu.add( "Events", 2 );
-   NewsCategoryMenu.add( "Updates", 3 );
-   NewsCategoryMenu.setSelected( 0 );
    NewsPostBodyText.setValue("submitted by " @ %dev @ "\n\n" @ ForumsGetTextDisplay(%body));
    NewsPostDlg.postID = -1;
    NewsPostDlg.action = "News";
@@ -430,13 +424,12 @@ function ForumsMessageAddRow(%text)
 //-----------------------------------------------------------------------------
 function ForumsNewTopic()
 {
-	if(ForumsList.getSelectedID()==105)
+	%fid = ForumsList.getSelectedID();
+	if( %fid == 105 || %fid == 35500 || %fid == 35501 || %fid == 35503 ||%fid == 35504)
 	{
-		$NewsCategory = "";
-		$NewsTitle = "";
-		Canvas.pushDialog(NewsPostDlg);
-		NewsPostDlg.postId = -1;
-		NewsPostBodyText.setValue("");
+		messageBoxYesNo("CONFIRM",
+						"Please do not submit bug reports without a tested solution, test posts or recruiting posts." NL " " NL "Continue with your submittal?",
+						"StartPostNews();");
 	}
 	else
 	{	
@@ -462,7 +455,7 @@ function ForumsOpenThread(%tid)
 //-----------------------------------------------------------------------------
 function ForumsPost()
 {
-//   error("FORUMPOST: " @ ForumsComposeDlg.action TAB ForumsComposeDlg.parentPost TAB $ForumsSubject);
+   
    $ForumsSubject = FP_SubjectEdit.getValue();
    if ( trim($ForumsSubject) $= "" )
    {
@@ -470,7 +463,15 @@ function ForumsPost()
          "FP_SubjectEdit.makeFirstResponder(1);");
       return;
    }
-   
+
+   // the subject text could be too long (OCI strips out non-ascii.  encoding method ensures normal chars still readable
+   if(getExpandedStrlen($ForumsSubject) >= 80)
+   {
+      MessageBoxOK( "POST FAILED", "Subject text too long.  Extended/international characters count as two letters.",
+         "FP_SubjectEdit.makeFirstResponder(1);");
+      return;
+   }
+
 	TextCheck($ForumsSubject,ForumsGui);
 	if(!ForumsGui.textCheck)
 	{      
@@ -488,7 +489,6 @@ function ForumsPost()
 						 ForumsComposeDlg.parentPost TAB
 						 $ForumsSubject TAB
 						 ForumsBodyText.getValue();
-           error("RT:" TAB ForumsComposeDlg.forum TAB ForumsComposeDlg.topic TAB ForumsComposeDlg.parentPost);
          }
          else if(ForumsComposeDlg.action $="News")
 		  {
@@ -511,7 +511,6 @@ function ForumsPost()
 						 ForumsComposeDlg.parentPost TAB
 						 $ForumsSubject TAB
 						 ForumsBodyText.getValue();
-//           error("RT:" TAB ForumsComposeDlg.forum TAB ForumsComposeDlg.topic TAB ForumsComposeDlg.parentPost);
          }
 	      else if(ForumsComposeDlg.action $="Edit")
          {
@@ -525,7 +524,6 @@ function ForumsPost()
       }
       %proxy.key = LaunchGui.key++;
       canvas.SetCursor(ArrowWaitCursor);
-//      error("DQ: " @ %ord NL %fieldData);
       DatabaseQuery(%ord,%fieldData,%proxy, %proxy.key);
 	   Canvas.popDialog(ForumsComposeDlg);
 	}
@@ -601,7 +599,7 @@ function GetTopicsList()
 	ForumsTopicsList.refreshFlag = 0;
 	ForumsGui.key = LaunchGui.key++;
    ForumsGui.state = "getTopicList";
-	DatabaseQueryArray(8,$currentForumPage,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key,true);
+	DatabaseQueryArray(8,$currentForumPage,ForumsList.getSelectedID(),ForumsGui,ForumsGui.key,true);
 }
 //-----------------------------------------------------------------------------
 function GetTopicPosts()
@@ -626,7 +624,6 @@ function GetTopicPosts()
        ForumsMessageVector.clear();
        ForumsMessageList.clear();
    }   
-//   error("DQA:" @ 8 TAB ForumsComposeDlg.topic);
    DatabaseQueryArray(9,0,ForumsComposeDlg.Topic TAB ForumsMessageList.lastID,ForumsGui,ForumsGui.key,true);
 }
 //-----------------------------------------------------------------------------
@@ -718,7 +715,7 @@ function ForumsGui::onDatabaseQueryResult(%this,%status,%resultString,%key)
 {
 	if(%this.key != %key)
 		return;
-//	echo("RECV: " @ %status TAB %resultString);
+//	echo("RECV: " @ %status NL "RS:" @ %resultString);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -812,12 +809,12 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 {
 	if(%this.key != %key)
 		return;
+//	echo("RECV: " @ %row);
 	%forumTID = getField(ForumsList.getRowTextbyId(ForumsList.getSelectedID()),2);
 	switch$(%this.state)
 	{
 		case "ForumList":
 			ForumsList.addRow(getField(%row,0),getField(%row,1) TAB getField(%row,2) TAB getField(%row,3));
-//           error("ISLASTROW:" TAB %isLastRow);
 			if ( %isLastRow ) //is last line
 	   		{
                %ai = wonGetAuthInfo();
@@ -885,7 +882,7 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
                    		%topic NL
                    		%poster NL
                    		%date NL
-						    %isAuthor NL
+					    %isAuthor NL
                    		%body;
 
             	%li = ForumsMessageVector.getLineIndexByTag(%postId);
@@ -920,7 +917,7 @@ function ForumsGui::NextThreadPage()
    canvas.SetCursor(ArrowWaitCursor);
    ForumsTopicsList.clearList();
    $currentForumPage++;
-	DatabaseQueryArray(8,$currentForumPage,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key,true);
+	DatabaseQueryArray(8,$currentForumPage,ForumsList.getSelectedID(),ForumsGui,ForumsGui.key,true);
 	ForumsTopicsList.refreshFlag = 0;
 }
 //-----------------------------------------------------------------------------
@@ -935,7 +932,7 @@ function ForumsGui::PreviousThreadPage()
    canvas.SetCursor(ArrowWaitCursor);
    ForumsTopicsList.clearList();
    $currentForumPage--;
-	DatabaseQueryArray(8,80,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key,true);
+	DatabaseQueryArray(8,80,ForumsList.getSelectedID(),ForumsGui,ForumsGui.key,true);
 	ForumsTopicsList.refreshFlag = 0;
 }
 //-----------------------------------------------------------------------------
@@ -1065,16 +1062,20 @@ function TopicsPopupDlg::onWake( %this )
    TopicsPopupMenu.add("Reset Cache", 0);
    TopicsPopupMenu.add("Flag Ignore", 1);   
    TopicsPopupMenu.add("Flag All Read", 2);   
-   if(isModerator())
-      TopicsPopupMenu.add(%line,-1);
-      TopicsPopupMenu.add("Request Admin Review", 3);   
-      if(isT2Admin())
-      {
-         TopicsPopupMenu.add("Lock Topic", 4);   
-         TopicsPopupMenu.add("Unlock Topic", 5);   
-	  	 TopicsPopupMenu.add("Move Topic",6);
-         TopicsPopupMenu.add("Remove Topic", 10);   
-      }
+	if(isModerator())
+    {
+		TopicsPopupMenu.add(%line,-1);
+		TopicsPopupMenu.add("Request Admin Review", 3);   
+	    if(isT2Admin())
+	    {
+			TopicsPopupMenu.add(%line,-1);
+//			TopicsPopupMenu.add("Request Admin Review", 3);   
+	        TopicsPopupMenu.add("Lock Topic", 4);   
+	        TopicsPopupMenu.add("Unlock Topic", 5);   
+		  	TopicsPopupMenu.add("Move Topic",6);
+	        TopicsPopupMenu.add("Remove Topic", 10);   
+	    }
+	}
             
    Canvas.rePaint();      
 }
@@ -1181,7 +1182,6 @@ function TopicsPopupMenu::onSelect( %this, %id, %text )
                TopicsPopupDlg.key = LaunchGui.key++;
                TopicsPopupDlg.state = "requestReview";
                %fieldData = ForumsList.getSelectedID() TAB ForumsTopicsList.getSelectedID() TAB getField(TopicsPopupMenu.topic.rcvrec,11);
-               error("RR: " @ 60 TAB %fieldData);
                databaseQuery(60, %fieldData, TopicsPopupDlg, TopicsPopupDlg.key);
 
        case 4: //Lock Thread
@@ -1202,9 +1202,8 @@ function TopicsPopupMenu::onSelect( %this, %id, %text )
               MessageBoxOK("NOTICE","Feature Not Yet Implemented");
        case 10: //Remove Topic
                TopicsPopupDlg.key = LaunchGui.key++;
-               TopicsPopupDlg.state = "adminRemoveTopic";
+               TopicsPopupDlg.state = "removeTopic";
                %fieldData = 0 TAB TopicsPopupMenu.topic.id TAB getField(TopicsPopupMenu.topic.rcvrec,11);
-               error("RT: " @ 62 TAB %fieldData);
                databaseQuery(62, %fieldData, TopicsPopupDlg, TopicsPopupDlg.key);
    }           
    canvas.popDialog(TopicsPopupDlg);
@@ -1231,7 +1230,6 @@ function TopicsPopupMenu::ExecuteLock(%this)
 function TopicsPopupMenu::ExecuteMove(%this)
 {
     %fieldData = TopicsPopupMenu.topic.id TAB MoveToForumList.getSelected() TAB MoveToForumList.getText();
-	error("MOVE: " @ %fieldData);
 	Canvas.popDialog("MoveThreadDlg");
 	TopicsPopupDlg.key = LaunchGui.key++;
     TopicsPopupDlg.state = "moveTopic";
@@ -1269,17 +1267,19 @@ function TopicsPopupDlg::onDatabaseQueryResult(%this,%status,%recordCount,%key)
        }
        else
        {
+			MessageBoxOK("NOTICE",getField(%status,1));
 			switch$(%this.state)
 			{
 				case "lockTopic":
-                     ForumsTopicsList.setRowStyle( getField(%recordCount,0), 3 );
-           			 MessageBoxOK("NOTICE",getField(%status,1));
+                     ForumsTopicsList.setRowStylebyID( ForumsTopicsList.getSelectedID(), 3 );
 				case "unlockTopic":
-                     ForumsTopicsList.setRowStyle( getField(%recordCount,0), 1 );
-           			 MessageBoxOK("NOTICE",getField(%status,1));
+                     ForumsTopicsList.setRowStylebyID( ForumsTopicsList.getSelectedID(), 1 );
 				case "moveTopic":
-                     ForumsTopicsList.setRowStyle( getField(%recordCount,0), 3 );
-           			 MessageBoxOK("NOTICE",getField(%status,1));
+                     ForumsTopicsList.setRowStylebyID( ForumsTopicsList.getSelectedID(), 3 );
+					 ForumsTopicsList.removeRowByID(ForumsTopicsList.getSelectedID());
+				case "removeTopic":					 					 
+                     ForumsTopicsList.setRowStylebyID( ForumsTopicsList.getSelectedID(), 3 );
+					 ForumsTopicsList.removeRowByID(ForumsTopicsList.getSelectedID());
 			}
        }
    else
@@ -1470,8 +1470,10 @@ function PostsPopupMenu::onSelect( %this, %id, %text )
        case 10: //Remove Post
                PostsPopupDlg.key = LaunchGui.key++;
                PostsPopupDlg.state = "adminRemovePost";
-               %fieldData = 0 TAB ForumsList.getSelectedID() TAB ForumsTopicsList.getSelectedID() TAB ForumsMessageList.getSelectedID() TAB PostsPopupMenu.post.authorID;
-			   MessageBoxYesNo("CONFIRM","Remove Post?","PostsPopupMenu.adminCall(63,\"" @ %fieldData @ "\");","");
+               %fieldData = ForumsMessageList.getSelectedID();
+			   MessageBoxYesNo("CONFIRM","Remove Post?","PostsPopupMenu.adminCall(14,\"" @ %fieldData @ "\");","");
+//               %fieldData = 0 TAB ForumsList.getSelectedID() TAB ForumsTopicsList.getSelectedID() TAB ForumsMessageList.getSelectedID() TAB PostsPopupMenu.post.authorID;
+//			   MessageBoxYesNo("CONFIRM","Remove Post?","PostsPopupMenu.adminCall(63,\"" @ %fieldData @ "\");","");
    }           
    canvas.popDialog(PostsPopupDlg);
 }
@@ -1492,10 +1494,20 @@ function PostsPopupDlg::onDatabaseQueryResult(%this,%status,%recordCount,%key)
        return;
 	if(getField(%status,0)==0)
    {
-       %selRow = ForumsMessageList.getRowNumByID(PostsPopupMenu.post.id);
+        %selRow = ForumsMessageList.getRowNumByID(PostsPopupMenu.post.id);
+		if (%this.state $= "adminRemovePost")
+		{
+			MessageBoxOK("NOTICE",getField(%status,1));
+			ForumsMessageVector.deleteLine( %selRow );
+			ForumsMessageList.removeRow( %selRow );
+			ForumsMessageList.setSelectedRow( %selRow );
+			CacheForumTopic();
+			%this.State = "done";			
+		}
        if (%this.state $= "adminRemovePostPlus")
        {
-   	    ForumsMessageVector.deleteLine( %selRow );
+			MessageBoxOK("NOTICE",getField(%status,1));
+		   ForumsMessageVector.deleteLine( %selRow );
            ForumsMessageList.removeRow( %selRow );
            ForumsMessageList.setSelectedRow( %selRow );
   		    CacheForumTopic();
@@ -1522,11 +1534,11 @@ function PostsPopupDlg::onDatabaseQueryResult(%this,%status,%recordCount,%key)
        }
        else
        {
-   	    ForumsMessageVector.deleteLine( %selRow );
-           ForumsMessageList.removeRow( %selRow );
-           ForumsMessageList.setSelectedRow( %selRow );
+			ForumsMessageVector.deleteLine( %selRow );
+			ForumsMessageList.removeRow( %selRow );
+			ForumsMessageList.setSelectedRow( %selRow );
   		    CacheForumTopic();
-           MessageBoxOK("NOTICE",getField(%status,1));
+			MessageBoxOK("NOTICE",getField(%status,1));
        }
    }
    else
@@ -1658,6 +1670,7 @@ function ForumsMessagelist::onDatabaseQueryResult(%this,%status,%resultString,%k
 //	echo("RECV: " @ %status TAB %resultString);
 	if(getField(%status,0)==0)
 	{
+		MessageBoxOK("COMPLETE",getField( %status, 1));
 		switch$(%this.state)
 		{
 			case "replyPost":

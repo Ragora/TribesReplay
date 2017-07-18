@@ -195,6 +195,7 @@ new SimGroup(MissionGroup) {
 					interiorFile = "bbunk1.dif";
 					showTerrainInside = "0";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new InteriorInstance() {
 					position = "-193.703 -532.218 271.638";
@@ -536,6 +537,7 @@ new SimGroup(MissionGroup) {
 					interiorFile = "bbunk2.dif";
 					showTerrainInside = "0";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new StaticShape() {
 					position = "76.9091 -713.73 196.21";

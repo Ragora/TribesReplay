@@ -94,7 +94,14 @@ new GuiControlProfile ("clockProfile")
 {
    fontType = "Univers Condensed";
    fontSize = 12;
-   fontColor = "0 255 0";
+   fontColor = "255 255 255";
+};
+
+new GuiControlProfile ("SiegeHalftimeClockProfile")
+{
+   fontType = "Univers Condensed";
+   fontSize = 18;
+   fontColor = "255 255 255";
 };
 
 new GuiControlProfile ("GuiContentProfileNoClear")
@@ -1536,6 +1543,17 @@ new GuiControlProfile( "DlgBackProfile" )
 {
 	opaque = true;
 	fillColor = "0 0 0 160";
+};
+
+new GuiControlProfile( "MotdCProfile" )
+{
+	justify = "center";
+	opaque = true;
+    autoSizeWidth = true;
+	fillColor = "0 0 0 160";
+	fontType = "Univers Condensed";
+	fontSize = 14;
+	fontColor = "000 219 234";
 };
 
 new GuiControlProfile( "GuiInputCtrlProfile" )

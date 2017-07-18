@@ -113,6 +113,7 @@ new SimGroup(MissionGroup) {
 		envMapIntensity = "0.5";
 		removeWetEdges = "1";
 			locked = "true";
+			AudioEnvironment = Underwater;
 	};
 	new SimGroup(ObserverDropPoints) {
 
@@ -313,6 +314,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new Turret(Team1TurretBaseLarge2) {
 					position = "-668.312 418.661 64.9914";
@@ -1708,6 +1710,7 @@ new SimGroup(MissionGroup) {
 				showTerrainInside = "0";
 				AudioProfile = "Universal_Base_2";
 					locked = "true";
+					AudioEnvironment = BigRoom;
 			};
 			new Turret(Team2TurretBaseLarge2) {
 				position = "746.016 -466.198 67.3335";

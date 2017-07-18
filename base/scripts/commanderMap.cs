@@ -66,7 +66,7 @@ function createCommanderKeyMap()
    CommanderKeyMap.copyBind( moveMap, startRecordingDemo );
    CommanderKeyMap.copyBind( moveMap, stopRecordingDemo );
    CommanderKeyMap.copyBind( moveMap, voiceCapture );
-   CommanderKeyMap.bindCmd( keyboard, escape, "", "escapeFromGame();" );
+   CommanderKeyMap.bindCmd( keyboard, escape, "", "toggleCommanderMap( true );" );
 
    // grab help key from movemap
    if(!bindAction( moveMap, toggleHelpGui, false, toggleCmdMapHelpGui ))
@@ -157,7 +157,21 @@ function clientCmdResetCommandMap()
 {
    CommanderMapGui.reset();
 }
-   
+
+function clientCmdScopeCommanderMap(%scope)
+{
+   if(!isPlayingDemo())
+      return;
+
+   if(%scope)
+   {
+      CommanderMap.openAllCategories();
+      CommanderMapGui.open();
+   }
+   else
+      CommanderMapGui.close();
+}
+
 function CommanderMapGui::onWake(%this)
 {
    clientCmdControlObjectReset();
@@ -167,10 +181,10 @@ function CommanderMapGui::onWake(%this)
    createCommanderKeyMap();
    CommanderKeyMap.push();
 
-   if ( $HudHandle['CommandScreen'] )
-      alxStop( $HudHandle['CommandScreen'] );
+   if ( $HudHandle[CommandScreen] )
+      alxStop( $HudHandle[CommandScreen] );
    alxPlay(CommandMapActivateSound, 0, 0, 0);
-   $HudHandle['CommandScreen'] = alxPlay(CommandMapHumSound, 0, 0, 0);
+   $HudHandle[CommandScreen] = alxPlay(CommandMapHumSound, 0, 0, 0);
 
    CMDTextButton.setValue(CommanderMap.renderText);
 
@@ -204,9 +218,9 @@ function CommanderMapGui::onSleep(%this)
    CommanderKeyMap.pop();
    Canvas.popDialog(MainChatHud);
 
-   alxStop($HudHandle['CommandScreen']);
+   alxStop($HudHandle[CommandScreen]);
    alxPlay(CommandMapDeactivateSound, 0, 0, 0);
-   $HudHandle['CommandScreen'] = "";
+   $HudHandle[CommandScreen] = "";
 
    // will reset the control object on this client.. should only be sent
    // if this gui is being removed outside of CommanderMapGui::close()
@@ -299,9 +313,13 @@ function CommanderMapGui::reset(%this)
    // reset waypoints
    if(isObject($ClientWaypoints))
       $ClientWaypoints.delete();
-   
-   $ClientWaypoints = new SimGroup();
-   ServerConnection.add($ClientWaypoints);
+
+   // this can be called when not connected to a server
+   if(isObject(ServerConnection))
+   {
+      $ClientWaypoints = new SimGroup();
+      ServerConnection.add($ClientWaypoints);
+   }
 
    %this.firstWake = true;
    CommanderTree.currentWaypointID = 0;

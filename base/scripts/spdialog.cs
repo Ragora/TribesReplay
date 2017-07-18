@@ -537,6 +537,8 @@ function createText(%who)
 	%who.miscMsg[InBounds] = "You have returned to the mission area.";
 	%who.miscMsg[OOBLoss] = "You were outside the mission area too long. Do you want to try again?";
 	%who.miscMsg[LeaveGame] = "Are you sure you want to abandon this game?";
+   %who.miscMsg[noTaskListDlg] = "You have not yet been granted access to the task list dialog.";
+   %who.miscMsg[noInventoryHUD] = "You have not yet been granted access to the Inventory HUD.";
 }
 
 				

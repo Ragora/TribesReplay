@@ -208,6 +208,18 @@ $DeathMessageVehicle[2] = '\c0%4 transforms %1 into tribal roadkill.';
 $DeathMessageVehicle[3] = '\c0%1 makes a painfully close examination of %4\'s front bumper.';
 $DeathMessageVehicle[4] = '\c0%1\'s messy death leaves a mark on %4\'s vehicle finish.';
 
+$DeathMessageVehicleCrashCount = 5;
+$DeathMessageVehicleCrash[ $DamageType::Crash, 0 ] = '\c0%1 fails to eject in time.';
+$DeathMessageVehicleCrash[ $DamageType::Crash, 1 ] = '\c0%1 becomes one with his vehicle dashboard.';
+$DeathMessageVehicleCrash[ $DamageType::Crash, 2 ] = '\c0%1 drives under the influence of death.';
+$DeathMessageVehicleCrash[ $DamageType::Crash, 3 ] = '\c0%1 makes a perfect three hundred point landing.';
+$DeathMessageVehicleCrash[ $DamageType::Crash, 4 ] = '\c0%1 heroically pilots his vehicle into something really, really hard.';
+
+$DeathMessageVehicleFriendlyCount = 3;
+$DeathMessageVehicleFriendly[0] = '\c0%1 gets in the way of a friendly vehicle.';
+$DeathMessageVehicleFriendly[1] = '\c0Sadly, a friendly vehicle turns %1 into roadkill.';
+$DeathMessageVehicleFriendly[2] = '\c0%1 becomes an unsightly ornament on a team vehicle\'s hood.';
+
 $DeathMessageVehicleUnmannedCount = 3;
 $DeathMessageVehicleUnmanned[0] = '\c0%1 gets in the way of a runaway vehicle.';
 $DeathMessageVehicleUnmanned[1] = '\c0An unmanned vehicle kills the pathetic %1.';

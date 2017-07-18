@@ -37,7 +37,7 @@ exec("scripts/message.cs");
 //function to be called when the game exits
 function onExit()
 {
-   if ( !isDemo() && !isDemoServer() )
+   if ( !isDemo() && isObject($IRCClient.tcp) )
       IRCClient::quit();
    
    echo("exporting pref::* to ClientPrefs.cs");
@@ -252,6 +252,9 @@ loadGui("BrowserSearchDlg");
 loadGui("BrowserEditInfoDlg");
 loadGui("CreateTribeDlg");
 loadGui("RecordingsDlg");
+loadGui("DemoLoadProgressDlg");
+loadGui("DemoRenameFileDlg");
+loadGui("DemoPlaybackDlg");
 loadGui("TrainingGui");
 loadGui("SinglePlayerEscapeDlg");
 loadGui("LobbyGui");
@@ -266,7 +269,6 @@ loadGui("PlayGui");
 loadGui("PanoramaGui");
 loadGui("LoadingGui");
 loadGui("TestGui");
-loadGui("BriefingGui");
 
 // HUD GUI's:
 loadGui("HUDDlgs");
@@ -277,7 +279,9 @@ loadGui("TerraformerTextureGui");
 loadGui("TerraformerHeightfieldGui");
 loadGui("TerraformerFullScreenGui");
 loadGui("helpTextGui");
+
 //
+
 loadGui("InteriorPreviewGui");
 loadGui("InteriorDebug");
 loadGui("EditorGui");
@@ -292,11 +296,16 @@ loadGui("IHVTest");
 
 // Load material properties
 echo("Load Material Properties:");
-exec("textures/badlands/badlandsPropMap.cs");
-exec("textures/desert/desertPropMap.cs");
-exec("textures/ice/icePropMap.cs");
-exec("textures/lava/lavaPropMap.cs");
-exec("textures/lush/lushPropMap.cs");
+//exec("textures/badlands/badlandsPropMap.cs");
+//exec("textures/desert/desertPropMap.cs");
+//exec("textures/ice/icePropMap.cs");
+//exec("textures/lava/lavaPropMap.cs");
+//exec("textures/lush/lushPropMap.cs");
+exec("scripts/badlandsPropMap.cs");
+exec("scripts/desertPropMap.cs");
+exec("scripts/icePropMap.cs");
+exec("scripts/lavaPropMap.cs");
+exec("scripts/lushPropMap.cs");
 
 // commander map
 exec("scripts/commanderProfiles.cs");
@@ -412,6 +421,15 @@ function DebugMetrics()
           "  NO:  " @ $Metrics::numObjectsRendered;
 }
 
+function showMapperMetrics( %expr )
+{
+   GLEnableMetrics( %expr );
+   
+   if( Canvas.getContent() != PlayGui.getId() )  
+      metricsIMain.setVisible( %expr );
+   else 
+      metricsMain.setVisible( %expr );
+}
 
 function showTerr()
 {
@@ -531,7 +549,7 @@ function abs(%val)
 
 function ServerConnectionAccepted()
 {
-   if ( !isDemo() && !isDemoServer() )
+   if ( !isDemo() )
    {
 	   %info = GMJ_Browser.getServerInfoString();
 	   %desc = "joined a" SPC getField(%info,4) @ " game (" @ getField(%info,3) @ ") on the \"" @ getField(%info,0) @ "\" server.";   
@@ -550,7 +568,7 @@ function ServerConnectionAccepted()
 
 function LocalConnectionAccepted()
 {   
-   if ( !isDemo() && !isDemoServer() )
+   if ( !isDemo() )
    {   
 	   %desc = $pref::IRCClient::hostmsg;
 

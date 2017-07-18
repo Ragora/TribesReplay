@@ -229,6 +229,7 @@ new SimGroup(MissionGroup) {
 							showTerrainInside = "0";
 							AudioProfile = "Universal_Base_2";
 								locked = "true";
+							AudioEnvironment = SmallRoom;
 						};
 						new InteriorInstance() {
 							position = "251.987 -242.184 78.1013";
@@ -2302,6 +2303,7 @@ new SimGroup(MissionGroup) {
 							showTerrainInside = "0";
 							AudioProfile = "Universal_Base_2";
 								locked = "true";
+								AudioEnvironment = SmallRoom;
 						};
 						new InteriorInstance() {
 							position = "-605.436 538.968 77.354";

@@ -56,7 +56,7 @@ new GuiControl(ShellLoadFileDlg) {
 					extent = "268 8";
 					minExtent = "8 8";
 					visible = "1";
-					altCommand = "eval($loadFileCommand); Canvas.popDialog(ShellLoadFileDlg);";
+					altCommand = "Canvas.popDialog(ShellLoadFileDlg);";
 					helpTag = "0";
 					enumerate = "0";
 					resizeCell = "1";
@@ -88,7 +88,7 @@ new GuiControl(ShellLoadFileDlg) {
 			extent = "128 38";
 			minExtent = "32 38";
 			visible = "1";
-			command = "eval($loadFileCommand); Canvas.popDialog(ShellLoadFileDlg);";
+			command = "Canvas.popDialog(ShellLoadFileDlg);";
 			helpTag = "0";
 			text = "LOAD";
 			simpleStyle = "0";

@@ -7,11 +7,26 @@
 //--------------------------------------------------------------------------
 // Sounds
 //--------------------------------------
+datablock EffectProfile(MBLSwitchEffect)
+{
+   effectname = "powered/turret_heavy_activate";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(MBLFireEffect)
+{
+   effectname = "powered/turret_missile_fire";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
 datablock AudioProfile(MBLSwitchSound)
 {
    filename    = "fx/powered/turret_missile_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = MBLSwitchEffect;
 };
 
 datablock AudioProfile(MBLFireSound)
@@ -19,6 +34,7 @@ datablock AudioProfile(MBLFireSound)
    filename    = "fx/powered/turret_missile_fire.wav";
    description = AudioDefault3d;
    preload = true;
+   effect = MBLFireEffect;
 };
 
 //--------------------------------------------------------------------------
@@ -49,7 +65,7 @@ datablock SeekerProjectileData(TurretMissile)
 
    flareDistance = 200;
    flareAngle    = 30;
-   minSeekHeat   = 0.7;
+   minSeekHeat   = 0.6;
 
    explosion           = "MissileExplosion";
    velInheritFactor    = 0.2;
@@ -94,7 +110,7 @@ datablock TurretImageData(MissileBarrelLarge)
    seekRadius   = 300;
    maxSeekAngle = 30;
    seekTime     = 1.0;
-   minSeekHeat  = 0.7;
+   minSeekHeat  = 0.6;
    emap = true;
    minTargetingDistance = 40;
 

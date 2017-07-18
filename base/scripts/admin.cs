@@ -17,7 +17,7 @@ $VoteMessage["VoteHoardMode", 1] = "disable Greed Mode";
 function serverCmdStartNewVote(%client, %typeName, %arg1, %arg2, %arg3, %arg4, %playerVote)
 {
    //DEMO VERSION - only voteKickPlayer is allowed
-   if ((isDemo() || isDemoServer()) && %typeName !$= "VoteKickPlayer")
+   if ((isDemo()) && %typeName !$= "VoteKickPlayer")
    {
       messageClient(%client, '', "All voting options except to kick a player are disabled in the DEMO VERSION.");
       return;

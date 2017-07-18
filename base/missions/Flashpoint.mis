@@ -70,10 +70,12 @@ new SimGroup(MissionGroup) {
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
 		visibleDistance = "350";
+		high_visibleDistance = "400";
 		useSkyTextures = "0";
 		renderBottomTexture = "0";
 		SkySolidColor = "0.450000 0.300000 0.250000 1.000000";
 		fogDistance = "100";
+		high_fogDistance = "125";
 		fogColor = "0.450000 0.300000 0.250000 1.000000";
 		fogVolume1 = "0 0 0";
 		fogVolume2 = "0 0 0";
@@ -189,6 +191,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_Pulse_2";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new StaticShape(Team0SensorLargePulse1) {
 					position = "-95.385 22.91 198.474";

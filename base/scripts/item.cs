@@ -79,10 +79,18 @@ datablock AudioProfile(ItemPickupSound)
    preload = true;
 };
 
+datablock EffectProfile(ItemThrowEffect)
+{
+   effectname = "packs/packs.throwpack";
+   minDistance = 2.5;
+	maxDistance = 2.5;
+};
+
 datablock AudioProfile(ItemThrowSound)
 {
    filename = "fx/packs/packs.throwpack.wav";
    description = AudioClosest3d;
+   effect = ItemThrowEffect;
    preload = true;
 };
 
@@ -540,21 +548,6 @@ function getVector(%string, %num)
 // explosion datablock
 // --------------------------------------------
 
-datablock EffectProfile(DeployableExplosionEffect)
-{
-   effectname = "explosions/explosion.xpl10";
-   minDistance = 10;
-   maxDistance = 50;
-};
-
-datablock AudioProfile(DeployablesExplosionSound)
-{
-   filename = "fx/explosions/deployables_explosion.wav";
-   description = AudioExplosion3d;
-   preload = true;
-   effect = DeployableExplosionEffect;
-};
-
 datablock ExplosionData(DeployablesExplosion)
 {
    soundProfile = DeployablesExplosionSound;
@@ -590,7 +583,6 @@ datablock StaticShapeData(DeployedBeacon) : StaticShapeDamageProfile
    maxDamage = 0.45;
    disabledLevel = 0.45;
    destroyedLevel = 0.45;
-   beacon = true;
    targetNameTag = 'beacon';
 
    deployedObject = true;
@@ -603,7 +595,7 @@ datablock StaticShapeData(DeployedBeacon) : StaticShapeDamageProfile
 
 function DeployedBeacon::onDestroyed(%data, %obj, %prevState)
 {
-   if(%obj.isBeaconType(friend))
+   if(%obj.getBeaconType() $= "friend")
       %bType = "MarkerBeacon";
    else
       %bType = "TargetBeacon";
@@ -668,7 +660,7 @@ function Beacon::onUse(%data, %obj)
    %rotation = %rotAxis @ " " @ %intAngle;
 
    %obj.decInventory(%data, 1);
-   %depBeac = new ScopeAlwaysShape() {
+   %depBeac = new BeaconObject() {
       dataBlock = "DeployedBeacon";
       position = VectorAdd(%terrPt, VectorScale(%terrNrm, 0.05));
       rotation = %rotation;
@@ -686,7 +678,7 @@ function Beacon::onUse(%data, %obj)
 
 function switchBeaconType(%beacon)
 {
-   if(%beacon.isBeaconType(friend))
+   if(%beacon.getBeaconType() $= "friend")
    {
       // switch from marker beacon to target beacon
       if($TeamDeployedCount[%beacon.team, TargetBeacon] >= $TeamDeployableMax[TargetBeacon])

@@ -66,7 +66,7 @@ function VehicleHud::quickBuy( %this, %id )
    if ( isObject( $Hud['vehicleHud'].data[%id, 0] ) )
    {
       if ( %this.selId != %id )
-         eval( $Hud['vehicleHud'].data[%id, 0].command );
+         VehicleHud.onTabSelect( %id, $Hud['vehicleHud'].data[%id, 0].vName, $Hud['vehicleHud'].data[%id, 0].vCount );
       %this.onBuy();
    }
 }
@@ -113,8 +113,10 @@ function VehicleHud::addLine( %this, %tag, %lineNum, %name, %count )
 		minExtent = "8 8";
 		visible = "1";
 		helpTag = "0";
-      command = "VehicleHud.onTabSelect(" @ %lineNum @ ", " @ %name @ ", " @ %count @ ");";
+      command = "VehicleHud.onTabSelect(" @ %lineNum @ "," @ %name @ "," @ %count @ ");";
 		text = "";
+      vName = %name;
+      vCount = %count;
 	};
 
    // If nothing is selected, select something:
@@ -142,4 +144,9 @@ function clientCmdStationVehicleHideHud()
 {
    hideHud( 'vehicleHud' );
 	clientCmdTogglePlayHuds(true);
+}
+
+function clientCmdStationVehicleHideJustHud()
+{
+   hideHud( 'vehicleHud' );
 }

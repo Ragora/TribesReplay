@@ -75,6 +75,7 @@ new SimGroup(MissionGroup) {
 		envMapIntensity = "0.2";
 		removeWetEdges = "0";
 			locked = "true";
+		audioEnvironment = Underwater;
 	};
 	new Sky(Sky) {
 		position = "-536 -1240 0";
@@ -204,6 +205,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
 							locked = "true";
+						audioEnvironment = BigRoom;					
 					};
 					new StaticShape() {
 						position = "-193.171 662.696 218.64";
@@ -235,6 +237,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
 							locked = "true";
+						audioEnvironment = SmallRoom;					
 					};
 					new Item() {
 						position = "-66.4878 624.459 228.436";
@@ -292,6 +295,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
 							locked = "true";
+						audioEnvironment = SmallRoom;					
 					};
 					new StaticShape() {
 						position = "-448.098 544.367 232.716";
@@ -327,6 +331,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
 							locked = "true";
+						audioEnvironment = SmallRoom;					
 					};
 					new Item() {
 						position = "287.049 623.05 196.942";
@@ -509,6 +514,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
 							locked = "true";
+						audioEnvironment = SmallRoom;					
 					};
 					new StaticShape() {
 						position = "-278.446 -448.882 260.269";
@@ -557,6 +563,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
 							locked = "true";
+						audioEnvironment = SmallRoom;					
 					};
 					new StaticShape() {
 						position = "352.306 -411.627 257.31";
@@ -617,6 +624,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
 							locked = "true";
+						audioEnvironment = BigRoom;					
 					};
 					new InteriorInstance() {
 						position = "-12 -323 203.12";
@@ -690,6 +698,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_2";
 							locked = "true";
+						audioEnvironment = SmallRoom;					
 					};
 					new StaticShape() {
 						position = "152.547 -458.643 164.3";

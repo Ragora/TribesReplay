@@ -81,6 +81,12 @@ function VehicleData::playerDismounted(%data, %obj, %player)
 {
    if( %player.client.observeCount > 0 )
       resetObserveFollow( %player.client, true );
+
+   setTargetSensorGroup(%obj.getTarget(), %obj.team);
+   
+   // if there is a turret, set its team as well.
+   if( %obj.turretObject > 0 )
+      setTargetSensorGroup(%obj.turretObject.getTarget(), %obj.team);
 }
 
 function HoverVehicle::useCreateHeight()
@@ -95,13 +101,15 @@ function WheeledVehicle::useCreateHeight()
 
 function AssaultVehicle::onDamage(%this, %obj)
 {
-   (%obj.getMountNodeObject(10)).setDamagelevel(%obj.getDamageLevel());
+   if(isObject(%obj.getMountNodeObject(10)))
+      (%obj.getMountNodeObject(10)).setDamagelevel(%obj.getDamageLevel());
    Parent::onDamage(%this, %obj);
 }
 
 function BomberFlyer::onDamage(%this, %obj)
 {
-   (%obj.getMountNodeObject(10)).setDamagelevel(%obj.getDamageLevel());
+   if(isObject(%obj.getMountNodeObject(10)))
+      (%obj.getMountNodeObject(10)).setDamagelevel(%obj.getDamageLevel());
    Parent::onDamage(%this, %obj);
 }
 
@@ -233,7 +241,6 @@ function VehicleData::onDestroyed(%data, %obj, %prevState)
          %obj.turretObject.getDataBlock().playerDismount(%obj.turretObject);
    for(%i = 0; %i < %obj.getDatablock().numMountPoints; %i++)
    {
-      echo("damaging objects...");
       if (%obj.getMountNodeObject(%i)) {
          %flingee = %obj.getMountNodeObject(%i);
          %flingee.getDataBlock().doDismount(%flingee, true);
@@ -467,7 +474,7 @@ function AssaultVehicle::deleteAllMounted(%data, %obj)
 
 function BomberFlyer::deleteAllMounted(%data, %obj)
 {
-   if(%obj.beacon)
+   if(isObject(%obj.beacon))
       %obj.beacon.delete();
 
    %turret = %obj.getMountNodeObject(10);
@@ -512,12 +519,6 @@ function MobileBaseVehicle::deleteAllMounted(%data, %obj)
    if(isObject(%obj.shield))
       %obj.shield.delete();
                             
-   if (isObject(%obj.teleporter))
-   {
-      %obj.teleporter.setThreadDir($ActivateThread, FALSE);
-      %obj.teleporter.playThread($ActivateThread,"activate");	
-      %obj.teleporter.playAudio($ActivateSound, StationTeleportDeacitvateSound);
-   }
    if(isObject(%obj.beacon))
    {
       %obj.beacon.delete();   	
@@ -725,9 +726,6 @@ function MobileBaseVehicle::playerMounted(%data, %obj, %player, %node)
       %obj.shield.schedule(1000,"delete"); 
       %obj.deploySchedule = "";
       
-      %obj.teleporter.setThreadDir($ActivateThread, FALSE);
-      %obj.teleporter.playThread($ActivateThread,"activate");	
-      %obj.teleporter.playAudio($ActivateSound, StationTeleportDeacitvateSound);
       %obj.fullyDeployed = 0;
       
       %obj.noEnemyControl = 0;
@@ -808,7 +806,7 @@ function MobileBaseVehicle::vehicleDeploy(%data, %obj, %player, %force)
                %obj.turret.playThread($PowerThread,"Power");
                %obj.turret.mountImage(MissileBarrelLarge, 0 ,false);
 
-               %obj.beacon = new ScopeAlwaysShape() {
+               %obj.beacon = new BeaconObject() {
                   dataBlock = "DeployedBeacon";
                   position = %obj.position;
                   rotation = %obj.rotation;
@@ -915,12 +913,6 @@ function MobileInvStation::onEndSequence(%data, %obj, %thread)
    {
       %obj.notDeployed = 0;
       %obj.vehicle.fullyDeployed = 1;
-      if(isObject(%obj.vehicle.teleporter))
-      {
-         %obj.vehicle.teleporter.setThreadDir($ActivateThread, TRUE);
-         %obj.vehicle.teleporter.playThread($ActivateThread,"activate");	
-         %obj.vehicle.teleporter.playAudio($ActivateSound, StationTeleportAcitvateSound);
-      }
    }
    Parent::onEndSequence(%data, %obj, %thread);
 }

@@ -1,3 +1,20 @@
+// sounds and effects
+///////////////////////
+datablock EffectProfile(DeployableExplosionEffect)
+{
+   effectname = "explosions/explosion.xpl10";
+   minDistance = 10;
+   maxDistance = 50;
+};
+
+datablock AudioProfile(DeployablesExplosionSound)
+{
+   filename = "fx/explosions/deployables_explosion.wav";
+   description = AudioExplosion3d;
+   preload = true;
+   effect = DeployableExplosionEffect;
+};
+
 //--------------------------------------------------------------------------
 // Shockwave
 //--------------------------------------------------------------------------
@@ -147,7 +164,7 @@ datablock TurretData(TurretBaseLarge) : TurretDamageProfile
    disabledLevel  = 1.35;
    explosion      = TurretExplosion;
 	expDmgRadius = 15.0;
-	expDamage = 0.7;
+	expDamage = 0.66;
 	expImpulse = 2000.0;
    repairRate     = 0;
    emap = true;
@@ -276,7 +293,9 @@ function checkTurretMount(%data, %obj, %slot)
    %potTurret = ContainerRayCast(%obj.getEyeTransform(), %srchEnd, $TypeMasks::TurretObjectType);
    if(%potTurret != 0)
    {
-      if(%potTurret.getDatablock().getName() $= "TurretBaseLarge")
+      %otherMountObj = "foo";
+
+      if(%potTurret.getDatablock().getName() $= "TurretBaseLarge" || %potTurret.getDatablock().getName() $= %otherMountObj)
       {
          // found a turret base, what team is it on?
          if(%potTurret.team == %obj.client.team)

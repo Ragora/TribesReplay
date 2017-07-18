@@ -687,7 +687,6 @@ function TribeAndWarriorBrowserGui::onWake(%this)
    MemberList.Clear();
    W_MemberList.clear();
    Canvas.pushDialog(LaunchToolbarDlg);
-   TWBTabView.addSet( 1, "gui/shll_horztabbuttonB", "5 5 5", "50 50 0", "5 5 5" );
 
    if ( TWBTabView.tabCount() == 0 )
    {
@@ -807,7 +806,7 @@ function TribeAdminMemberDlg::onDatabaseQueryResult( %this, %status, %resultStri
 {
     if ( %this.key != %key )
       return;
-// echo("RECV: " @ %status);
+ echo("RECV: " @ %status);
    if(getField(%status,0)==0)
    {
       switch$(%this.state)
@@ -815,7 +814,10 @@ function TribeAdminMemberDlg::onDatabaseQueryResult( %this, %status, %resultStri
          case "setMemberProfile":
             %this.state = "done";
             ForumsTopicsList.refreshFlag = true;
-            messageBoxOK("COMPLETE","Member Profile has been updated","WonUpdateCertificate();TL_Profile.setValue(1);");
+			if (getField(%status,3) == getField(getRecord(WonGetAuthInfo(),0),3))
+	            messageBoxOK("COMPLETE","Member Profile has been updated","WonUpdateCertificate();TL_Profile.setValue(1);");
+			else
+				messageBoxOK("COMPLETE",getField(%status,1));
       }
    }
    else if (getSubStr(getField(%status,1),0,9) $= "ORA-04061")
@@ -950,6 +952,11 @@ function BrowserSearchPane::onDatabaseRow(%this, %row, %isLastRow, %key)
    }
 }
 //==--  TWBTabView -----------------------------------------------------------
+function TWBTabView::onAdd( %this )
+{
+   %this.addSet( 1, "gui/shll_horztabbuttonB", "5 5 5", "50 50 0", "5 5 5" );
+}
+//-----------------------------------------------------------------------------
 function TWBTabView::view(%this, %name, %type)
 {
    if ( %type $= "Tribe" )

@@ -409,6 +409,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 						team = "1";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new InteriorInstance() {
 					position = "483.1 -299.94 101.715";
@@ -418,6 +419,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 						team = "1";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new InteriorInstance() {
 					position = "341.493 -179.539 78.7793";
@@ -664,6 +666,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 						team = "2";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new InteriorInstance() {
 					position = "-283.977 18.08 101.25";
@@ -673,6 +676,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 						team = "2";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new Turret() {
 					position = "-278.451 -103.223 73.0707";
@@ -1068,6 +1072,7 @@ new SimGroup(MissionGroup) {
 		envMapIntensity = "0.4";
 		removeWetEdges = "0";
 			locked = "true";
+			AudioEnvironment = Underwater;
 	};
 };
 //--- OBJECT WRITE END ---

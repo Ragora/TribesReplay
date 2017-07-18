@@ -9,12 +9,14 @@ datablock EffectProfile(BlasterSwitchEffect)
 {
    effectname = "weapons/blaster_activate";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(BlasterFireEffect)
 {
    effectname = "weapons/blaster_fire";
-   minDistance = 3.0;
+   minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 //--------------------------------------------------------------------------

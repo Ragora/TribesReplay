@@ -67,8 +67,6 @@ new SimGroup(MissionGroup) {
 			visibleDistance = "500";
 			position = "-1024 -1024 0";
 	};
-	new Terraformer(Terraformer) {
-	};
 	new NavigationGraph(NavGraph) {
 		conjoinAngleDev = "70";
 		cullDensity = "0.3";
@@ -120,6 +118,7 @@ new SimGroup(MissionGroup) {
 					interiorFile = "bbase4cm.dif";
 					showTerrainInside = "0";
 						team = "1";
+						AudioEnvironment = BigRoom;
 				};
 				new StaticShape(Team1StationInventory3) {
 					position = "-453.7 -754.041 224.031";
@@ -1025,6 +1024,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 						team = "2";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new StaticShape(Team2StationInventory4) {
 					position = "-287.53 344.9 243.663";
@@ -2093,6 +2093,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-120 344 30.339";
@@ -2107,6 +2108,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-104 -120 16.3623";
@@ -2121,6 +2123,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-448 -80 36.8361";
@@ -2135,6 +2138,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-704 -600 -0.359596";
@@ -2149,6 +2153,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-920 -80 35";
@@ -2163,6 +2168,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-16 -440 69";
@@ -2177,6 +2183,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-440 -280 67.038";
@@ -2191,6 +2198,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "104 -192 67.033";
@@ -2205,6 +2213,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-680 120 81.7432";
@@ -2219,6 +2228,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud1";
 			envMapIntensity = "0.5";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 	};
 	new SimGroup(Sounds) {

@@ -328,6 +328,7 @@ new SimGroup(MissionGroup) {
 				AudioProfile = "Universal_Base_1";
 					threshold2 = "60";
 					threshold1 = "330";
+					AudioEnvironment = SmallRoom;
 			};
 		};
 		new SimGroup(team0) {
@@ -2487,6 +2488,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud3";
 			envMapIntensity = "0.9";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-8 48 95.5";
@@ -2501,6 +2503,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud3";
 			envMapIntensity = "0.9";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 		new WaterBlock() {
 			position = "-272 376 72";
@@ -2515,6 +2518,7 @@ new SimGroup(MissionGroup) {
 			envMapTexture = "lush/skies/lushcloud3";
 			envMapIntensity = "0.9";
 			removeWetEdges = "1";
+			AudioEnvironment = Underwater;
 		};
 	};
 	new SimGroup(Sounds) {

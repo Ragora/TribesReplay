@@ -27,7 +27,7 @@ new SimGroup(MissionGroup) {
 		flightCeilingRange = "20";
 			locked = "true";
 	};
-	new Sun() {
+	new Sun(Sun) {
 		direction = "0.622506 0.622506 -0.474313";
 		color = "0.800000 0.800000 0.800000 1.000000";
 		ambient = "0.400000 0.400000 0.400000 1.000000";
@@ -35,6 +35,18 @@ new SimGroup(MissionGroup) {
 			locked = "true";
 			position = "-1024 -1024 0";
 			rotation = "1 0 0 0";
+
+      lensFlareScale = 0.7;               // size of lens flare circles
+      lensFlareIntensity = 1.0;           // translucency of lens flare
+      frontFlareSize = 300.0;             // size of sun flare
+      backFlareSize = 450.0;              // size of background sun flare
+      flareColor = "1.0 1.0 1.0 1.0";
+      
+      texture[0] = "special/sunFlare";
+      texture[1] = "special/sunFlare02";
+      texture[2] = "special/LensFlare/flare01";
+      texture[3] = "special/LensFlare/flare02";
+      texture[4] = "special/LensFlare/flare03";
 	};
 	new TerrainBlock(Terrain) {
 		rotation = "1 0 0 0";
@@ -481,6 +493,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new StaticShape(Team1StationInventory1) {
 					position = "35.77 -778.125 130.44";
@@ -736,6 +749,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = SmallRoom;
 				};
 				new StaticShape(Team2StationInventory1) {
 					position = "-435.278 515.64 129.6";

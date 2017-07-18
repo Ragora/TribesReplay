@@ -372,11 +372,11 @@ datablock SimDataBlock(TankDamageProfile)
    shieldDamageScale[$DamageType::Grenade] = 0.8;
    shieldDamageScale[$DamageType::Mine] = 3.25;
    shieldDamageScale[$DamageType::Missile] = 2.0;
-   shieldDamageScale[$DamageType::Mortar] = 0.8;
+   shieldDamageScale[$DamageType::Mortar] = 1.7;
    shieldDamageScale[$DamageType::Plasma] = 1.0;
    shieldDamageScale[$DamageType::BomberBombs] = 1.5;
    shieldDamageScale[$DamageType::TankChaingun] = 1.5;
-   shieldDamageScale[$DamageType::TankMortar] = 1.4;
+   shieldDamageScale[$DamageType::TankMortar] = 1.8;
    shieldDamageScale[$DamageType::MissileTurret] = 1.25;
    shieldDamageScale[$DamageType::MortarTurret] = 1.0;
    shieldDamageScale[$DamageType::PlasmaTurret] = 1.25;
@@ -401,11 +401,11 @@ datablock SimDataBlock(TankDamageProfile)
    damageScale[$DamageType::Grenade] = 1.0;
    damageScale[$DamageType::Mine] = 2.25;
    damageScale[$DamageType::Missile] = 1.25;
-   damageScale[$DamageType::Mortar] = 1.0;
+   damageScale[$DamageType::Mortar] = 1.4;
    damageScale[$DamageType::Plasma] = 0.5;
    damageScale[$DamageType::BomberBombs] = 1.0;
    damageScale[$DamageType::TankChaingun] = 0.75;
-   damageScale[$DamageType::TankMortar] = 1.0;
+   damageScale[$DamageType::TankMortar] = 1.6;
    damageScale[$DamageType::MissileTurret] = 1.25;
    damageScale[$DamageType::MortarTurret] = 1.0;
    damageScale[$DamageType::PlasmaTurret] = 1.0;
@@ -633,7 +633,7 @@ datablock SimDataBlock(LightPlayerDamageProfile)
    damageScale[$DamageType::SentryTurret] =		1.0;
    damageScale[$DamageType::Disc] =		 		1.0;
    damageScale[$DamageType::Grenade] =		 	1.2;
-   damageScale[$DamageType::Mine] =		 		1.2;
+   damageScale[$DamageType::Mine] =		 		1.0;
    damageScale[$DamageType::Missile] =		 	1.0;
    damageScale[$DamageType::Mortar] =		 	1.3;
    damageScale[$DamageType::Plasma] =		 	1.0;
@@ -647,7 +647,7 @@ datablock SimDataBlock(LightPlayerDamageProfile)
    damageScale[$DamageType::Default] =			1.0;
    damageScale[$DamageType::Impact] =			1.2;
    damageScale[$DamageType::Ground] =			1.0;
-   damageScale[$DamageType::Explosion] =		1.2;
+   damageScale[$DamageType::Explosion] =		1.0;
    damageScale[$DamageType::Lightning]	=		1.0;
 };
 
@@ -666,7 +666,7 @@ datablock SimDataBlock(MediumPlayerDamageProfile)
    damageScale[$DamageType::SentryTurret] =		1.0;
    damageScale[$DamageType::Disc] =		 		0.8;
    damageScale[$DamageType::Grenade] =		 	1.0;
-   damageScale[$DamageType::Mine] =		 		1.0;
+   damageScale[$DamageType::Mine] =		 		0.9;
    damageScale[$DamageType::Missile] =		 	0.8;
    damageScale[$DamageType::Mortar] =		 	1.0;
    damageScale[$DamageType::Plasma] =		 	0.65;
@@ -680,7 +680,7 @@ datablock SimDataBlock(MediumPlayerDamageProfile)
    damageScale[$DamageType::Default] =		 	1.0;
    damageScale[$DamageType::Impact] =		 	1.0;
    damageScale[$DamageType::Ground] =		 	1.0;
-   damageScale[$DamageType::Explosion] =		1.0;
+   damageScale[$DamageType::Explosion] =		0.8;
    damageScale[$DamageType::Lightning]	=		1.2;
 };
 

@@ -1,6 +1,5 @@
 // Tribes 2 Input Map File
-moveMap.delete();
-new ActionMap(moveMap);
+moveMap.clearMap();
 moveMap.bindCmd(keyboard, "escape", "", "escapeFromGame();");
 moveMap.bind(keyboard, "alt e", toggleEditor);
 moveMap.bind(keyboard, "s", moveleft);
@@ -88,10 +87,15 @@ moveMap.bind(keyboard, "ctrl-alt numpad9", selectFavorite19);
 moveMap.bind(keyboard, "ctrl-alt numpad0", selectFavorite20);
 moveMap.bind(keyboard, "w", toggleFreeLook);
 moveMap.bind(keyboard, "ctrl z", throwWeapon);
+moveMap.bind(keyboard, "ctrl n", toggleNetDisplayHud);
 moveMap.bind(mouse0, "xaxis", yaw);
 moveMap.bind(mouse0, "yaxis", pitch);
 moveMap.bind(mouse0, "button0", mouseFire);
 moveMap.bind(mouse0, "button1", mouseJet);
 moveMap.bind(mouse0, "zaxis", cycleWeaponAxis);
-if (!isDemo())
-   GlobalActionMap.bind(keyboard, "super2", toggleConsole);
+observerMap.clearMap();
+observerMap.bind(keyboard, "space", jump);
+observerMap.bind(keyboard, "up", moveup);
+observerMap.bind(keyboard, "down", movedown);
+observerMap.bind(mouse0, "button1", mouseJet);
+GlobalActionMap.bind(keyboard, "super2", toggleConsole);

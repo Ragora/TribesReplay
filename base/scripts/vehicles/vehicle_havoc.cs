@@ -4,17 +4,32 @@
 //**************************************************************
 // SOUNDS
 //**************************************************************
+datablock EffectProfile(HAPCFlyerEngineEffect)
+{
+   effectname = "vehicles/htransport_thrust";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(HAPCFlyerThrustEffect)
+{
+   effectname = "vehicles/htransport_boost";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
 
 datablock AudioProfile(HAPCFlyerEngineSound)
 {
    filename    = "fx/vehicles/htransport_thrust.wav";
    description = AudioDefaultLooping3d;
+   effect = HAPCFlyerEngineEffect;
 };
 
 datablock AudioProfile(HAPCFlyerThrustSound)
 {
    filename    = "fx/vehicles/htransport_boost.wav";
    description = AudioDefaultLooping3d;
+   effect = HAPCFlyerThrustEffect;
 };
 
 //**************************************************************
@@ -81,6 +96,7 @@ datablock FlyingVehicleData(HAPCFlyer) : HavocDamageProfile
    rollForce = 12;               // Auto-roll
    hoverHeight = 8;         // Height off the ground at rest
    createHoverHeight = 6;   // Height off the ground when created
+   maxForwardSpeed = 71;  // speed in which forward thrust force is no longer applied (meters/second)
 
    // Turbo Jet
    jetForce = 5000;

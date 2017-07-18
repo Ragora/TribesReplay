@@ -7,13 +7,16 @@
 $CHANNEL_STATUS = "STATUS";
 $VERSION_STRING = "Dynamix IRC Chat 1.2.0";
 $ESCAPE_SEQ = "_-_";
+
 $IRCClient::serverList = GetIRCServerList(0);
 $IRCClient::serverCount = getRecordCount($IRCClient::serverList);
 $IRCClient::retries = 0;
+
 if ($IRCClient::serverCount > 1)
    $IRCClient::serverIndex = getRandom($IRCClient::serverCount-1)-1;
 else
    $IRCClient::serverIndex = -1;
+
 $IRCClient::serverAttempt = 0;
 
 $AWAY_TIMEOUT = 5 * 60 * 1000;
@@ -135,9 +138,7 @@ function ChatGui::onAdd(%this)
 function ChatGui::onWake(%this)
 {
    Canvas.pushDialog(LaunchToolbarDlg);
-
-   ChatTabView.addSet(1,"gui/shll_horztabbuttonB","5 5 5","50 50 0","5 5 5");
-
+//   ChatTabView.addSet(1,"gui/shll_horztabbuttonB","5 5 5","50 50 0","5 5 5");
    ChatGui.awake = true;
    ChatTabView.setSelected($IRCClient::currentChannel);
    ChatGuiScroll.scrollToBottom();
@@ -152,19 +153,69 @@ function ChatGui::setKey(%this,%ignore)
 //------------------------------------------------------------------------------
 function ChatTabView::onAdd(%this)
 {
-   if ($LaunchMode $= "Normal")
-      %this.addTab($IRCClient::channels.getObject(0),"STATUS");
+	// Don't Forget, it needs to be on add unless you have a VERY GOOD REASON, right Brad?.
+   	ChatTabView.addSet(1,"gui/shll_horztabbuttonB","5 5 5","50 50 0","5 5 5");
+	if ($LaunchMode $= "Normal")
+//		%this.addTab(0,"WELCOME");
+      %this.addTab($IRCClient::channels.getObject(0),"WELCOME");
 }
 
 //------------------------------------------------------------------------------
 function ChatTabView::onSelect(%this,%obj,%name)
 {
+	if (%name $= "WELCOME")
+	{
+		%indentSpace = "";
+		WelcomeHeadlines.clear();
+		WelcomeText.clear();
+		%obj.topic = "Welcome to the Tribes 2 Chat Area!";
+
+		%topic[0] = "Welcome To Tribes 2 Chat";
+		%topic[1] = "Public Channels";
+		%topic[2] = "Private Channels";
+		%topic[3] = "Chat Options";
+		%topic[4] = "ShazBot";
+		%topic[5] = "Channel Ops";
+		%topic[6] = "Private Channel Conduct";
+		%topic[7] = "Right Click Mute";
+		%topic[8] = "/me, /action, channels";
+		%topic[9] = "Tab Complete";
+
+		%atxt[0] = "Welcome to the Tribes 2 Chat.  Tribes has the distinction of having the largest and most devoted player base of any massivly multi-player game.  To support this base we have included the Chat area to make it easier to recruit, get help, meet other players and organize games.  Tribes 2 Chat is a secure IRC based chat network that requires an authenticated Tribes 2 game client to join, this means that third party IRC clients like mIRC cannot be used.";
+		%atxt[1] = "When you access the CHANNELS list, you are seeing a listing of all the available chat rooms. The chat rooms colored \"white\" are general rooms that anyone can access. These are usually the most populated rooms and are \"Tribes 2\" where general gameplay is discussed, \"Recruiting\" where people go to try and find teams, or to recruit players onto their teams, and \"Help\" which is an area to go and speak with other players about technical issues you're having with your system.";
+		%atxt[2] = "There are also Private Chat channels that you will see IF you are a member of a Tribe. If that's the case, then there will be a private chat channel visible for each tribe you belong to and you can enter those rooms to speak with other Tribe members. Players that do not belong to those tribes will not be able to enter that room.";
+		%atxt[3] = "There are CHAT OPTIONS (use the button at the top of this page to access those options) that allow you to customize your \"away\" message and a few other messages.";
+		%atxt[4] = "When you're in a chat channel, beware the Mighty and Powerful SHAZBOT. Shazbot is an automated spam and cursing filter that runs in the general rooms. If you curse a lot, or repeat the same messages too often, or even if you just spam a whole bunch of different nonsense lines in a row, the Mighty and Powerful SHAZBOT will throw you out of the room to think about your transgressions. These kicks are temporary and you can come back later, but if you get kicked enough times, you may be banned entirely, so think before you type and the world will be rosy. (Shazbot doesn't like all-caps messages either...so be careful. No shouting around him...he's sensitive.)";
+		%atxt[5] = "There are human Operators (Ops) in each channel also. These Ops are not automated. They are people. If you respect them, then they will be kind and considerate in return. However, if you badmouth them or otherwise annoy them, they may kick or ban you from a channel. Just be civil and all things will be good. (NOTE: In Private channels, the Ops are all Tribe members and there are no cursing or spamming rules...unless those Ops make those rules.)";
+		%atxt[6] = "Private channels are completely deregulated. Dynamix/Sierra/Vivendi-Universal neither care, nor want to know, what you talk about in those channels. They are yours. Warning to anyone who goes to those channels: If you go there, and you do not like what you hear, then leave. Don't expect Dynamix/Sierra/Vivendi-Universal to do anything about private channels. We only review the public channels.";
+		%atxt[7] = "When in a public channel, if someone is being annoying, then simply use the MUTE functionality to ignore him completely. This is much easier than trying to get an Op to kick him and is usually easier and faster.";
+		%atxt[8] = "If you see someone typing in a different color, they are probably using a \"/me\" or \"/action\" command. This allows you to emote an action in chat. For instance, if you type /me is away from the keyboard right now, then you'll see \"<playername> is away from the keyboard right now\" and it will be a different color than normal chat. Channel links are usually green and are created by putting a pound sign \"#\" before the channel name.";
+		%atxt[9] = "There is a nifty Tab Complete feature that makes it easier to type names. If there is a player named \"MrMyxlpytlk\" in the room, you may have a tough time typing that out normally. But if you type \"MrMy\" and then hit TAB, the name will auto-complete instantly, allowing you to respond quickly to screwy names.";
+
+		for (%i = 0; %i < 10; %i++)
+		{
+	      	%text = %text @ "<lmargin:10><color:ADFFFA><font:Univers:22><tag:" @ %i @ ">" @ %topic[%i] @
+    	            "\n\n<lmargin:30><rmargin%:80><font:Univers:16><color:82BEB9>" @ %atxt[%i] @ "<sbreak>\n\n\n<rmargin%:100>";
+			WelcomeHeadlines.addRow( %i, %topic[%i] );
+		}
+
+		ChatPanel.setVisible(false);
+		WelcomePanel.setVisible(true);
+		WelcomeText.setValue(%text);
+		WelcomeHeadlines.setSelectedRow(0);
+	}
+	else
+	{
+		ChatPanel.setVisible(true);
+		WelcomePanel.setVisible(false);
+	}
+
    ChatTabFrame.setAltColor(%obj.private);
    %i = %obj.findMember($IRCClient::people.getObject(0));
    ChatEditChannelBtn.setVisible(%obj.getFlags(%i) & $PERSON_OPERATOR);
    
    //is this the status window?  do we need the options button
-   %vis = (%name $= "STATUS" ? true : false);
+   %vis = (%name $= "WELCOME" ? true : false);
    ChatEditOptionsBtn.setVisible(%vis);
    
    ChatChannelTopic.setValue(%obj.topic);
@@ -172,6 +223,7 @@ function ChatTabView::onSelect(%this,%obj,%name)
    {
       if ($IRCClient::currentChannel == $IRCClient::attachedChannel)
          ChatGuiMessageVector.detach();
+
       ChatGuiMessageVector.attach(%obj);
      //ChatGuiMessageVector.scrollToBottom();
       $IRCClient::attachedChannel = %obj;
@@ -469,6 +521,7 @@ function ChatRoomMemberList::onRightMouseDown(%this,%column,%row,%mousePos)
          ChatMemberPopup.add("Mute",6);
 
 	  ChatMemberPopup.add( "--------------------",-1);
+//   	  ChatMemberPopup.add( "Instant Message", 9 );
    	  ChatMemberPopup.add( "TMail", 10 );
 	  ChatMemberPopup.add( "Add To Buddylist",11);
 
@@ -526,6 +579,8 @@ function ChatMemberPopup::onSelect(%this,%id,%text)
          IRCClient::ignore(ChatMemberPopup.member,!(ChatMemberPopup.member.flags & $PERSON_IGNORE));
 	  case 7: // go to webbrowser page
 		 LinkBrowser(%member,"warrior");
+//	  case 9: // Instant Message
+//         IRCClient::instant(ChatMemberPopup.member,0);
 	  case 10: // TMail
 		 LinkEMail(%member);
 	  case 11: // Add To Buddylist
@@ -828,9 +883,11 @@ function IRCClient::notify(%event)
          {
             switch$ ( $IRCClient::channelNames[%i] )
             {
-               case "#Tribes2":              %temp = 3;
-               case "#Tribes2-recruiting":   %temp = 2;
-               case "#Help":                 %temp = 1;
+               case "#Tribes2":              %temp = 5;
+               case "#Tribes2-Recruiting":   %temp = 4;
+               case "#Help":                 %temp = 3;
+               case "#Scripting":            %temp = 2;
+               case "#Mapping":              %temp = 1;
                default:                      %temp = 0;
             }
             JoinChatList.addRow(%i, IRCClient::displayChannel( $IRCClient::channelNames[%i]) TAB $IRCClient::channelUsers[%i] TAB %temp );
@@ -870,6 +927,8 @@ function IRCClient::notify(%event)
             $IRCClient::nextChannel = 0;
          }
          ChatTabView.removeTab($IRCClient::deletedChannel);
+//	  case IDIRC_INSTANT:
+//         	MessageBoxOK("Message", "You have been instant Messaged by " @ $IRCClient::inviteperson);
       case IDIRC_INVITED: //invited to join existing channel.
          	//MessageBoxOKCancel("Invite", "You have been invited to channel " @ IRCClient::displayChannel($IRCClient::invitechannel) @ " by " @ $IRCClient::inviteperson @ ".", "IRCClient::join($IRCClient::invitechannel);");
          	IRCClient::newMessage($IRCClient::CurrentChannel, "You have been invited to channel " @ $IRCClient::invitechannel @ " by " @ $IRCClient::inviteperson @ ".");
@@ -1562,6 +1621,8 @@ function IRCClient::dispatch(%prefix,%command,%params)
        IRCClient::onVersion(%prefix,%params);
      case "ACTION":
        IRCClient::onAction(%prefix,%params);
+	 case "INSTANT":
+		IRCClient::onInstantMsg(%prefix,%params);
      case "INVITE":		
        IRCClient::onInvite(%prefix,%params);
      case "301":
@@ -3005,7 +3066,30 @@ function IRCClient::nickHighLight(%message)
    } 
    return %message;
 }
+//------------------------------------------------------------------------------
+function IRCClient::onInstantMsg(%prefix,%params)
+{
+   // Find or create the person (should never be NULL)
+   %p = IRCClient::findPerson2(%prefix,true);
+   if (%p)
+   {
+      %params = nextToken(%params,channel,":");
+      %channel = %params;
 
+      // Only bother the user if they aren't ignoring this person
+      if (!(%person.flags & $PERSON_IGNORE))
+      {
+         // Set vars and notify the responder
+         $IRCClient::inviteperson = IRCClient::displayNick(%p);
+         IRCClient::notify(IDIRC_INSTANT);
+      }
+   }
+}
+//------------------------------------------------------------------------------
+function IRCClient::instant(%p,%c)
+{
+	IRCClient::send("INSTANT" SPC %p.displayName SPC 0);
+}
 //------------------------------------------------------------------------------
 function IRCClient::part(%params)
 {
@@ -3180,6 +3264,10 @@ function IRCClient::ignore(%p,%tf)
       }
       IRCClient::notify(IDIRC_SORT);
    }
+   else
+   {
+		echo("not P:" @ %p TAB %tf);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3282,8 +3370,11 @@ function IRCClient::onJoinServer(%mission,%server,%address,%mayprequire,%prequir
 }
 
 //------------------------------------------------------------------------------
- function IRCClient::onJoinGame(%address, %desc)
+function IRCClient::onJoinGame(%address, %desc)
 {
+   if(!isObject($IRCClient::tcp))
+      return;
+
    //error("IRCClient::onJoinGame( "@ %address @", "@ %desc @" )");
    //IRCClient::away("joined a game.");
 
@@ -3325,4 +3416,10 @@ if ($LaunchMode $= "Normal")
 {
    IRCClient::init();
    IRCClient::connect();
+}
+
+//------------------------------------------------------------------------------
+function WelcomeHeadlines::onSelect( %this, %id, %text )
+{
+   WelcomeText.scrollToTag( %id );
 }

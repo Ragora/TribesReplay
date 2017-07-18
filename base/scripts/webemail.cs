@@ -655,20 +655,6 @@ function LC_BigList::GetOnlineStatus(%this)
     databaseQuery(69,%roster, %this,%this.key);
 }
 //-----------------------------------------------------------------------------
-function LC_BigList::onDatabaseQueryResult(%this,%status,%resultString,%key)
-{
-  if(%key != %this.key)
-    return;
-//  switch$(%this.status)
-//  {
-//    case "getOnline": if(getField(%status,0) == 0)
-//                        for(%str=0;%str<strLen(%resultString);%str++)
-//                        {
-//                          %this.setRowStyle( %str, !getSubStr(%resultString,%str,1) );
-//                        }
-//  }
-}
-//-----------------------------------------------------------------------------
 function AddressDlg::onDatabaseQueryResult(%this,%status,%resultString,%key)
 {
 	if(%this.key != %key)
@@ -1072,7 +1058,6 @@ function EMailGui::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
 
 					%this.checkingEmail = false;
 		   			%this.checkSchedule = schedule(1000 * 60 * 5, 0, CheckEmail, true);
-//					echo("scheduling Email check " @ %this.checkSchedule @ " in 5 minutes");
 				}
 			case "sendMail":
 				%this.state = "done";
@@ -1163,8 +1148,9 @@ function EMailGui::onDatabaseRow(%this, %row,%isLastRow,%key)
 			%body = getFields(%row,17);
 			%msg = %ID NL %senderQuad NL %isRead NL %created NL %TList NL %CCList NL %subject NL %body @ "\n";
 			%this.message = %msg;
-			$EmailNextSeq = %ID;
-			EmailMessageVector.pushBackLine(%this.message, getField(%this.message, 0));
+			EmailNewMessageArrived( %msg, %id );
+//			$EmailNextSeq = %ID;
+//			EmailMessageVector.pushBackLine(%this.message, getField(%this.message, 0));
 			if(!%this.soundPlayed)
 			{
 				if(!getRecord(%this.message, 2))//are there any unread messages in this group?

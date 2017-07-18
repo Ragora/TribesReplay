@@ -310,7 +310,7 @@ else
    if ($LaunchMode $= "DedicatedServer" && $PureServer)
    {
       if (setPureServer(1))
-         $Con::prompt = "PURE%";
+         $Con::prompt = "PURE% ";
    }
 
 	// load autoexec once for command-line overrides:
@@ -646,6 +646,10 @@ function StartupGui::checkLoginDone( %this, %editAcct, %emailCheck )
             {
                %msg = "Email check failed - You can not request more than one account info email per every 24-hour period.";
             }
+			else if ( %code == -2806)
+			{
+				%msg = "Invalid Login Name";
+			}
             else if(%errorString !$= "")
             {
                %msg = "Error - " @ %errorString;
@@ -1063,7 +1067,11 @@ if ($LaunchMode $= "DedicatedServer" ||
 }
 else
 {
-   videoSetGammaCorrection($pref::OpenGL::gammaCorrection);
+   // WinNT does not currently support gammaCorrection (disable in options)
+   $Video::setGammaCorrectionSupported = !(($platform $= "windows") && ($platformVersion $= "winnt"));
+   if($Video::setGammaCorrectionSupported)
+      videoSetGammaCorrection($pref::OpenGL::gammaCorrection);
+   
    if(!createCanvas())
    {
       quit();
@@ -2001,6 +2009,7 @@ else
                maxLength = "16";
                password = "0";
                glowOffset = "9 9";
+               IRCName = true;
             };
             new ShellTextEditCtrl() {
                profile = "NewTextEditProfile";

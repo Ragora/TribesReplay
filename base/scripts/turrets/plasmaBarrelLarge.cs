@@ -7,12 +7,26 @@
 //--------------------------------------------------------------------------
 // Sounds
 //--------------------------------------------------------------------------
+datablock EffectProfile(PBLSwitchEffect)
+{
+   effectname = "powered/turret_light_activate";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
+
+datablock EffectProfile(PBLFireEffect)
+{
+   effectname = "powered/turret_plasma_fire";
+   minDistance = 2.5;
+   maxDistance = 5.0;
+};
 
 datablock AudioProfile(PBLSwitchSound)
 {
    filename    = "fx/powered/turret_light_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = PBLSwitchEffect;
 };
 
 datablock AudioProfile(PBLFireSound)
@@ -20,6 +34,7 @@ datablock AudioProfile(PBLFireSound)
    filename    = "fx/powered/turret_plasma_fire.wav";
    description = AudioDefault3d;
    preload = true;
+   effect = PBLFireEffect;
 };
 
 //--------------------------------------------------------------------------

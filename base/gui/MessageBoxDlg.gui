@@ -7,6 +7,8 @@ new GuiControl(MessageBoxOKDlg) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	helpTag = "0";
 
 	new ShellPaneCtrl(MBOKFrame) {
@@ -30,7 +32,7 @@ new GuiControl(MessageBoxOKDlg) {
 			helpTag = "0";
 			lineSpacing = "2";
 		};
-		new ShellBitmapButton() {
+		new ShellBitmapButton(MBOKButton) {
 			profile = "ShellButtonProfile";
 			horizSizing = "center";
 			vertSizing = "bottom";
@@ -38,7 +40,7 @@ new GuiControl(MessageBoxOKDlg) {
 			extent = "120 38";
 			minExtent = "32 38";
 			visible = "1";
-			command = "eval(MessageBoxOKDlg.callback); Canvas.popDialog(MessageBoxOKDlg);";
+			command = "Canvas.popDialog(MessageBoxOKDlg);";
          accelerator = "return";
 			helpTag = "0";
 			text = "OK";
@@ -57,6 +59,8 @@ new GuiControl(MessageBoxYesNoDlg) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	helpTag = "0";
 
 	new ShellPaneCtrl(MBYesNoFrame) {
@@ -80,7 +84,7 @@ new GuiControl(MessageBoxYesNoDlg) {
 			helpTag = "0";
 			lineSpacing = "2";
 		};
-		new ShellBitmapButton() {
+		new ShellBitmapButton(MBYesNoButtonYes) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
@@ -88,13 +92,13 @@ new GuiControl(MessageBoxYesNoDlg) {
 			extent = "120 38";
 			minExtent = "32 38";
 			visible = "1";
-			command = "eval(MessageBoxYesNoDlg.yesCallback); Canvas.popDialog(MessageBoxYesNoDlg);";
+			command = "Canvas.popDialog(MessageBoxYesNoDlg);";
          accelerator = "enter";
 			helpTag = "0";
 			text = "YES";
 			simpleStyle = "0";
 		};
-		new ShellBitmapButton() {
+		new ShellBitmapButton(MBYesNoButtonNo) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
@@ -102,7 +106,7 @@ new GuiControl(MessageBoxYesNoDlg) {
 			extent = "120 38";
 			minExtent = "32 38";
 			visible = "1";
-			command = "eval(MessageBoxYesNoDlg.noCallback); Canvas.popDialog(MessageBoxYesNoDlg);";
+			command = "Canvas.popDialog(MessageBoxYesNoDlg);";
          accelerator = "escape";
 			helpTag = "0";
 			text = "NO";
@@ -121,6 +125,8 @@ new GuiControl(MessageBoxOKCancelDlg) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	helpTag = "0";
 
 	new ShellPaneCtrl(MBOKCancelFrame) {
@@ -144,7 +150,7 @@ new GuiControl(MessageBoxOKCancelDlg) {
 			helpTag = "0";
 			lineSpacing = "2";
 		};
-		new ShellBitmapButton() {
+		new ShellBitmapButton(MBOKCancelButtonOK) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
@@ -152,13 +158,13 @@ new GuiControl(MessageBoxOKCancelDlg) {
 			extent = "120 38";
 			minExtent = "32 38";
 			visible = "1";
-			command = "eval(MessageBoxOKCancelDlg.callback); Canvas.popDialog(MessageBoxOKCancelDlg);";
+			command = "Canvas.popDialog(MessageBoxOKCancelDlg);";
          accelerator = "return";
 			helpTag = "0";
 			text = "OK";
 			simpleStyle = "0";
 		};
-		new ShellBitmapButton() {
+		new ShellBitmapButton(MBOKCancelButtonCancel) {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
@@ -166,7 +172,7 @@ new GuiControl(MessageBoxOKCancelDlg) {
 			extent = "120 38";
 			minExtent = "32 38";
 			visible = "1";
-			command = "eval(MessageBoxOKCancelDlg.cancelCallback); Canvas.popDialog(MessageBoxOKCancelDlg);";
+			command = "Canvas.popDialog(MessageBoxOKCancelDlg);";
          accelerator = "escape";
 			helpTag = "0";
 			text = "CANCEL";

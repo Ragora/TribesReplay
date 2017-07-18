@@ -6,7 +6,7 @@
 // deploy on) interior surfaces and terrain.
 // ------------------------------------------------------------------
 
-$TeamDeployableMax[DeployedCamera]  = 20;
+$TeamDeployableMax[DeployedCamera]  = 15;
 
 // ------------------------------------------
 // force-feedback effect datablocks
@@ -15,20 +15,22 @@ $TeamDeployableMax[DeployedCamera]  = 20;
 datablock EffectProfile(CameraGrenadeActivateEffect)
 {
    effectname = "weapons/grenade_camera_activate";
-   minDistance = 3.0;
+   minDistance = 2.5;
+   maxDistance = 5.0;
 };
 
 datablock EffectProfile(CameraGrenadeAttachEffect)
 {
    effectname = "weapons/grenade_camera_activate";
-   minDistance = 3.0;
+   minDistance = 2.5;
+   maxDistance = 5.0;
 };
 
 datablock EffectProfile(CameraGrenadeExplosionEffect)
 {
    effectname = "explosions/explosion.xpl10";
    minDistance = 10;
-   maxDistance = 50;
+   maxDistance = 30;
 };
 
 // ------------------------------------------
@@ -113,6 +115,7 @@ datablock SensorData(CameraSensorObject)
    detectsUsingLOS = true;
    detectionPings = false;
    detectsPassiveJammed = true;
+   detectsActiveJammed = false;
    detectRadius = 40;
    detectsFOVOnly = true;
    useObjectFOV = true;
@@ -179,4 +182,12 @@ datablock TurretImageData(DeployableCameraBarrel)
    degPerSecTheta    = 180;
    degPerSecPhi      = 360;
 };
+
+//------------------------------------------------------------------------------
+// Functions:
+//------------------------------------------------------------------------------
+function CameraGrenadeThrown::onCollision( %data, %obj, %col )
+{
+   // Do nothing...
+}
 

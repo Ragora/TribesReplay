@@ -39,7 +39,9 @@ function AIProcessMessageTable(%threadId)
 	else
 	{
 		//play the msg, schedule the next msg, and increment the index
-		serverCmdCannedChat(%speaker, addTaggedString(%msg), true);
+      %tag = addTaggedString( %msg );
+		serverCmdCannedChat(%speaker, %tag, true);
+      removeTaggedString( %tag );
 		schedule(%delay, 0, "AIProcessMessageTable", %threadId);
 		$AIMsgThreadDelay = %delay;
 		$AIMsgThreadIndex++;
@@ -93,7 +95,7 @@ function AIMessageThreadTemplate(%type, %msg, %clSpeaker, %clListener)
 					else if (%randNum < 0.66)
 						$AIMsgThreadTable[%index++] = %clListener @ " ChatCmdDefendReinforce " @ 1500;
 					else
-						$AIMsgThreadTable[%index++] = %clListener @ " ChatCmdDefend " @ 1250;
+						$AIMsgThreadTable[%index++] = %clListener @ " ChatCmdDefendEntrances " @ 1250;
 
 					//do we acknowledge the command first?
 					if (getRandom() < 0.5)
@@ -354,8 +356,10 @@ function AIMessageThread(%msg, %clSpeaker, %clListener, %force, %index, %threadI
 //				schedule("AIEndMessageThread(" @ $AIMsgThreadId @ ");", 1000);
 			
 		default:
-			serverCmdCannedChat(%clSpeaker, addTaggedString(%msg), true);
-			schedule(1500, 0, "AIEndMessageThread", $AIMsgThreadId);
+         %tag = addTaggedString( %msg );
+			serverCmdCannedChat( %clSpeaker, %tag, true );
+         removeTaggedString( %tag );   // Don't keep incrementing the string ref count...
+			schedule( 1500, 0, "AIEndMessageThread", $AIMsgThreadId );
 	}
 }
 

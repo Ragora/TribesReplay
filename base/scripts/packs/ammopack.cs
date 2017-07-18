@@ -62,7 +62,8 @@ datablock ItemData(AmmoPack)
 	max[ConcussionGrenade] = 10;
 	max[FlashGrenade] = 10;
 	max[FlareGrenade] = 10;
-	max[Mine] = 5;
+	max[CameraGrenade] = 0;
+    max[Mine] = 5;
 	max[RepairKit] = 1;
 };
 

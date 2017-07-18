@@ -216,6 +216,7 @@ function CnHGame::equip(%game, %player)
 {
 	for(%i =0; %i<$InventoryHudCount; %i++)
 		%player.client.setInventoryHudItem($InventoryHudData[%i, itemDataName], 0, 1);
+   %player.client.clearBackpackIcon();
 
 	//%player.setArmor("Light");
 	%player.setInventory(Blaster,1);
@@ -314,7 +315,7 @@ function CnHGame::awardScorePlayerFFDefend(%game, %cl, %flipflop)
    if (%game.SCORE_PER_FLIPFLOP_DEFEND != 0)
    {
       messageClient(%cl, 'msgFFDef', '\c0You received a %1 point bonus for defending %2.', %game.SCORE_PER_FLIPFLOP_DEFEND, %game.cleanWord(%flipflop.name));	
-      messageTeamExcept(%cl, 'msgFFDef', '\c0Teammate %1 received a %2 point bonus for defending %3', %cl.name, %game.SCORE_PER_FLIPFLOP_DEFEND, %game.cleanWord(%flipflop.name));
+//      messageTeamExcept(%cl, 'msgFFDef', '\c0Teammate %1 received a %2 point bonus for defending %3', %cl.name, %game.SCORE_PER_FLIPFLOP_DEFEND, %game.cleanWord(%flipflop.name));
    }      
 	%game.recalcScore(%cl);
 }
@@ -328,7 +329,7 @@ function CnHGame::awardScorePlayerFFCap(%game, %cl, %this)
    if (%game.SCORE_PER_PLYR_FLIPFLOP_CAP != 0)
    {
       messageClient(%cl, 'msgFFDef', '\c0You received a %1 point bonus for holding the %2.', %game.SCORE_PER_PLYR_FLIPFLOP_CAP, %game.cleanWord(%this.name));	
-      messageTeamExcept(%cl, 'msgFFDef', '\c0Teammate %1 received a %2 point bonus for holding the %3', %cl.name, %game.SCORE_PER_PLYR_FLIPFLOP_CAP, %game.cleanWord(%this.name));
+//      messageTeamExcept(%cl, 'msgFFDef', '\c0Teammate %1 received a %2 point bonus for holding the %3', %cl.name, %game.SCORE_PER_PLYR_FLIPFLOP_CAP, %game.cleanWord(%this.name));
    }      
 	%game.recalcScore(%cl);
 } 

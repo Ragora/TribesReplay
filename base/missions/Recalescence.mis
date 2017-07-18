@@ -36,6 +36,7 @@ new SimGroup(MissionGroup) {
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
 		visibleDistance = "450";
+		high_visibleDistance = "700";
 		useSkyTextures = "0";
 		renderBottomTexture = "0";
 		SkySolidColor = "0.800000 0.360000 0.200000 0.000000";
@@ -44,6 +45,9 @@ new SimGroup(MissionGroup) {
 		fogVolume1 = "80 0 90";
 		fogVolume2 = "300 90 150";
 		fogVolume3 = "0 0 0";
+		high_fogVolume1 = "750 215 235";
+		high_fogVolume2 = "700 235 245";
+		high_fogVolume3 = "750 245 255";
 		materialList = "lava_dark.dml";
 		windVelocity = "1 0 0";
 		windEffectPrecipitation = "0";
@@ -153,6 +157,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new Item() {
 					position = "434.058 319.732 223.559";
@@ -2074,6 +2079,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_2";
 						locked = "true";
+						AudioEnvironment = BigRoom;
 				};
 				new StaticShape(Team2generatorLarge2) {
 					position = "-377.35 -221.62 116.796";

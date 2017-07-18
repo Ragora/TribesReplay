@@ -4,12 +4,75 @@
 //**************************************************************
 // SOUNDS
 //**************************************************************
+datablock EffectProfile(BomberFlyerEngineEffect)
+{
+   effectname = "vehicles/bomber_engine";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(BomberFlyerThrustEffect)
+{
+   effectname = "vehicles/bomber_boost";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(BomberTurretFireEffect)
+{
+   effectname = "vehicles/bomber_turret_fire";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(BomberTurretActivateEffect)
+{
+   effectname = "vehicles/bomber_turret_activate";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(BomberTurretReloadEffect)
+{
+   effectname = "vehicles/bomber_turret_reload";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(BomberTurretDryFireEffect)
+{
+   effectname = "vehicles/bomber_turret_dryfire";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(BomberBombReloadEffect)
+{
+   effectname = "vehicles/bomber_bomb_reload";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(BomberBombDryFireEffect)
+{
+   effectname = "vehicles/bomber_bomb_dryfire";
+   minDistance = 5.0;
+   maxDistance = 10.0;
+};
+
+datablock EffectProfile(BomberBombFireEffect)
+{
+   effectname = "weapons/generic_throw";
+   minDistance = 10.0;
+   maxDistance = 20.0;
+};
 
 datablock AudioProfile(BomberFlyerEngineSound)
 {
    filename    = "fx/vehicles/bomber_engine.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = BomberFlyerEngineEffect;
 };
 
 datablock AudioProfile(BomberFlyerThrustSound)
@@ -17,6 +80,7 @@ datablock AudioProfile(BomberFlyerThrustSound)
    filename    = "fx/vehicles/bomber_boost.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = BomberFlyerThrustEffect;
 };
 
 datablock AudioProfile(FusionExpSound)
@@ -32,6 +96,7 @@ datablock AudioProfile(BomberTurretFireSound)
    filename    = "fx/vehicles/bomber_turret_fire.wav";
    description = AudioClose3d;
    preload = true;
+   effect = BomberTurretFireEffect;
 };
 
 datablock AudioProfile(BomberTurretActivateSound)
@@ -39,6 +104,7 @@ datablock AudioProfile(BomberTurretActivateSound)
    filename    = "fx/vehicles/bomber_turret_activate.wav";
    description = AudioClose3d;
    preload = true;
+   effect = BomberTurretActivateEffect;
 };
 
 datablock AudioProfile(BomberTurretReloadSound)
@@ -46,6 +112,7 @@ datablock AudioProfile(BomberTurretReloadSound)
    filename    = "fx/vehicles/bomber_turret_reload.wav";
    description = AudioClose3d;
    preload = true;
+   effect = BomberTurretReloadEffect;
 };
 
 datablock AudioProfile(BomberTurretIdleSound)
@@ -60,6 +127,7 @@ datablock AudioProfile(BomberTurretDryFireSound)
    filename    = "fx/vehicles/bomber_turret_dryfire.wav";
    description = AudioClose3d;
    preload = true;
+   effect = BomberTurretDryFireEffect;
 };
    
 datablock AudioProfile(BomberBombReloadSound)
@@ -67,6 +135,7 @@ datablock AudioProfile(BomberBombReloadSound)
    filename    = "fx/vehicles/bomber_bomb_reload.wav";
    description = AudioClose3d;
    preload = true;
+   effect = BomberBombReloadEffect;
 };
 
 datablock AudioProfile(BomberBombProjectileSound)
@@ -74,6 +143,7 @@ datablock AudioProfile(BomberBombProjectileSound)
    filename    = "fx/vehicles/bomber_bomb_projectile.wav";
    description = AudioDefaultLooping3d;
    preload = true;
+   effect = BomberBombFireEffect;
 };
 
 datablock AudioProfile(BomberBombDryFireSound)
@@ -81,6 +151,7 @@ datablock AudioProfile(BomberBombDryFireSound)
    filename    = "fx/vehicles/bomber_bomb_dryfire.wav";
    description = AudioClose3d;
    preload = true;
+   effect = BomberBombDryFireEffect;
 };
 
 datablock AudioProfile(BomberBombFireSound)
@@ -88,6 +159,7 @@ datablock AudioProfile(BomberBombFireSound)
    filename    = "fx/vehicles/bomber_bomb_reload.wav";
    description = AudioClose3d;
    preload = true;
+   effect = BomberBombFireEffect;
 };
 
 datablock AudioProfile(BomberBombIdleSound)
@@ -157,15 +229,16 @@ datablock FlyingVehicleData(BomberFlyer) : BomberDamageProfile
    maxSteeringAngle = 5;    // Max radiens you can rotate the wheel. Smaller number is more maneuverable.
    horizontalSurfaceForce = 5;   // Horizontal center "wing" (provides "bite" into the wind for climbing/diving and turning)
    verticalSurfaceForce = 8;     // Vertical center "wing" (controls side slip. lower numbers make MORE slide.)
-   maneuveringForce = 4500;      // Horizontal jets (W,S,D,A key thrust)
+   maneuveringForce = 4700;      // Horizontal jets (W,S,D,A key thrust)
    steeringForce = 1100;         // Steering jets (force applied when you move the mouse)
    steeringRollForce = 300;      // Steering jets (how much you heel over when you turn)
    rollForce = 8;                // Auto-roll (self-correction to right you after you roll/invert)
    hoverHeight = 5;        // Height off the ground at rest
    createHoverHeight = 3;  // Height off the ground when created
+   maxForwardSpeed = 85;  // speed in which forward thrust force is no longer applied (meters/second)
 
    // Turbo Jet
-   jetForce = 2000;      // Afterburner thrust (this is in addition to normal thrust)
+   jetForce = 3000;      // Afterburner thrust (this is in addition to normal thrust)
    minJetEnergy = 40.0;     // Afterburner can't be used if below this threshhold.
    jetEnergyDrain = 3.0;       // Energy use of the afterburners (low number is less drain...can be fractional)
    vertThrustMultiple = 3.0;
@@ -793,8 +866,6 @@ datablock TargetProjectileData(BomberTargeter)
    textureName[1]       = "special/flare";
    textureName[2]       = "special/pulse";
    textureName[3]      	= "special/expFlare";
-   beacon               = true;
-   beaconType           = vehicle;
 };
 
 //-------------------------------------
@@ -868,8 +939,9 @@ function BomberTargetingImage::deconstruct(%data, %obj, %slot)
       %bomber.beacon.delete();
       %bomber.beacon = "";
    }
-   %bomber.beacon = new ScopeAlwaysShape() {
+   %bomber.beacon = new BeaconObject() {
       dataBlock = "BomberBeacon";
+      beaconType = "vehicle";
       position = %pos;
    };
 
@@ -890,9 +962,7 @@ function BomberTargetingImage::deconstruct(%data, %obj, %slot)
 datablock StaticShapeData(BomberBeacon)
 {
    shapeFile = "turret_muzzlepoint.dts";
-   beacon = true;
    targetNameTag = 'beacon';
-   beaconType           = vehicle;
    isInvincible = true;
    
    dynamicType = $TypeMasks::SensorObjectType;

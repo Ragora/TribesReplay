@@ -9,25 +9,28 @@ datablock EffectProfile(MissileSwitchEffect)
 {
    effectname = "weapons/missile_launcher_activate";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(MissileFireEffect)
 {
    effectname = "weapons/missile_fire";
-   minDistance = 10.0;
+   minDistance = 2.5;
+   maxDistance = 5.0;
 };
 
 datablock EffectProfile(MissileDryFireEffect)
 {
    effectname = "weapons/missile_launcher_dryfire";
    minDistance = 2.5;
+   maxDistance = 2.5;
 };
 
 datablock EffectProfile(MissileExplosionEffect)
 {
    effectname = "explosions/explosion.xpl23";
    minDistance = 10;
-   maxDistance = 50;
+   maxDistance = 30;
 };
 
 //--------------------------------------------------------------------------
@@ -245,7 +248,7 @@ datablock ParticleEmitterData(MissileExplosionSmokeEMitter)
 
 
 
-datablock DebrisData( VSpikeDebris )
+datablock DebrisData( MissileSpikeDebris )
 {
    emitters[0] = MissileSmokeSpikeEmitter;
    explodeOnMaxBounce = true;
@@ -272,7 +275,7 @@ datablock ExplosionData(MissileExplosion)
 
    emitter[0] = MissileExplosionSmokeEmitter;
 
-   debris = VSpikeDebris;
+   debris = MissileSpikeDebris;
    debrisThetaMin = 10;
    debrisThetaMax = 170;
    debrisNum = 8;
@@ -642,7 +645,7 @@ datablock SeekerProjectileData(ShoulderMissile)
    lifetimeMS          = 6000;
    muzzleVelocity      = 10.0;
    maxVelocity         = 80.0;
-   turningSpeed        = 90.0;
+   turningSpeed        = 110.0;
    acceleration        = 200.0;
 
    proximityRadius     = 3;
@@ -722,7 +725,7 @@ datablock ShapeBaseImageData(MissileLauncherImage)
    projectileType = SeekerProjectile;
 
    isSeeker     = true;
-   seekRadius   = 300;
+   seekRadius   = 400;
    maxSeekAngle = 8;
    seekTime     = 0.5;
    minSeekHeat  = 0.7;  // the heat that must be present on a target to lock it.

@@ -39,6 +39,7 @@ datablock ItemData(FlashGrenadeThrown)
 
    computeCRC = true;
 
+    maxWhiteout = 1.2;
 };
 
 datablock ItemData(FlashGrenade)
@@ -57,4 +58,12 @@ datablock ItemData(FlashGrenade)
    computeCRC = true;
 
 };
+
+//--------------------------------------------------------------------------
+// Functions:
+//--------------------------------------------------------------------------
+function FlashGrenadeThrown::onCollision( %data, %obj, %col )
+{
+   // Do nothing...
+}
 

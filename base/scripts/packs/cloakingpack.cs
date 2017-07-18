@@ -11,12 +11,19 @@
 //
 //Only light armors may equip with this item.
 
+datablock EffectProfile(CloakingPackActivateEffect)
+{
+   effectname = "packs/cloak_on";
+   minDistance = 2.5;
+   maxDistance = 2.5;
+};
 
 datablock AudioProfile(CloakingPackActivateSound)
 {
    filename = "fx/packs/cloak_on.wav";
    description = CloseLooping3d;
    preload = true;
+   effect = CloakingPackActivateEffect;
 };
 
 datablock ShapeBaseImageData(CloakingPackImage)
@@ -91,6 +98,8 @@ function CloakingPackImage::onActivate(%data, %obj, %slot)
       {
          messageClient(%obj.client, 'MsgCloakingPackOn', '\c2Cloaking pack on.');
          %obj.setCloaked(true);
+         if ( !isDemo() )
+            commandToClient( %obj.client, 'setCloakIconOn' );
       }
       else
       {
@@ -121,6 +130,8 @@ function CloakingPackImage::onDeactivate(%data, %obj, %slot)
 
    %obj.setCloaked(false);
    %obj.setImageTrigger(%slot, false);
+   if ( !isDemo() )
+      commandToClient( %obj.client, 'setCloakIconOff' );
 }
 
 function CloakingPack::onPickup(%this, %obj, %shape, %amount)

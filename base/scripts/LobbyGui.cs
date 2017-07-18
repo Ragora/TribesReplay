@@ -526,8 +526,9 @@ function lobbyVote()
                return;
             
             case "ChooseTeam":
-               fillLobbyTeamMenu();
-               return;
+               commandToServer( 'ClientJoinTeam', -1, true );
+               schedule( 100, 0, lobbyReturnToGame );
+               return;   
 
             case "VoteTournamentMode":
                LobbyVoteMenu.tourneyChoose = 1;

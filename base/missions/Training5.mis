@@ -354,6 +354,7 @@ new SimGroup(MissionGroup) {
 					showTerrainInside = "0";
 					AudioProfile = "Universal_Base_1";
 						locked = "false";
+						AudioEnvironment = SmallRoom;
 				};
 			};
 		};
@@ -371,6 +372,7 @@ new SimGroup(MissionGroup) {
 						showTerrainInside = "0";
 						AudioProfile = "Universal_Base_3";
 							locked = "true";
+							AudioEnvironment = BigRoom;
 					};
 					new StaticShape(ObjectiveGen1) {
 						position = "-460.757 -348.913 6.0481";

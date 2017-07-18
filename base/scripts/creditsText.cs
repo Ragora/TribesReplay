@@ -338,6 +338,7 @@ addCreditsLine("Bart \"=DB=Seven\" Smith");
 addCreditsLine("Ben \"Diox\" May");
 addCreditsLine("Ben \"Hypn0tik\" Tamler");
 addCreditsLine("Ben \"Stan\" Gray");
+addCreditsLine("Bobby \"Mogart\" Rider");
 addCreditsLine("Bodhi \"Heliometus Max\" Daher");
 addCreditsLine("Brad \"Bort\" Klann");
 addCreditsLine("Bret D. \"Bacchus\" Wilson");
@@ -1563,116 +1564,11 @@ addCreditsLine("Greg \"Satan\" Romaszka");
 addCreditsLine("Steve \"Cpt.Wussie!!!\" Snow");
 addCreditsLine("");
 addCreditsLine("");
-addCreditsLine("<spush><font:Univers condensed:22><spush><color:18A27B>Credits Screen By<spop><spop>");
-addCreditsLine("Kidney Thief  :)", true);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+addCreditsLine("");
+addCreditsLine("");
+addCreditsLine("");
+addCreditsLine("");
+addCreditsLine("");
+addCreditsLine("<just:center><bitmap:twb/twb_lineup><sbreak>");
+addCreditsLine("<spush><font:Univers condensed:26><spush><color:18A27B>So Long, and Thanks For All The Fish.<spop><spop>");
+addCreditsLine("<spush><font:Univers condensed:22><spush><color:c0c0c0>Tribes2 Development Team<spop><spop>", true);
