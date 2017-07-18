@@ -33,6 +33,8 @@ function TCPDebugger::onLine(%this, %line)
       %this.handleRunning();
    else if(%cmd $= "EVALOUT")
       %this.handleEvalOut(%rest);
+   else if(%cmd $= "OBJTAGLISTOUT")
+      %this.handleObjTagList(%rest);
    else
       %this.handleError(%line);   
 }
@@ -166,6 +168,10 @@ function TCPDebugger::handleEvalOut(%this, %line)
 	   %expr = getField(%row, 0);
 	   DebuggerWatchView.setRowById(%id, %expr @ "\t" @ %value);
 	}
+}
+
+function TCPDebugger::handleObjTagList(%this, %line)
+{
 }
 
 function TCPDebugger::handleError(%this, %line)

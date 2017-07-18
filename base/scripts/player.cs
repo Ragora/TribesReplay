@@ -1408,6 +1408,9 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    //max[Rock]          = 1;
    
    observeParameters = "0.5 4.5 4.5";
+
+   shieldEffectScale = "0.7 0.7 1.0";
+
 };
 
 
@@ -1663,6 +1666,8 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    //max[Rock]          = 1;
    
    observeParameters = "0.5 4.5 4.5";
+
+   shieldEffectScale = "0.7 0.7 1.0";
 };
 
 
@@ -1914,6 +1919,8 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    //max[Rock]          = 1;
    
    observeParameters = "0.5 4.5 4.5";
+
+   shieldEffectScale = "0.7 0.7 1.0";
 };
 
 
@@ -2535,7 +2542,7 @@ function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %am
    }
 
    %targetClient = %targetObject.getOwnerClient();
-   %sourceClient = %sourceObject ? %sourceObject.getOwnerClient() : 0;
+   %sourceClient = isObject(%sourceObject) ? %sourceObject.getOwnerClient() : 0;
 
    %targetTeam = %targetClient.team;
 
@@ -2549,11 +2556,11 @@ function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %am
    else if(isObject(%sourceObject) && %sourceObject.getClassName() $= "Turret")
       %sourceTeam = getTargetSensorGroup(%sourceObject.getTarget());
    else if( isObject(%sourceObject) &&
-   	( %sourceObject.getClassName() $= "FlyingVehicle" || %sourceObject.getClassName() $= "WheeledVehicle" ) || %sourceObject.getClassName() $= "HoverVehicle")
+   	( %sourceObject.getClassName() $= "FlyingVehicle" || %sourceObject.getClassName() $= "WheeledVehicle" || %sourceObject.getClassName() $= "HoverVehicle"))
       %sourceTeam = getTargetSensorGroup(%sourceObject.getTarget());
    else
    {
-      if (%sourceObject && %sourceObject.getTarget() >= 0 )
+      if (isObject(%sourceObject) && %sourceObject.getTarget() >= 0 )
       {
          %sourceTeam = getTargetSensorGroup(%sourceObject.getTarget());
       }

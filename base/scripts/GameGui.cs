@@ -370,7 +370,8 @@ function GMJ_Browser::onDatabaseRow( %this, %row, %isLastRow, %key )
 function GMJ_Browser::onSelect( %this, %address )
 {
    GMJ_JoinBtn.setActive( true );
-   GMJ_RefreshServerBtn.setActive( true );
+   if ( !isServerQueryActive() )
+      GMJ_RefreshServerBtn.setActive( true );
    $JoinGamePassword = "";
    $JoinGameAddress = %address;
 
@@ -489,7 +490,7 @@ function ServerInfoDlg::update( %this )
       // Fill in the content window:
       %content = GMJ_Browser.getServerContentString();
       SI_ContentWindow.fill( %content );
-      %refreshable = true;
+      %refreshable = !isServerQueryActive();
    }
    else
    {
@@ -506,7 +507,7 @@ function ServerInfoDlg::update( %this )
          case "timedOut":
             %temp = "<spush><color:DC1A1A>Timed out.<spop>";
             SI_ContentWindow.setText( "Not available." );
-            %refreshable = true;
+            %refreshable = !isServerQueryActive();
       }
       %infoText = %infoText NL "<lmargin:0><spush>" @ %this.headerStyle @ "STATUS: <spop><lmargin:70>" TAB %temp;
    }

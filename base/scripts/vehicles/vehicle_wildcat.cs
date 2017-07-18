@@ -28,6 +28,37 @@ datablock AudioProfile(ScoutThrustSound)
 };
 
 //**************************************************************
+// LIGHTS
+//**************************************************************
+datablock RunningLightData(WildcatLight1)
+{
+   radius = 1.0;
+   color = "1.0 1.0 1.0 0.3";
+   nodeName = "Headlight_node01";
+   direction = "-1.0 1.0 0.0";
+   texture = "special/headlight4";
+};
+
+datablock RunningLightData(WildcatLight2)
+{
+   radius = 1.0;
+   color = "1.0 1.0 1.0 0.3";
+   nodeName = "Headlight_node02";
+   direction = "1.0 1.0 0.0";
+   texture = "special/headlight4";
+};
+
+datablock RunningLightData(WildcatLight3)
+{
+   type = 2;
+   radius = 100.0;
+   color = "1.0 1.0 1.0 1.0";
+   offset = "0.0 0.0 0.0";
+   direction = "0.0 1.0 0.0";
+   texture = "special/projheadlight";
+};
+
+//**************************************************************
 // VEHICLE CHARACTERISTICS
 //**************************************************************
 
@@ -43,6 +74,7 @@ datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
 
    debrisShapeName = "vehicle_grav_scout_debris.dts";
    debris = ShapeDebris;
+   renderWhenDestroyed = false;
 
    drag = 0.0;
    density = 0.9;
@@ -161,6 +193,12 @@ datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
 
    checkRadius = 1.7785;
    observeParameters = "1 10 10";
+
+   runningLight[0] = WildcatLight1;
+   runningLight[1] = WildcatLight2;
+   runningLight[2] = WildcatLight3;
+
+   shieldEffectScale = "0.9375 1.125 0.6";
 };
 
 //**************************************************************

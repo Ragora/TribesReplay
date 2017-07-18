@@ -39,15 +39,24 @@ function ChooseFilterDlg::newFilter( %this )
    %this.editFilterIndex = CF_FilterList.rowCount();
 
    FilterEditName.setValue( "New Filter" );
-   FilterEditMinPlayers.setValue( 0 );
-   FilterEditMaxPlayers.setValue( 255 );
    FilterEditGameType.setText( "Any" );
    FilterEditMissionType.setText( "Any" );
-   for ( %i = 0; isObject( "FilterEditLocMask" @ %i ); %i++ )
-      ( "FilterEditLocMask" @ %i ).setValue( true );
+   FilterEditMinPlayers.setValue( 0 );
+   FilterEditMaxPlayers.setValue( 255 );
+   FilterEditMaxBots.setValue( 16 );
+   FilterEditMinCPU.setValue( 0 );
    FilterEditUsePingTgl.setValue( false );
    FilterEditMaxPing.setValue( 50 );
    FilterEditMaxPing.setVisible( false );
+   FilterEditTDOnTgl.setValue( false );
+   FilterEditTDOffTgl.setValue( false );
+   FilterEditWindowsTgl.setValue( false );
+   FilterEditLinuxTgl.setValue( false );
+   FilterEditDedicatedTgl.setValue( false );
+   FilterEditNoPwdTgl.setValue( false );
+   FilterEditCurVersionTgl.setValue( false );
+   for ( %i = 0; isObject( "FilterEditLocMask" @ %i ); %i++ )
+      ( "FilterEditLocMask" @ %i ).setValue( true );
 
    Canvas.pushDialog( FilterEditDlg );
 }
@@ -115,6 +124,28 @@ function ChooseFilterDlg::editFilter( %this )
 
    FilterEditMaxBots.setValue( %maxBots );
    FilterEditMinCPU.setValue( %minCPU );
+   if ( %flags & 8 )
+   {
+      FilterEditWindowsTgl.setValue( true );
+      FilterEditLinuxTgl.setValue( false );
+   }
+   else
+   {
+      FilterEditWindowsTgl.setValue( false );
+      FilterEditLinuxTgl.setValue( %flags & 4 );
+   }
+
+   if ( %flags & 16 )
+   {
+      FilterEditTDOnTgl.setValue( true );
+      FilterEditTDOffTgl.setValue( false );
+   }
+   else
+   {
+      FilterEditTDOnTgl.setValue( false );
+      FilterEditTDOffTgl.setValue( %flags & 32 );
+   }
+
    FilterEditDedicatedTgl.setValue( %flags & 1 );
    FilterEditNoPwdTgl.setValue( %flags & 2 );
    FilterEditCurVersionTgl.setValue( %flags & 128 );
@@ -142,6 +173,10 @@ function ChooseFilterDlg::saveFilter( %this )
    %minCPU = FilterEditMinCPU.getValue();
    %flags = FilterEditDedicatedTgl.getValue()
      | ( FilterEditNoPwdTgl.getValue() << 1 )
+     | ( FilterEditLinuxTgl.getValue() << 2 )
+     | ( FilterEditWindowsTgl.getValue() << 3 )
+     | ( FilterEditTDOnTgl.getValue() << 4 )
+     | ( FilterEditTDOffTgl.getValue() << 5 )
      | ( FilterEditCurVersionTgl.getValue() << 7 );
    %row = %filterName TAB %gameType TAB %misType
         TAB %minPlayers TAB %maxPlayers TAB %regionCode 
@@ -161,7 +196,7 @@ function ChooseFilterDlg::deleteFilter( %this )
       return;
 
    %row = CF_FilterList.getRowNumById( %rowId );
-   %lastFilter = CF_FilterList.rowCount() - 3;
+   %lastFilter = CF_FilterList.rowCount() - 4;
 
    while ( ( %nextRow = CF_FilterList.getRowTextById( %rowId + 1 ) ) !$= "" )
    {
@@ -329,6 +364,34 @@ function addMissionType(%type)
 {
    if ( %type !$= "" && FilterEditMissionType.findText( %type ) == -1 )
       FilterEditMissionType.add( %type, 0 );
+}
+
+//------------------------------------------------------------------------------
+function FilterEditTDOnTgl::onAction( %this )
+{
+   if ( %this.getValue() && FilterEditTDOffTgl.getValue() )
+      FilterEditTDOffTgl.setValue( false );
+}
+
+//------------------------------------------------------------------------------
+function FilterEditTDOffTgl::onAction( %this )
+{
+   if ( %this.getValue() && FilterEditTDOnTgl.getValue() )
+      FilterEditTDOnTgl.setValue( false );
+}
+
+//------------------------------------------------------------------------------
+function FilterEditWindowsTgl::onAction( %this )
+{
+   if ( %this.getValue() && FilterEditLinuxTgl.getValue() )
+      FilterEditLinuxTgl.setValue( false );
+}
+
+//------------------------------------------------------------------------------
+function FilterEditLinuxTgl::onAction( %this )
+{
+   if ( %this.getValue() && FilterEditWindowsTgl.getValue() )
+      FilterEditWindowsTgl.setValue( false );
 }
 
 //------------------------------------------------------------------------------

@@ -114,6 +114,7 @@ datablock FlyingVehicleData(BomberFlyer) : BomberDamageProfile
 
    debrisShapeName = "vehicle_air_bomber_debris.dts";
    debris = ShapeDebris;
+   renderWhenDestroyed = false;
 
    drag    = 0.2;
    density = 1.0;
@@ -239,6 +240,8 @@ datablock FlyingVehicleData(BomberFlyer) : BomberDamageProfile
 
    checkRadius = 7.1895;
    observeParameters = "1 10 10";
+
+   shieldEffectScale = "0.75 0.975 0.375";
 };
 
 //**************************************************************

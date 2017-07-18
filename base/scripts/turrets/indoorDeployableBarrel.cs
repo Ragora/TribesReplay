@@ -113,6 +113,8 @@ datablock TurretData(TurretDeployedWallIndoor) : TurretDamageProfile
    thetaMax = 145;
    thetaNull = 90;
 
+   deployedObject = true;
+   
    primaryAxis = yaxis;
 
    isShielded = true;
@@ -157,6 +159,8 @@ datablock TurretData(TurretDeployedCeilingIndoor) : TurretDamageProfile
    thetaNull = 90;
    heatSignature = 0.0;
 
+   deployedObject = true;
+    
    primaryAxis = revzaxis;
 
    isShielded = true;
@@ -262,6 +266,7 @@ datablock TurretImageData(DeployableIndoorBarrel)
    stateTransitionOnTimeout[3] = "Reload";
    stateTimeoutValue[3]        = 0.3;
    stateFire[3]                = true;
+   stateShockwave[3]           = true;
    stateRecoil[3]              = LightRecoil;
    stateAllowImageChange[3]    = false;
    stateSequence[3]            = "Fire";

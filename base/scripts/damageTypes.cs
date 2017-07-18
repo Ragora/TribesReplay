@@ -653,7 +653,7 @@ datablock SimDataBlock(MediumPlayerDamageProfile)
    damageScale[$DamageType::Bullet] = 1.0;
    damageScale[$DamageType::ELF] = 0.75;
    damageScale[$DamageType::ShockLance] = 1.0;
-   damageScale[$DamageType::Laser] = 1.2;
+   damageScale[$DamageType::Laser] = 1.1;
    damageScale[$DamageType::ShrikeBlaster] = 1.0;
    damageScale[$DamageType::BellyTurret] = 1.0;
    damageScale[$DamageType::AATurret] = 0.7;
@@ -686,7 +686,7 @@ datablock SimDataBlock(HeavyPlayerDamageProfile)
    damageScale[$DamageType::Bullet] = 0.6;
    damageScale[$DamageType::ELF] = 0.75;
    damageScale[$DamageType::ShockLance] = 1.0;
-   damageScale[$DamageType::Laser] = 1.2;
+   damageScale[$DamageType::Laser] = 0.63;
    damageScale[$DamageType::ShrikeBlaster] = 1.0;
    damageScale[$DamageType::BellyTurret] = 1.0;
    damageScale[$DamageType::AATurret] = 0.7;

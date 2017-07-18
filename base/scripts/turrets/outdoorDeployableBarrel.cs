@@ -198,6 +198,7 @@ datablock TurretImageData(DeployableOutdoorBarrel)
    stateTransitionOnTimeout[3] = "Reload";
    stateTimeoutValue[3]        = 0.3;
    stateFire[3]                = true;
+   stateShockwave[3]           = true;
    stateRecoil[3]              = LightRecoil;
    stateAllowImageChange[3]    = false;
    stateSequence[3]            = "Fire";

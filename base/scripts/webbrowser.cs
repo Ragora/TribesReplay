@@ -202,7 +202,7 @@ function EditDescriptionApply()
 //-----------------------------------------------------------------------------
 function GetProfileHdr(%type, %line)
 {
-	%CRec = wonGetAuthInfo();
+	$GuidTribes = getRecords(wonGetAuthInfo(),1);
 	if(%type==0)
 	{		
 		TProfileHdr.tribeID = getField(%line,0);
@@ -216,23 +216,28 @@ function GetProfileHdr(%type, %line)
 
 		TL_Profile.setVisible(1);
 		TL_Roster.setVisible(1);
-
+		TL_News.setVisible(1);
        for(%checkID=0;%checkID<getField(getRecord($GuidTribes,0),0);%checkID++)
        {
            if(getField(getRecord($GuidTribes,1+%checkID),3) == 1401)
                TProfileHdr.twa = 4;
-           else if(TProfileHdr.tribe_id == getField(getRecord($GuidTribes,1+%checkID),3))
+           else 
+           	if(TProfileHdr.tribeid == getField(getRecord($GuidTribes,1+%checkID),3))
 				if(TProfileHdr.twa == 0)
            			TProfileHdr.twa =  getField(getRecord($GuidTribes,1+%checkID),4);
        }
    
-		TL_News.setVisible(TProfileHdr.twa);
-		TL_Invites.setVisible(TProfileHdr.twa);
 
 		if(TProfileHdr.twa > 1)
+		{
 			TW_Admin.setVisible(1);
+			TL_Invites.setVisible(1);
+		}
 		else
+		{
 			TW_Admin.setVisible(0);
+			TL_Invites.setVisible(0);
+		}
 	}
 	else
 	{
@@ -792,16 +797,35 @@ function BrowserSearchDlg::onWake( %this )
       BSearchOKBtn.setActive( false );
 }
 //-----------------------------------------------------------------------------
+function BrowserSearchPane::GetOnlineStatus(%this)
+{
+    %this.key = LaunchGui.key++;
+    %this.status = "getOnline";
+    for(%oStat=0;%oStat<BrowserSearchMatchList.RowCount();%oStat++)
+    {
+      if(%oStat == 0)
+        %roster = getField(BrowserSearchMatchList.getRowText(%oStat),3);
+      else
+        %roster = %roster TAB getField(BrowserSearchMatchList.getRowText(%oStat),3);
+    }
+    databaseQuery(69,%roster,%this,%this.key);
+}
+//-----------------------------------------------------------------------------
 function BrowserSearchMatchList::onSelect( %this, %id, %text )
 {
    BSearchOKBtn.setActive( true );
+}
+//-----------------------------------------------------------------------------
+function BrowserSearchMatchList::onAdd(%this)
+{
+	BrowserSearchMatchList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
 }
 //==--  BrowserSearchPane ----------------------------------------------------
 function BrowserSearchPane::onDatabaseQueryResult(%this, %status, %resultStatus, %key)
 {
    if(%key != %this.key)
       return;
-//	echo("RECV: " @ %status);
+	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -828,6 +852,13 @@ function BrowserSearchPane::onDatabaseQueryResult(%this, %status, %resultStatus,
 					%this.rowNum = -1;
 					%this.state = "tribe";
 				}
+			case "getOnline":
+				error("GONLINE:" @ %status TAB %resultString);
+				if(getField(%status,0) == 0)
+	                for(%str=0;%str<strLen(%resultString);%str++)
+	                {
+	                	BrowserSearchMatchList.setRowStyle( %str, !getSubStr(%resultString,%str,1) );
+	                }				
 		}
 	}
 	else if (getSubStr(getField(%status,1),0,9) $= "ORA-04061")
@@ -859,7 +890,10 @@ function BrowserSearchPane::onDatabaseRow(%this, %row, %isLastRow, %key)
 	     	%line = getFields(%row,1);
 		 	BrowserSearchMatchList.addRow(%this.rowNum++, %line);
 			if(%isLastRow)
+			{
+                %this.GetOnlineStatus();
 				%this.state = "done";
+			}
 	}
 }
 //==--  TWBTabView -----------------------------------------------------------
@@ -1115,6 +1149,10 @@ function GuiMLTextCtrl::onURL(%this, %url)
       		PostsPopupDlg.key = LaunchGui.key++;
             PostsPopupDlg.state = "adminRemovePostPlus";
             databaseQuery(63, 7 TAB getFields(%url,1), PostsPopupDlg, PostsPopupDlg.key);
+	  case "joinPublicChat":
+			TribePane.joinChat(getField(%url,1),0);
+	  case "joinPrivateChat":
+			TribePane.joinChat(getField(%url,1),1);
 
       //if there is an unknown URL type, treat it as a weblink..
       default:
@@ -1207,6 +1245,17 @@ function TribePane::onWake(%this)
 		tl_profile.setValue(1);
 	}		
 }
+function TribePane::JoinChat(%this, %tribe, %chanType)
+{
+	if(%chanType == 0)
+		%chan = "_Public";
+	else
+		%chan = "_Private";
+
+	error("CHANNEL:" @ %chan);
+	IRCClient::join(IRCClient::channelName(%tribe) @ %chan);
+    LaunchTabView.viewTab("CHAT", ChatGui, 0);
+}
 //-----------------------------------------------------------------------------
 function TribePane::onDatabaseQueryResult(%this, %status, %resultString , %key)
 {
@@ -1285,18 +1334,30 @@ function TribePane::onDatabaseQueryResult(%this, %status, %resultString , %key)
 			case "getTribeNews":
 		   		TWBText.Clear();
 		   		%this.articleLines = 0;
-	       		TWBText.SetText("<just:left><color:ADFFFA><lmargin:10><Font:Univers Condensed:18>" @ TProfileHdr.tribeName @ " News:\n" @
-		               	   		"<color:82BEB9>\n");
-
-				if(getField(%resultString,0)>0)
+				if(GetTribeMember(TProfileHdr.tribeName))
 				{
-					%this.state = "tribeNews";
+		       		TWBText.SetText("<just:left><color:ADFFFA><lmargin:10><Font:Univers Condensed:18>" @ TProfileHdr.tribeName @ " Options:" @
+			               	   		"<color:82BEB9>\n\n<lmargin:20><spush><color:ADFFCC><a:forumlink" TAB TProfileHdr.tribeName @ ">Tribal Forum</a><spop>\n" @
+			               	   		"<spush><color:ADFFCC><a:joinPublicChat" TAB TProfileHdr.tribeName @ ">Tribal Chat: Public</a><spop>\n" @
+		    	           	   		"<spush><color:ADFFCC><a:joinPrivateChat" TAB TProfileHdr.tribeName @ ">Tribal Chat: Private</a><spop>");
 				}
 				else
 				{
-					%this.state="done";
-					messageBoxOK("NOTICE","No Tribe News.");
+		       		TWBText.SetText("<just:left><color:ADFFFA><lmargin:10><Font:Univers Condensed:18>" @ TProfileHdr.tribeName @ " Options:\n\n" @
+			               	   		"<spush><color:ADFFCC><a:joinPublicChat" TAB TProfileHdr.tribeName @ ">Enter " @ TProfileHdr.tribeName @ " Public Chat</a><spop>\n" );
 				}
+
+				%this.state = "done";
+
+//				if(getField(%resultString,0)>0)
+//				{
+//					%this.state = "tribeNews";
+//				}
+//				else
+//				{
+//					%this.state="done";
+//					messageBoxOK("NOTICE","No Tribe News.");
+//				}
 
 			case "getTribeInvites":
 					if(getField(%resultString,0) > 0)
@@ -1925,16 +1986,21 @@ function WarriorPopupDlg::onWake( %this )
     {
      	case 0:	if(getField(GetRecord(WonGetAuthInfo(),0),0) $= TWBTabView.getTabText(TWBTabView.GetSelectedID()))
 				{ // visitor is owner
-//     				WarriorPopup.add( "Clear Primary Tribe setting", 0);
-					WarriorPopUp.add( "Make " SPC WarriorPopup.player.name SPC "my primary tribe", 1 );
- 			    	WarriorPopup.add( "Leave" SPC WarriorPopup.player.name, 2 );
- 			    	WarriorPopup.add( "Go To" SPC WarriorPopup.player.name SPC "forum", 3 );
+					WarriorPopUp.add( strupr(WarriorPopup.Player.name), -1);
+					WarriorPopUp.add( "---------------------------------------------", -1);
+//     				WarriorPopup.add( "Clear Primary Tribe setting", 0);					
+					WarriorPopUp.add( "Make Primary Tribe", 1 );
+ 			    	WarriorPopup.add( "Leave Tribe", 2 );
+ 			    	WarriorPopup.add( "Go To Forum", 3 );
 				}
 
     	case 1: if(getField(GetRecord(WonGetAuthInfo(),0),0) $= TWBTabView.getTabText(TWBTabView.GetSelectedID()))
 				{ // visitor is owner
-					WarriorPopup.add( "EMail " @ getField(WarriorPopup.player.name,0), 4 );
-					WarriorPopup.add( "Remove" SPC getField(WarriorPopup.player.name,0) SPC " from Buddylist", 5 );
+					WarriorPopUp.add( strupr(getField(WarriorPopup.player.name,0)), -1);
+					WarriorPopUp.add( "---------------------------------------------", -1);
+					WarriorPopup.add( "Contact By EMail", 4 );
+					WarriorPopup.add( "Remove from Buddylist", 5 );
+					WarriorPopup.add( ".............................................", -1);
 					WarriorPopup.add( "Clear BuddyList", 6 );
 					WarriorPopup.add( "EMail BuddyList", 7 );
 				}
@@ -2101,21 +2167,27 @@ function TribeMemberPopupDlg::onWake( %this )
 			break;
 		}
 	}
+	TribeMemberPopup.add( strUpr(TribeMemberPopup.player.name), -1);
+	TribeMemberPopup.add( "--------------------------------------------",-1);
     switch(MemberList.CID)
     {
     	case 0:	
+			    TribeMemberPopup.add( "Contact by EMail", 2 );
+			    TribeMemberPopup.add( "Add To Buddylist", 4 );
+			    TribeMemberPopup.add( "Add To Blocklist", 5 );
+				TribeMemberPopup.add( "Invite To Chat", 8);
 				if(%isMember)
 				{
-    				TribeMemberPopup.add( "Kick" SPC TribeMemberPopup.player.name, 0 );
-			    	TribeMemberPopup.add( "Edit" SPC TribeMemberPopup.player.name, 1 );
+					TribeMemberPopup.add( "............................................", -1);
+    				TribeMemberPopup.add( "Kick from Tribe", 0 );
+			    	TribeMemberPopup.add( "Edit Profile", 1 );
 			    	TribeMemberPopup.add( "EMail Tribe", 3 );
 				}
-			    TribeMemberPopup.add( "EMail" SPC TribeMemberPopup.player.name, 2 );
-			    TribeMemberPopup.add( "Add" SPC TribeMemberPopup.player.name SPC "To Buddylist", 4 );
-			    TribeMemberPopup.add( "Add" SPC TribeMemberPopup.player.name SPC "To Blocklist", 5 );
 
-    	case 1: TribeMemberPopup.add( "Cancel Invite To" SPC TribeMemberPopup.player.name, 6 );
-				TribeMemberPopup.add( "EMail Invited Player", 7 );
+    	case 1: TribeMemberPopup.add( "Contact by EMail", 7 );
+				TribeMemberPopup.add( "Add To Buddylist",4);
+				TribeMemberPopup.add( "............................................", -1);
+				TribeMemberPopup.add( "Cancel Invite", 6 );
     	case 2: TribeMemberPopup.Add("HMMM...",8);   
     	case 3: TribeMemberPopup.Add("HMMM...",8);   
     	default: TribeMemberPopup.Add("HMMM...",8);   
@@ -2160,7 +2232,8 @@ function TribeMemberPopup::onSelect( %this, %id, %text )
                			 	  "TribeMemberPopup.onSelect(12,\"call12\");","");
 	  case 7: //	7 EMail Invited Player
 	     	  LinkEMail(TribeMemberPopup.player.name);
-	  case 8:
+	  case 8: //	8 INVITE TO CHAT
+			MessageboxOK("NOTICE","This is a preview of coming functionality and is not yet available for use.");			  
 	  case 9:
 	  case 10:
 	  case 11:

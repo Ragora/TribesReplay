@@ -170,6 +170,10 @@ function NewsGui::onDatabaseRow(%this, %row,%isLastRow,%key)
 //-----------------------------------------------------------------------------
 function PostNews()
 {
+	messageBoxYesNo("CONFIRM","Please do not submit bug reports without a tested solution, test posts or recruiting posts." NL " " NL "Continue with your submittal?","StartPostNews();");
+}
+function StartPostNews()
+{
    $NewsCategory = "";
    $NewsTitle = "";
    Canvas.pushDialog(NewsPostDlg);

@@ -7,17 +7,21 @@ new GuiControl(OptionsDlg) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	helpTag = "0";
-		pane = "Video";
+		pane = "VIDEO";
 
 	new ShellPaneCtrl() {
 		profile = "ShellDlgPaneProfile";
 		horizSizing = "center";
 		vertSizing = "center";
-		position = "20 45";
-		extent = "600 390";
+		position = "20 30";
+		extent = "600 420";
 		minExtent = "48 92";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
 		text = "SETTINGS";
 		maxLength = "255";
@@ -26,11 +30,13 @@ new GuiControl(OptionsDlg) {
 		new ShellBitmapButton() {
 			profile = "ShellButtonProfile";
 			horizSizing = "right";
-			vertSizing = "bottom";
-			position = "34 332";
+			vertSizing = "top";
+			position = "34 362";
 			extent = "82 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "Canvas.popDialog(OptionsDlg);";
 			helpTag = "0";
 			text = "DONE";
@@ -44,6 +50,8 @@ new GuiControl(OptionsDlg) {
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "OptionsDlg.setPane(Video);";
 			helpTag = "0";
 			text = "VIDEO";
@@ -58,6 +66,8 @@ new GuiControl(OptionsDlg) {
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "OptionsDlg.setPane(Graphics);";
 			helpTag = "0";
 			text = "GRAPHICS";
@@ -72,6 +82,8 @@ new GuiControl(OptionsDlg) {
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "OptionsDlg.setPane(Textures);";
 			helpTag = "0";
 			text = "TEXTURES";
@@ -86,6 +98,8 @@ new GuiControl(OptionsDlg) {
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "OptionsDlg.setPane(Sound);";
 			helpTag = "0";
 			text = "SOUND";
@@ -100,6 +114,8 @@ new GuiControl(OptionsDlg) {
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "OptionsDlg.setPane(Voice);";
 			helpTag = "0";
 			text = "VOICE";
@@ -114,6 +130,8 @@ new GuiControl(OptionsDlg) {
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "OptionsDlg.setPane(Controls);";
 			helpTag = "0";
 			text = "CONTROLS";
@@ -128,6 +146,8 @@ new GuiControl(OptionsDlg) {
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "OptionsDlg.setPane(Network);";
 			helpTag = "0";
 			text = "NETWORK";
@@ -142,6 +162,8 @@ new GuiControl(OptionsDlg) {
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "OptionsDlg.setPane(Game);";
 			helpTag = "0";
 			text = "GAME";
@@ -153,9 +175,11 @@ new GuiControl(OptionsDlg) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "127 31";
-			extent = "254 338";
+			extent = "254 368";
 			minExtent = "254 26";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 			isVertical = "1";
 			useCloseButton = "0";
@@ -166,9 +190,11 @@ new GuiControl(OptionsDlg) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "138 42";
-			extent = "437 316";
+			extent = "437 346";
 			minExtent = "16 18";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
@@ -179,6 +205,8 @@ new GuiControl(OptionsDlg) {
 				extent = "100 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Video Driver:";
 				maxLength = "255";
@@ -191,6 +219,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Driver";
 				maxLength = "255";
@@ -208,6 +238,8 @@ new GuiControl(OptionsDlg) {
 				extent = "100 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Resolution:";
 				maxLength = "255";
@@ -220,6 +252,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Resolution";
 				maxLength = "255";
@@ -237,6 +271,8 @@ new GuiControl(OptionsDlg) {
 				extent = "100 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Bit Depth:";
 				maxLength = "255";
@@ -249,6 +285,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Default";
 				maxLength = "255";
@@ -266,6 +304,8 @@ new GuiControl(OptionsDlg) {
 				extent = "127 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "FULL SCREEN";
 				maxLength = "255";
@@ -278,6 +318,8 @@ new GuiControl(OptionsDlg) {
 				extent = "128 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "OptionsDlg.applyGraphicChanges();";
 				helpTag = "0";
 				text = "APPLY CHANGES";
@@ -291,6 +333,8 @@ new GuiControl(OptionsDlg) {
 				extent = "128 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "Canvas.pushDialog(DriverInfoDlg);";
 				helpTag = "0";
 				text = "DRIVER INFO";
@@ -304,6 +348,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "DISABLE VERTICAL SYNC";
 				maxLength = "255";
@@ -314,19 +360,23 @@ new GuiControl(OptionsDlg) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "138 42";
-			extent = "437 316";
+			extent = "437 346";
 			minExtent = "16 18";
-			visible = "0";
+			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 8";
+				position = "231 6";
 				extent = "97 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Gamma Correction:";
 				maxLength = "255";
@@ -335,26 +385,30 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 23";
+				position = "241 21";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				altCommand = "updateGammaCorrection();";
 				helpTag = "0";
 				range = "0.000000 1.000000";
 				ticks = "1000";
-				value = "0.5";
+				value = "0.903509";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "26 8";
+				position = "26 6";
 				extent = "72 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Terrain Detail:";
 				maxLength = "255";
@@ -363,10 +417,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "36 23";
+				position = "36 21";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				command = "updateTerrainDetail();";
 				helpTag = "0";
@@ -379,10 +435,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 48";
+				position = "231 44";
 				extent = "67 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Shape Detail:";
 				maxLength = "255";
@@ -391,25 +449,29 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 63";
+				position = "241 59";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 1.000000";
 				ticks = "19";
-				value = "0.5";
+				value = "1";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "27 48";
+				position = "27 44";
 				extent = "77 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Shadow Detail:";
 				maxLength = "255";
@@ -418,25 +480,29 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "37 63";
+				position = "37 59";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 1.000000";
 				ticks = "1000";
-				value = "0";
+				value = "0.5";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "27 88";
+				position = "27 82";
 				extent = "72 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Interior Detail:";
 				maxLength = "255";
@@ -445,25 +511,29 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "37 103";
+				position = "37 97";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.300000 1.000000";
 				ticks = "1000";
-				value = "1";
+				value = "0.82193";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 88";
+				position = "231 82";
 				extent = "85 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Visible Distance:";
 				maxLength = "255";
@@ -472,10 +542,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 103";
+				position = "241 97";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.600000 1.000000";
@@ -484,13 +556,91 @@ new GuiControl(OptionsDlg) {
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
+				profile = "ShellTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "27 120";
+				extent = "84 22";
+				minExtent = "8 8";
+				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				helpTag = "0";
+				text = "Particle Density:";
+				maxLength = "255";
+			};
+			new ShellSliderCtrl(OP_ParticleDensitySlider) {
+				profile = "ShellSliderProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "37 135";
+				extent = "170 24";
+				minExtent = "12 24";
+				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				variable = "value";
+				helpTag = "0";
+				range = "0.000000 3.000000";
+				ticks = "1000";
+				value = "1";
+				usePlusMinus = "1";
+			};
+			new GuiTextCtrl(OP_DynamicLightText) {
+				profile = "ShellTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "231 120";
+				extent = "108 22";
+				minExtent = "8 8";
+				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				helpTag = "0";
+				text = "Dynamic Light Visible Distance:";
+				maxLength = "255";
+			};
+			new GuiTextCtrl(OP_DynamicLightText_Disabled) {
+				profile = "DisabledTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "231 120";
+				extent = "108 22";
+				minExtent = "8 8";
+				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				helpTag = "0";
+				text = "Dynamic Light Visible Distance:";
+				maxLength = "255";
+			};
+			new ShellSliderCtrl(OP_DynamicLightSlider) {
+				profile = "ShellSliderProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "241 135";
+				extent = "170 24";
+				minExtent = "12 24";
+				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				variable = "value";
+				helpTag = "0";
+				range = "0.000000 100.000000";
+				ticks = "100";
+				value = "75";
+				usePlusMinus = "1";
+			};
+			new GuiTextCtrl() {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "79 137";
+				position = "79 168";
 				extent = "70 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Sky Detail:";
 				maxLength = "255";
@@ -499,10 +649,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellPopupProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "146 128";
+				position = "146 159";
 				extent = "200 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Default";
 				maxLength = "255";
@@ -516,10 +668,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "35 167";
+				position = "35 198";
 				extent = "114 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "First Person Draw:";
 				maxLength = "255";
@@ -528,10 +682,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellPopupProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "146 158";
+				position = "146 189";
 				extent = "200 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Default";
 				maxLength = "255";
@@ -540,32 +696,6 @@ new GuiControl(OptionsDlg) {
 				rolloverBarBitmap = "gui/shll_pulldownbar_rol";
 				selectedBarBitmap = "gui/shll_pulldownbar_act";
 				noButtonStyle = "0";
-			};
-			new ShellToggleButton() {
-				profile = "ShellRadioProfile";
-				horizSizing = "right";
-				vertSizing = "bottom";
-				position = "31 196";
-				extent = "170 30";
-				minExtent = "26 27";
-				visible = "1";
-				variable = "$pref::precipitationOn";
-				helpTag = "0";
-				text = "PRECIPITATION";
-				maxLength = "255";
-			};
-			new ShellToggleButton() {
-				profile = "ShellRadioProfile";
-				horizSizing = "right";
-				vertSizing = "bottom";
-				position = "236 196";
-				extent = "170 30";
-				minExtent = "26 27";
-				visible = "1";
-				variable = "$pref::Interior::DynamicLights";
-				helpTag = "0";
-				text = "DYNAMIC INTERIOR LIGHTS";
-				maxLength = "255";
 			};
 			new ShellToggleButton() {
 				profile = "ShellRadioProfile";
@@ -575,9 +705,11 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
-				variable = "$pref::decalsOn";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				variable = "$pref::precipitationOn";
 				helpTag = "0";
-				text = "DECALS";
+				text = "PRECIPITATION";
 				maxLength = "255";
 			};
 			new ShellToggleButton() {
@@ -588,9 +720,12 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
-				variable = "$pref::Terrain::dynamicLights";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				variable = "$pref::Interior::DynamicLights";
+				command = "updateDynamicLightSliderState();";
 				helpTag = "0";
-				text = "DYNAMIC TERRAIN LIGHTS";
+				text = "DYNAMIC INTERIOR LIGHTS";
 				maxLength = "255";
 			};
 			new ShellToggleButton() {
@@ -601,6 +736,39 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				variable = "$pref::decalsOn";
+				helpTag = "0";
+				text = "DECALS";
+				maxLength = "255";
+			};
+			new ShellToggleButton() {
+				profile = "ShellRadioProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "236 256";
+				extent = "170 30";
+				minExtent = "26 27";
+				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				variable = "$pref::Terrain::dynamicLights";
+				command = "updateDynamicLightSliderState();";
+				helpTag = "0";
+				text = "DYNAMIC TERRAIN LIGHTS";
+				maxLength = "255";
+			};
+			new ShellToggleButton() {
+				profile = "ShellRadioProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "31 286";
+				extent = "170 30";
+				minExtent = "26 27";
+				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::Terrain::enableDetails";
 				helpTag = "0";
 				text = "TERRAIN DETAILS";
@@ -610,10 +778,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "236 256";
+				position = "236 286";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "INTERIOR TEXTURED FOG";
 				maxLength = "255";
@@ -622,10 +792,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "133 286";
+				position = "133 316";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "VERTEX LIGHTING";
 				maxLength = "255";
@@ -636,9 +808,11 @@ new GuiControl(OptionsDlg) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "138 42";
-			extent = "437 316";
+			extent = "437 346";
 			minExtent = "16 18";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
@@ -649,6 +823,8 @@ new GuiControl(OptionsDlg) {
 				extent = "100 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Texture Quality:";
 				maxLength = "255";
@@ -661,6 +837,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Default";
 				maxLength = "255";
@@ -678,6 +856,8 @@ new GuiControl(OptionsDlg) {
 				extent = "114 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Terrain Texture Detail:";
 				maxLength = "255";
@@ -690,11 +870,13 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 6.000000";
 				ticks = "7";
-				value = "6";
+				value = "5";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
@@ -705,6 +887,8 @@ new GuiControl(OptionsDlg) {
 				extent = "109 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Shape Texture Detail:";
 				maxLength = "255";
@@ -717,6 +901,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 1.000000";
@@ -728,10 +914,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "26 125";
+				position = "26 123";
 				extent = "119 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Building Texture Detail:";
 				maxLength = "255";
@@ -740,25 +928,29 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "36 140";
+				position = "36 138";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 1.000000";
 				ticks = "6";
-				value = "1";
+				value = "0.8";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 125";
+				position = "231 123";
 				extent = "97 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Sky Texture Detail:";
 				maxLength = "255";
@@ -767,15 +959,17 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 140";
+				position = "241 138";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 1.000000";
 				ticks = "6";
-				value = "1";
+				value = "0.8";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl(OP_CompressLabel) {
@@ -785,7 +979,9 @@ new GuiControl(OptionsDlg) {
 				position = "17 46";
 				extent = "120 22";
 				minExtent = "8 8";
-				visible = "0";
+				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Texture Compression:";
 				maxLength = "255";
@@ -797,7 +993,9 @@ new GuiControl(OptionsDlg) {
 				position = "6 46";
 				extent = "135 22";
 				minExtent = "8 8";
-				visible = "1";
+				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Texture Compression:";
 				maxLength = "255";
@@ -810,6 +1008,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "None";
 				maxLength = "255";
@@ -827,6 +1027,8 @@ new GuiControl(OptionsDlg) {
 				extent = "58 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Anisotropy:";
 				maxLength = "255";
@@ -839,6 +1041,8 @@ new GuiControl(OptionsDlg) {
 				extent = "58 22";
 				minExtent = "8 8";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Anisotropy:";
 				maxLength = "255";
@@ -851,6 +1055,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 1.000000";
@@ -866,6 +1072,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::environmentMaps";
 				helpTag = "0";
 				text = "ENVIRONMENT MAPS";
@@ -879,6 +1087,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::Interior::ShowEnvironmentMaps";
 				helpTag = "0";
 				text = "INTERIOR ENV. MAPS";
@@ -890,9 +1100,11 @@ new GuiControl(OptionsDlg) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "138 42";
-			extent = "437 316";
+			extent = "437 346";
 			minExtent = "16 18";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
@@ -903,6 +1115,8 @@ new GuiControl(OptionsDlg) {
 				extent = "72 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "3D Provider:";
 				maxLength = "255";
@@ -915,6 +1129,8 @@ new GuiControl(OptionsDlg) {
 				extent = "268 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Provider";
 				maxLength = "255";
@@ -932,6 +1148,8 @@ new GuiControl(OptionsDlg) {
 				extent = "79 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "RESET";
 				simpleStyle = "0";
@@ -944,6 +1162,8 @@ new GuiControl(OptionsDlg) {
 				extent = "160 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::Audio::environmentEnabled";
 				helpTag = "0";
 				text = "ENVIRONMENT ENABLED";
@@ -957,6 +1177,8 @@ new GuiControl(OptionsDlg) {
 				extent = "72 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Speakers:";
 				maxLength = "255";
@@ -969,6 +1191,8 @@ new GuiControl(OptionsDlg) {
 				extent = "169 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Speaker";
 				maxLength = "255";
@@ -986,6 +1210,8 @@ new GuiControl(OptionsDlg) {
 				extent = "72 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Frequency:";
 				maxLength = "255";
@@ -998,6 +1224,8 @@ new GuiControl(OptionsDlg) {
 				extent = "169 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Frequency";
 				maxLength = "255";
@@ -1015,6 +1243,8 @@ new GuiControl(OptionsDlg) {
 				extent = "72 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Bit Rate:";
 				maxLength = "255";
@@ -1027,6 +1257,8 @@ new GuiControl(OptionsDlg) {
 				extent = "100 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Bit Rate";
 				maxLength = "255";
@@ -1044,6 +1276,8 @@ new GuiControl(OptionsDlg) {
 				extent = "60 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Channels:";
 				maxLength = "255";
@@ -1056,6 +1290,8 @@ new GuiControl(OptionsDlg) {
 				extent = "100 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select # Channels";
 				maxLength = "255";
@@ -1073,6 +1309,8 @@ new GuiControl(OptionsDlg) {
 				extent = "79 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Master Volume:";
 				maxLength = "255";
@@ -1085,12 +1323,14 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				altCommand = "updateMasterVolume();";
 				helpTag = "0";
 				range = "0.000000 1.000000";
 				ticks = "1000";
-				value = "0.8";
+				value = "0.894737";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
@@ -1101,6 +1341,8 @@ new GuiControl(OptionsDlg) {
 				extent = "79 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Effects Volume:";
 				maxLength = "255";
@@ -1113,6 +1355,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 1.000000";
@@ -1124,10 +1368,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "26 217";
+				position = "26 215";
 				extent = "60 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Gui Volume:";
 				maxLength = "255";
@@ -1136,26 +1382,30 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "36 232";
+				position = "36 230";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				altCommand = "updateGuiVolume();";
 				helpTag = "0";
 				range = "0.000000 1.000000";
 				ticks = "1000";
-				value = "0.8";
+				value = "0.692982";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 217";
+				position = "231 215";
 				extent = "97 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Voice Bind Volume:";
 				maxLength = "255";
@@ -1164,10 +1414,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 232";
+				position = "241 230";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 1.000000";
@@ -1179,10 +1431,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "31 267";
+				position = "31 266";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::Audio::musicEnabled";
 				helpTag = "0";
 				text = "MP3 MUSIC";
@@ -1196,6 +1450,8 @@ new GuiControl(OptionsDlg) {
 				extent = "74 22";
 				minExtent = "8 8";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Music Volume:";
 				maxLength = "255";
@@ -1204,10 +1460,12 @@ new GuiControl(OptionsDlg) {
 				profile = "DisabledTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 257";
+				position = "231 253";
 				extent = "74 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Music Volume:";
 				maxLength = "255";
@@ -1216,16 +1474,18 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 272";
+				position = "241 268";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				altCommand = "updateMusicVolume();";
 				helpTag = "0";
 				range = "0.000000 1.000000";
 				ticks = "1000";
-				value = "0.8";
+				value = "0.859649";
 				usePlusMinus = "1";
 			};
 		};
@@ -1234,9 +1494,11 @@ new GuiControl(OptionsDlg) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "138 42";
-			extent = "437 316";
+			extent = "437 346";
 			minExtent = "16 18";
-			visible = "1";
+			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new ShellToggleButton(OP_MicrophoneEnabledTgl) {
@@ -1247,6 +1509,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::Audio::enableVoiceCapture";
 				helpTag = "0";
 				text = "MICROPHONE ENABLED";
@@ -1260,6 +1524,8 @@ new GuiControl(OptionsDlg) {
 				extent = "173 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "alxCaptureStart(true);";
 				helpTag = "0";
 				text = "TEST RECORD";
@@ -1273,6 +1539,8 @@ new GuiControl(OptionsDlg) {
 				extent = "102 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Microphone Volume:";
 				maxLength = "255";
@@ -1285,6 +1553,8 @@ new GuiControl(OptionsDlg) {
 				extent = "102 22";
 				minExtent = "8 8";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Microphone Volume:";
 				maxLength = "255";
@@ -1297,6 +1567,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 1.000000";
@@ -1312,6 +1584,8 @@ new GuiControl(OptionsDlg) {
 				extent = "123 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Microphone Input Boost:";
 				maxLength = "255";
@@ -1324,6 +1598,8 @@ new GuiControl(OptionsDlg) {
 				extent = "123 22";
 				minExtent = "8 8";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Microphone Input Boost:";
 				maxLength = "255";
@@ -1336,6 +1612,8 @@ new GuiControl(OptionsDlg) {
 				extent = "110 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "100%";
 				maxLength = "255";
@@ -1348,12 +1626,14 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				altCommand = "updateInputBoost();";
 				helpTag = "0";
 				range = "1.000000 5.000000";
 				ticks = "5000";
-				value = "4.78947";
+				value = "3.59649";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl(OP_VoiceListenLabel) {
@@ -1364,6 +1644,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Voice Listen Codec(s):";
 				maxLength = "255";
@@ -1376,6 +1658,8 @@ new GuiControl(OptionsDlg) {
 				extent = "129 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Quality";
 				maxLength = "255";
@@ -1393,6 +1677,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Voice Send Codec:";
 				maxLength = "255";
@@ -1405,6 +1691,8 @@ new GuiControl(OptionsDlg) {
 				extent = "129 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Quality";
 				maxLength = "255";
@@ -1422,6 +1710,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 22";
 				minExtent = "8 8";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Voice Listen Quality:";
 				maxLength = "255";
@@ -1434,6 +1724,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 22";
 				minExtent = "8 8";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Voice Send Quality:";
 				maxLength = "255";
@@ -1446,6 +1738,8 @@ new GuiControl(OptionsDlg) {
 				extent = "395 140";
 				minExtent = "8 140";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				lineSpacing = "2";
 				allowColorChars = "0";
@@ -1458,19 +1752,24 @@ new GuiControl(OptionsDlg) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "138 42";
-			extent = "437 316";
+			extent = "437 346";
 			minExtent = "16 18";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
+				group = "Main";
 
 			new ShellScrollCtrl() {
 				profile = "NewScrollCtrlProfile";
 				horizSizing = "right";
-				vertSizing = "bottom";
+				vertSizing = "height";
 				position = "2 31";
-				extent = "290 253";
+				extent = "290 283";
 				minExtent = "24 52";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				willFirstRespond = "1";
 				hScrollBar = "alwaysOff";
@@ -1485,9 +1784,11 @@ new GuiControl(OptionsDlg) {
 					horizSizing = "right";
 					vertSizing = "bottom";
 					position = "4 6";
-					extent = "266 241";
+					extent = "266 271";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
 
 					new ShellTextList(OP_RemapList) {
@@ -1498,6 +1799,8 @@ new GuiControl(OptionsDlg) {
 						extent = "266 8";
 						minExtent = "8 8";
 						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
 						altCommand = "OP_RemapList.doRemap();";
 						helpTag = "0";
 						enumerate = "0";
@@ -1516,6 +1819,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "restoreDefaultMappings();";
 				helpTag = "0";
 				text = "RESTORE DEFAULTS";
@@ -1529,6 +1834,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ShellGetLoadFilename( \"LOAD CONTROL CONFIG\", \"prefs/*.cs\", \"isMapFile\", \"loadMapFile\" );";
 				helpTag = "0";
 				text = "LOAD";
@@ -1542,6 +1849,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "ShellGetSaveFilename( \"SAVE CONTROL CONFIG\", \"prefs/*.cs\", \"isMapFile\", \"saveMapFile\", $pref::Input::ActiveConfig );";
 				helpTag = "0";
 				text = "SAVE AS";
@@ -1555,6 +1864,8 @@ new GuiControl(OptionsDlg) {
 				extent = "126 30";
 				minExtent = "26 27";
 				visible = "0";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "pref::Input::MouseEnabled";
 				helpTag = "0";
 				text = "DINPUT MOUSE";
@@ -1568,6 +1879,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "Canvas.pushDialog(MouseConfigDlg);";
 				helpTag = "0";
 				text = "CONFIGURE MOUSE";
@@ -1581,6 +1894,8 @@ new GuiControl(OptionsDlg) {
 				extent = "126 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "ENABLE JOYSTICK";
 				maxLength = "255";
@@ -1593,6 +1908,8 @@ new GuiControl(OptionsDlg) {
 				extent = "140 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "Canvas.pushDialog(JoystickConfigDlg);";
 				helpTag = "0";
 				text = "CONFIGURE JOYSTICK";
@@ -1601,11 +1918,13 @@ new GuiControl(OptionsDlg) {
 			new GuiTextCtrl() {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
-				vertSizing = "bottom";
-				position = "32 287";
+				vertSizing = "top";
+				position = "32 317";
 				extent = "124 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Toggle Console Key:";
 				maxLength = "255";
@@ -1613,11 +1932,13 @@ new GuiControl(OptionsDlg) {
 			new ShellFieldCtrl() {
 				profile = "ShellFieldProfile";
 				horizSizing = "right";
-				vertSizing = "bottom";
-				position = "161 286";
+				vertSizing = "top";
+				position = "161 316";
 				extent = "128 23";
 				minExtent = "16 18";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 
 				new GuiButtonCtrl(OP_ConsoleKeyBtn) {
@@ -1628,6 +1949,8 @@ new GuiControl(OptionsDlg) {
 					extent = "122 17";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					command = "OP_ConsoleKeyBtn.doRemap();";
 					helpTag = "0";
 					text = "grave";
@@ -1641,6 +1964,8 @@ new GuiControl(OptionsDlg) {
 				extent = "100 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Control Group:";
 				maxLength = "255";
@@ -1653,6 +1978,8 @@ new GuiControl(OptionsDlg) {
 				extent = "180 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Control Group";
 				maxLength = "255";
@@ -1668,9 +1995,11 @@ new GuiControl(OptionsDlg) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "138 42";
-			extent = "437 316";
+			extent = "437 346";
 			minExtent = "16 18";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
@@ -1681,6 +2010,8 @@ new GuiControl(OptionsDlg) {
 				extent = "60 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Presets:";
 				maxLength = "255";
@@ -1693,6 +2024,8 @@ new GuiControl(OptionsDlg) {
 				extent = "110 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "OP_NetworkPane.applyPresets( \"modem1\" );";
 				helpTag = "0";
 				text = "28.8 MODEM";
@@ -1706,6 +2039,8 @@ new GuiControl(OptionsDlg) {
 				extent = "110 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "OP_NetworkPane.applyPresets( \"modem2\" );";
 				helpTag = "0";
 				text = "56K MODEM";
@@ -1719,6 +2054,8 @@ new GuiControl(OptionsDlg) {
 				extent = "110 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "OP_NetworkPane.applyPresets( \"lan\" );";
 				helpTag = "0";
 				text = "DSL/LAN";
@@ -1732,6 +2069,8 @@ new GuiControl(OptionsDlg) {
 				extent = "65 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Packet Rate:";
 				maxLength = "255";
@@ -1744,11 +2083,13 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "2.000000 32.000000";
 				ticks = "31";
-				value = "10";
+				value = "20";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
@@ -1759,6 +2100,8 @@ new GuiControl(OptionsDlg) {
 				extent = "62 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Packet Size:";
 				maxLength = "255";
@@ -1771,21 +2114,25 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "100.000000 450.000000";
 				ticks = "36";
-				value = "200";
+				value = "350";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "26 92";
+				position = "26 90";
 				extent = "99 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Client Update Rate:";
 				maxLength = "255";
@@ -1794,10 +2141,12 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "36 107";
+				position = "36 105";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "8.000000 32.000000";
@@ -1813,6 +2162,8 @@ new GuiControl(OptionsDlg) {
 				extent = "200 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Display on Master Server:";
 				maxLength = "255";
@@ -1825,6 +2176,8 @@ new GuiControl(OptionsDlg) {
 				extent = "180 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Display Option";
 				maxLength = "255";
@@ -1842,6 +2195,8 @@ new GuiControl(OptionsDlg) {
 				extent = "144 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Server Location:";
 				maxLength = "255";
@@ -1854,6 +2209,8 @@ new GuiControl(OptionsDlg) {
 				extent = "180 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Region";
 				maxLength = "255";
@@ -1871,6 +2228,8 @@ new GuiControl(OptionsDlg) {
 				extent = "190 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::Net::CheckEmail";
 				helpTag = "0";
 				text = "CHECK EMAIL WHILE PLAYING";
@@ -1884,6 +2243,8 @@ new GuiControl(OptionsDlg) {
 				extent = "190 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::Net::DisconnectChat";
 				helpTag = "0";
 				text = "DISCONNECT FROM CHAT";
@@ -1895,9 +2256,11 @@ new GuiControl(OptionsDlg) {
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "138 42";
-			extent = "437 316";
+			extent = "437 346";
 			minExtent = "16 18";
 			visible = "0";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
@@ -1908,6 +2271,8 @@ new GuiControl(OptionsDlg) {
 				extent = "65 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Zoom Speed:";
 				maxLength = "255";
@@ -1920,6 +2285,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "value";
 				helpTag = "0";
 				range = "0.000000 500.000000";
@@ -1935,6 +2302,8 @@ new GuiControl(OptionsDlg) {
 				extent = "173 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				command = "Canvas.popDialog( OptionsDlg ); Canvas.pushDialog(EditChatMenuGui);";
 				helpTag = "0";
 				text = "EDIT CHAT MENU";
@@ -1948,6 +2317,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::toggleVehicleView";
 				helpTag = "0";
 				text = "3RD PERSON VEHICLE";
@@ -1961,6 +2332,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::SkipIntro";
 				helpTag = "0";
 				text = "SKIP INTRO";
@@ -1974,6 +2347,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::Vehicle::InvertYAxis";
 				helpTag = "0";
 				text = "INVERT VEHICLE Y-AXIS";
@@ -1987,6 +2362,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$Pref::useImmersion";
 				command = "toggleImmersion();";
 				helpTag = "0";
@@ -2001,6 +2378,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::enableBadWordFilter";
 				helpTag = "0";
 				text = "ENABLE BAD WORD FILTER";
@@ -2014,6 +2393,8 @@ new GuiControl(OptionsDlg) {
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				variable = "$pref::usePrefSkins";
 				helpTag = "0";
 				text = "SHOW PERSONAL SKINS";
@@ -2027,6 +2408,8 @@ new GuiControl(OptionsDlg) {
 				extent = "100 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Launch Screen:";
 				maxLength = "255";
@@ -2039,6 +2422,8 @@ new GuiControl(OptionsDlg) {
 				extent = "180 36";
 				minExtent = "49 36";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Select Screen";
 				maxLength = "255";

@@ -78,7 +78,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 				position = "3 27";
 				extent = "550 272";
 				minExtent = "16 18";
-				visible = "0";
+				visible = "1";
 				hideCursor = "0";
 				bypassHideCursor = "0";
 				helpTag = "0";
@@ -119,7 +119,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							horizSizing = "width";
 							vertSizing = "bottom";
 							position = "9 9";
-							extent = "288 224";
+							extent = "272 224";
 							minExtent = "8 8";
 							visible = "1";
 							hideCursor = "0";
@@ -131,7 +131,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 								horizSizing = "width";
 								vertSizing = "height";
 								position = "0 0";
-								extent = "272 16";
+								extent = "272 262";
 								minExtent = "8 8";
 								visible = "1";
 								hideCursor = "0";
@@ -168,7 +168,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 						hideCursor = "0";
 						bypassHideCursor = "0";
 						helpTag = "0";
-						bitmap = "texticons/twb_Lineup.jpg";
+						bitmap = "texticons/twb/twb_Lineup.jpg";
 						useVariable = "0";
 							wrap = "0";
 					};
@@ -222,7 +222,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 									horizSizing = "right";
 									vertSizing = "bottom";
 									position = "0 0";
-									extent = "8 8";
+									extent = "8 392";
 									minExtent = "8 8";
 									visible = "1";
 									hideCursor = "0";
@@ -243,7 +243,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							bypassHideCursor = "0";
 							altCommand = "TribePane.RosterDblClick();";
 							helpTag = "0";
-							startScrollRegion = "2 0";
+							startScrollRegion = "3 0";
 							headerBitmap = "gui/server_tabs";
 							sortArrowBitmap = "gui/shll_sortarrow";
 							fieldBase = "gui/shll_field";
@@ -267,8 +267,8 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 					profile = "ShellRadioProfile";
 					horizSizing = "right";
 					vertSizing = "bottom";
-					position = "477 -2";
-					extent = "64 30";
+					position = "486 -2";
+					extent = "63 30";
 					minExtent = "26 27";
 					visible = "1";
 					hideCursor = "0";
@@ -283,7 +283,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 					profile = "ShellRadioProfile";
 					horizSizing = "right";
 					vertSizing = "bottom";
-					position = "414 -2";
+					position = "423 -2";
 					extent = "66 27";
 					minExtent = "26 27";
 					visible = "1";
@@ -332,14 +332,14 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 					horizSizing = "right";
 					vertSizing = "bottom";
 					position = "357 -2";
-					extent = "60 27";
+					extent = "69 27";
 					minExtent = "26 27";
 					visible = "1";
 					hideCursor = "0";
 					bypassHideCursor = "0";
 					command = "TribePane.ButtonClick(2);";
 					helpTag = "0";
-					text = "NEWS";
+					text = "OPTIONS";
 					maxLength = "255";
 					groupNum = "4";
 				};
@@ -351,7 +351,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 				position = "3 27";
 				extent = "550 272";
 				minExtent = "16 18";
-				visible = "1";
+				visible = "0";
 				hideCursor = "0";
 				bypassHideCursor = "0";
 				helpTag = "0";
@@ -404,7 +404,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 								horizSizing = "width";
 								vertSizing = "bottom";
 								position = "0 0";
-								extent = "286 16";
+								extent = "286 100";
 								minExtent = "8 8";
 								visible = "1";
 								hideCursor = "0";
@@ -441,7 +441,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 						hideCursor = "0";
 						bypassHideCursor = "0";
 						helpTag = "0";
-						bitmap = "texticons/twb_soclose.jpg";
+						bitmap = "texticons/twb/twb_Laserrifle.jpg";
 						useVariable = "0";
 							wrap = "0";
 					};
@@ -621,7 +621,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 				horizSizing = "width";
 				vertSizing = "bottom";
 				position = "7 5";
-				extent = "142 26";
+				extent = "8 26";
 				minExtent = "8 8";
 				visible = "1";
 				hideCursor = "0";
@@ -629,8 +629,6 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 				helpTag = "0";
 				text = "EAST [DEV]";
 				maxLength = "255";
-					name = "EAST";
-					OldText = "EAST";
 			};
 		};
 		new ShellBitmapButton(TWBClosePaneBtn) {

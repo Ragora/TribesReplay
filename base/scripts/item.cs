@@ -595,6 +595,8 @@ datablock StaticShapeData(DeployedBeacon) : StaticShapeDamageProfile
    beacon = true;
    targetNameTag = 'beacon';
 
+   deployedObject = true;
+   
    dynamicType = $TypeMasks::SensorObjectType;
 
    debrisShapeName = "debris_generic_small.dts";

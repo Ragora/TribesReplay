@@ -242,6 +242,9 @@ function SimObject::incCatagory(%this)
 
 function ShapeBase::setInventory(%this,%data,%value,%force)
 {
+   if (!isObject(%data))
+      return;
+
    %name = %data.getName();
    if (%value < 0)
       %value = 0;

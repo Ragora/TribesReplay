@@ -61,6 +61,27 @@ datablock AudioProfile(MobileBaseStationUndeploySound)
    preload = true;
 };
 
+
+//**************************************************************
+// LIGHTS
+//**************************************************************
+datablock RunningLightData(MPBLight1)
+{
+   pointSize = 3.0;
+   pointColor = "1.0 1.0 1.0 0.3";
+   pointNodeName = "Headlight_node01";
+   texture = "special/expFlare";
+};
+
+datablock RunningLightData(MPBLight2)
+{
+   pointSize = 3.0;
+   pointColor = "1.0 1.0 1.0 0.3";
+   pointNodeName = "Headlight_node02";
+   texture = "special/expFlare";
+};
+
+
 //**************************************************************
 // VEHICLE CHARACTERISTICS
 //**************************************************************
@@ -75,6 +96,7 @@ datablock SensorData(MPBDeployedSensor) : VehiclePulseSensor
 datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
 {
    spawnOffset = "0 0 1.0";
+   renderWhenDestroyed = false;
 
    catagory = "Vehicles";
    shapeFile = "vehicle_land_mpbase.dts";
@@ -211,6 +233,11 @@ datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
    checkRadius = 7.5225;
    
    observeParameters = "1 12 12";
+
+   runningLight[0] = MPBLight1;
+   runningLight[1] = MPBLight2;
+
+   shieldEffectScale = "0.85 1.2 0.7";
 };
 
 //**************************************************************

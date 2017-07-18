@@ -22,6 +22,9 @@ function Observer::onTrigger(%data,%obj,%trigger,%state)
 
    //trigger types:   0:fire 1:altTrigger 2:jump 3:jet 4:throw
    %client = %obj.getControllingClient();
+   if (%client == 0)
+      return;
+
    switch$ (%obj.mode)
    {
       case "justJoined":

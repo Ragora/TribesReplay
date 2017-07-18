@@ -84,11 +84,13 @@ function ProxyEcho::onDatabaseRow(%this, %row, %isLast, %key)
 
 function HandleDatabaseProxyResponse(%prefix, %params)
 {
+//	error("HDPR - START:" TAB %prefix NL %params);
    %id = getWord(%params, 0);
 
    for(%qc = 0; %qc < $DBQueryCount; %qc++)
       if(getWord($DBQueries[%qc], 0) == %id)
          break;
+
    if(%qc == $DBQueryCount)
    {
       warn("Invalid database proxy message id: " @ %id);
@@ -96,6 +98,8 @@ function HandleDatabaseProxyResponse(%prefix, %params)
    }
 
    %lastPacket = getWord(%params, 1);
+//   error("HDPR - lastPacket" TAB %lastPacket);
+
    %start = strpos(%params, ":") + 1;
    if(!%start)
    {
@@ -110,16 +114,23 @@ function HandleDatabaseProxyResponse(%prefix, %params)
 
    // concat it with any text from prior message(s) that hasn't been
    // processed yet.
+//   error("HDPR - concat: " @ $DBQueryText[%qc] NL %newStr);
    %msg = $DBQueryText[%qc] @ %newStr;
    %proxyObject = getWord($DBQueries[%qc], 2);
    %proxyKey = getWord($DBQueries[%qc], 3);
 
+//   error("HDPR - allrecs: " @ getWord($DBQueries[%qc],1));
    if(getWord($DBQueries[%qc], 1) == 0) // we haven't receivd the first 2 recs yet
    {
+//	  error("HDPR - need first 2 recs: " @ strpos(%msg, "\\S"));
       // check if we have 2 records in %msg:
       %pos1 = strpos(%msg, "\\S");
+//	  error("HDPR - POS1: " @ %pos1);
+
       if(%pos1 != -1)
          %pos2 = strpos(%msg, "\\S", %pos1 + 2);
+
+//	  error("HDPR - POS2: " @ %pos2);
 
       if(%pos1 != -1 && %pos2 != -1)
       {
@@ -131,6 +142,8 @@ function HandleDatabaseProxyResponse(%prefix, %params)
          %msg = getSubStr(%msg, %pos2 + 2, 100000);
       }
    }
+
+//   error("HDPR - DBQ_1: " @ getWord($DBQueries[%qc], 1));
    if(getWord($DBQueries[%qc], 1) == 1)
    {
       // start spitting out rows:
@@ -144,11 +157,14 @@ function HandleDatabaseProxyResponse(%prefix, %params)
       }
    }
    $DBQueryText[%qc] = %msg; // save off the last text...
+
    if(%lastPacket)
    {
       // erase the query from the array:
+//	  error("HDPR - ONLastPacket" TAB getWord($DBQueries[%qc], 1));
       if(getWord($DBQueries[%qc], 1) == 0)
          warn("Error in database query response - not enough data.");
+
       for(%i = %qc; %i < $DBQueryCount; %i++)
       {
          $DBQueries[%i] = $DBQueries[%i+1];

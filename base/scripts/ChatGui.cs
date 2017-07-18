@@ -431,7 +431,9 @@ function ChatRoomMemberList::onRightMouseDown(%this,%column,%row,%mousePos)
    else
    {
       if (strcmp(ChatMemberPopup.member.displayName,$IRCClient::currentChannel.getName()))
+	  {
          ChatMemberPopup.add("Chat",2);
+	  }
    
       if ($IRCClient::currentChannel.getFlags(%im) & $PERSON_OPERATOR)
       {
@@ -445,6 +447,11 @@ function ChatRoomMemberList::onRightMouseDown(%this,%column,%row,%mousePos)
          ChatMemberPopup.add("Unmute",6);
       else
          ChatMemberPopup.add("Mute",6);
+
+	  ChatMemberPopup.add( "--------------------",-1);
+   	  ChatMemberPopup.add( "TMail", 10 );
+	  ChatMemberPopup.add( "Add To Buddylist",11);
+
       for (%i = 1; %i < $IRCClient::channels.getCount(); %i++)
       {
          %c = $IRCClient::channels.getObject(%i);
@@ -476,6 +483,7 @@ function ChatPrivate()
 //------------------------------------------------------------------------------
 function ChatMemberPopup::onSelect(%this,%id,%text)
 {
+   %member = getSubStr(ChatMemberPopup.member.displayName,0,strlen(ChatMemberPopup.member.displayname)-strlen(nextToken(ChatMemberPopup.member.displayname,name,"^"))-1);
    switch( %id )
    {
       case 0:  // Set Back
@@ -494,6 +502,11 @@ function ChatMemberPopup::onSelect(%this,%id,%text)
          IRCClient::kick(ChatMemberPopup.member,$pref::IRCClient::banmsg);
       case 6:  // Mute/Unmute
          IRCClient::ignore(ChatMemberPopup.member,!(ChatMemberPopup.member.flags & $PERSON_IGNORE));
+	  case 10: // TMail
+		 LinkEMail(%member);
+	  case 11: // Add To Buddylist
+   		 MessageBoxYesNo("CONFIRM","Add " @ %member @ " to Buddy List?",
+					     "LinkAddBuddy(\"" @ %member @ "\",TWBText,\"addBuddy\");","");
       default: // Invite
          IRCClient::invite(ChatMemberPopup.member,%id);
    }
@@ -832,7 +845,7 @@ function IRCClient::notify(%event)
             $IRCClient::nextChannel = 0;
          }
          ChatTabView.removeTab($IRCClient::deletedChannel);
-      case IDIRC_INVITED:
+      case IDIRC_INVITED: //invited to join existing channel.
          //MessageBoxOKCancel("Invite", "You have been invited to channel " @ IRCClient::displayChannel($IRCClient::invitechannel) @ " by " @ $IRCClient::inviteperson @ ".", "IRCClient::join($IRCClient::invitechannel);");
          IRCClient::newMessage($IRCClient::CurrentChannel, "You have been invited to channel " @ $IRCClient::invitechannel @ " by " @ $IRCClient::inviteperson @ ".");
       case IDIRC_BAN_LIST:

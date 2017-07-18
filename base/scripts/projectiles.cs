@@ -41,21 +41,6 @@ function SniperProjectileData::onCollision(%data, %projectile, %targetObject, %m
    %targetObject.damage(%projectile.sourceObject, %position, %modifier * %damageAmount, %data.directDamageType);
 }
 
-function TurretImageData::onFire( %data, %obj, %slot )
-{
-   if( %data.muzzleFlash !$= "" )
-   {
-      %flash = new Shockwave()
-      {
-         dataBlock = %data.muzzleFlash;
-         pos = %obj.getMuzzlePoint(%slot);
-         normal = %obj.getMuzzleVector(%slot);
-      };
-   }
-   
-   Parent::onFire( %data, %obj, %slot );
-}
-
 function ShapeBaseImageData::onFire(%data, %obj, %slot)
 {
    %data.lightStart = getSimTime();

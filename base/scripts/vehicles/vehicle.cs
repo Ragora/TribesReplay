@@ -236,7 +236,7 @@ function VehicleData::onDestroyed(%data, %obj, %prevState)
          %flingee.damage(0, %obj.getPosition(), 0.4, $DamageType::Explosion); 
       }
    }
-   %obj.schedule(600, "delete");
+   %obj.schedule(2000, "delete");
 }
 
 function radiusVehicleExplosion(%data, %vehicle)
@@ -419,7 +419,8 @@ function MobileBaseVehicle::onAdd(%this, %obj)
    Parent::onAdd(%this, %obj);
    %obj.station = "";
    %obj.turret = "";
-   
+   %obj.beacon = "";
+
    %obj.schedule(5000, "playThread", $AmbientThread, "ambient");
 }
 
@@ -501,6 +502,10 @@ function MobileBaseVehicle::deleteAllMounted(%data, %obj)
       %obj.teleporter.setThreadDir($ActivateThread, FALSE);
       %obj.teleporter.playThread($ActivateThread,"activate");	
       %obj.teleporter.playAudio($ActivateSound, StationTeleportDeacitvateSound);
+   }
+   if(isObject(%obj.beacon))
+   {
+      %obj.beacon.delete();   	
    }
 }
 
@@ -754,6 +759,15 @@ function MobileBaseVehicle::vehicleDeploy(%data, %obj, %player, %force)
                %obj.turret.setSelfPowered();
                %obj.turret.playThread($PowerThread,"Power");
                %obj.turret.mountImage(MissileBarrelLarge, 0 ,false);
+
+               %obj.beacon = new ScopeAlwaysShape() {
+                  dataBlock = "DeployedBeacon";
+                  position = %obj.position;
+                  rotation = %obj.rotation;
+                  team = %obj.team;
+               };
+               %obj.beacon.setBeaconType(friend);
+               %obj.beacon.setTarget(%obj.team);
                
                checkSpawnPos(%obj, 20);
             }
@@ -814,6 +828,8 @@ function MobileBaseVehicle::onEndSequence(%data, %obj, %thread)
       %obj.station.trigger.delete();
       %obj.station.delete();
       %obj.station = "";
+
+	  %obj.beacon.delete();
       
       %obj.unmountObject(%obj.turret);
       %obj.turret.delete();
@@ -1101,8 +1117,11 @@ function VehicleData::damageObject(%data, %targetObject, %sourceObject, %positio
    if(%amount != 0)
       %targetObject.applyDamage(%amount);
       
-   if(%targetObject.getDamageState() $= "Destroyed" && %momVec !$= "")
-      %targetObject.setMomentumVector(%momVec);
+   if(%targetObject.getDamageState() $= "Destroyed" )
+   {
+      if( %momVec !$= "")
+         %targetObject.setMomentumVector(%momVec);
+   }
 }
 
 function VehicleData::onImpact(%data, %vehicleObject, %collidedObject, %vec, %vecLen)

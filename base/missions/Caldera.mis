@@ -357,9 +357,6 @@ new SimGroup(MissionGroup) {
 							locked = "true";
 							originalBarrel = "PlasmaBarrelLarge";
 					};
-				};
-				new SimGroup(Stations) {
-
 					new StaticShape() {
 						position = "239.01 -4.57 219.7";
 						rotation = "0 0 1 179.909";
@@ -448,8 +445,6 @@ new SimGroup(MissionGroup) {
 					};
 				};
 			};
-		};
-		new SimGroup(team0) {
 		};
 	};
 	new AudioEmitter() {

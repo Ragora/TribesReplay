@@ -81,6 +81,10 @@ function StaticShapeData::onEnabled(%data, %obj, %prevState)
 {
 	if(%obj.waypoint)
 		game.switchWaypoint(%obj.waypoint);
+
+   if(%obj.isPowered())
+      %data.onGainPowerEnabled(%obj);
+   Parent::onEnabled(%data, %obj, %prevState);
 }
 
 };

@@ -97,6 +97,45 @@ datablock AudioProfile(AssaultMortarIdleSound)
 };
 
 //**************************************************************
+// LIGHTS
+//**************************************************************
+datablock RunningLightData(TankLight1)
+{
+   radius = 1.5;
+   color = "1.0 1.0 1.0 0.2";
+   nodeName = "Headlight_node01";
+   direction = "0.0 1.0 0.0";
+   texture = "special/headlight4";
+};
+
+datablock RunningLightData(TankLight2)
+{
+   radius = 1.5;
+   color = "1.0 1.0 1.0 0.2";
+   nodeName = "Headlight_node02";
+   direction = "0.0 1.0 0.0";
+   texture = "special/headlight4";
+};
+
+datablock RunningLightData(TankLight3)
+{
+   radius = 1.5;
+   color = "1.0 1.0 1.0 0.2";
+   nodeName = "Headlight_node03";
+   direction = "0.0 1.0 0.0";
+   texture = "special/headlight4";
+};
+
+datablock RunningLightData(TankLight4)
+{
+   radius = 1.5;
+   color = "1.0 1.0 1.0 0.2";
+   nodeName = "Headlight_node04";
+   direction = "0.0 1.0 0.0";
+   texture = "special/headlight4";
+};
+
+//**************************************************************
 // VEHICLE CHARACTERISTICS
 //**************************************************************
 
@@ -110,6 +149,7 @@ datablock HoverVehicleData(AssaultVehicle) : TankDamageProfile
    shapeFile = "vehicle_grav_tank.dts";
    multipassenger = true;
    computeCRC = true;
+   renderWhenDestroyed = false;
                                                  
    weaponNode = 1;
 
@@ -241,6 +281,13 @@ datablock HoverVehicleData(AssaultVehicle) : TankDamageProfile
    
    checkRadius = 5.5535;
    observeParameters = "1 10 10";
+
+   runningLight[0] = TankLight1;
+   runningLight[1] = TankLight2;
+   runningLight[2] = TankLight3;
+   runningLight[3] = TankLight4;
+
+   shieldEffectScale = "0.9 1.0 0.6";
 };
 
 //**************************************************************

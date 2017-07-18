@@ -605,10 +605,11 @@ function StrToList(%listName, %str, %delim)
   }
 }
 //-----------------------------------------------------------------------------
-function LC_BigList::onAdd(%this)
-{
-	LC_BigList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
-}
+// NOTE: This control is not a ShellFancyTextList, so the addStyle method is not valid
+// function LC_BigList::onAdd(%this)
+// {
+// 	LC_BigList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
+// }
 //-----------------------------------------------------------------------------
 function LC_BigList::GetOnlineStatus(%this)
 {

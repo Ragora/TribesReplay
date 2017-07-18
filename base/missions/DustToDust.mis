@@ -7,7 +7,7 @@
 //--- MISSION QUOTE END ---
 
 //--- MISSION STRING BEGIN ---
-//[CTF]Eight flag captures to win
+//[CTF]800 points to win
 //[Hunters TeamHunters]Nexus is on a floating platform located near center of map
 //No inventory or vehicle stations, but hidden weapons caches exist
 //--- MISSION STRING END ---
@@ -38,10 +38,10 @@ new SimGroup(MissionGroup) {
 		cloudSpeed1 = "0.0001";
 		cloudSpeed2 = "0.0002";
 		cloudSpeed3 = "0.0003";
-		visibleDistance = "800";
+		visibleDistance = "550";
 		useSkyTextures = "1";
 		SkySolidColor = "0.390000 0.390000 0.390000 0.000000";
-		fogDistance = "200";
+		fogDistance = "150";
 		fogColor = "0.800000 0.700000 0.500000 1.000000";
 		fogVolume1 = "0 0 0";
 		fogVolume2 = "0 0 0";

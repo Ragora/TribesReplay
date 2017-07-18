@@ -24,6 +24,7 @@ datablock AudioProfile(HAPCFlyerThrustSound)
 datablock FlyingVehicleData(HAPCFlyer) : HavocDamageProfile
 {
    spawnOffset = "0 0 6";
+   renderWhenDestroyed = false;
 
    catagory = "Vehicles";
    shapeFile = "vehicle_air_hapc.dts";
@@ -161,6 +162,8 @@ datablock FlyingVehicleData(HAPCFlyer) : HavocDamageProfile
 
    stuckTimerTicks = 32;   // If the hapc spends more than 1 sec in contact with something
    stuckTimerAngle = 80;   //  with a > 80 deg. pitch, BOOM!
+
+   shieldEffectScale = "1.0 0.9375 0.45";
 };
 
 function HAPCFlyer::hasDismountOverrides(%data, %obj)

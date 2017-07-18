@@ -41,6 +41,29 @@ datablock AudioProfile(ShrikeBlasterDryFireSound)
 };
 
 //**************************************************************
+// LIGHTS
+//**************************************************************
+datablock RunningLightData(ShrikeLight1)
+{
+   type        = 1;
+   radius      = 2.0;
+   length      = 3.0;
+   color       = "1.0  1.0  1.0  1.0";
+   direction   = "0.0  1.0 -1.0 ";
+   offset      = "0.0  0.0 -0.5";
+   texture     = "special/lightcone04";
+};
+
+datablock RunningLightData(ShrikeLight2)
+{
+   radius = 1.5;
+   color = "1.0 1.0 1.0 0.3";
+   direction = "0.0 0.0 -1.0";
+   offset      = "0.0  0.8 -1.2";
+   texture = "special/headlight4";
+};
+
+//**************************************************************
 // VEHICLE CHARACTERISTICS
 //**************************************************************
 
@@ -55,6 +78,7 @@ datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
 
    debrisShapeName = "vehicle_air_scout_debris.dts";
    debris = ShapeDebris;
+   renderWhenDestroyed = false;
 
    drag    = 0.15;
    density = 1.0;
@@ -175,6 +199,12 @@ datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
    
    checkRadius = 5.5;
    observeParameters = "1 10 10";
+
+   runningLight[0] = ShrikeLight1;
+//   runningLight[1] = ShrikeLight2;
+
+   shieldEffectScale = "0.937 1.125 0.60";
+
 };
 
 //**************************************************************

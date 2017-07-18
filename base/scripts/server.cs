@@ -73,6 +73,7 @@ function CreateServer(%mission, %missionType)
    
    $missionSequence = 0;
    $CurrentMissionType = %missionType;
+   $HostGameBotCount = 0;
    $HostGamePlayerCount = 0;
    if ( $HostGameType !$= "SinglePlayer" )
       allowConnections(true);
@@ -374,6 +375,10 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
       case "Bioderm":
          %client.sex = "Male";
          %client.race = "Bioderm";
+      default:
+         error("Invalid race/gender combo passed: " @ %raceGender);
+         %client.sex = "Male";
+         %client.race = "Human";
    }
    %client.armor = "Light";
 

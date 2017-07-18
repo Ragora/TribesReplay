@@ -2773,7 +2773,7 @@ function DefaultGame::voteChangeTimeLimit( %game, %admin, %newLimit )
    %cause = "";
    if ( %admin )
    {
-      messageAll( 'AdminSetTimeLimit', '\c2The Admin changed the mission time limit to %1 minutes.', %newLimit );
+      messageAll( 'MsgAdminForce', '\c2The Admin changed the mission time limit to %1 minutes.', %newLimit );
       $Host::TimeLimit = %newLimit;
       %cause = "(admin)";
    }

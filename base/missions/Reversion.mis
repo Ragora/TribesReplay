@@ -8,15 +8,15 @@
 //--- MISSION QUOTE END ---
 
 //--- MISSION STRING BEGIN ---
-//[CTF]5 flag captures to win
+//[CTF]500 points to win
 //--- MISSION STRING END ---
 
 //--- OBJECT WRITE BEGIN ---
 new SimGroup(MissionGroup) {
-		CTF_scoreLimit = "5";
-		powerCount = "0";
 		cdTrack = "2";
+		powerCount = "0";
 		musicTrack = "lush";
+		CTF_scoreLimit = "5";
 
 	new MissionArea(MissionArea) {
 		area = "-944 -824 1872 1648";
@@ -36,6 +36,7 @@ new SimGroup(MissionGroup) {
 		cloudSpeed3 = "0.0003";
 		visibleDistance = "650";
 		useSkyTextures = "0";
+		renderBottomTexture = "0";
 		SkySolidColor = "0.300000 0.300000 0.300000 0.000000";
 		fogDistance = "50";
 		fogColor = "0.350000 0.350000 0.350000 1.000000";
@@ -48,14 +49,16 @@ new SimGroup(MissionGroup) {
 		fogVolumeColor1 = "128.000000 128.000000 128.000000 -190776.046875";
 		fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000000";
 		fogVolumeColor3 = "128.000000 128.000000 128.000000 -62109.015625";
-			locked = "true";
 			cloudSpeed0 = "0.000000 0.000700";
+			locked = "true";
 	};
 	new Lightning() {
 		position = "-24.2587 -1058.63 355.675";
 		rotation = "1 0 0 0";
 		scale = "2000 500 300";
 		dataBlock = "DefaultStorm";
+		lockCount = "0";
+		homingCount = "0";
 		strikesPerMinute = "2";
 		strikeWidth = "2.5";
 		chanceToHitTarget = "0.5";
@@ -70,10 +73,10 @@ new SimGroup(MissionGroup) {
 		direction = "0.57735 0.57735 -0.57735";
 		color = "0.700000 0.700000 0.700000 1.000000";
 		ambient = "0.600000 0.600000 0.600000 1.000000";
-			position = "120 32 0";
-			locked = "true";
 			rotation = "1 0 0 0";
 			scale = "1 1 1";
+			locked = "true";
+			position = "120 32 0";
 	};
 	new TerrainBlock(Terrain) {
 		rotation = "1 0 0 0";
@@ -81,20 +84,20 @@ new SimGroup(MissionGroup) {
 		detailTexture = "details/lushdet1";
 		terrainFile = "Reversion.ter";
 		squareSize = "8";
-			position = "-1024 -1024 0";
 			locked = "true";
+			position = "-1024 -1024 0";
 	};
 	new NavigationGraph(NavGraph) {
 		conjoinAngleDev = "65";
 		cullDensity = "0.3";
 		customArea = "0 0 0 0";
-			conjoinBowlDev = "20";
-			coverage = "0";
-			position = "0 0 0 1";
-			locked = "true";
-			GraphFile = "Reversion.nav";
 			rotation = "0 0 0 0";
+			GraphFile = "Reversion.nav";
 			scale = "1 1 1";
+			coverage = "0";
+			locked = "true";
+			conjoinBowlDev = "20";
+			position = "0 0 0 1";
 	};
 	new WaterBlock() {
 		position = "256 400 7.9047";
@@ -257,38 +260,38 @@ new SimGroup(MissionGroup) {
 			};
 			new SimGroup(tower0b) {
 
-				new StaticShape(Team1StationInventory1) {
-					position = "-604.757 346.985 51.4981";
-					rotation = "-0 0 -1 90";
+				new Turret(Team1TurretBaseLarge1) {
+					position = "-592.282 340.362 61.0431";
+					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					nameTag = "South Tower";
-					dataBlock = "StationInventory";
+					dataBlock = "TurretBaseLarge";
 					lockCount = "0";
 					homingCount = "0";
-						locked = "true";
+					initialBarrel = "PlasmaBarrelLarge";
+						locked = "false";
 				};
-				new StaticShape(Team1StationInventory2) {
-					position = "-579.671 346.989 51.4927";
-					rotation = "0 0 1 90";
+				new InteriorInstance() {
+					position = "-592.231 348.482 50.72";
+					rotation = "0 0 1 179.909";
 					scale = "1 1 1";
-					nameTag = "South Tower";
-					dataBlock = "StationInventory";
-					lockCount = "0";
-					homingCount = "0";
+					interiorFile = "bbunk9.dif";
+					showTerrainInside = "0";
+					AudioProfile = "Universal_Base_2";
 						locked = "true";
 				};
 				new StaticShape(Team1StationInventory3) {
-					position = "-592.285 346.339 61.8749";
+					position = "-592.285 334.739 52.6749";
 					rotation = "0 0 1 180";
 					scale = "1 1 1";
 					nameTag = "South Tower";
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						locked = "true";
+						locked = "false";
 				};
 				new Item() {
-					position = "-592.263 345.019 76.2272";
+					position = "-592.263 355.019 54.0272";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "RepairPack";
@@ -297,27 +300,7 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						locked = "true";
-				};
-				new Turret(Team1TurretBaseLarge1) {
-					position = "-592.282 353.122 86.0031";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					nameTag = "South Tower";
-					dataBlock = "TurretBaseLarge";
-					lockCount = "0";
-					homingCount = "0";
-					initialBarrel = "PlasmaBarrelLarge";
-						locked = "true";
-				};
-				new InteriorInstance() {
-					position = "-592.225 340.482 58";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					interiorFile = "bbunk2.dif";
-					showTerrainInside = "0";
-					AudioProfile = "Universal_Base_2";
-						locked = "true";
+						locked = "false";
 				};
 			};
 			new SimGroup(base0) {
@@ -343,7 +326,7 @@ new SimGroup(MissionGroup) {
 						locked = "true";
 				};
 				new Item(Team1flag1) {
-					position = "-701.246 419.048 86.0133";
+					position = "-701.246 419.048 86.0046";
 					rotation = "0 0 1 90";
 					scale = "1 1 1";
 					dataBlock = "Flag";
@@ -352,6 +335,7 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "0";
 					rotate = "0";
+						WayPoint = "3725";
 						locked = "true";
 				};
 				new StaticShape(Team1SensorMediumPulse1) {
@@ -448,16 +432,6 @@ new SimGroup(MissionGroup) {
 					initialBarrel = "SentryTurretBarrel";
 						locked = "true";
 				};
-				new Turret() {
-					position = "-710.498 419.286 98.9546";
-					rotation = "0.283404 0.283404 -0.916168 95.0101";
-					scale = "1 1 1";
-					dataBlock = "TurretBaseLarge";
-					lockCount = "0";
-					homingCount = "0";
-					initialBarrel = "ELFBarrelLarge";
-						locked = "true";
-				};
 			};
 			new SimGroup(veh0) {
 
@@ -477,6 +451,8 @@ new SimGroup(MissionGroup) {
 					dataBlock = "StationVehiclePad";
 					lockCount = "0";
 					homingCount = "0";
+						station = "3520";
+						Ready = "1";
 						locked = "true";
 				};
 			};
@@ -492,38 +468,37 @@ new SimGroup(MissionGroup) {
 			};
 			new SimGroup(tower0a) {
 
-				new StaticShape(Team1StationInventory9) {
-					position = "-604.709 490.954 51.4968";
-					rotation = "-0 0 -1 90";
+				new InteriorInstance() {
+					position = "-592.184 497.451 50.4";
+					rotation = "1 0 0 0";
 					scale = "1 1 1";
-					nameTag = "North Tower";
-					dataBlock = "StationInventory";
-					lockCount = "0";
-					homingCount = "0";
+					interiorFile = "bbunk9.dif";
+					showTerrainInside = "0";
 						locked = "true";
 				};
-				new StaticShape(Team1StationInventory10) {
-					position = "-579.64 490.895 51.4974";
-					rotation = "0 0 1 90";
+				new Turret(Team1TurretBaseLarge3) {
+					position = "-592.44 505.708 60.8904";
+					rotation = "0 0 1 180";
 					scale = "1 1 1";
 					nameTag = "North Tower";
-					dataBlock = "StationInventory";
+					dataBlock = "TurretBaseLarge";
 					lockCount = "0";
 					homingCount = "0";
-						locked = "true";
+					initialBarrel = "PlasmaBarrelLarge";
+						locked = "false";
 				};
 				new StaticShape(Team1StationInventory11) {
-					position = "-592.181 491.943 61.8746";
+					position = "-592.181 511.183 52.3546";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					nameTag = "North Tower";
 					dataBlock = "StationInventory";
 					lockCount = "0";
 					homingCount = "0";
-						locked = "true";
+						locked = "false";
 				};
 				new Item() {
-					position = "-592.281 492.645 76.2456";
+					position = "-592.281 491.525 53.4856";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "RepairPack";
@@ -532,27 +507,7 @@ new SimGroup(MissionGroup) {
 					collideable = "0";
 					static = "1";
 					rotate = "0";
-						locked = "true";
-				};
-				new Turret(Team1TurretBaseLarge3) {
-					position = "-592.44 485.028 86.0104";
-					rotation = "0 0 1 180";
-					scale = "1 1 1";
-					nameTag = "North Tower";
-					dataBlock = "TurretBaseLarge";
-					lockCount = "0";
-					homingCount = "0";
-					initialBarrel = "PlasmaBarrelLarge";
-						locked = "true";
-				};
-				new InteriorInstance() {
-					position = "-592.184 497.451 58";
-					rotation = "0 0 1 180";
-					scale = "1 1 1";
-					interiorFile = "bbunk2.dif";
-					showTerrainInside = "0";
-					AudioProfile = "Universal_Base_2";
-						locked = "true";
+						locked = "false";
 				};
 			};
 			new SimGroup(AIObjectives) {
@@ -567,7 +522,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the generator";
 					targetObject = "Team1generatorLarge1";
 					targetClientId = "-1";
-					targetObjectId = "3295";
+					targetObjectId = "3491";
 					location = "-700.967 391.722 56.9892";
 					weightLevel1 = "3200";
 					weightLevel2 = "1600";
@@ -582,6 +537,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIODefendLocation) {
@@ -594,7 +550,7 @@ new SimGroup(MissionGroup) {
 					description = "Defend the generator";
 					targetObject = "Team1generatorLarge1";
 					targetClientId = "-1";
-					targetObjectId = "3295";
+					targetObjectId = "3491";
 					location = "-700.967 391.722 56.9892";
 					weightLevel1 = "3100";
 					weightLevel2 = "1500";
@@ -609,64 +565,67 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
-				new AIObjective(AIORepairObject) {
-					position = "-579.668 342.497 53.0639";
+				new AIObjective(AIOMortarObject) {
+					position = "793.577 -466.837 57.8452";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team1StationInventory1";
+					description = "Mortar the enemy turret";
+					targetObject = "Team2SentryTurret2";
 					targetClientId = "-1";
-					targetObjectId = "3297";
-					location = "-579.668 342.497 53.0639";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
+					targetObjectId = "3602";
+					location = "793.577 -466.837 57.8452";
+					weightLevel1 = "3400";
+					weightLevel2 = "1000";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
+					offense = "1";
+					defense = "0";
+					equipment = "Mortar MortarAmmo";
+					buyEquipmentSet = "HeavyAmmoSet";
 					issuedByHuman = "0";
 					issuedByClientId = "-1";
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
-				new AIObjective(AIORepairObject) {
-					position = "-604.754 342.493 53.0585";
+				new AIObjective(AIOAttackObject) {
+					position = "778.688 -493.811 59.3416";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team1StationInventory2";
+					description = "Attack the enemy generator";
+					targetObject = "Team2generatorLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3299";
-					location = "-604.754 342.493 53.0585";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
+					targetObjectId = "3607";
+					location = "778.688 -493.811 59.3416";
+					weightLevel1 = "3100";
+					weightLevel2 = "1600";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
+					offense = "1";
+					defense = "0";
+					desiredEquipment = "ShieldPack";
+					buyEquipmentSet = "MediumShieldSet";
 					issuedByHuman = "0";
 					issuedByClientId = "-1";
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
-					position = "-592.14 343.143 63.4407";
+					position = "-592.14 333.943 53.4407";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -675,8 +634,8 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team1StationInventory3";
 					targetClientId = "-1";
-					targetObjectId = "3301";
-					location = "-592.14 343.143 63.4407";
+					targetObjectId = "3495";
+					location = "-592.14 333.943 53.4407";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
 					weightLevel3 = "0";
@@ -690,10 +649,11 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
-					position = "-592.296 355.93 83.8925";
+					position = "-592.296 340.33 61.4925";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -702,8 +662,8 @@ new SimGroup(MissionGroup) {
 					description = "Repair the turret";
 					targetObject = "Team1TurretBaseLarge1";
 					targetClientId = "-1";
-					targetObjectId = "3304";
-					location = "-592.296 355.93 83.8925";
+					targetObjectId = "3493";
+					location = "-592.296 340.33 61.4925";
 					weightLevel1 = "3100";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -717,6 +677,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -729,7 +690,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the turret";
 					targetObject = "Team1TurretBaseLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3308";
+					targetObjectId = "3500";
 					location = "-667.784 418.661 66.8927";
 					weightLevel1 = "3100";
 					weightLevel2 = "1000";
@@ -744,6 +705,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIODefendLocation) {
@@ -756,7 +718,7 @@ new SimGroup(MissionGroup) {
 					description = "Defend our flag";
 					targetObject = "Team1flag1";
 					targetClientId = "-1";
-					targetObjectId = "3309";
+					targetObjectId = "3501";
 					location = "-701.246 419.048 87.644";
 					weightLevel1 = "3900";
 					weightLevel2 = "2000";
@@ -772,6 +734,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackPlayer) {
@@ -785,7 +748,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagCarrier";
 					targetObject = "Team1flag1";
 					targetClientId = "-1";
-					targetObjectId = "3309";
+					targetObjectId = "3501";
 					location = "-701.246 419.048 87.644";
 					weightLevel1 = "4800";
 					weightLevel2 = "3000";
@@ -800,6 +763,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOTouchObject) {
@@ -813,7 +777,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagDropped";
 					targetObject = "Team1flag1";
 					targetClientId = "-1";
-					targetObjectId = "3309";
+					targetObjectId = "3501";
 					location = "-701.246 419.048 87.644";
 					weightLevel1 = "5001";
 					weightLevel2 = "4100";
@@ -826,10 +790,11 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
-					position = "-700.941 453.754 108.512";
+					position = "-604.474 413.718 54.912";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -838,8 +803,8 @@ new SimGroup(MissionGroup) {
 					description = "Repair the Sensor";
 					targetObject = "Team1SensorMediumPulse1";
 					targetClientId = "-1";
-					targetObjectId = "3310";
-					location = "-700.941 453.754 108.512";
+					targetObjectId = "3503";
+					location = "-604.474 413.718 54.912";
 					weightLevel1 = "3100";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -853,6 +818,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -865,7 +831,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team1StationInventory4";
 					targetClientId = "-1";
-					targetObjectId = "3311";
+					targetObjectId = "3504";
 					location = "-701.066 412.142 93.5677";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -880,6 +846,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -892,7 +859,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team1StationInventory5";
 					targetClientId = "-1";
-					targetObjectId = "3313";
+					targetObjectId = "3506";
 					location = "-701.021 425.866 93.5604";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -907,6 +874,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -919,7 +887,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team1StationInventory6";
 					targetClientId = "-1";
-					targetObjectId = "3315";
+					targetObjectId = "3508";
 					location = "-686.565 419.146 60.5676";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -934,6 +902,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -946,7 +915,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team1StationInventory7";
 					targetClientId = "-1";
-					targetObjectId = "3317";
+					targetObjectId = "3510";
 					location = "-703.347 439.114 79.5655";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -961,6 +930,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -973,7 +943,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team1StationInventory8";
 					targetClientId = "-1";
-					targetObjectId = "3319";
+					targetObjectId = "3512";
 					location = "-703.353 398.983 79.5659";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -988,6 +958,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -1000,7 +971,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the turret";
 					targetObject = "Team1SentryTurret1";
 					targetClientId = "-1";
-					targetObjectId = "3322";
+					targetObjectId = "3515";
 					location = "-684.52 418.951 55.5301";
 					weightLevel1 = "3100";
 					weightLevel2 = "1000";
@@ -1015,6 +986,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -1027,7 +999,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the turret";
 					targetObject = "Team1SentryTurret2";
 					targetClientId = "-1";
-					targetObjectId = "3323";
+					targetObjectId = "3516";
 					location = "-715.873 419.3 55.5031";
 					weightLevel1 = "3100";
 					weightLevel2 = "1000";
@@ -1042,6 +1014,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -1054,7 +1027,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the generator";
 					targetObject = "Team1generatorLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3330";
+					targetObjectId = "3522";
 					location = "-700.984 446.274 56.9995";
 					weightLevel1 = "3200";
 					weightLevel2 = "1600";
@@ -1069,6 +1042,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIODefendLocation) {
@@ -1081,7 +1055,7 @@ new SimGroup(MissionGroup) {
 					description = "Defend the generator";
 					targetObject = "Team1generatorLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3330";
+					targetObjectId = "3522";
 					location = "-700.984 446.274 56.9995";
 					weightLevel1 = "3100";
 					weightLevel2 = "1500";
@@ -1096,60 +1070,63 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
-				new AIObjective(AIORepairObject) {
-					position = "-579.675 495.497 53.0626";
+				new AIObjective(AIOAttackObject) {
+					position = "669.907 -552.045 53.3825";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team1StationInventory9";
+					description = "Attack the enemy inventory";
+					targetObject = "Team2StationInventory11";
 					targetClientId = "-1";
-					targetObjectId = "3332";
-					location = "-579.675 495.497 53.0626";
+					targetObjectId = "3650";
+					location = "669.907 -552.045 53.3825";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
+					offense = "1";
+					defense = "0";
+					desiredEquipment = "ShieldPack";
+					buyEquipmentSet = "HeavyAmmoSet";
 					issuedByHuman = "0";
 					issuedByClientId = "-1";
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
-				new AIObjective(AIORepairObject) {
-					position = "-604.744 495.556 53.0632";
+				new AIObjective(AIOMortarObject) {
+					position = "669.939 -543.963 62.6336";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team1StationInventory10";
+					description = "Mortar the enemy turret";
+					targetObject = "Team2TurretBaseLarge3";
 					targetClientId = "-1";
-					targetObjectId = "3334";
-					location = "-604.744 495.556 53.0632";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
+					targetObjectId = "3653";
+					location = "669.939 -543.963 62.6336";
+					weightLevel1 = "3400";
+					weightLevel2 = "1000";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
+					offense = "1";
+					defense = "0";
+					equipment = "Mortar MortarAmmo";
+					buyEquipmentSet = "HeavyAmmoSet";
 					issuedByHuman = "0";
 					issuedByClientId = "-1";
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -1162,7 +1139,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team1StationInventory11";
 					targetClientId = "-1";
-					targetObjectId = "3336";
+					targetObjectId = "3526";
 					location = "-592.203 494.508 63.4404";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -1177,10 +1154,11 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
-					position = "-592.235 482.026 83.8916";
+					position = "-592.235 505.626 59.8916";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -1189,8 +1167,8 @@ new SimGroup(MissionGroup) {
 					description = "Repair the turret";
 					targetObject = "Team1TurretBaseLarge3";
 					targetClientId = "-1";
-					targetObjectId = "3339";
-					location = "-592.235 482.026 83.8916";
+					targetObjectId = "3525";
+					location = "-592.235 505.626 59.8916";
 					weightLevel1 = "3100";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -1204,6 +1182,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -1216,7 +1195,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy generator";
 					targetObject = "Team2generatorLarge1";
 					targetClientId = "-1";
-					targetObjectId = "3393";
+					targetObjectId = "3575";
 					location = "778.671 -439.259 59.3313";
 					weightLevel1 = "3100";
 					weightLevel2 = "1600";
@@ -1231,101 +1210,21 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOAttackObject) {
-					position = "657.372 -390.034 55.406";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team2StationInventory1";
-					targetClientId = "-1";
-					targetObjectId = "3394";
-					location = "657.372 -390.034 55.406";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOAttackObject) {
-					position = "682.458 -390.03 55.4006";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team2StationInventory2";
-					targetClientId = "-1";
-					targetObjectId = "3396";
-					location = "682.458 -390.03 55.4006";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOAttackObject) {
-					position = "669.844 -390.68 65.7828";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team2StationInventory3";
-					targetClientId = "-1";
-					targetObjectId = "3398";
-					location = "669.844 -390.68 65.7828";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOMortarObject) {
-					position = "670 -403.467 86.2345";
+					position = "762.224 -466.488 57.8722";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
 					description = "Mortar the enemy turret";
-					targetObject = "Team2TurretBaseLarge1";
+					targetObject = "Team2SentryTurret1";
 					targetClientId = "-1";
-					targetObjectId = "3401";
-					location = "670 -403.467 86.2345";
+					targetObjectId = "3601";
+					location = "762.224 -466.488 57.8722";
 					weightLevel1 = "3400";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -1339,6 +1238,91 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
+						issuingClientId = "-1";
+				};
+				new AIObjective(AIOAttackObject) {
+					position = "781.057 -446.52 81.9079";
+					rotation = "1 0 0 0";
+					scale = "1 1 1";
+					dataBlock = "AIObjectiveMarker";
+					lockCount = "0";
+					homingCount = "0";
+					description = "Attack the enemy inventory";
+					targetObject = "Team2StationInventory8";
+					targetClientId = "-1";
+					targetObjectId = "3598";
+					location = "781.057 -446.52 81.9079";
+					weightLevel1 = "2900";
+					weightLevel2 = "1400";
+					weightLevel3 = "0";
+					weightLevel4 = "0";
+					offense = "1";
+					defense = "0";
+					desiredEquipment = "ShieldPack";
+					buyEquipmentSet = "HeavyAmmoSet";
+					issuedByHuman = "0";
+					issuedByClientId = "-1";
+					forceClientId = "-1";
+					locked = "1";
+						gameType = "all";
+						isInvalid = "0";
+						issuingClientId = "-1";
+				};
+				new AIObjective(AIOAttackObject) {
+					position = "669.844 -382.28 56.9828";
+					rotation = "1 0 0 0";
+					scale = "1 1 1";
+					dataBlock = "AIObjectiveMarker";
+					lockCount = "0";
+					homingCount = "0";
+					description = "Attack the enemy inventory";
+					targetObject = "Team2StationInventory3";
+					targetClientId = "-1";
+					targetObjectId = "3580";
+					location = "669.844 -382.28 56.9828";
+					weightLevel1 = "2900";
+					weightLevel2 = "1400";
+					weightLevel3 = "0";
+					weightLevel4 = "0";
+					offense = "1";
+					defense = "0";
+					desiredEquipment = "ShieldPack";
+					buyEquipmentSet = "HeavyAmmoSet";
+					issuedByHuman = "0";
+					issuedByClientId = "-1";
+					forceClientId = "-1";
+					locked = "1";
+						gameType = "all";
+						isInvalid = "0";
+						issuingClientId = "-1";
+				};
+				new AIObjective(AIOMortarObject) {
+					position = "670 -386.267 65.0345";
+					rotation = "1 0 0 0";
+					scale = "1 1 1";
+					dataBlock = "AIObjectiveMarker";
+					lockCount = "0";
+					homingCount = "0";
+					description = "Mortar the enemy turret";
+					targetObject = "Team2TurretBaseLarge1";
+					targetClientId = "-1";
+					targetObjectId = "3583";
+					location = "670 -386.267 65.0345";
+					weightLevel1 = "3400";
+					weightLevel2 = "1000";
+					weightLevel3 = "0";
+					weightLevel4 = "0";
+					offense = "1";
+					defense = "0";
+					equipment = "Mortar MortarAmmo";
+					buyEquipmentSet = "HeavyAmmoSet";
+					issuedByHuman = "0";
+					issuedByClientId = "-1";
+					forceClientId = "-1";
+					locked = "1";
+						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOMortarObject) {
@@ -1351,7 +1335,7 @@ new SimGroup(MissionGroup) {
 					description = "Mortar the enemy turret";
 					targetObject = "Team2TurretBaseLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3404";
+					targetObjectId = "3586";
 					location = "745.488 -466.198 69.2348";
 					weightLevel1 = "3400";
 					weightLevel2 = "1000";
@@ -1366,6 +1350,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOTouchObject) {
@@ -1379,7 +1364,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagGrab";
 					targetObject = "Team2flag1";
 					targetClientId = "-1";
-					targetObjectId = "3405";
+					targetObjectId = "3587";
 					location = "778.95 -466.585 89.986";
 					weightLevel1 = "3850";
 					weightLevel2 = "2000";
@@ -1395,6 +1380,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOTouchObject) {
@@ -1408,7 +1394,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagCapture";
 					targetObject = "Team2flag1";
 					targetClientId = "-1";
-					targetObjectId = "3405";
+					targetObjectId = "3587";
 					location = "778.95 -466.585 89.986";
 					weightLevel1 = "5000";
 					weightLevel2 = "0";
@@ -1421,6 +1407,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOTouchObject) {
@@ -1434,7 +1421,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagDropped";
 					targetObject = "Team2flag1";
 					targetClientId = "-1";
-					targetObjectId = "3405";
+					targetObjectId = "3587";
 					location = "778.95 -466.585 89.986";
 					weightLevel1 = "5001";
 					weightLevel2 = "4100";
@@ -1447,10 +1434,11 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOMortarObject) {
-					position = "778.645 -501.291 110.854";
+					position = "678.245 -470.091 60.854";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -1459,8 +1447,8 @@ new SimGroup(MissionGroup) {
 					description = "Mortar the enemy Sensor";
 					targetObject = "Team2SensorMediumPulse1";
 					targetClientId = "-1";
-					targetObjectId = "3406";
-					location = "778.645 -501.291 110.854";
+					targetObjectId = "3589";
+					location = "678.245 -470.091 60.854";
 					weightLevel1 = "3400";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -1474,6 +1462,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -1486,7 +1475,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team2StationInventory4";
 					targetClientId = "-1";
-					targetObjectId = "3407";
+					targetObjectId = "3590";
 					location = "778.77 -459.679 95.9097";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -1501,6 +1490,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -1513,7 +1503,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team2StationInventory5";
 					targetClientId = "-1";
-					targetObjectId = "3409";
+					targetObjectId = "3592";
 					location = "778.725 -473.403 95.9024";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -1528,6 +1518,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -1540,7 +1531,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team2StationInventory6";
 					targetClientId = "-1";
-					targetObjectId = "3411";
+					targetObjectId = "3594";
 					location = "764.269 -466.683 62.9097";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -1555,6 +1546,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -1567,7 +1559,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team2StationInventory7";
 					targetClientId = "-1";
-					targetObjectId = "3413";
+					targetObjectId = "3596";
 					location = "781.051 -486.651 81.9075";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -1582,222 +1574,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOAttackObject) {
-					position = "781.057 -446.52 81.9079";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team2StationInventory8";
-					targetClientId = "-1";
-					targetObjectId = "3415";
-					location = "781.057 -446.52 81.9079";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOMortarObject) {
-					position = "762.224 -466.488 57.8722";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Mortar the enemy turret";
-					targetObject = "Team2SentryTurret1";
-					targetClientId = "-1";
-					targetObjectId = "3418";
-					location = "762.224 -466.488 57.8722";
-					weightLevel1 = "3400";
-					weightLevel2 = "1000";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					equipment = "Mortar MortarAmmo";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOMortarObject) {
-					position = "793.577 -466.837 57.8452";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Mortar the enemy turret";
-					targetObject = "Team2SentryTurret2";
-					targetClientId = "-1";
-					targetObjectId = "3419";
-					location = "793.577 -466.837 57.8452";
-					weightLevel1 = "3400";
-					weightLevel2 = "1000";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					equipment = "Mortar MortarAmmo";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOAttackObject) {
-					position = "778.688 -493.811 59.3416";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Attack the enemy generator";
-					targetObject = "Team2generatorLarge2";
-					targetClientId = "-1";
-					targetObjectId = "3424";
-					location = "778.688 -493.811 59.3416";
-					weightLevel1 = "3100";
-					weightLevel2 = "1600";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "MediumShieldSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOAttackObject) {
-					position = "657.379 -543.034 55.4047";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team2StationInventory9";
-					targetClientId = "-1";
-					targetObjectId = "3425";
-					location = "657.379 -543.034 55.4047";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOAttackObject) {
-					position = "682.448 -543.093 55.4053";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team2StationInventory10";
-					targetClientId = "-1";
-					targetObjectId = "3427";
-					location = "682.448 -543.093 55.4053";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOAttackObject) {
-					position = "669.907 -542.045 65.7825";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team2StationInventory11";
-					targetClientId = "-1";
-					targetObjectId = "3429";
-					location = "669.907 -542.045 65.7825";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIOMortarObject) {
-					position = "669.939 -529.563 86.2336";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Mortar the enemy turret";
-					targetObject = "Team2TurretBaseLarge3";
-					targetClientId = "-1";
-					targetObjectId = "3432";
-					location = "669.939 -529.563 86.2336";
-					weightLevel1 = "3400";
-					weightLevel2 = "1000";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					equipment = "Mortar MortarAmmo";
-					buyEquipmentSet = "HeavyAmmoSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 			};
@@ -1861,38 +1638,38 @@ new SimGroup(MissionGroup) {
 				homingCount = "0";
 					locked = "true";
 			};
-			new StaticShape(Team2StationInventory1) {
-				position = "682.472 -394.534 53.8402";
-				rotation = "0 0 1 90";
+			new Turret(Team2TurretBaseLarge3) {
+				position = "670.053 -544.552 61.6232";
+				rotation = "1 0 0 0";
 				scale = "1 1 1";
-				nameTag = "North Tower";
-				dataBlock = "StationInventory";
+				nameTag = "South Tower";
+				dataBlock = "TurretBaseLarge";
 				lockCount = "0";
 				homingCount = "0";
-					locked = "true";
+				initialBarrel = "PlasmaBarrelLarge";
+					locked = "false";
 			};
-			new StaticShape(Team2StationInventory2) {
-				position = "657.386 -394.537 53.8348";
-				rotation = "-0 0 -1 90";
+			new InteriorInstance() {
+				position = "669.893 -536.999 51.1421";
+				rotation = "0 0 1 179.909";
 				scale = "1 1 1";
-				nameTag = "North Tower";
-				dataBlock = "StationInventory";
-				lockCount = "0";
-				homingCount = "0";
-					locked = "true";
+				interiorFile = "bbunk9.dif";
+				showTerrainInside = "0";
+				AudioProfile = "Universal_Base_2";
+					locked = "false";
 			};
 			new StaticShape(Team2StationInventory3) {
-				position = "670 -393.888 64.217";
+				position = "670 -382.248 56.057";
 				rotation = "1 0 0 0";
 				scale = "1 1 1";
 				nameTag = "North Tower";
 				dataBlock = "StationInventory";
 				lockCount = "0";
 				homingCount = "0";
-					locked = "true";
+					locked = "false";
 			};
 			new Item() {
-				position = "669.978 -392.568 78.5692";
+				position = "669.978 -402.728 57.2492";
 				rotation = "1 0 0 0";
 				scale = "1 1 1";
 				dataBlock = "RepairPack";
@@ -1901,10 +1678,10 @@ new SimGroup(MissionGroup) {
 				collideable = "0";
 				static = "1";
 				rotate = "0";
-					locked = "true";
+					locked = "false";
 			};
 			new Turret(Team2TurretBaseLarge1) {
-				position = "669.911 -400.594 88.2732";
+				position = "669.911 -386.514 64.4732";
 				rotation = "0 0 1 180";
 				scale = "1 1 1";
 				nameTag = "North Tower";
@@ -1912,13 +1689,13 @@ new SimGroup(MissionGroup) {
 				lockCount = "0";
 				homingCount = "0";
 				initialBarrel = "PlasmaBarrelLarge";
-					locked = "true";
+					locked = "false";
 			};
 			new InteriorInstance() {
-				position = "669.94 -388.031 60.3421";
-				rotation = "0 0 1 180";
+				position = "669.946 -396.031 54.1021";
+				rotation = "0 0 -1 0.0791294";
 				scale = "1 1 1";
-				interiorFile = "bbunk2.dif";
+				interiorFile = "bbunk9.dif";
 				showTerrainInside = "0";
 				AudioProfile = "Universal_Base_2";
 					locked = "true";
@@ -1944,7 +1721,7 @@ new SimGroup(MissionGroup) {
 					locked = "true";
 			};
 			new Item(Team2flag1) {
-				position = "778.95 -466.585 88.3554";
+				position = "778.95 -466.585 88.3467";
 				rotation = "0 0 1 90";
 				scale = "1 1 1";
 				dataBlock = "Flag";
@@ -1953,6 +1730,7 @@ new SimGroup(MissionGroup) {
 				collideable = "0";
 				static = "0";
 				rotate = "0";
+					WayPoint = "3726";
 					locked = "true";
 			};
 			new StaticShape(Team2SensorMediumPulse1) {
@@ -2065,6 +1843,8 @@ new SimGroup(MissionGroup) {
 				dataBlock = "StationVehiclePad";
 				lockCount = "0";
 				homingCount = "0";
+					station = "3605";
+					Ready = "1";
 					locked = "true";
 			};
 			new StaticShape(Team2generatorLarge2) {
@@ -2075,68 +1855,6 @@ new SimGroup(MissionGroup) {
 				dataBlock = "GeneratorLarge";
 				lockCount = "0";
 				homingCount = "0";
-					locked = "true";
-			};
-			new StaticShape(Team2StationInventory9) {
-				position = "682.424 -538.502 53.8389";
-				rotation = "0 0 1 90";
-				scale = "1 1 1";
-				nameTag = "South Tower";
-				dataBlock = "StationInventory";
-				lockCount = "0";
-				homingCount = "0";
-					locked = "true";
-			};
-			new StaticShape(Team2StationInventory10) {
-				position = "657.355 -538.443 53.8395";
-				rotation = "-0 0 -1 90";
-				scale = "1 1 1";
-				nameTag = "South Tower";
-				dataBlock = "StationInventory";
-				lockCount = "0";
-				homingCount = "0";
-					locked = "true";
-			};
-			new StaticShape(Team2StationInventory11) {
-				position = "669.896 -539.491 64.2167";
-				rotation = "0 0 1 180";
-				scale = "1 1 1";
-				nameTag = "South Tower";
-				dataBlock = "StationInventory";
-				lockCount = "0";
-				homingCount = "0";
-					locked = "true";
-			};
-			new Item() {
-				position = "669.996 -540.193 78.5876";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				dataBlock = "RepairPack";
-				lockCount = "0";
-				homingCount = "0";
-				collideable = "0";
-				static = "1";
-				rotate = "0";
-					locked = "true";
-			};
-			new Turret(Team2TurretBaseLarge3) {
-				position = "670.053 -532.512 88.3432";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				nameTag = "South Tower";
-				dataBlock = "TurretBaseLarge";
-				lockCount = "0";
-				homingCount = "0";
-				initialBarrel = "PlasmaBarrelLarge";
-					locked = "true";
-			};
-			new InteriorInstance() {
-				position = "669.899 -544.999 60.3421";
-				rotation = "1 0 0 0";
-				scale = "1 1 1";
-				interiorFile = "bbunk2.dif";
-				showTerrainInside = "0";
-				AudioProfile = "Universal_Base_2";
 					locked = "true";
 			};
 			new SimGroup(AIObjectives) {
@@ -2151,7 +1869,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy generator";
 					targetObject = "Team1generatorLarge1";
 					targetClientId = "-1";
-					targetObjectId = "3295";
+					targetObjectId = "3491";
 					location = "-700.967 391.722 56.9892";
 					weightLevel1 = "3100";
 					weightLevel2 = "1600";
@@ -2166,64 +1884,67 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
-				new AIObjective(AIOAttackObject) {
-					position = "-579.668 342.497 53.0639";
+				new AIObjective(AIORepairObject) {
+					position = "778.688 -493.811 59.3416";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team1StationInventory1";
+					description = "Repair the generator";
+					targetObject = "Team2generatorLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3297";
-					location = "-579.668 342.497 53.0639";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
+					targetObjectId = "3607";
+					location = "778.688 -493.811 59.3416";
+					weightLevel1 = "3200";
+					weightLevel2 = "1600";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
+					offense = "0";
+					defense = "1";
+					equipment = "RepairPack";
+					buyEquipmentSet = "HeavyRepairSet";
 					issuedByHuman = "0";
 					issuedByClientId = "-1";
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
-				new AIObjective(AIOAttackObject) {
-					position = "-604.754 342.493 53.0585";
+				new AIObjective(AIODefendLocation) {
+					position = "778.688 -493.811 59.3416";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team1StationInventory2";
+					description = "Defend the generator";
+					targetObject = "Team2generatorLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3299";
-					location = "-604.754 342.493 53.0585";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
+					targetObjectId = "3607";
+					location = "778.688 -493.811 59.3416";
+					weightLevel1 = "3100";
+					weightLevel2 = "1500";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
+					offense = "0";
+					defense = "1";
+					desiredEquipment = "ShieldPack Plasma PlasmaAmmo";
+					buyEquipmentSet = "HeavyShieldSet";
 					issuedByHuman = "0";
 					issuedByClientId = "-1";
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
-					position = "-592.14 343.143 63.4407";
+					position = "-592.14 333.943 53.4407";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -2232,8 +1953,8 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team1StationInventory3";
 					targetClientId = "-1";
-					targetObjectId = "3301";
-					location = "-592.14 343.143 63.4407";
+					targetObjectId = "3495";
+					location = "-592.14 333.943 53.4407";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
 					weightLevel3 = "0";
@@ -2247,10 +1968,11 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOMortarObject) {
-					position = "-592.296 355.93 83.8925";
+					position = "-592.296 340.33 61.4925";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -2259,8 +1981,8 @@ new SimGroup(MissionGroup) {
 					description = "Mortar the enemy turret";
 					targetObject = "Team1TurretBaseLarge1";
 					targetClientId = "-1";
-					targetObjectId = "3304";
-					location = "-592.296 355.93 83.8925";
+					targetObjectId = "3493";
+					location = "-592.296 340.33 61.4925";
 					weightLevel1 = "3400";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -2274,6 +1996,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOMortarObject) {
@@ -2286,7 +2009,7 @@ new SimGroup(MissionGroup) {
 					description = "Mortar the enemy turret";
 					targetObject = "Team1TurretBaseLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3308";
+					targetObjectId = "3500";
 					location = "-667.784 418.661 66.8927";
 					weightLevel1 = "3400";
 					weightLevel2 = "1000";
@@ -2301,6 +2024,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOTouchObject) {
@@ -2314,7 +2038,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagGrab";
 					targetObject = "Team1flag1";
 					targetClientId = "-1";
-					targetObjectId = "3309";
+					targetObjectId = "3501";
 					location = "-701.246 419.048 87.644";
 					weightLevel1 = "3850";
 					weightLevel2 = "2000";
@@ -2330,6 +2054,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOTouchObject) {
@@ -2343,7 +2068,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagCapture";
 					targetObject = "Team1flag1";
 					targetClientId = "-1";
-					targetObjectId = "3309";
+					targetObjectId = "3501";
 					location = "-701.246 419.048 87.644";
 					weightLevel1 = "5000";
 					weightLevel2 = "0";
@@ -2356,6 +2081,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOTouchObject) {
@@ -2369,7 +2095,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagDropped";
 					targetObject = "Team1flag1";
 					targetClientId = "-1";
-					targetObjectId = "3309";
+					targetObjectId = "3501";
 					location = "-701.246 419.048 87.644";
 					weightLevel1 = "5001";
 					weightLevel2 = "4100";
@@ -2382,10 +2108,11 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOMortarObject) {
-					position = "-700.941 453.754 108.512";
+					position = "-604.474 413.718 54.912";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -2394,8 +2121,8 @@ new SimGroup(MissionGroup) {
 					description = "Mortar the enemy Sensor";
 					targetObject = "Team1SensorMediumPulse1";
 					targetClientId = "-1";
-					targetObjectId = "3310";
-					location = "-700.941 453.754 108.512";
+					targetObjectId = "3503";
+					location = "-604.474 413.718 54.912";
 					weightLevel1 = "3400";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -2409,6 +2136,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -2421,7 +2149,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team1StationInventory4";
 					targetClientId = "-1";
-					targetObjectId = "3311";
+					targetObjectId = "3504";
 					location = "-701.066 412.142 93.5677";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -2436,6 +2164,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -2448,7 +2177,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team1StationInventory5";
 					targetClientId = "-1";
-					targetObjectId = "3313";
+					targetObjectId = "3506";
 					location = "-701.021 425.866 93.5604";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -2463,6 +2192,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -2475,7 +2205,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team1StationInventory6";
 					targetClientId = "-1";
-					targetObjectId = "3315";
+					targetObjectId = "3508";
 					location = "-686.565 419.146 60.5676";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -2490,6 +2220,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -2502,7 +2233,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team1StationInventory7";
 					targetClientId = "-1";
-					targetObjectId = "3317";
+					targetObjectId = "3510";
 					location = "-703.347 439.114 79.5655";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -2517,6 +2248,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -2529,7 +2261,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team1StationInventory8";
 					targetClientId = "-1";
-					targetObjectId = "3319";
+					targetObjectId = "3512";
 					location = "-703.353 398.983 79.5659";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -2544,6 +2276,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOMortarObject) {
@@ -2556,7 +2289,7 @@ new SimGroup(MissionGroup) {
 					description = "Mortar the enemy turret";
 					targetObject = "Team1SentryTurret1";
 					targetClientId = "-1";
-					targetObjectId = "3322";
+					targetObjectId = "3515";
 					location = "-684.52 418.951 55.5301";
 					weightLevel1 = "3400";
 					weightLevel2 = "1000";
@@ -2571,6 +2304,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOMortarObject) {
@@ -2583,7 +2317,7 @@ new SimGroup(MissionGroup) {
 					description = "Mortar the enemy turret";
 					targetObject = "Team1SentryTurret2";
 					targetClientId = "-1";
-					targetObjectId = "3323";
+					targetObjectId = "3516";
 					location = "-715.873 419.3 55.5031";
 					weightLevel1 = "3400";
 					weightLevel2 = "1000";
@@ -2598,6 +2332,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -2610,7 +2345,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy generator";
 					targetObject = "Team1generatorLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3330";
+					targetObjectId = "3522";
 					location = "-700.984 446.274 56.9995";
 					weightLevel1 = "3100";
 					weightLevel2 = "1600";
@@ -2625,60 +2360,63 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
-				new AIObjective(AIOAttackObject) {
-					position = "-579.675 495.497 53.0626";
+				new AIObjective(AIORepairObject) {
+					position = "669.907 -552.045 53.3825";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team1StationInventory9";
+					description = "Repair the inventory station";
+					targetObject = "Team2StationInventory11";
 					targetClientId = "-1";
-					targetObjectId = "3332";
-					location = "-579.675 495.497 53.0626";
+					targetObjectId = "3650";
+					location = "669.907 -552.045 53.3825";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
+					offense = "0";
+					defense = "1";
+					equipment = "RepairPack";
+					buyEquipmentSet = "MediumRepairSet";
 					issuedByHuman = "0";
 					issuedByClientId = "-1";
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
-				new AIObjective(AIOAttackObject) {
-					position = "-604.744 495.556 53.0632";
+				new AIObjective(AIORepairObject) {
+					position = "669.939 -543.963 62.6336";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
-					description = "Attack the enemy inventory";
-					targetObject = "Team1StationInventory10";
+					description = "Repair the turret";
+					targetObject = "Team2TurretBaseLarge3";
 					targetClientId = "-1";
-					targetObjectId = "3334";
-					location = "-604.744 495.556 53.0632";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
+					targetObjectId = "3653";
+					location = "669.939 -543.963 62.6336";
+					weightLevel1 = "3100";
+					weightLevel2 = "1000";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
-					offense = "1";
-					defense = "0";
-					desiredEquipment = "ShieldPack";
-					buyEquipmentSet = "HeavyAmmoSet";
+					offense = "0";
+					defense = "1";
+					equipment = "RepairPack";
+					buyEquipmentSet = "LightRepairSet";
 					issuedByHuman = "0";
 					issuedByClientId = "-1";
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackObject) {
@@ -2691,7 +2429,7 @@ new SimGroup(MissionGroup) {
 					description = "Attack the enemy inventory";
 					targetObject = "Team1StationInventory11";
 					targetClientId = "-1";
-					targetObjectId = "3336";
+					targetObjectId = "3526";
 					location = "-592.203 494.508 63.4404";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -2706,10 +2444,11 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOMortarObject) {
-					position = "-592.235 482.026 83.8916";
+					position = "-592.235 505.626 59.8916";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -2718,8 +2457,8 @@ new SimGroup(MissionGroup) {
 					description = "Mortar the enemy turret";
 					targetObject = "Team1TurretBaseLarge3";
 					targetClientId = "-1";
-					targetObjectId = "3339";
-					location = "-592.235 482.026 83.8916";
+					targetObjectId = "3525";
+					location = "-592.235 505.626 59.8916";
 					weightLevel1 = "3400";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -2733,6 +2472,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -2745,7 +2485,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the generator";
 					targetObject = "Team2generatorLarge1";
 					targetClientId = "-1";
-					targetObjectId = "3393";
+					targetObjectId = "3575";
 					location = "778.671 -439.259 59.3313";
 					weightLevel1 = "3200";
 					weightLevel2 = "1600";
@@ -2760,6 +2500,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIODefendLocation) {
@@ -2772,7 +2513,7 @@ new SimGroup(MissionGroup) {
 					description = "Defend the generator";
 					targetObject = "Team2generatorLarge1";
 					targetClientId = "-1";
-					targetObjectId = "3393";
+					targetObjectId = "3575";
 					location = "778.671 -439.259 59.3313";
 					weightLevel1 = "3100";
 					weightLevel2 = "1500";
@@ -2787,101 +2528,21 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
-					position = "657.372 -390.034 55.406";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team2StationInventory1";
-					targetClientId = "-1";
-					targetObjectId = "3394";
-					location = "657.372 -390.034 55.406";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "682.458 -390.03 55.4006";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team2StationInventory2";
-					targetClientId = "-1";
-					targetObjectId = "3396";
-					location = "682.458 -390.03 55.4006";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "669.844 -390.68 65.7828";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team2StationInventory3";
-					targetClientId = "-1";
-					targetObjectId = "3398";
-					location = "669.844 -390.68 65.7828";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "670 -403.467 86.2345";
+					position = "793.577 -466.837 57.8452";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
 					lockCount = "0";
 					homingCount = "0";
 					description = "Repair the turret";
-					targetObject = "Team2TurretBaseLarge1";
+					targetObject = "Team2SentryTurret2";
 					targetClientId = "-1";
-					targetObjectId = "3401";
-					location = "670 -403.467 86.2345";
+					targetObjectId = "3602";
+					location = "793.577 -466.837 57.8452";
 					weightLevel1 = "3100";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -2895,6 +2556,91 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
+						issuingClientId = "-1";
+				};
+				new AIObjective(AIORepairObject) {
+					position = "762.224 -466.488 57.8722";
+					rotation = "1 0 0 0";
+					scale = "1 1 1";
+					dataBlock = "AIObjectiveMarker";
+					lockCount = "0";
+					homingCount = "0";
+					description = "Repair the turret";
+					targetObject = "Team2SentryTurret1";
+					targetClientId = "-1";
+					targetObjectId = "3601";
+					location = "762.224 -466.488 57.8722";
+					weightLevel1 = "3100";
+					weightLevel2 = "1000";
+					weightLevel3 = "0";
+					weightLevel4 = "0";
+					offense = "0";
+					defense = "1";
+					equipment = "RepairPack";
+					buyEquipmentSet = "LightRepairSet";
+					issuedByHuman = "0";
+					issuedByClientId = "-1";
+					forceClientId = "-1";
+					locked = "1";
+						gameType = "all";
+						isInvalid = "0";
+						issuingClientId = "-1";
+				};
+				new AIObjective(AIORepairObject) {
+					position = "669.844 -382.28 56.5828";
+					rotation = "1 0 0 0";
+					scale = "1 1 1";
+					dataBlock = "AIObjectiveMarker";
+					lockCount = "0";
+					homingCount = "0";
+					description = "Repair the inventory station";
+					targetObject = "Team2StationInventory3";
+					targetClientId = "-1";
+					targetObjectId = "3580";
+					location = "669.844 -382.28 56.5828";
+					weightLevel1 = "2900";
+					weightLevel2 = "1400";
+					weightLevel3 = "0";
+					weightLevel4 = "0";
+					offense = "0";
+					defense = "1";
+					equipment = "RepairPack";
+					buyEquipmentSet = "MediumRepairSet";
+					issuedByHuman = "0";
+					issuedByClientId = "-1";
+					forceClientId = "-1";
+					locked = "1";
+						gameType = "all";
+						isInvalid = "0";
+						issuingClientId = "-1";
+				};
+				new AIObjective(AIORepairObject) {
+					position = "670 -386.267 65.0345";
+					rotation = "1 0 0 0";
+					scale = "1 1 1";
+					dataBlock = "AIObjectiveMarker";
+					lockCount = "0";
+					homingCount = "0";
+					description = "Repair the turret";
+					targetObject = "Team2TurretBaseLarge1";
+					targetClientId = "-1";
+					targetObjectId = "3583";
+					location = "670 -386.267 65.0345";
+					weightLevel1 = "3100";
+					weightLevel2 = "1000";
+					weightLevel3 = "0";
+					weightLevel4 = "0";
+					offense = "0";
+					defense = "1";
+					equipment = "RepairPack";
+					buyEquipmentSet = "LightRepairSet";
+					issuedByHuman = "0";
+					issuedByClientId = "-1";
+					forceClientId = "-1";
+					locked = "1";
+						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -2907,7 +2653,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the turret";
 					targetObject = "Team2TurretBaseLarge2";
 					targetClientId = "-1";
-					targetObjectId = "3404";
+					targetObjectId = "3586";
 					location = "745.488 -466.198 69.2348";
 					weightLevel1 = "3100";
 					weightLevel2 = "1000";
@@ -2922,6 +2668,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIODefendLocation) {
@@ -2934,7 +2681,7 @@ new SimGroup(MissionGroup) {
 					description = "Defend our flag";
 					targetObject = "Team2flag1";
 					targetClientId = "-1";
-					targetObjectId = "3405";
+					targetObjectId = "3587";
 					location = "778.95 -466.585 89.986";
 					weightLevel1 = "3900";
 					weightLevel2 = "2000";
@@ -2950,6 +2697,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOAttackPlayer) {
@@ -2963,7 +2711,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagCarrier";
 					targetObject = "Team2flag1";
 					targetClientId = "-1";
-					targetObjectId = "3405";
+					targetObjectId = "3587";
 					location = "778.95 -466.585 89.986";
 					weightLevel1 = "4800";
 					weightLevel2 = "3000";
@@ -2978,6 +2726,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIOTouchObject) {
@@ -2991,7 +2740,7 @@ new SimGroup(MissionGroup) {
 					mode = "FlagDropped";
 					targetObject = "Team2flag1";
 					targetClientId = "-1";
-					targetObjectId = "3405";
+					targetObjectId = "3587";
 					location = "778.95 -466.585 89.986";
 					weightLevel1 = "5001";
 					weightLevel2 = "4100";
@@ -3004,10 +2753,11 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
-					position = "778.645 -501.291 110.854";
+					position = "678.245 -470.091 60.854";
 					rotation = "1 0 0 0";
 					scale = "1 1 1";
 					dataBlock = "AIObjectiveMarker";
@@ -3016,8 +2766,8 @@ new SimGroup(MissionGroup) {
 					description = "Repair the Sensor";
 					targetObject = "Team2SensorMediumPulse1";
 					targetClientId = "-1";
-					targetObjectId = "3406";
-					location = "778.645 -501.291 110.854";
+					targetObjectId = "3589";
+					location = "678.245 -470.091 60.854";
 					weightLevel1 = "3100";
 					weightLevel2 = "1000";
 					weightLevel3 = "0";
@@ -3031,6 +2781,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -3043,7 +2794,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team2StationInventory4";
 					targetClientId = "-1";
-					targetObjectId = "3407";
+					targetObjectId = "3590";
 					location = "778.77 -459.679 95.9097";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -3058,6 +2809,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -3070,7 +2822,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team2StationInventory5";
 					targetClientId = "-1";
-					targetObjectId = "3409";
+					targetObjectId = "3592";
 					location = "778.725 -473.403 95.9024";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -3085,6 +2837,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -3097,7 +2850,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team2StationInventory6";
 					targetClientId = "-1";
-					targetObjectId = "3411";
+					targetObjectId = "3594";
 					location = "764.269 -466.683 62.9097";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -3112,6 +2865,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -3124,7 +2878,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team2StationInventory7";
 					targetClientId = "-1";
-					targetObjectId = "3413";
+					targetObjectId = "3596";
 					location = "781.051 -486.651 81.9075";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -3139,6 +2893,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 				new AIObjective(AIORepairObject) {
@@ -3151,7 +2906,7 @@ new SimGroup(MissionGroup) {
 					description = "Repair the inventory station";
 					targetObject = "Team2StationInventory8";
 					targetClientId = "-1";
-					targetObjectId = "3415";
+					targetObjectId = "3598";
 					location = "781.057 -446.52 81.9079";
 					weightLevel1 = "2900";
 					weightLevel2 = "1400";
@@ -3166,222 +2921,7 @@ new SimGroup(MissionGroup) {
 					forceClientId = "-1";
 					locked = "1";
 						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "762.224 -466.488 57.8722";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the turret";
-					targetObject = "Team2SentryTurret1";
-					targetClientId = "-1";
-					targetObjectId = "3418";
-					location = "762.224 -466.488 57.8722";
-					weightLevel1 = "3100";
-					weightLevel2 = "1000";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "LightRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "793.577 -466.837 57.8452";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the turret";
-					targetObject = "Team2SentryTurret2";
-					targetClientId = "-1";
-					targetObjectId = "3419";
-					location = "793.577 -466.837 57.8452";
-					weightLevel1 = "3100";
-					weightLevel2 = "1000";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "LightRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "778.688 -493.811 59.3416";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the generator";
-					targetObject = "Team2generatorLarge2";
-					targetClientId = "-1";
-					targetObjectId = "3424";
-					location = "778.688 -493.811 59.3416";
-					weightLevel1 = "3200";
-					weightLevel2 = "1600";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "HeavyRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIODefendLocation) {
-					position = "778.688 -493.811 59.3416";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Defend the generator";
-					targetObject = "Team2generatorLarge2";
-					targetClientId = "-1";
-					targetObjectId = "3424";
-					location = "778.688 -493.811 59.3416";
-					weightLevel1 = "3100";
-					weightLevel2 = "1500";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					desiredEquipment = "ShieldPack Plasma PlasmaAmmo";
-					buyEquipmentSet = "HeavyShieldSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "657.379 -543.034 55.4047";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team2StationInventory9";
-					targetClientId = "-1";
-					targetObjectId = "3425";
-					location = "657.379 -543.034 55.4047";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "682.448 -543.093 55.4053";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team2StationInventory10";
-					targetClientId = "-1";
-					targetObjectId = "3427";
-					location = "682.448 -543.093 55.4053";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "669.907 -542.045 65.7825";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the inventory station";
-					targetObject = "Team2StationInventory11";
-					targetClientId = "-1";
-					targetObjectId = "3429";
-					location = "669.907 -542.045 65.7825";
-					weightLevel1 = "2900";
-					weightLevel2 = "1400";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "MediumRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
-						issuingClientId = "-1";
-				};
-				new AIObjective(AIORepairObject) {
-					position = "669.939 -529.563 86.2336";
-					rotation = "1 0 0 0";
-					scale = "1 1 1";
-					dataBlock = "AIObjectiveMarker";
-					lockCount = "0";
-					homingCount = "0";
-					description = "Repair the turret";
-					targetObject = "Team2TurretBaseLarge3";
-					targetClientId = "-1";
-					targetObjectId = "3432";
-					location = "669.939 -529.563 86.2336";
-					weightLevel1 = "3100";
-					weightLevel2 = "1000";
-					weightLevel3 = "0";
-					weightLevel4 = "0";
-					offense = "0";
-					defense = "1";
-					equipment = "RepairPack";
-					buyEquipmentSet = "LightRepairSet";
-					issuedByHuman = "0";
-					issuedByClientId = "-1";
-					forceClientId = "-1";
-					locked = "1";
-						gameType = "all";
+						isInvalid = "0";
 						issuingClientId = "-1";
 				};
 			};
@@ -3393,15 +2933,27 @@ new SimGroup(MissionGroup) {
 				showTerrainInside = "0";
 					locked = "true";
 			};
-			new Turret() {
-				position = "788.135 -466.735 101.346";
-				rotation = "0.287606 -0.287605 0.913546 95.1737";
+			new StaticShape(Team2StationInventory11) {
+				position = "669.896 -550.771 53.0967";
+				rotation = "0 0 1 180";
 				scale = "1 1 1";
-				dataBlock = "TurretBaseLarge";
+				nameTag = "South Tower";
+				dataBlock = "StationInventory";
 				lockCount = "0";
 				homingCount = "0";
-				initialBarrel = "ELFBarrelLarge";
-					locked = "true";
+					locked = "false";
+			};
+			new Item() {
+				position = "669.996 -530.393 54.4676";
+				rotation = "1 0 0 0";
+				scale = "1 1 1";
+				dataBlock = "RepairPack";
+				lockCount = "0";
+				homingCount = "0";
+				collideable = "0";
+				static = "1";
+				rotate = "0";
+					locked = "false";
 			};
 		};
 	};

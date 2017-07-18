@@ -60,6 +60,9 @@ function OptionsDlg::onWake( %this )
    OP_ShadowSlider.setValue( $pref::Shadows );
    OP_InteriorDetailSlider.setValue( $pref::Interior::detailAdjust );
    OP_VisibleDistanceSlider.setValue( $pref::VisibleDistanceMod );
+   OP_ParticleDensitySlider.setValue( 4.0 - $pref::ParticleDensity );
+   OP_DynamicLightSlider.setValue( 100 - $pref::Interior::DynamicLightsClipPix );
+   updateDynamicLightSliderState();
    OP_SkyDetailMenu.init();
    if ( !$pref::SkyOn )
       %selId = 5;
@@ -514,6 +517,10 @@ function OptionsDlg::saveSettings( %this )
    $pref::TS::screenError = $max_TSScreenError - mFloor( OP_ShapeSlider.getValue() * ( $max_TSScreenError - $min_TSScreenError ) ); 
    $pref::TS::detailAdjust = $min_TSDetailAdjust + OP_ShapeSlider.getValue() * ( $max_TSDetailAdjust - $min_TSDetailAdjust );
    $pref::Shadows = OP_ShadowSlider.getValue();
+   $pref::ParticleDensity = 4.0 - OP_ParticleDensitySlider.getValue();
+   %val = 100 - OP_DynamicLightSlider.getValue();
+   $pref::Interior::DynamicLightsClipPix = $pref::Terrain::DynamicLightsClipPix = %val;
+   $pref::Interior::DynamicLightsFadePix = $pref::Terrain::DynamicLightsFadePix = 2 * %val;
    setShadowDetailLevel( $pref::Shadows );
    $pref::Interior::detailAdjust = OP_InteriorDetailSlider.getValue();
    $pref::VisibleDistanceMod = OP_VisibleDistanceSlider.getValue();
@@ -834,6 +841,15 @@ function updateTerrainDetail()
    $pref::Terrain::screenError = $max_screenerror - mFloor( OP_TerrainSlider.getValue());
    if ( OP_TerrainSlider.getValue() != $max_screenerror - $pref::Terrain::screenError )
       OP_TerrainSlider.setValue( $max_screenerror - $pref::Terrain::screenError );
+}
+
+//------------------------------------------------------------------------------
+function updateDynamicLightSliderState()
+{
+   %on = $pref::Interior::DynamicLights || $pref::Terrain::dynamicLights;
+   OP_DynamicLightText.setVisible( %on );
+   OP_DynamicLightText_Disabled.setVisible( !%on );
+   OP_DynamicLightSlider.setActive( %on );
 }
 
 //------------------------------------------------------------------------------

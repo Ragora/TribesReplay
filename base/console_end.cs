@@ -93,7 +93,6 @@ if($LaunchMode $= "DedicatedServer")
 	$Host::Dedicated = true;
    $HostGameType = "Online";
    $ServerName = $Host::GameName;
-   $HostGameBotCount = $Host::BotCount;
    setNetPort($Host::Port);
    CreateServer($Host::Map, $Host::MissionType);
    return;

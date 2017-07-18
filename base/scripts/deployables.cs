@@ -612,9 +612,9 @@ function InventoryDeployableImage::testInventoryTooClose(%item, %plyr)
    return %turretInRange;
 }
 
-function TurretOutdoorDeployableImage::testTurretTooClose(%item, %plyr)
+function TurretIndoorDeployableImage::testTurretTooClose(%item, %plyr)
 {
-   InitContainerRadiusSearch(%item.surfacePt, $TurretOutdoorSpaceRadius, $TypeMasks::StaticShapeObjectType);
+   InitContainerRadiusSearch(%item.surfacePt, $TurretIndoorSpaceRadius, $TypeMasks::StaticShapeObjectType);
 
    // old function was only checking whether the first object found was a turret -- also wasn't checking
    // which team the object was on

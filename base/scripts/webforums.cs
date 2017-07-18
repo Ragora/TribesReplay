@@ -1,7 +1,7 @@
 //------------------------------------------
 // Forums code
 //------------------------------------------
-$ForumCacheVersion = 8; //lucky seven...NOT!
+$ForumCacheVersion = 9; //lucky seven...NOT!
 $ForumCachePath = "webcache/" @ getField(wonGetAuthInfo(),3) @ "/";
 $currentForumPage = 0;
 $topicPageLength = 60;
@@ -70,12 +70,6 @@ $GuidTribes = 0;
 if(!isObject(ForumsMessageVector))
 {
    new MessageVector(ForumsMessageVector);
-}
-//-----------------------------------------------------------------------------
-if($GuidTribes == 0)
-{
-   %ai = wonGetAuthInfo();
-   $GuidTribes = getRecords(%ai,1);
 }
 //-----------------------------------------------------------------------------
 function isModerator()
@@ -634,6 +628,11 @@ function GetTopicPosts()
 function ForumsGui::onAdd( %this )
 {
    %this.initialized = false;
+	if($GuidTribes == 0)
+	{
+	   %ai = wonGetAuthInfo();
+	   $GuidTribes = getRecords(%ai,1);
+	}
 }
 //-----------------------------------------------------------------------------
 function ForumsGui::onWake(%this)

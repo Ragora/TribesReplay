@@ -28,6 +28,7 @@
 *.dts
 *.WAV
 *.cfg
+*.dso
 *EULA.txt
 *UKEULA.txt
 *UpdatePatch.txt
