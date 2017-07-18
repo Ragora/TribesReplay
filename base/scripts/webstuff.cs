@@ -154,6 +154,8 @@ function HandleDatabaseProxyResponse(%prefix, %params)
          $DBQueries[%i] = $DBQueries[%i+1];
          $DBQueryText[%i] = $DBQueryText[%i+1];
       }
+      $DBQueries[%i] = "";
+      $DBQueryText[%i] = "";
       $DBQueryCount--;
    }
 }
@@ -168,7 +170,7 @@ function DatabaseQueryi(%astr, %args, %proxyObject, %key)
 		if (%proxyObject !$= "")
 			%proxyObject.onDatabaseQueryResult("1\tORA-04061", "", %key);
 
-		return;
+		return 0;
 	}
 
    // maxRows will be empty
@@ -194,16 +196,36 @@ function DatabaseQueryi(%astr, %args, %proxyObject, %key)
    }
    %msg = getSubStr(%args, %i, 400);
    IRCClient::send("dbqax" SPC %id SPC %astr SPC ":" @ %msg);
+   return %id;
 }
 
 function DatabaseQuery(%ordinal, %args, %proxyObject, %key)
 {
-   DatabaseQueryi(%ordinal SPC "0", %args, %proxyObject, %key);
+   return DatabaseQueryi(%ordinal SPC "0", %args, %proxyObject, %key);
 }
 
 function DatabaseQueryArray(%ordinal, %maxRows, %args, %proxyObject, %key)
 {
-   DatabaseQueryi("C" @ %ordinal SPC %maxRows, %args, %proxyObject, %key);
+   return DatabaseQueryi("C" @ %ordinal SPC %maxRows, %args, %proxyObject, %key);
+}
+
+function DatabaseQueryCancel(%id)
+{
+   for(%qc = 0; %qc < $DBQueryCount; %qc++)
+      if(getWord($DBQueries[%qc], 0) == %id)
+         break;
+   if(%qc == $DBQueryCount)
+      return;
+   IRCClient::send("dbqc " @ %id);
+
+   for(%i = %qc; %i < $DBQueryCount; %i++)
+   {
+      $DBQueries[%i] = $DBQueries[%i+1];
+      $DBQueryText[%i] = $DBQueryText[%i+1];
+   }
+   $DBQueries[%i] = "";
+   $DBQueryText[%i] = "";
+   $DBQueryCount--;
 }
 
 function WONUpdateCertificateDone(%errCode, %errStr)

@@ -540,7 +540,7 @@ function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
          default:
             if(%code <= -2900 && %code >= -2999)
             {				
-			   if(%code = -2902)
+			   if(%code == -2902)
 					%msg = "Account Creation Failed - That CDKey is already in use." @ %code;
 			   else
                		%msg = "Account Creation Failed - That warrior name is already in use.  Please choose another warrior name and try again. Code = " @ %code;
