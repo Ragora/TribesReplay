@@ -848,6 +848,7 @@ function Station::onLosePowerDisabled(%data, %obj)
 		if(%data.getName() $= DeployedStationInventory)
 		   %obj.stopThread($ActivateThread);
 		// reset some attributes
+      %occupied.setCloaked(false);
 		%occupied.station = "";
 		%occupied.inStation = false;
 		%obj.triggeredBy = "";
@@ -900,14 +901,9 @@ function DeployedStationInventory::setPlayersPosition(%data, %obj, %trigger, %co
    if((VectorLen(%vel) < 22) && (%obj.triggeredBy != %colObj))
    {
       // build offset for player position
-      %yrot = getWords(VectorOrthoBasis( getWords( %obj.getTransform(), 3, 6 ) ) ,3 ,5);
-      %yrot = VectorScale( %yrot, -1.0 );
-      %statTrans = %obj.getTransform();
-      %statX = getWord( %statTrans, 0 );
-      %statY = getWord( %statTrans, 1 );
-      %statZ = getWord( %statTrans, 2 );
-       
-      %colObj.setTransform( %statX + getWord( %yRot, 0 ) @ " " @ %statY + getWord( %yRot, 1 ) @ " " @ %statZ + 0.2 @ " " @ getWords( %statTrans, 3, 6 ) );
+      %rot = getWords(%obj.getTransform(), 3, 6);
+      %colObj.setTransform( getWords(%colObj.getTransform(),0,2) @ " " @ %rot );
+
       %colObj.setvelocity("0 0 0");
       %colObj.setMoveState(true);
       %colObj.schedule(1600,"setMoveState", false);

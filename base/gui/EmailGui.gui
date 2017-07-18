@@ -10,16 +10,6 @@ new GuiChunkedBitmapCtrl(EmailGui) {
 	variable = "$ShellBackground";
 	helpTag = "0";
 	useVariable = "1";
-		key = "2";
-		messageCount = "1";
-		state = "done";
-		cacheLoaded = "1";
-		soundPlayed = "0";
-		eid = "593";
-		checkingEMail = "1";
-		checkSchedule = "596";
-		btnClicked = "0";
-		STATUS = "error";
 
 	new ShellPaneCtrl() {
 		profile = "ShellPaneProfile";

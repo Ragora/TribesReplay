@@ -574,6 +574,11 @@ function DefaultGame::gameOver( %game )
          %client.endMission();
          messageClient( %client, 'MsgClearDebrief', "" );
          %game.sendDebriefing( %client );
+
+         //clear the score hud...
+         messageClient( %client, 'SetScoreHudHeader', "", "" );
+         messageClient( %client, 'SetScoreHudSubheader', "", "");
+         messageClient( %client, 'ClearHud', "", 'scoreScreen', 0 );
       }
    }
 
@@ -1255,9 +1260,16 @@ function DefaultGame::AIChangeTeam(%game, %client, %newTeam)
       return;
 
    //clear the ai from any objectives, etc...
-   AIUnassignClient(%client);
-   %client.clearTasks();
+	AIUnassignClient(%client);
+   %client.stop();
+	%client.clearTasks();
    %client.clearStep();
+   %client.lastDamageClient = -1;
+   %client.lastDamageTurret = -1;
+   %client.shouldEngage = -1;
+   %client.setEngageTarget(-1);
+   %client.setTargetObject(-1);
+	%client.pilotVehicle = false;
    %client.defaultTasksAdded = false;
 
    //kill the player, which should cause the Game object to perform whatever cleanup is required.

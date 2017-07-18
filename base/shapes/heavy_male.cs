@@ -20,10 +20,10 @@ datablock TSShapeConstructor(HeavyMaleDts)
    sequence16 = "heavy_male_dieback.dsq death3";
    sequence17 = "heavy_male_diesidelf.dsq death4";
    sequence18 = "heavy_male_diesidert.dsq death5";
-   sequence19 = "heavy_male_dieleglf.dsq death6";
-   sequence20 = "heavy_male_dielegrt.dsq death7";
+   sequence19 = "heavy_male_dieforward.dsq death6";      // heavy_male_dieleglf
+   sequence20 = "heavy_male_diechest.dsq death7";        // heavy_male_dielegrt
    sequence21 = "heavy_male_dieslump.dsq death8";
-   sequence22 = "heavy_male_dieknees.dsq death9";
+   sequence22 = "heavy_male_dieforward.dsq death9";      // heavy_male_dieknees
    sequence23 = "heavy_male_dieforward.dsq death10";  
    sequence24 = "heavy_male_diespin.dsq death11";
    sequence25 = "heavy_male_celsalute.dsq cel1";   

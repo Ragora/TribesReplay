@@ -317,6 +317,7 @@ function ForumsNewTopic()
 	}
 	else
 	{	
+//  		ForumsGui.LaunchForum = getField(ForumsList.getRowTextById(ForumsList.getSelectedID()),0);
 		$ForumsSubject = "";
 		Canvas.pushDialog( ForumsComposeDlg );
 		ForumsBodyText.setValue( "" );
@@ -339,6 +340,7 @@ function ForumsOpenThread(%tid)
 //-----------------------------------------------------------------------------
 function ForumsPost()
 {
+//   error("FORUMPOST: " @ ForumsComposeDlg.action TAB ForumsComposeDlg.parentPost TAB $ForumsSubject);
    $ForumsSubject = FP_SubjectEdit.getValue();
    if ( trim($ForumsSubject) $= "" )
    {
@@ -346,62 +348,71 @@ function ForumsPost()
          "FP_SubjectEdit.makeFirstResponder(1);");
       return;
    }
-
-   ForumsTopicsList.refreshFlag = 1;
-
+   
 	TextCheck($ForumsSubject,ForumsGui);
 	if(!ForumsGui.textCheck)
 	{
-      if(ForumsComposeDlg.action !$= "Post" || ForumsComposeDlg.parentPost != 0)
+//   if(ForumsComposeDlg.action !$= "Post" || ForumsComposeDlg.parentPost != 0)
+//      {
+//         %proxy = ForumsMessageList;
+//         %newGroup = TopicsListGroup.getObject(ForumsTopicsList.getSelectedRow());
+//         %proxy.lastId = %newGroup.updateid;
+//         %proxy.highestUpdate = %proxy.lastId;
+//         %proxy.state = "updateCheck";
+//      }
+      
+      ForumsTopicsList.refreshFlag = 1;
+      if(ForumsComposeDlg.parentPost == 0) //this is a new topic request
       {
-         %proxy = ForumsMessageList;
-         %newGroup = TopicsListGroup.getObject(ForumsTopicsList.getSelectedRow());
-         %proxy.lastId = %newGroup.updateid;
-         %proxy.highestUpdate = %proxy.lastId;
-         %proxy.state = "updateCheck";
+         if(ForumsComposeDlg.action $= "Post")
+         {
+           %ord = 12;
+           %proxy = ForumsGui;
+           %proxy.state = "newTopic";
+   	    ForumsGui.LaunchTopic = $ForumsSubject;
+           %fieldData = ForumsComposeDlg.forum TAB
+						 ForumsComposeDlg.topic TAB 
+						 ForumsComposeDlg.parentPost TAB
+						 $ForumsSubject TAB
+						 ForumsBodyText.getValue();
+         }
+         else if(ForumsComposeDlg.action $="News")
+		  {
+           %ord = 14;
+		    %proxy.state = "postNews";
+           %fieldData = ForumsComposeDlg.post TAB
+						 $ForumsSubject TAB
+						 ForumsBodyText.getValue();
+         }
       }
-      else
+      else if(ForumsComposeDlg.parentPost != 0)
       {
-         %proxy = ForumsGui;
-         %proxy.state = "newTopic";
-      }
-
-      if(ForumsComposeDlg.action $= "Post" || ForumsComposeDlg.action $= "Reply")
-      {
+         if(ForumsComposeDlg.action $= "Reply")
+         {
+           %ord = 12;
            %proxy = ForumsMessageList;
 		    %proxy.state = "replyPost";
-           %proxy.key = LaunchGui.key++;
-           canvas.SetCursor(ArrowWaitCursor);
-		    DatabaseQuery(12,ForumsComposeDlg.forum TAB
-							 ForumsComposeDlg.topic TAB 
-							 ForumsComposeDlg.parentPost TAB
-							 $ForumsSubject TAB
-							 ForumsBodyText.getValue(),
-							 %proxy, %proxy.key);
-	   }
-	   else if(ForumsComposeDlg.action $="Edit")
-		{
+           %fieldData = ForumsComposeDlg.forum TAB
+						 ForumsComposeDlg.topic TAB 
+						 ForumsComposeDlg.parentPost TAB
+						 $ForumsSubject TAB
+						 ForumsBodyText.getValue();
+         }
+	      else if(ForumsComposeDlg.action $="Edit")
+         {
+           %ord = 13;
            %proxy = ForumsMessageList;
-           %proxy.key = LaunchGui.key++;
 			%proxy.state = "editPost";
-           canvas.SetCursor(ArrowWaitCursor);
-			DatabaseQuery(13,ForumsComposeDlg.parentPost TAB
-          					 $ForumsSubject TAB
-          					 ForumsBodyText.getValue()
-						    ,%proxy
-						    ,%proxy.key);
-		}
-		else if(ForumsComposeDlg.action $="News")
-		{
-			%proxy.state = "postNews";
-           %proxy.key = LaunchGui.key++;
-           canvas.SetCursor(ArrowWaitCursor);
-			DatabaseQuery(14,ForumsComposeDlg.post TAB
-							$ForumsSubject TAB
-							ForumsBodyText.getValue(),
-							%proxy,%proxy.key);
-		}
-		Canvas.popDialog(ForumsComposeDlg);
+           %fieldData = ForumsComposeDlg.parentPost TAB
+      					 $ForumsSubject TAB
+      					 ForumsBodyText.getValue();
+         }
+      }
+      %proxy.key = LaunchGui.key++;
+      canvas.SetCursor(ArrowWaitCursor);
+//      error("DQ: " @ %ord NL %fieldData);
+      DatabaseQuery(%ord,%fieldData,%proxy, %proxy.key);
+	   Canvas.popDialog(ForumsComposeDlg);
 	}
 	else
 	{
@@ -424,6 +435,7 @@ function ForumsRejectPost() //forumsDeletePost()
    ForumsMessageList.key = LaunchGui.key++;
    ForumsMessageList.state = "deletePost";
    canvas.SetCursor(ArrowWaitCursor);
+//   error("REJECT: " @ ForumsComposeDlg.parentPost);
    MessageBoxYesNo("CONFIRM", "Are you sure you wish to remove the selected post?",
   	      "DatabaseQuery(14," @ ForumsComposeDlg.parentPost @ "," @ ForumsMessagelist @ "," @ ForumsMessagelist.key @ ");", "canvas.SetCursor(defaultCursor);");
 }
@@ -482,12 +494,14 @@ function GetForumsList()
 //-----------------------------------------------------------------------------
 function GetTopicsList()
 {
+//   error("GTL: " @ ForumsComposeDlg.forum);
 	ForumsGui.key = LaunchGui.key++;
 	ForumShell.setTitle($ForumsGetTopics);
    ForumsGui.state = "getTopicList";
 	ForumsTopicsList.clear();
    canvas.SetCursor(ArrowWaitCursor);
    ForumsTopicsList.clearList();
+//   error("DQA:" @ 8 TAB ForumsComposeDlg.forum);
 	DatabaseQueryArray(8,80,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key);
 	ForumsTopicsList.refreshFlag = 0;
 }
@@ -513,6 +527,7 @@ function GetTopicPosts()
        ForumsMessageVector.clear();
        ForumsMessageList.clear();
    }   
+//   error("DQA:" @ 8 TAB ForumsComposeDlg.topic);
    DatabaseQueryArray(9,0,ForumsComposeDlg.Topic TAB ForumsMessageList.lastID,ForumsGui,ForumsGui.key);
 }
 //-----------------------------------------------------------------------------
@@ -546,7 +561,7 @@ function ForumsGui::onWake(%this)
       ForumShell.setTitle($ForumsConnecting);
       ForumsGui.state = "getForumList";
      canvas.SetCursor(ArrowWaitCursor);
-	  DatabaseQueryArray(7,200,"",ForumsGui,ForumsGui.key);
+	  DatabaseQueryArray(7,100,"",ForumsGui,ForumsGui.key);
    }
 	// Make these buttons inactive until a message is selected:
 	FO_ReplyBtn.setActive( false );
@@ -609,10 +624,7 @@ function ForumsGui::onDatabaseQueryResult(%this,%status,%resultString,%key)
                %forumID = getField(ForumsList.getRowTextById(ForumsList.getSelectedID()),2);
                %forumTID = ForumsTopicsList.getSelectedID();
 
-// 				if(%statFlag >= %forumFlag)
- 		   			%this.bflag = %statFlag;
-// 				else
-// 					%this.bflag = %forumFlag;
+	   			%this.bflag = %statFlag;
  
  		   		switch$ ( %this.bflag )
  		   		{
@@ -680,6 +692,9 @@ function ForumsGui::onDatabaseQueryResult(%this,%status,%resultString,%key)
 			case "postNews":
 				%this.state = "done";
 				messageBoxOK("CONFIRMED","Your News Reply has been submitted");
+           case "newTopic":
+               %this.state = "done";
+               ForumsRefreshTopics();
 		}
 	}
 	else if (getSubStr(getField(%status,1),0,9) $= "ORA-04061")
@@ -706,8 +721,15 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 	{
 		case "ForumList":
 			ForumsList.addRow(getField(%row,0),getField(%row,1) TAB getField(%row,2) TAB getField(%row,3));
+//           error("ISLASTROW:" TAB %isLastRow);
 			if ( %isLastRow ) //is last line
 	   		{
+               %ai = wonGetAuthInfo();
+               for(%east=0;%east<getField(getRecord(%ai,1),0);%east++)
+               {
+                   %wonTribe = getRecord(%ai,2+%east);
+                   ForumsList.addRow(getField(%wonTribe,3)*-1,getField(%wonTribe,0) TAB getField(%wonTribe,4) TAB getField(%wonTribe,2));
+               }
 	      		if ( ForumsGui.launchForum !$= "" )
 	      		{
 	         		ForumsList.selectForum( ForumsGui.LaunchForum );
@@ -1318,6 +1340,7 @@ function ForumsMessagelist::onDatabaseQueryResult(%this,%status,%resultString,%k
                %text = setRecord(%text,0,"1");
                ForumsMessageVector.pushBackLine(%text, %postID);
       		    CacheForumTopic();
+               GetTopicPosts();
 			case "deletePost":
 				%this.state = "done";
           		%postId = getField( %status, 2 );

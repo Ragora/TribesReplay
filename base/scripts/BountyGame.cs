@@ -779,6 +779,9 @@ function BountyGame::enterMissionArea(%game, %playerData, %player)
 
 function BountyGame::leaveMissionArea(%game, %playerData, %player)
 {
+   if(%player.getState() $= "Dead")
+      return;
+
    %player.client.outOfBounds = true;
    messageClient(%player.client, 'LeaveMissionArea', '\c1You have left the mission area. Return or take damage.~wfx/misc/warning_beep.wav');
    %player.alertThread = %game.schedule(1000, "AlertPlayer", 3, %player);

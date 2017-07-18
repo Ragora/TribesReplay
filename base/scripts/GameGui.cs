@@ -107,6 +107,7 @@ function GM_JoinPane::onActivate( %this )
    if ( %this.onceOnly $= "" )
    {
       GM_VersionText.setText( "Version" SPC getT2VersionNumber() );
+      GMJ_StopBtn.setActive( false );
 
       %this.onceOnly = 1;
       GMJ_Browser.lastQuery = $PlayingOnline ? "Master" : "LanServers";
@@ -202,7 +203,12 @@ function updateServerBrowser()
 function updateServerBrowserStatus( %text, %percentage )
 {
    GMJ_StatusText.setValue( %text );
-   GMJ_ProgressBar.setValue( %percentage );
+   if ( %percentage >= 0 && %percentage <= 1 )
+   {
+      GMJ_ProgressBar.setValue( %percentage );
+      if ( %percentage == 0 ) // Query is over.
+         GMJ_StopBtn.setActive( false );
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -225,6 +231,7 @@ function GMJ_Browser::runQuery( %this )
 		GMJ_FilterBtn.setVisible( false );
       GMJ_FilterText.setText( "LAN Servers" );
       queryLanServers( $JoinGamePort );
+      GMJ_StopBtn.setActive( true );
    }
    else
    {
@@ -236,6 +243,7 @@ function GMJ_Browser::runQuery( %this )
          GMJ_StatusText.setValue( "Querying the master server..." );
          GMJ_FilterText.setText( "All servers" );
          queryMasterServer( $JoinGamePort );
+         GMJ_StopBtn.setActive( true );
       }
       else if ( $pref::ServerBrowser::activeFilter == 1 )
       {
@@ -245,10 +253,26 @@ function GMJ_Browser::runQuery( %this )
          %this.key = LaunchGui.key++;
          DatabaseQueryArray( 5, 0, "", %this, %this.key );
       }
+      else if ( $pref::ServerBrowser::activeFilter == 2 )
+      {
+         // Favorites only:
+         GMJ_FilterText.setText( "Favorites" );
+         if ( $pref::ServerBrowser::FavoriteCount <= 0 || $pref::ServerBrowser::Favorite[0] $= "" )
+         {
+            GMJ_StatusText.setValue( "No favorites found." );
+            MessageBoxOK( "INVALID FILTER", "You haven't marked any servers as favorites.  Click the Favorites column to mark a server as a favorite." );
+         }
+         else
+         {
+            GMJ_StatusText.setValue( "Querying favorites..." );
+            queryFavoriteServers();
+            GMJ_StopBtn.setActive( true );
+         }
+      }
       else
       {
          GMJ_StatusText.setValue( "Querying the master server..." );
-         %filterIndex = $pref::ServerBrowser::activeFilter - 2;
+         %filterIndex = $pref::ServerBrowser::activeFilter - 3;
          if ( $pref::ServerBrowser::Filter[%filterIndex] !$= "" )
          {
             %filter = $pref::ServerBrowser::Filter[%filterIndex];
@@ -262,6 +286,7 @@ function GMJ_Browser::runQuery( %this )
                   getField( %filter, 4 ),    // Max Players 
                   getField( %filter, 5 ),    // Region Mask 
                   getField( %filter, 6 ) );  // Max Ping
+            GMJ_StopBtn.setActive( true );
          }
          else
          {
@@ -269,6 +294,7 @@ function GMJ_Browser::runQuery( %this )
             $pref::ServerBrowser::activeFilter = 0;
             GMJ_FilterText.setText( "All servers" );
             queryMasterServer( $JoinGamePort );
+            GMJ_StopBtn.setActive( true );
          }
       }
    }
@@ -304,6 +330,7 @@ function GMJ_Browser::onDatabaseRow( %this, %row, %isLastRow, %key )
    {
       GMJ_StatusText.setValue( "Querying the master server..." );
       queryMasterServer( $JoinGamePort, 0, "Any", "Any", 0, 255, 0xFFFFFFFF, 0, %this.buddyList );
+      GMJ_StopBtn.setActive( true );
       %this.buddyList = "";
    }
 }
@@ -550,6 +577,7 @@ function JoinSelectedGame()
 function JoinGame(%address)
 {
    MessagePopup( "JOINING SERVER", "CONNECTING" );
+   cancelServerQuery();
 	echo("Joining Server " @ %address);
 	%playerPref = $pref::Player[$pref::Player::Current];
 	%playerName = getField( %playerPref, 0 );
@@ -872,6 +900,7 @@ function StartHostedGame()
    MessagePopup( "STARTING SERVER", "Initializing..." );
    Canvas.repaint();
 
+   cancelServerQuery();
    setNetPort( $Host::Port );
    CreateServer( $Host::Map, $Host::MissionType );
 	%playerPref = $pref::Player[$pref::Player::Current];

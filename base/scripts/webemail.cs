@@ -36,6 +36,7 @@ if(!isObject(EmailMessageVector))
 function LaunchEmail()
 {
    LaunchTabView.viewTab( "EMAIL", EmailGui, 0 );
+	EmailGui.checkSchedule = schedule(1000,0, CheckEmail, false);
 }
 //-----------------------------------------------------------------------------
 function EmailMessageNew()
@@ -348,12 +349,12 @@ function EmailNewMessageArrived(%message, %seq)
 //-----------------------------------------------------------------------------
 function GetEMailBtnClick()
 {
-	if(isEventPending(EMailGUI.eid))
-		cancel(EmailGui.eid);
+	if(isEventPending(EMailGUI.checkSchedule))
+		cancel(EmailGui.checkSchedule);
 
 	EMailGui.btnClicked = true;
 	EMailGui.checkingEMail = false;
-	EMailGui.eid = schedule(1000 * 2 * 1, 0, CheckEmail, false);
+	EMailGui.checkSchedule = schedule(1000 * 2, 0, CheckEmail, false);
   	canvas.SetCursor(ArrowWaitCursor);
 }
 //-----------------------------------------------------------------------------
@@ -1000,6 +1001,7 @@ function EMailGui::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
 						MessageBoxOK("NOTICE","No New Mail");
 						EmailGui.btnClicked = false;
 					}
+					%this.checkingEmail = false;
 		   			%this.checkSchedule = schedule(1000 * 60 * 5, 0, CheckEmail, true);
 //					echo("scheduling Email check " @ %this.checkSchedule @ " in 5 minutes");
 				}
@@ -1107,6 +1109,7 @@ function EMailGui::onDatabaseRow(%this, %row,%isLastRow,%key)
 			{
 				EmailGui.dumpCache();
 				EmailGui.loadCache();
+				%this.checkingEmail = false;
 		   		%this.checkSchedule = schedule(1000 * 60 * 5, 0, CheckEmail, true);
 //				echo("scheduling Email check " @ %this.checkSchedule @ " in 5 minutes");
 			}
@@ -1222,9 +1225,8 @@ function EmailGui::dumpCache( %this )
 //-----------------------------------------------------------------------------
 function EmailGui::onSleep( %this )
 {
-	EMailGui.checkingEMail = false;
-	%this.checkingEmail = "";
-	%this.checkSchedule = schedule(1000 * 10 * 1, 0, CheckEmail, true);
+//	EMailGui.checkingEMail = false;
+//	%this.checkSchedule = schedule(1000 * 0 * 1, 0, CheckEmail, true);
 	Canvas.popDialog( LaunchToolbarDlg );
 }
 //-----------------------------------------------------------------------------

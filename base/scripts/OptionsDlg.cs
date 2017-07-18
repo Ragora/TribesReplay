@@ -45,13 +45,13 @@ function OptionsDlg::onWake( %this )
 		OP_VideoDriverMenu.add( getField( %buffer, %i ), %i );
 
 	// Select the current device:
+	OP_FullScreenTgl.setValue( $pref::Video::fullScreen );
+
 	%selId = OP_VideoDriverMenu.findText( $pref::Video::displayDevice );
 	if ( %selId == -1 )
 		%selId = 0; // How did THAT happen?
 	OP_VideoDriverMenu.setSelected( %selId );
 	OP_VideoDriverMenu.onSelect( %selId, "" );
-
-	OP_FullScreenTgl.setValue( $pref::Video::fullScreen );
 	OP_FullScreenTgl.onAction();
 
 	OP_ApplyBtn.setActive( false );

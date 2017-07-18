@@ -123,9 +123,12 @@ function ShapeBaseImageData::onFire(%data, %obj, %slot)
          vehicleObject    = %vehicle;
       };
    }
-	if (%data.deleteLastProjectile && isObject(%obj.lastProjectile))
-	   %obj.lastProjectile.delete();
+
+   if (isObject(%obj.lastProjectile) && %obj.deleteLastProjectile)
+      %obj.lastProjectile.delete();
+
    %obj.lastProjectile = %p;
+   %obj.deleteLastProjectile = %data.deleteLastProjectile;
    MissionCleanup.add(%p);
    
    // AI hook

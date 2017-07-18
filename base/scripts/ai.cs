@@ -20,6 +20,8 @@ $AIModeMountVehicle = 4;
 
 $AIClientLOSTimeout = 15000;	//how long a client has to remain out of sight of the bot
 										//before the bot "can't see" the client anymore...
+$AIClientMinLOSTime = 10000;	//how long a bot will search for a client
+
 
 //-----------------------------------//
 //Objective weights - level 1
@@ -275,6 +277,7 @@ function AIMissionEnd()
          %client.clearStep();
          %client.lastDamageClient = -1;
          %client.lastDamageTurret = -1;
+         %client.shouldEngage = -1;
          %client.setEngageTarget(-1);
          %client.setTargetObject(-1);
 	      %client.pilotVehicle = false;
@@ -552,6 +555,7 @@ function onAIRespawn(%client)
    %client.clearStep();
    %client.lastDamageClient = -1;
    %client.lastDamageTurret = -1;
+   %client.shouldEngage = -1;
    %client.setEngageTarget(-1);
    %client.setTargetObject(-1);
 	%client.pilotVehicle = false;
@@ -624,9 +628,7 @@ function AIFindClosestEnemyToLoc(%srcClient, %srcLocation, %radius, %losTimeout,
 		//make sure we find someone who's alive
 		if (AIClientIsAlive(%cl) && %cl.team != %srcClient.team)
 		{
-			%clIsCloaked = false;
-			if (%cl.player.getInventory("CloakingPack") > 0 && %cl.player.getImageState($BackpackSlot) $= "activate")
-				%clIsCloaked = true;
+			%clIsCloaked = !isTargetVisible(%cl.target, %srcClient.getSensorGroup());
 
 			//make sure the client can see the enemy
 			%hasLOS = %srcClient.hasLOSToClient(%cl);

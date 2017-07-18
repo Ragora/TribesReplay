@@ -279,7 +279,7 @@ new SimGroup(MissionGroup) {
 						targetClientId = "-1";
 						targetObjectId = "-1";
 						location = "-393.239 -700.595 209.593";
-						weightLevel1 = "4949";
+						weightLevel1 = "4950";
 						weightLevel2 = "0";
 						weightLevel3 = "0";
 						weightLevel4 = "0";
@@ -307,7 +307,7 @@ new SimGroup(MissionGroup) {
 						targetClientId = "-1";
 						targetObjectId = "-1";
 						location = "-390.81 -704.636 186.451";
-						weightLevel1 = "4951";
+						weightLevel1 = "4950";
 						weightLevel2 = "0";
 						weightLevel3 = "0";
 						weightLevel4 = "0";
@@ -368,8 +368,8 @@ new SimGroup(MissionGroup) {
 						targetClientId = "-1";
 						targetObjectId = "3449";
 						location = "-161.64 -23.2113 296.991";
-						weightLevel1 = "4800";
-						weightLevel2 = "2800";
+						weightLevel1 = "5000";
+						weightLevel2 = "3000";
 						weightLevel3 = "0";
 						weightLevel4 = "0";
 						offense = "1";
@@ -396,7 +396,7 @@ new SimGroup(MissionGroup) {
 						targetClientId = "-1";
 						targetObjectId = "-1";
 						location = "-170.462 -13.963 295.049";
-						weightLevel1 = "4790";
+						weightLevel1 = "4950";
 						weightLevel2 = "0";
 						weightLevel3 = "0";
 						weightLevel4 = "0";
@@ -588,8 +588,8 @@ new SimGroup(MissionGroup) {
 					targetClientId = "-1";
 					targetObjectId = "3462";
 					location = "120.531 595.532 61.3005";
-					weightLevel1 = "4000";
-					weightLevel2 = "2000";
+					weightLevel1 = "5000";
+					weightLevel2 = "3000";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
 					offense = "1";
@@ -643,8 +643,8 @@ new SimGroup(MissionGroup) {
 					targetClientId = "-1";
 					targetObjectId = "3478";
 					location = "23.5983 -395.053 240.566";
-					weightLevel1 = "4900";
-					weightLevel2 = "2900";
+					weightLevel1 = "5000";
+					weightLevel2 = "3000";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
 					offense = "1";
@@ -725,8 +725,8 @@ new SimGroup(MissionGroup) {
 					targetClientId = "-1";
 					targetObjectId = "3473";
 					location = "-366.433 349.044 279.604";
-					weightLevel1 = "4500";
-					weightLevel2 = "2500";
+					weightLevel1 = "5000";
+					weightLevel2 = "3000";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
 					offense = "1";
@@ -836,8 +836,8 @@ new SimGroup(MissionGroup) {
 						targetClientId = "-1";
 						targetObjectId = "3449";
 						location = "-161.64 -23.2113 296.991";
-						weightLevel1 = "4800";
-						weightLevel2 = "2800";
+						weightLevel1 = "5000";
+						weightLevel2 = "3000";
 						weightLevel3 = "0";
 						weightLevel4 = "0";
 						offense = "1";
@@ -864,7 +864,7 @@ new SimGroup(MissionGroup) {
 						targetClientId = "-1";
 						targetObjectId = "-1";
 						location = "-154.08 -29.4053 295.085";
-						weightLevel1 = "4790";
+						weightLevel1 = "4950";
 						weightLevel2 = "0";
 						weightLevel3 = "0";
 						weightLevel4 = "0";
@@ -894,8 +894,8 @@ new SimGroup(MissionGroup) {
 					targetClientId = "-1";
 					targetObjectId = "-1";
 					location = "-391.639 -689.494 211.654";
-					weightLevel1 = "4000";
-					weightLevel2 = "2000";
+					weightLevel1 = "5000";
+					weightLevel2 = "3000";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
 					offense = "1";
@@ -1007,8 +1007,8 @@ new SimGroup(MissionGroup) {
 						targetClientId = "-1";
 						targetObjectId = "3462";
 						location = "120.531 595.532 61.3005";
-						weightLevel1 = "4950";
-						weightLevel2 = "2950";
+						weightLevel1 = "5000";
+						weightLevel2 = "3000";
 						weightLevel3 = "0";
 						weightLevel4 = "0";
 						offense = "1";
@@ -1035,7 +1035,7 @@ new SimGroup(MissionGroup) {
 						targetClientId = "-1";
 						targetObjectId = "-1";
 						location = "118.059 590.475 53.3606";
-						weightLevel1 = "4951";
+						weightLevel1 = "4950";
 						weightLevel2 = "0";
 						weightLevel3 = "0";
 						weightLevel4 = "0";
@@ -1091,7 +1091,7 @@ new SimGroup(MissionGroup) {
 						targetClientId = "-1";
 						targetObjectId = "-1";
 						location = "124.983 610.647 36.895";
-						weightLevel1 = "4949";
+						weightLevel1 = "4950";
 						weightLevel2 = "0";
 						weightLevel3 = "0";
 						weightLevel4 = "0";
@@ -1175,8 +1175,8 @@ new SimGroup(MissionGroup) {
 					targetClientId = "-1";
 					targetObjectId = "3478";
 					location = "23.5983 -395.053 240.566";
-					weightLevel1 = "4500";
-					weightLevel2 = "2500";
+					weightLevel1 = "5000";
+					weightLevel2 = "3000";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
 					offense = "1";
@@ -1230,8 +1230,8 @@ new SimGroup(MissionGroup) {
 					targetClientId = "-1";
 					targetObjectId = "3473";
 					location = "-366.433 349.044 279.604";
-					weightLevel1 = "4900";
-					weightLevel2 = "2900";
+					weightLevel1 = "5000";
+					weightLevel2 = "3000";
 					weightLevel3 = "0";
 					weightLevel4 = "0";
 					offense = "1";

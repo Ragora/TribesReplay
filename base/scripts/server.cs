@@ -165,6 +165,11 @@ function DestroyServer()
    $missionRunning = false;
    allowConnections(false);
    stopHeartbeat();
+	%game = game.class;
+	MissionGroup.delete();
+	MissionCleanup.delete();
+	%game.deactivatePackages();
+	%game.delete();
    if(isObject($ServerGroup))
       $ServerGroup.delete();
 
@@ -301,6 +306,7 @@ function getValidVoicePitch(%voice, %voicePitch)
 
 function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, %voicePitch )
 {
+   %client.setMissionCRC($missionCRC);
    sendLoadInfoToClient( %client );
 
    //%client.setSimulatedNetParams(0.1, 30);
@@ -663,6 +669,17 @@ function loadMissionStage2()
    %file = "missions/" @ $missionName @ ".mis";
    if(!isFile(%file))
       return;
+
+   // send the mission file crc to the clients (used for mission lighting)
+   $missionCRC = getFileCRC(%file);
+   %count = ClientGroup.getCount();
+   for(%i = 0; %i < %count; %i++)
+   {
+      %client = ClientGroup.getObject(%i);
+      if(!%client.isAIControlled())
+         %client.setMissionCRC($missionCRC);
+   }
+
    $countDownStarted = false;
    exec(%file);
    $instantGroup = MissionCleanup;
@@ -1101,6 +1118,10 @@ function serverCmdPlayCel(%client,%anim)
 // NOTENOTENOTE: Review
 function serverCmdPlayAnim(%client, %anim)
 {
+   if( %anim $= "Death1" || %anim $= "Death2" || %anim $= "Death3" || %anim $= "Death4" || %anim $= "Death5" ||
+       %anim $= "Death6" || %anim $= "Death7" || %anim $= "Death8" || %anim $= "Death9" || %anim $= "Death10" || %anim $= "Death11" )
+      return;
+
    %player = %client.player;
    // don't play animations if player is in a vehicle
    if (%player.isMounted())
@@ -1610,7 +1631,11 @@ function checkMissionStart()
          countDown($Host::warmupTime * 1000);
       else
          Game.startMatch();   
-   }
+   
+      for(%x = 0; %x < $NumVehiclesDeploy; %x++)
+         $VehiclesDeploy[%x].getDataBlock().schedule(%timeMS / 2, "vehicleDeploy", $VehiclesDeploy[%x], 0, 1);
+      $NumVehiclesDeploy = 0;
+    }
    else
    {   
       schedule(2000, ServerGroup, "checkMissionStart");     
@@ -1628,11 +1653,7 @@ function Countdown(%timeMS)
       %game = Game.getId();
    else
       return;
-   
-   for(%x = 0; %x < $NumVehiclesDeploy; %x++)
-      $VehiclesDeploy[%x].getDataBlock().schedule(%timeMS / 2, "vehicleDeploy", $VehiclesDeploy[%x]);
-   $NumVehiclesDeploy = 0;
-      
+     
    $countdownStarted = true;
    Game.matchStart = Game.schedule( %timeMS, "StartMatch" );
 

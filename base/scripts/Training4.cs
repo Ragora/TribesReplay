@@ -103,6 +103,7 @@ function activateskillSpecificTrainingSettings()
 	// skill 3: no turret, no destroy turret or upstairs gen objectives
 	if(%skill > 2) {
 		nameToId(Team1TurretBaseLarge1).hide(true);
+      freeTarget(nameToId(Team1TurretBaseLarge1).getTarget());
 		nameToId(GenForceField).delete();
 	}
 }

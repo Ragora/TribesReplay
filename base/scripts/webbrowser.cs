@@ -1,6 +1,6 @@
 //==-- FUNCTIONS -------------------------------------------------------------
 //$strcheck = "14	:	<	>	*	^	|	~	@	%	&	/	\\	`	\"";
-$strcheck = "4	:	%	\\	/";
+$strcheck = "6	<	>	:	%	\\	/";
 
 $playerGfx = "texticons/twb/twb_default.jpg";
 $tribeGfx = "texticons/twb/twb_default.jpg";
@@ -308,6 +308,7 @@ function SearchTribes()
 //-----------------------------------------------------------------------------
 function KillTribe(%tribe)
 {
+	TWBTabView.closeCurrentPane();
 	Canvas.popDialog(TribePropertiesDlg);
 	TribePane.key = LaunchGui.key++;
   	TribePane.state = "killTribe";
@@ -2314,3 +2315,4 @@ function WarriorGraphicsList::onSelect(%this)
 function WarriorPropertiesDlg::ConnectionTerminated(%this)
 {
 }
+//-----------------------------------------------------------------------------

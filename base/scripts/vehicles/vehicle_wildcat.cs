@@ -35,7 +35,7 @@ datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
 {
    spawnOffset = "0 0 1";
 
-   floatingGravMag = 2.5;
+   floatingGravMag = 3.5;
 
    catagory = "Vehicles";
    shapeFile = "vehicle_grav_scout.dts";

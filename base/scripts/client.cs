@@ -75,7 +75,7 @@ function addMessageHudLine(%text)
       %origPosition = chatHud.position;
       
    //add the message...
-   while(HudMessageVector.getNumLines() && (HudMessageVector.getNumLines() >= $pref::HudMessageLogSize))
+   while( !chatPageDown.isVisible() && HudMessageVector.getNumLines() && (HudMessageVector.getNumLines() >= $pref::HudMessageLogSize))
    {
       %tag = HudMessageVector.getLineTag(0);
       if(%tag != 0)
@@ -89,7 +89,7 @@ function addMessageHudLine(%text)
    if (%linesToScroll > 0)
    {
       chatPageDown.setVisible(true);
-      ChatPageDown.position = ( firstWord( outerChatHud.extent ) - 20 ) @ " " @ ( $chatScrollLenY[$chatHudLength] - 6 );
+      ChatPageDown.position = ( firstWord( outerChatHud.extent ) - 20 ) @ " " @ ( $chatScrollLenY[$Pref::chatHudLength] - 6 );
       chatHud.position = %origPosition;
    }
    else

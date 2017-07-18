@@ -725,7 +725,7 @@ new GuiControlProfile ("ShellTopicTextProfile")
 new GuiControlProfile ("BrowserFilterLabelProfile")
 {
    fontType = $ShellLabelFont;
-   fontSize = $ShellMediumFontSize;
+   fontSize = 22;
    fontColor = "0 220 0";
    justify = "left";
    autoSizeWidth = true;
@@ -735,7 +735,7 @@ new GuiControlProfile ("BrowserFilterLabelProfile")
 new GuiControlProfile ("BrowserFilterTextProfile")
 {
    fontType = $ShellLabelFont;
-   fontSize = $ShellMediumFontSize;
+   fontSize = 22;
    fontColor = "66 219 234";
    justify = "left";
    autoSizeWidth = true;
@@ -745,7 +745,7 @@ new GuiControlProfile ("BrowserFilterTextProfile")
 new GuiControlProfile ("BrowserStatusTextProfile")
 {
    fontType = $ShellLabelFont;
-   fontSize = $ShellMediumFontSize;
+   fontSize = 22;
    fontColor = "66 219 234";
    justify = "right";
    autoSizeWidth = false;
@@ -1601,7 +1601,13 @@ new GuiControlProfile ("GuiChannelVectorProfile")
    fontColor = "249 250 194"; 		// default font color
    fontColors[1] = "255 255 255";	// nick font color
    fontColors[2] = "255 255 0";		// tribe font color
-	fontColors[3] = "0 200 0";			// server font color
+   fontColors[3] = "0 200 0";			// server font color
+   fontColors[4] = "4 235 105"; 	// client join/drop, tournament mode
+   fontColors[5] = "219 200 128"; 	// gameplay, admin/voting, pack/deployable
+   fontColors[6] = "77 253 95";  	// team chat, spam protection message, client tasks
+   fontColors[7] = "40 231 240";  	// global chat
+   fontColors[8] = "200 200 50 200";  // used in single player game
+   fontColors[9] = "0 255 255";       // action
    autoSizeWidth = false;
    autoSizeHeight = true;
 };

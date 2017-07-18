@@ -118,7 +118,7 @@ datablock StaticShapeData(DeployedStationInventory) : StaticShapeDamageProfile
    renderWhenDestroyed = false;
    doesRepair = true;
 
-	deployedObject = true;
+   deployedObject = true;
 
    cmdCategory = "DSupport";
    cmdIcon = CMDStationIcon;
@@ -199,7 +199,7 @@ datablock StaticShapeData(DeployedMotionSensor) : StaticShapeDamageProfile
    explosion = DeployablesExplosion;
    dynamicType = $TypeMasks::SensorObjectType;
 
-	deployedObject = true;
+   deployedObject = true;
 
    cmdCategory = "DSupport";
    cmdIcon = CMDSensorIcon;
@@ -281,7 +281,7 @@ datablock StaticShapeData(DeployedPulseSensor) : StaticShapeDamageProfile
    explosion = DeployablesExplosion;
    dynamicType = $TypeMasks::SensorObjectType;
 
-	deployedObject = true;
+   deployedObject = true;
 
    cmdCategory = "DSupport";
    cmdIcon = CMDSensorIcon;
@@ -504,10 +504,10 @@ function Deployables::searchView(%obj, %searchRange, %mask)
 //-------------------------------------------------
 function ShapeBaseImageData::testMaxDeployed(%item, %plyr)
 {
-	if(%item.item $= TurretOutdoorDeployable || %item.item $= TurretIndoorDeployable)
-		%itemCount = countTurretsAllowed(%item.item);
-	else
-		%itemCount = $TeamDeployableMax[%item.item];
+   if(%item.item $= TurretOutdoorDeployable || %item.item $= TurretIndoorDeployable)
+      %itemCount = countTurretsAllowed(%item.item);
+   else
+      %itemCount = $TeamDeployableMax[%item.item];
 
    return $TeamDeployedCount[%plyr.team, %item.item] >= %itemCount;
 }
@@ -550,7 +550,7 @@ function ShapeBaseImageData::testObjectTooClose(%item)
 //-------------------------------------------------
 function TurretOutdoorDeployableImage::testNoTerrainFound(%item)
 {
-      return %item.surface.getClassName() !$= TerrainBlock;
+   return %item.surface.getClassName() !$= TerrainBlock;
 }
 
 function ShapeBaseImageData::testNoTerrainFound(%item, %surface)
@@ -736,36 +736,43 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
 
    if (%item.testMaxDeployed(%plyr))
       %disqualified = $NotDeployableReason::MaxDeployed;
-
    else if (%item.testNoSurfaceInRange(%plyr))
       %disqualified = $NotDeployableReason::NoSurfaceFound;
-
    else if (%item.testNoTerrainFound(%surface))
       %disqualified = $NotDeployableReason::NoTerrainFound;
-
    else if (%item.testNoInteriorFound())
       %disqualified = $NotDeployableReason::NoInteriorFound;
-   
    else if (%item.testSlopeTooGreat(%surface, %surfaceNrm))
       %disqualified = $NotDeployableReason::SlopeTooGreat;
-
    else if (%item.testSelfTooClose(%plyr, %surfacePt))
       %disqualified = $NotDeployableReason::SelfTooClose;
-
    else if (%item.testObjectTooClose(%surfacePt))
       %disqualified = $NotDeployableReason::ObjectTooClose;   
-
    else if (%item.testTurretTooClose(%plyr))
       %disqualified = $NotDeployableReason::TurretTooClose;
-
    else if (%item.testTurretSaturation())
       %disqualified = $NotDeployableReason::TurretSaturation;
+   else
+   {
+      // Test that there are no objstructing objects that this object
+      //  will intersect with
+      //
+      %rot = %item.getInitialRotation(%plyr);
+      if(%item.deployed.className $= "DeployedTurret")
+         %xform = %item.deployed.getDeployTransform(%item.surfacePt, %item.surfaceNrm);
+      else
+         %xform = %surfacePt SPC %rot;
 
+      if (!%item.deployed.checkDeployPos(%xform))
+      {
+         %disqualified = $NotDeployableReason::ObjectTooClose;
+      }
+   }
       
    if (%plyr.getMountedImage($BackpackSlot) == %item)  //player still have the item?
    {
       if (%disqualified)
-           activateDeploySensorRed(%plyr);
+         activateDeploySensorRed(%plyr);
       else
          activateDeploySensorGrn(%plyr);      
 
@@ -904,9 +911,9 @@ function ShapeBaseImageData::onDeploy(%item, %plyr, %slot)
    else
       %deplObj.setTransform(%item.surfacePt SPC %rot);
 
-	// set the recharge rate right away
-	if(%deplObj.getDatablock().rechargeRate)
-		%deplObj.setRechargeRate(%deplObj.getDatablock().rechargeRate);
+   // set the recharge rate right away
+   if(%deplObj.getDatablock().rechargeRate)
+      %deplObj.setRechargeRate(%deplObj.getDatablock().rechargeRate);
    
    // set team, owner, and handle
    %deplObj.team = %plyr.client.Team;
@@ -1121,10 +1128,19 @@ function DeployedStationInventory::onEndSequence(%data, %obj, %thread)
       %trigger = new Trigger()
       {
          dataBlock = stationTrigger;
-      polyhedron = "-0.75 0.0 0.1 1.5 0.0 0.0 0.0 -1.5 0.0 0.0 0.0 2.3";
+         polyhedron = "-0.125 0.0 0.1 0.25 0.0 0.0 0.0 -0.7 0.0 0.0 0.0 1.0";
       };             
       MissionCleanup.add(%trigger);
-      %trigger.setTransform(%obj.getTransform());
+   
+      %trans = %obj.getTransform();
+      %vSPos = getWords(%trans,0,2);
+      %vRot =  getWords(%trans,3,5);
+      %vAngle = getWord(%trans,6);
+      %matrix = VectorOrthoBasis(%vRot @ " " @ %vAngle + 0.0);
+      %yRot = getWords(%matrix, 3, 5);
+      %pos = vectorAdd(%vSPos, vectorScale(%yRot, -0.1));
+   
+      %trigger.setTransform(%pos @ " " @ %vRot @ " " @ %vAngle);
 
       // associate the trigger with the station
       %trigger.station = %obj;
@@ -1190,25 +1206,25 @@ function DeployedTurret::onDestroyed(%this, %obj, %prevState)
 
 function countTurretsAllowed(%type)
 {
-	for(%j = 1; %j < Game.numTeams; %j++)
-		%teamPlayerCount[%j] = 0;
+   for(%j = 1; %j < Game.numTeams; %j++)
+      %teamPlayerCount[%j] = 0;
    %numClients = ClientGroup.getCount();
    for(%i = 0; %i < %numClients; %i++)
    {
       %cl = ClientGroup.getObject(%i);
-		if(%cl.team > 0)
-			%teamPlayerCount[%cl.team]++;
+      if(%cl.team > 0)
+         %teamPlayerCount[%cl.team]++;
    }
-	// the bigger team determines the number of turrets allowed
-	%maxPlayers = %teamPlayerCount[1] > %teamPlayerCount[2] ? %teamPlayerCount[1] : %teamPlayerCount[2];
-	// each team can have 1 turret of each type (indoor/outdoor) for every 2 players
-	// minimum and maximums are defined in deployables.cs
-	%teamTurretMax = mFloor(%maxPlayers / 2);
-	if(%teamTurretMax < $TeamDeployableMin[%type])
-		%teamTurretMax = $TeamDeployableMin[%type];
-	else if(%teamTurretMax > $TeamDeployableMax[%type])
-		%teamTurretMax = $TeamDeployableMax[%type];
-	
-	return %teamTurretMax;
+   // the bigger team determines the number of turrets allowed
+   %maxPlayers = %teamPlayerCount[1] > %teamPlayerCount[2] ? %teamPlayerCount[1] : %teamPlayerCount[2];
+   // each team can have 1 turret of each type (indoor/outdoor) for every 2 players
+   // minimum and maximums are defined in deployables.cs
+   %teamTurretMax = mFloor(%maxPlayers / 2);
+   if(%teamTurretMax < $TeamDeployableMin[%type])
+      %teamTurretMax = $TeamDeployableMin[%type];
+   else if(%teamTurretMax > $TeamDeployableMax[%type])
+      %teamTurretMax = $TeamDeployableMax[%type];
+   
+   return %teamTurretMax;
 }
 

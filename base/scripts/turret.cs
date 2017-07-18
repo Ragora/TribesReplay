@@ -271,6 +271,9 @@ function TurretData::replaceCallback(%this, %turret, %engineer)
 
 function TurretData::onDestroyed(%this, %turret, %prevState)
 {
+   if( isObject( %turret.lastProjectile ) )
+      %turret.lastProjectile.delete();
+         
    Parent::onDestroyed(%this, %turret, %prevState);
 }
 

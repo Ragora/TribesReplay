@@ -188,7 +188,7 @@ function AIHuntersTask::weight(%task, %client)
 		}
 		else
 		{
-         %losTimeout = 5000 + ($AIClientLOSTimeout * %client.getSkillLevel());
+         %losTimeout = $AIClientMinLOSTime + ($AIClientLOSTimeout * %client.getSkillLevel());
 			%result = AIFindClosestEnemy(%client, $AIHuntersCloseFlagDist, %losTimeout);
 	      %closestEnemy = getWord(%result, 0);
 		   %closestEnemydist = getWord(%result, 1);
@@ -268,7 +268,7 @@ function AIHuntersTask::weight(%task, %client)
 	}
 	
 	//find the closest player with the most flags (that we have los to)
-   %losTimeout = 5000 + ($AIClientLOSTimeout * %client.getSkillLevel());
+   %losTimeout = $AIClientMinLOSTime + ($AIClientLOSTimeout * %client.getSkillLevel());
 	%bestClientToEngage = findClientWithMostFlags(%client, %losTimeout);
 	%bestClientDist = 32767;
 	if (AIClientIsAlive(%bestClientToEngage))

@@ -208,7 +208,6 @@ loadGui("ShellSaveFileDlg");
 // menus
 loadGui("AddressDlg");
 loadGui("GenDialog");
-loadGui("CreateWarriorDlg");
 loadGui("LaunchGui");
 loadGui("LaunchToolbarDlg");
 loadGui("GameGui");
@@ -587,7 +586,7 @@ function DispatchLaunchMode()
    }
 }
 
-if(WONGetAuthInfo() $= "" && $LaunchMode !$= "Demo")
+if($LaunchMode !$= "Demo")
    VerifyCDCheck(DispatchLaunchMode);
 else
    DispatchLaunchMode();

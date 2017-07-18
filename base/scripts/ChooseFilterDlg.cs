@@ -10,10 +10,11 @@ function ChooseFilterDlg::onWake( %this )
    CF_FilterList.clear();
    CF_FilterList.addRow( 0, "All servers" );
    CF_FilterList.addRow( 1, "Servers with buddies" );
+   CF_FilterList.addRow( 2, "Favorites only" );
    for ( %i = 0; $pref::ServerBrowser::Filter[%i] !$= ""; %i++ )
-      CF_FilterList.addRow( %i + 2, $pref::ServerBrowser::Filter[%i] );
+      CF_FilterList.addRow( %i + 3, $pref::ServerBrowser::Filter[%i] );
 
-   if ( $pref::ServerBrowser::activeFilter >= %i + 2 )
+   if ( $pref::ServerBrowser::activeFilter >= %i + 3 )
       $pref::ServerBrowser::activeFilter = 0;
 
    CF_FilterList.setSelectedById( $pref::ServerBrowser::activeFilter );
@@ -26,8 +27,8 @@ function ChooseFilterDlg::onSleep( %this )
 {
    // export out all the filters...
    %count = CF_FilterList.rowCount();
-   for ( %row = 2; %row < %count; %row++ )
-      $pref::ServerBrowser::Filter[%row - 2] = CF_FilterList.getRowText( %row );
+   for ( %row = 3; %row < %count; %row++ )
+      $pref::ServerBrowser::Filter[%row - 3] = CF_FilterList.getRowText( %row );
 }
 
 //------------------------------------------------------------------------------
@@ -55,7 +56,7 @@ function ChooseFilterDlg::newFilter( %this )
 function ChooseFilterDlg::editFilter( %this )
 {
    %rowId = CF_FilterList.getSelectedId();
-   if ( %rowId < 2 ) // can't edit default filters
+   if ( %rowId < 3 ) // can't edit default filters
       return;
 
    // get an updated list of game types:
@@ -127,7 +128,7 @@ function ChooseFilterDlg::saveFilter( %this )
 function ChooseFilterDlg::deleteFilter( %this )
 {
    %rowId = CF_FilterList.getSelectedId();
-   if ( %rowId < 2 ) // can't delete default filters
+   if ( %rowId < 3 ) // can't delete default filters
       return;
 
    %row = CF_FilterList.getRowNumById( %rowId );
@@ -163,7 +164,7 @@ function ChooseFilterDlg::go( %this )
 function CF_FilterList::onSelect( %this, %id, %text )
 {
 	// Let the user know they can't edit or delete the default filters:
-	if ( %id < 2 )
+	if ( %id < 3 )
 	{
 		CF_EditFilterBtn.setActive( false );
 		CF_DeleteFilterBtn.setActive( false );

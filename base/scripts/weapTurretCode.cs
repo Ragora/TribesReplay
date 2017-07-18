@@ -226,8 +226,13 @@ function ScoutChaingunPairImage::onUnmount(%this,%obj,%slot)
 }
 
 
-function BomberTurret::onDamage()
+function BomberTurret::onDamage(%data, %obj)
 {
+   %newDamageVal = %obj.getDamageLevel();
+   if(%obj.lastDamageVal !$= "")
+      if(isObject(%obj.getObjectMount()) && %obj.lastDamageVal > %newDamageVal)   
+         %obj.getObjectMount().setDamageLevel(%newDamageVal);
+   %obj.lastDamageVal = %newDamageVal;
 }
 
 function BomberTurret::damageObject(%this, %damageObj, %projectile, %amount, %damageType)
@@ -304,7 +309,11 @@ function BomberTurret::playerDismount(%data, %obj)
    %obj.fireTrigger = 0;
    %obj.setImageTrigger(2, false);
    %obj.setImageTrigger(4, false);
-   %obj.setImageTrigger(6, false);
+   if(%obj.getImageTrigger(6))
+   {
+      %obj.setImageTrigger(6, false);
+      ShapeBaseImageData::deconstruct(%obj.getMountedImage(6), %obj);
+   }
    %client = %obj.getControllingClient();
    commandToClient(%client, 'endBomberSight');
 //   %client.player.setControlObject(%client.player);
@@ -338,12 +347,13 @@ function BomberBombPairImage::onUnmount(%this,%obj,%slot)
 
 function BomberTurretBarrel::onTriggerDown(%this, %obj, %slot)
 {
-   %obj.schedule(300, "setImageTrigger", 3, true);
+   %obj.turretBarrelSchedule = %obj.schedule(300, "setImageTrigger", 3, true);
 }
 
 function BomberTurretBarrel::onTriggerUp(%this, %obj, %slot)
 {
-   %obj.schedule(400, "setImageTrigger", 3, false);
+   cancel(%obj.turretBarrelSchedule);
+   %obj.setImageTrigger( 3, false);
 }
 
 function BomberTurretBarrelPair::onMount(%this, %obj, %slot)
@@ -391,8 +401,13 @@ function MobileTurretBase::onAdd(%this, %obj)
    setTargetNeverVisMask(%obj.target, 0xffffffff);
 }
 
-function MobileTurretBase::onDamage()
+function MobileTurretBase::onDamage(%data, %obj)
 {
+   %newDamageVal = %obj.getDamageLevel();
+   if(%obj.lastDamageVal !$= "")
+      if(isObject(%obj.getObjectMount()) && %obj.lastDamageVal > %newDamageVal)   
+         %obj.getObjectMount().setDamageLevel(%newDamageVal);
+   %obj.lastDamageVal = %newDamageVal;
 }
 
 function MobileTurretBase::damageObject(%this, %targetObject, %sourceObject, %position, %amount, %damageType)
@@ -408,8 +423,13 @@ function MobileTurretBase::onEndSequence(%data, %obj, %thread)
    //Used so that the parent wont be called..
 }
 
-function AssaultPlasmaTurret::onDamage()
+function AssaultPlasmaTurret::onDamage(%data, %obj)
 {
+   %newDamageVal = %obj.getDamageLevel();
+   if(%obj.lastDamageVal !$= "")
+      if(isObject(%obj.getObjectMount()) && %obj.lastDamageVal > %newDamageVal)   
+         %obj.getObjectMount().setDamageLevel(%newDamageVal);
+   %obj.lastDamageVal = %newDamageVal;
 }
 
 function AssaultPlasmaTurret::damageObject(%this, %damageObj, %projectile, %amount, %damageType)

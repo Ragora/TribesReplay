@@ -193,6 +193,15 @@ function dogKillerSpeaks(%line)
 		serverCmdCannedChat($teammate0, %line, true);
 }
 
+function findDogKillerNextRespawn()
+{
+	%num = game.respawnPoint;
+	%group = nameToId("Team1/DropPoints/Respawns");
+	%object = %group.getObject(%num);
+	return %object;
+
+}
+
 function getTeammateGlobals()
 {
 	$TeammateWarnom0 = "Dogkiller";
@@ -379,7 +388,6 @@ function Pack::onCollision(%data, %obj, %col)
 
 function FlipFlop::playerTouch(%data, %flipFlop, %player)
 {
-
    if(!Parent::playerTouch(%data, %flipflop, %player))
       return;
 
@@ -541,7 +549,41 @@ function SinglePlayerGame::onClientKilled(%game, %clVictim, %clKiller, %damageTy
 		game.sentryTurretKill = true;
 		doText(T2_tipDefense05);
 	}
+	
+ 	if(%clVictim == $player && game.respawnPoint != 3)
+ 	{
+ 		%point = findDogKillerNextRespawn();
+  		%DKdefend = new AIObjective(AIODefendLocation)
+  		{
+ 			datablock = "AIObjectiveMarker";
+ 			position = %point.position;
+ 			rotation = "1 0 0 0";
+ 			scale = "1 1 1";
+ 			description = "Defend the players next respawn";
+ 			location = %point.position;
+ 			weightLevel1 = 7000;
+ 			targetClientId = "-1";
+ 			targetObjectId = %point;
+ 		};
+  		MissionCleanup.add(%DKdefend);
+  		$ObjectiveQ[$playerTeam].add(%DKdefend);
+  		game.dogKillersPlayerDefend = %DKdefend;
+ 	}
+
 	Parent::onClientKilled(%game, %clVictim, %clKiller, %damageType, %implement);
+}
+
+function spawnSinglePlayer()
+{
+	if(isObject(game.dogKillersPlayerDefend))
+	{
+		AIClearObjective($teammate0.dogKillersPlayerDefend);
+	   	$teammate0.dogKillersPlayerDefend.weightLevel1 = 0;
+		
+		game.dogKillersPlayerDefend.delete();
+	}
+	
+	parent::spawnSinglePlayer();
 }
 
 function missionClientKilled(%clVictim, %killer)
@@ -632,6 +674,7 @@ function checkObjectives()
 		//Dogkiller can now pick up team objectives
 		AIClearObjective($teammate0.DogKillerEscort);
 	   	$teammate0.DogKillerEscort.weightLevel1 = 0;
+				
 		schedule(6000, game, dogKillerSpeaks, 'ChatSelfDefendBase');
 
 	   	doText(T2_10);
@@ -641,7 +684,7 @@ function checkObjectives()
 		// first get the gens up
 		if( ! nameToId("base3/EasternFortification").isPowered() )
 		{
-			echo("switch is not powered");
+			//echo("switch is not powered");
 			doText(t2_TipDefense02, 1000);
 		
 		}

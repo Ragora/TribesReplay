@@ -1070,6 +1070,7 @@ function clientCmdSetPassengerVehicleKeys()
 {
    passengerKeys.copyBind( moveMap, toggleZoom );
    passengerKeys.copyBind( moveMap, setZoomFOV );
+   passengerKeys.copyBind( moveMap, toggleScoreScreen );
 }
  
 function clientCmdSetDefaultVehicleKeys(%inVehicle)
@@ -1122,6 +1123,8 @@ function clientCmdSetDefaultVehicleKeys(%inVehicle)
       passengerKeys.copyBind( moveMap, voteNo );
       passengerKeys.copyBind( moveMap, toggleCommanderMap );
       passengerKeys.bindCmd( keyboard, escape, "", "escapeFromGame();" );
+      passengerKeys.copyBind( moveMap, toggleHelpGui );
+      passengerKeys.copyBind( moveMap, toggleScoreScreen );
 
       // Bind the weapon keys as well:
       passengerKeys.copyBind( moveMap, nextWeapon );

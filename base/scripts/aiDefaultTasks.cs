@@ -110,7 +110,7 @@ function AIEngageTask::weight(%task, %client)
 	}
 
 	//see if anyone has fired on us recently...
-   %losTimeout = 5000 + ($AIClientLOSTimeout * %client.getSkillLevel());
+   %losTimeout = $AIClientMinLOSTime + ($AIClientLOSTimeout * %client.getSkillLevel());
    if (AIClientIsAlive(%client.lastDamageClient, %losTimeout) && getSimTime() - %client.lastDamageTime < %losTimeout)
    {
       //see if we should turn on the new attacker

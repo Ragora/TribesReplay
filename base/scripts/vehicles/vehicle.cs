@@ -1,9 +1,13 @@
+// Notes:
+// - respawning vehicles with turrets (bomber/tank) will not setup the turret properly
+
 //Damage Rate for entering Liquid
 $VehicleDamageLava       = 0.0325;
 $VehicleDamageHotLava    = 0.0325;
 $VehicleDamageCrustyLava = 0.0325;
 
 $NumVehiclesDeploy = 0;
+
 //**************************************************************
 //* GENERAL PURPOSE FUNCTIONS
 //**************************************************************
@@ -22,7 +26,7 @@ function VehicleData::onAdd(%data, %obj)
    if(%obj.deployed)
    {
       if($countDownStarted)
-         %data.schedule(($Host::WarmupTime * 1000) / 2, "vehicleDeploy", %obj);
+         %data.schedule(($Host::WarmupTime * 1000) / 2, "vehicleDeploy", %obj, 0, 1);
       else
       {
          $VehiclesDeploy[$NumVehiclesDeploy] = %obj;
@@ -72,6 +76,21 @@ function VehicleData::onDamage(%this,%obj)
          %obj.setDamageState(Enabled);
    }
 } 
+
+function VehicleData::playerDismounted(%data, %obj, %player)
+{
+	//this function is declared to prevent console error msg spam...
+}
+
+function HoverVehicle::useCreateHeight()
+{
+	//this function is declared to prevent console error msg spam...
+}
+
+function WheeledVehicle::useCreateHeight()
+{
+	//this function is declared to prevent console error msg spam...
+}
 
 function AssaultVehicle::onDamage(%this, %obj)
 {
@@ -345,6 +364,9 @@ function BomberFlyer::onAdd(%this, %obj)
    //for this particular weapon - a non-firing datablock used only so the AI can aim the turret
    //Also needed so we can set the turret parameters..
    %turret.mountImage(AIAimingTurretBarrel, 0);
+
+   // setup the turret's target info
+   setTargetSensorGroup(%turret.getTarget(), %turret.team);
    setTargetNeverVisMask(%turret.getTarget(), 0xffffffff);
 }
 
@@ -370,7 +392,6 @@ function AssaultVehicle::onAdd(%this, %obj)
    %turret.selectedWeapon = 1;
    MissionCleanup.add(%turret);
    %turret.team = %obj.teamBought;
-   setTargetSensorGroup(%turret.getTarget(), %turret.team);
    %turret.setSelfPowered();
    %obj.mountObject(%turret, 10);
    %turret.mountImage(AssaultPlasmaTurretBarrel, 2);
@@ -379,10 +400,14 @@ function AssaultVehicle::onAdd(%this, %obj)
 
    //vehicle turrets should not auto fire at targets
    %turret.setAutoFire(false);
+   
    //Needed so we can set the turret parameters..
    %turret.mountImage(AssaultTurretParam, 0);
-   setTargetNeverVisMask(%turret.getTarget(), 0xffffffff);
    %obj.schedule(6000, "playThread", $ActivateThread, "activate");
+
+   // set the turret's target info
+   setTargetSensorGroup(%turret.getTarget(), %turret.team);
+   setTargetNeverVisMask(%turret.getTarget(), 0xffffffff);
 }
 
 //----------------------------
@@ -487,7 +512,6 @@ function MobileBaseVehicle::deleteAllMounted(%data, %obj)
 function ScoutFlyer::playerMounted(%data, %obj, %player, %node)
 {
    // scout flyer == SUV (single-user vehicle)
-   setTargetSensorGroup(%obj.getTarget(), %player.client.getSensorGroup());
    commandToClient(%player.client, 'setHudMode', 'Pilot', "Shrike", %node);
    $numVWeapons = 1;
 }
@@ -523,8 +547,6 @@ function BomberFlyer::playerMounted(%data, %obj, %player, %node)
       %obj.getMountNodeObject(10).selectedWeapon = 1;
       commandToClient(%player.client,'SetWeaponryVehicleKeys', true);
 
-      setTargetSensorGroup(%turret.getTarget(), %player.client.getSensorGroup());
-      setTargetNeverVisMask(%turret.getTarget(), 0xffffffff);
 	   commandToClient(%player.client, 'setHudMode', 'Pilot', "Bomber", %node);
    }
    else
@@ -603,9 +625,6 @@ function AssaultVehicle::playerMounted(%data, %obj, %player, %node)
       // if the player is the turreteer, show vehicle's weapon icons
       //commandToClient(%player.client, 'showVehicleWeapons', %data.getName());
       //%player.client.setVWeaponsHudActive(1); // plasma turret icon (default)
-      
-      setTargetSensorGroup(%turret.getTarget(), %player.client.getSensorGroup());
-      setTargetNeverVisMask(%turret.getTarget(), 0xffffffff);
       
       $aWeaponActive = 0;
       commandToClient(%player.client,'SetWeaponryVehicleKeys', true);
@@ -694,16 +713,16 @@ function WheeledVehicle::deployVehicle(%obj, %data, %player)
 //* JERICHO DEPLOYMENT and UNDEPLOYMENT
 //**************************************************************
 
-function MobileBaseVehicle::vehicleDeploy(%data, %obj, %player)
+function MobileBaseVehicle::vehicleDeploy(%data, %obj, %player, %force)
 { 
-   if(VectorLen(%obj.getVelocity()) <= 0.1)
+   if(VectorLen(%obj.getVelocity()) <= 0.1 || %force)
    {
       %deployMessage = "";
-      if( (%deployMessage = %data.checkTurretDistance(%obj)) $= "")
+      if( (%deployMessage = %data.checkTurretDistance(%obj)) $= "" || %force)
       {
          if(%obj.station $= "")
          {
-            if( (%deployMessage = %data.checkDeploy(%obj)) $= "")
+            if( (%deployMessage = %data.checkDeploy(%obj)) $= "" || %force)
             {
                %obj.station = new StaticShape() {
                   scale = "1 1 1";
@@ -743,7 +762,7 @@ function MobileBaseVehicle::vehicleDeploy(%data, %obj, %player)
             %obj.turret.setSelfPowered();
             %obj.turret.playThread($PowerThread,"Power");
          }
-         if(%deployMessage $= "")
+         if(%deployMessage $= "" || %force)
          {
             if(%obj.turret.getTarget() == -1)
                %obj.turret.setTarget(%obj.turret.target);
@@ -1323,6 +1342,7 @@ function VehicleData::respawn(%data, %marker)
       %newObj = %data.create(%marker.curTeam, %marker);
       %newObj.startFade(1000, 0, false);
       %newObj.setTransform(%marker.getTransform());
+
       setTargetSensorGroup(%newObj.target, %newObj.team);
       MissionCleanup.add(%newObj);
    }

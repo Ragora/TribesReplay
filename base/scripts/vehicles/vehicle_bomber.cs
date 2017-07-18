@@ -125,6 +125,10 @@ datablock FlyingVehicleData(BomberFlyer) : BomberDamageProfile
    isProtectedMountPoint[1] = true;
    isProtectedMountPoint[2] = true;
 
+   cameraDefaultFov = 90.0;
+   cameraMinFov = 5.0;
+   cameraMaxFov = 120.0;
+   
    cameraMaxDist = 22;
    cameraOffset = 5;
    cameraLag = 1.0;
@@ -745,11 +749,6 @@ datablock ShapeBaseImageData(BomberTargetingImage)
 
 function BomberTargetingImage::onFire(%data,%obj,%slot)
 {
-   if( %obj.isCloaked() )
-   {
-      %obj.setCloaked( false );
-      %obj.reCloak = %obj.schedule( 500, "setCloaked", true ); 
-   }
    %bomber = %obj.getObjectMount();
    if(%bomber.beacon)
    {

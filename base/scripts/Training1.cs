@@ -1306,6 +1306,14 @@ function trainingPlayerHitGround()
 	schedule(%heartBeatLengthMS, Game, trainingIntroFlightEnd);
 } 
 
+function SinglePlayerGame::displayDeathMessages(%game, %clVictim, %clKiller, %damageType, %implement)
+{
+	if(game.trainingIntro)
+		return;
+	else Parent::displayDeathMessages(%game, %clVictim, %clKiller, %damageType, %implement);
+}
+
+
 function serverCmdBuildClientTask(%client, %task, %team)
 {
 	// player shouldnt be able to use the voice commands to do anything

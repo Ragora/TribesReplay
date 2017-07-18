@@ -358,6 +358,9 @@ function RabbitGame::enterMissionArea(%game, %playerData, %player)
 
 function RabbitGame::leaveMissionArea(%game, %playerData, %player)
 {
+   if(%player.getState() $= "Dead")
+      return;
+   
    %player.client.outOfBounds = true;
    if (%player.client.team == $RabbitTeam)
       messageClient(%player.client, 'LeaveMissionArea', '\c1You have left the mission area. Return or take damage.~wfx/misc/warning_beep.wav');

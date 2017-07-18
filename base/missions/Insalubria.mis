@@ -1139,8 +1139,7 @@ new SimGroup(MissionGroup) {
 						weightLevel4 = "0";
 						offense = "1";
 						defense = "0";
-						equipment = "LIGHT";
-						desiredEquipment = "EnergyPack";
+						desiredEquipment = "Light EnergyPack";
 						buyEquipmentSet = "LightEnergyDefault";
 						issuedByHuman = "0";
 						issuedByClientId = "-1";
@@ -1586,8 +1585,7 @@ new SimGroup(MissionGroup) {
 						weightLevel4 = "0";
 						offense = "1";
 						defense = "0";
-						equipment = "LIGHT";
-						desiredEquipment = "EnergyPack";
+						desiredEquipment = "Light EnergyPack";
 						buyEquipmentSet = "LightEnergyDefault";
 						issuedByHuman = "0";
 						issuedByClientId = "-1";
@@ -1928,8 +1926,7 @@ new SimGroup(MissionGroup) {
 						weightLevel4 = "0";
 						offense = "1";
 						defense = "0";
-						equipment = "LIGHT";
-						desiredEquipment = "EnergyPack";
+						desiredEquipment = "Light EnergyPack";
 						buyEquipmentSet = "LightEnergyDefault";
 						issuedByHuman = "0";
 						issuedByClientId = "-1";
@@ -2219,8 +2216,7 @@ new SimGroup(MissionGroup) {
 						weightLevel4 = "0";
 						offense = "1";
 						defense = "0";
-						equipment = "LIGHT";
-						desiredEquipment = "EnergyPack";
+						desiredEquipment = "Light EnergyPack";
 						buyEquipmentSet = "LightEnergyDefault";
 						issuedByHuman = "0";
 						issuedByClientId = "-1";
@@ -2488,8 +2484,7 @@ new SimGroup(MissionGroup) {
 						weightLevel4 = "0";
 						offense = "1";
 						defense = "0";
-						equipment = "LIGHT";
-						desiredEquipment = "EnergyPack";
+						desiredEquipment = "Light EnergyPack";
 						buyEquipmentSet = "LightEnergyDefault";
 						issuedByHuman = "0";
 						issuedByClientId = "-1";
@@ -2934,8 +2929,7 @@ new SimGroup(MissionGroup) {
 						weightLevel4 = "0";
 						offense = "1";
 						defense = "0";
-						equipment = "LIGHT";
-						desiredEquipment = "EnergyPack";
+						desiredEquipment = "Light EnergyPack";
 						buyEquipmentSet = "LightEnergyDefault";
 						issuedByHuman = "0";
 						issuedByClientId = "-1";
@@ -3251,8 +3245,7 @@ new SimGroup(MissionGroup) {
 						weightLevel4 = "0";
 						offense = "1";
 						defense = "0";
-						equipment = "LIGHT";
-						desiredEquipment = "EnergyPack";
+						desiredEquipment = "Light EnergyPack";
 						buyEquipmentSet = "LightEnergyDefault";
 						issuedByHuman = "0";
 						issuedByClientId = "-1";
@@ -3438,8 +3431,7 @@ new SimGroup(MissionGroup) {
 						weightLevel4 = "0";
 						offense = "1";
 						defense = "0";
-						equipment = "LIGHT";
-						desiredEquipment = "EnergyPack";
+						desiredEquipment = "Light EnergyPack";
 						buyEquipmentSet = "LightEnergyDefault";
 						issuedByHuman = "0";
 						issuedByClientId = "-1";

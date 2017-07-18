@@ -31,6 +31,8 @@ function OnlineLogIn()
    FilterEditGameType.clear();
    FilterEditMissionType.clear();
    queryMasterGameTypes();
+   // Start the Email checking...
+   EmailGui.checkSchedule = schedule( 5000, 0, CheckEmail, true );
    Canvas.setContent(LaunchGui);
 }
 
@@ -285,86 +287,6 @@ function LaunchGui::onSleep(%this)
 }
 
 //----------------------------------------------------------------------------
-// Login/Warrior creation functions:
-//---------------------------------------------------------------------------
-function CreateWarriorDlg::onAdd( %this )
-{
-   %this.created = "";
-}
-
-//----------------------------------------------------------------------------
-function CreateWarriorDlg::onWake( %this )
-{
-   CreateWarriorText.setText( "<just:center>Enter your warrior name.\nThis is the name by which you will be represented on forums, chat, and in e-mail."
-      @ " It is also the name you will use when becoming a member of a tribe." );
-   CreateWarriorBtn.setActive( false );
-   CreateWarriorNameEdit.schedule( 100, makeFirstResponder, 1 );
-}
-
-//----------------------------------------------------------------------------
-function CreateWarriorDlg::onLine( %this, %line, %key )
-{
-   //error( "** line = \"" @ %line @ "\" **" );
-   if ( %key != %this.key )
-      return;
-   
-   if ( %this.checkState $= "createplayer" )
-   {
-      if ( getField( %line, 0 ) $= "0" )
-         %this.checkState = "getquad";
-      else
-      {
-         MessageBoxOK( "FAILED", getField( %line, 1 ), "resetCreateWarrior();" );
-         %this.checkState = "";
-      }
-   }
-   else if ( %this.checkState $= "getquad" )
-   {
-      %this.created = true;
-      CloseMessagePopup();
-      MessageBoxOK( "SUCCESS", "You successfully created the new warrior \"" @ $CreateAccountWarriorName @ "\".", "checkNamesAndAliases();" );
-   }
-}
-
-//----------------------------------------------------------------------------
-function resetCreateWarrior()
-{
-   $CreateAccountWarriorName = "";
-   Canvas.pushDialog( CreateWarriorDlg );
-}
-
-//----------------------------------------------------------------------------
-function CreateWarriorDlg::connectionTerminated( %this, %key )
-{
-   if ( %key != %this.key )
-      return;
-}
-
-//----------------------------------------------------------------------------
-function CreateWarriorNameEdit::checkValidPlayerName( %this )
-{
-   %name = strToPlayerName( %this.getValue() );
-   %this.setValue( %name );
-
-   CreateWarriorBtn.setActive( strlen( stripTrailingSpaces( %name ) ) > 2 );
-}
-
-//----------------------------------------------------------------------------
-function LoginCreateWarrior()
-{
-   CreateWarriorNameEdit.checkValidPlayerName();
-   if ( CreateWarriorBtn.isActive() )
-   {
-      Canvas.popDialog(CreateWarriorDlg);
-      MessagePopup( "PLEASE WAIT", "Creating warrior..." );
-      CreateWarriorDlg.key = LaunchGui.key++;
-      CreateWarriorDlg.checkState = "createplayer";
-
-      HTTPSecureRequest("update_createplayer", $CreateAccountWarriorName, CreateWarriorDlg, CreateWarriorDlg.key);
-   }
-}
-
-//----------------------------------------------------------------------------
 function checkNamesAndAliases()
 {
    %gotoWarriorSetup = false;
@@ -374,14 +296,7 @@ function checkNamesAndAliases()
       if ( LaunchGui.getWarrior )
       {
          %cert = WONGetAuthInfo();
-         if ( %cert $= "" && !CreateWarriorDialog.created )
-         {
-            // THIS WILL GO INTO THE CREATE ACCOUNT PROCESS SOON!
-            // Must create our player nickname:
-            Canvas.pushDialog( CreateWarriorDlg );
-            return;
-         }
-         else
+         if ( %cert !$= "" )
          {
             LaunchGui.getWarrior = "";
             if ( %cert $= "" )
@@ -408,6 +323,8 @@ function checkNamesAndAliases()
                %gotoWarriorSetup = true;
             }
          }
+         else
+            MessageBoxOK( "WARNING", "Failed to get account information.  You may need to quit the game and log in again." );
       }
    }
    else if ( $pref::Player::Count == 0 )

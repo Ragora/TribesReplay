@@ -287,6 +287,9 @@ function DMGame::enterMissionArea(%game, %playerData, %player)
 
 function DMGame::leaveMissionArea(%game, %playerData, %player)
 {
+   if(%player.getState() $= "Dead")
+      return;
+                                         
    %player.client.outOfBounds = true;
    messageClient(%player.client, 'LeaveMissionArea', '\c1You have left the mission area. Return or take damage.~wfx/misc/warning_beep.wav');
    logEcho(%player.client.nameBase@" (pl "@%player@"/cl "@%player.client@") left mission area");

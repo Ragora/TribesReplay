@@ -540,7 +540,7 @@ function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
             if(%code <= -2900 && %code >= -2999)
             {				
 			   if(%code == -2902)
-					%msg = "Account Creation Failed - That CDKey is already in use." @ %code;
+					%msg = "Account has already been created - Please login." @ %code;
 			   else
                		%msg = "Account Creation Failed - That warrior name is already in use.  Please choose another warrior name and try again. Code = " @ %code;
             }
@@ -605,6 +605,14 @@ function CreateAccount()
    CreateAccountCDKey5.setText( "" );
    $CreateAccountEmail = "";
    $CreateAccountSendInfo = 0;
+
+   if ( $platform $= "windows" && isKoreanBuild() )
+   {  
+      CreateAccountAgeBlurbText.setText( "<just:center>If you are under 15 years old, you are not allowed to create a Tribes 2 account." );
+      CreateAccountOldEnoughTgl.setText( "I AM AT LEAST 15 YEARS OF AGE" );
+   }
+   else
+      CreateAccountAgeBlurbText.setText( "<just:center>We are COPPA compliant.\nIf you are under 13, you are not allowed to create a Tribes 2 account." );
 
    Canvas.pushDialog( CreateAccountDlg );
 }
@@ -1714,27 +1722,15 @@ else
                helpTag = "0";
                text = "Email:";
             };
-            new GuiTextCtrl() {
+            new GuiMLTextCtrl(CreateAccountAgeBlurbText) {
                profile = "ShellTextRightProfile";
                horizSizing = "right";
                vertSizing = "bottom";
-               position = "174 289";
-               extent = "134 22";
+               position = "60 289";
+               extent = "376 44";
                minExtent = "8 8";
                visible = "1";
                helpTag = "0";
-               text = "We are COPPA compliant.";
-            };
-            new GuiTextCtrl() {
-               profile = "ShellTextRightProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "73 305";
-               extent = "351 22";
-               minExtent = "8 8";
-               visible = "1";
-               helpTag = "0";
-               text = "If you are under 13, you are not allowed to create a Tribes 2 account.";
             };
             new GuiTextCtrl() {
                profile = "ShellTextRightProfile";
@@ -1910,7 +1906,7 @@ else
                helpTag = "0";
                text = "SEND ME INFORMATION ABOUT TRIBES 2 AND OTHER PRODUCTS";
             };
-            new ShellToggleButton() {
+            new ShellToggleButton(CreateAccountOldEnoughTgl) {
                profile = "ShellRadioProfile";
                horizSizing = "right";
                vertSizing = "bottom";

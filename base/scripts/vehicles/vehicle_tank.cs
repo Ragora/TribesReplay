@@ -104,7 +104,7 @@ datablock HoverVehicleData(AssaultVehicle) : TankDamageProfile
 {
    spawnOffset = "0 0 4";
 
-   floatingGravMag = 3.5;
+   floatingGravMag = 4.5;
 
    catagory = "Vehicles";
    shapeFile = "vehicle_grav_tank.dts";

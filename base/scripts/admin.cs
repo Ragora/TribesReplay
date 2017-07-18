@@ -9,7 +9,18 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
 			//send a message to everyone about the vote...
          if (%playerVote)
 	      {   
-            if((%client.team != %arg1.team && Game.numTeams > 1) && %typeName !$= "VoteAdminPlayer")
+            %teamSpecific = Game.numTeams > 1;
+            %kickerIsObs = %client.team == 0;
+            %kickeeIsObs = %arg1.team == 0;
+            %sameTeam = %client.team == %arg1.team;
+            
+            if( %kickeeIsObs )
+            {
+               %teamSpecific = false;
+               %sameTeam = false;  
+            }
+            
+            if(( !%sameTeam && %teamSpecific) && %typeName !$= "VoteAdminPlayer")
             {
                messageClient(%client, '', "\c2Player votes must be team based.");
                return;
@@ -26,8 +37,7 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
                
                Game.kickClient = %arg1;
                %clientsVoting = 0;
-               %teamSpecific = Game.numTeams > 1;
-               if(%arg1.team != 0 && %teamSpecific)
+               if(%teamSpecific)
                {   
                   for ( %clientIndex = 0; %clientIndex < ClientGroup.getCount(); %clientIndex++ ) 
                   {
@@ -35,8 +45,8 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
             
                      if(%cl.team == %client.team)
                      {   
-                        %clients[%clientsVoting++] = %clientIndex;
-                        messageClient( %client, 'VoteStarted', '\c2%1 initiated a vote to %2 %3.', %client.name, %actionMsg, %arg1.name); 
+                        messageClient( %cl, 'VoteStarted', '\c2%1 initiated a vote to %2 %3.', %client.name, %actionMsg, %arg1.name); 
+                        %clientsVoting++;
                      }
                   }
                }
@@ -78,10 +88,12 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
          // open the vote hud for all clients that will participate in this vote
          if(%teamSpecific)
          {
-            for(%i = 0; %i < %clientsVoting; %i++)
-            {   
-               %cl = ClientGroup.getObject(%clients[%i]);
-               messageClient(%cl, 'openVoteHud', "", %clientsVoting, ($Host::VotePassPercent / 100));    
+            for ( %clientIndex = 0; %clientIndex < ClientGroup.getCount(); %clientIndex++ ) 
+            {
+               %cl = ClientGroup.getObject( %clientIndex );
+      
+               if(%cl.team == %client.team)
+                  messageClient(%cl, 'openVoteHud', "", %clientsVoting, ($Host::VotePassPercent / 100));    
             }
          }
          else

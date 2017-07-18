@@ -255,6 +255,13 @@ new AudioProfile(TaskCompletedSound)
 	  preload = true;
 };
 
+new AudioProfile(InputDeniedSound)
+{
+   filename = "fx/misc/diagnostic_beep.wav";
+   description = "audioGui";
+	  preload = true;
+};
+
 //--------------------------------------------------------------------------
 //-------------------------------------- Shapebase lock/homing tones...
 new AudioDescription(AudioLockTones)

@@ -23,7 +23,7 @@ datablock TSShapeConstructor(MediumMaleDts)
    sequence18 = "medium_male_diesidelf.dsq death4";
    sequence19 = "medium_male_diesidert.dsq death5";
    sequence20 = "medium_male_dieleglf.dsq death6";
-   sequence21 = "medium_male_dielegrt.dsq death7";
+   sequence21 = "medium_male_diechest.dsq death7";          // medium_male_dielegrt
    sequence22 = "medium_male_dieback.dsq death8";
    sequence23 = "medium_male_dieknees.dsq death9";
    sequence24 = "medium_male_dieforward.dsq death10";  

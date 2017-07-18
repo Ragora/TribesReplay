@@ -115,6 +115,7 @@ datablock SensorData(CameraSensorObject)
    detectsPassiveJammed = true;
    detectRadius = 40;
    detectsFOVOnly = true;
+   useObjectFOV = true;
 };
 
 datablock TurretData(TurretDeployedCamera) : TurretDamageProfile

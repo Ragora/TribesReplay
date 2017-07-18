@@ -63,7 +63,7 @@ function AIBountyEngageTask::weight(%task, %client)
 
 	//see if anyone has fired on us recently...
    %mustEngage = false;
-   %losTimeout = 5000 + ($AIClientLOSTimeout * %client.getSkillLevel());
+   %losTimeout = $AIClientMinLOSTime + ($AIClientLOSTimeout * %client.getSkillLevel());
    if (AIClientIsAlive(%client.lastDamageClient, %losTimeout) && getSimTime() - %client.lastDamageTime < %losTimeout)
    {
 		//see if the attacker is either our target or, we are their target

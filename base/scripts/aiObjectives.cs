@@ -451,7 +451,7 @@ function AIDefendLocation::weight(%task, %client)
 
 	//search for a new vehicle to attack
 	%task.engageVehicle = -1;
-   %losTimeout = 5000 + ($AIClientLOSTimeout * %client.getSkillLevel());
+   %losTimeout = $AIClientMinLOSTime + ($AIClientLOSTimeout * %client.getSkillLevel());
 	%result = AIFindClosestEnemyPilot(%client, 300, %losTimeout);
 	%pilot = getWord(%result, 0);
 	%pilotDist = getWord(%result, 1);
@@ -700,7 +700,7 @@ function AIAttackLocation::weight(%task, %client)
 		%task.baseWeight = %client.objectiveWeight;
 
 	//if we're a sniper, we're going to cheat, and see if there are clients near the attack location
-   %losTimeout = 5000 + ($AIClientLOSTimeout * %client.getSkillLevel());
+   %losTimeout = $AIClientMinLOSTime + ($AIClientLOSTimeout * %client.getSkillLevel());
 	%distToLoc = VectorDist(%client.player.getWorldBoxCenter(), %task.location);
 	if (%client.player.getInventory(SniperRifle) > 0 && %client.player.getInventory(EnergyPack) > 0 && %distToLoc > 60)
 		%result = AIFindClosestEnemyToLoc(%client, %task.location, 50, $AIClientLOSTimeout, true);
@@ -1052,7 +1052,7 @@ function AITouchObject::weight(%task, %client)
    //see if we can find someone to shoot at...
    if (%client.getEngageTarget() <= 0)
    {
-      %losTimeout = 5000 + ($AIClientLOSTimeout * %client.getSkillLevel());
+      %losTimeout = $AIClientMinLOSTime + ($AIClientLOSTimeout * %client.getSkillLevel());
       %myLocation = %client.player.getWorldBoxCenter();
 		%result = AIFindClosestEnemy(%client, 40, %losTimeout);
       %task.engageTarget = getWord(%result, 0);
@@ -1264,25 +1264,29 @@ function AIEscortPlayer::weight(%task, %client)
 	if (%task == %client.objectiveTask)
 		%task.baseWeight = %client.objectiveWeight;
 
-   //always shoot at the closest person to the client being escorted
-   if (AIClientIsAlive(%task.targetClient))
+   //make sure we still have someone to escort
+   if (!AiClientIsAlive(%task.targetClient))
    {
-      %targetPos = %task.targetClient.player.getWorldBoxCenter();
-      %losTimeout = 5000 + ($AIClientLOSTimeout * %client.getSkillLevel());
-		%result = AIFindClosestEnemyToLoc(%client, %targetPos, 50, %losTimeout);
+		%task.setWeight(0);
+      return;
+   }
+
+   //always shoot at the closest person to the client being escorted
+   %targetPos = %task.targetClient.player.getWorldBoxCenter();
+   %losTimeout = $AIClientMinLOSTime + ($AIClientLOSTimeout * %client.getSkillLevel());
+	%result = AIFindClosestEnemyToLoc(%client, %targetPos, 50, %losTimeout);
+   %task.engageTarget = getWord(%result, 0);
+   if (!AIClientIsAlive(%task.engageTarget))
+   {
+      if (AIClientIsAlive(%task.targetClient.lastDamageClient, %losTimeout) && getSimTime() - %task.targetClient.lastDamageTime < %losTimeout)
+         %task.engageTarget = %task.targetClient.lastDamageClient;
+   }
+   if (!AIClientIsAlive(%task.engageTarget))
+   {
+      %myPos = %client.player.getWorldBoxCenter();
+		%result = AIFindClosestEnemy(%client, 50, %losTimeout);
       %task.engageTarget = getWord(%result, 0);
-      if (!AIClientIsAlive(%task.engageTarget))
-      {
-         if (AIClientIsAlive(%task.targetClient.lastDamageClient, %losTimeout) && getSimTime() - %task.targetClient.lastDamageTime < %losTimeout)
-            %task.engageTarget = %task.targetClient.lastDamageClient;
-      }
-      if (!AIClientIsAlive(%task.engageTarget))
-      {
-         %myPos = %client.player.getWorldBoxCenter();
-			%result = AIFindClosestEnemy(%client, 50, %losTimeout);
-         %task.engageTarget = getWord(%result, 0);
-      }
-   }   
+   }
 
 	//if both us and the person we're escorting are in a vehicle, set the weight high!
 	if (%task.targetClient.player.isMounted() && %client.player.isMounted())
@@ -1315,6 +1319,17 @@ function AIEscortPlayer::weight(%task, %client)
 
 function AIEscortPlayer::monitor(%task, %client)
 {
+   //make sure we still have someone to escort
+   if (!AiClientIsAlive(%task.targetClient))
+   {
+	   if (%task == %client.objectiveTask)
+	   {
+	      AIUnassignClient(%client);
+	      Game.AIChooseGameObjective(%client);
+	   }
+      return;
+   }
+
    //first, buy the equipment
    if (%client.needEquipment)
    {
@@ -1348,7 +1363,6 @@ function AIEscortPlayer::monitor(%task, %client)
 	//see if our target is mounted in a vehicle...
 	if (%task.targetClient.player.isMounted())
 	{
-
 		//find the passenger seat the bot will take
 		%vehicle = %task.targetClient.vehicleMounted;
 		%node = findAIEmptySeat(%vehicle, %client.player);
@@ -2618,7 +2632,7 @@ function AIDeployEquipment::monitor(%task, %client)
 	if (%distance < 10 && %dist2D < 10)
       %client.aimAt(%task.location, 1000);
 
-   if ((%client.pathDistRemaining(20) > %distance + 0.25) || %dist2D > 0.3)
+   if ((%client.pathDistRemaining(20) > %distance + 0.25) || %dist2D > 0.5)
 	{
 		%task.deployAttempts = 0;
 		%task.checkObstructed = false;
@@ -3620,12 +3634,17 @@ function AIODeployEquipment::weight(%this, %client, %level, %minWeight, %invento
 		return 0;
 
 	//first, make sure we haven't deployed too many...
-	if ($TeamDeployedCount[%client.team, %this.equipment] >= $TeamDeployableMax[%this.equipment])
+ 	if (%this.equipment $= "TurretOutdoorDeployable" || %this.equipment $= "TurretIndoorDeployable")
+      %maxAllowed = countTurretsAllowed(%this.equipment);
+   else
+      %maxAllowed = $TeamDeployableMax[%this.equipment];
+
+	if ($TeamDeployedCount[%client.team, %this.equipment] >= %maxAllowed)
 		return 0;
 
 	//now make sure there are no other items in the way...
   	InitContainerRadiusSearch(%this.location, $MinDeployableDistance, $TypeMasks::VehicleObjectType |
-  	                                       $TypeMasks::MoveableObjectType |
+  	                                             $TypeMasks::MoveableObjectType |
   	                                             $TypeMasks::StaticShapeObjectType |
   	                                             $TypeMasks::TSStaticShapeObjectType | 
   	                                             $TypeMasks::ForceFieldObjectType |

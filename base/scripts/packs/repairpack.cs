@@ -103,7 +103,7 @@ datablock ShapeBaseImageData(RepairGunImage)
 
    usesEnergy = true;
    minEnergy = 3;
-	cutOffEnergy = 3.1;
+   cutOffEnergy = 3.1;
    emap = true;
 
    repairFactorPlayer = 0.002; // <--- attention DaveG!
@@ -229,21 +229,21 @@ function RepairGunImage::onActivateReady(%this,%obj,%slot)
 {
    %obj.errMsgSent = false;
    %obj.selfRepairing = false;
-	%obj.repairing = 0;
+   %obj.repairing = 0;
    %obj.setImageLoaded(%slot, false);
 }
 
 function RepairGunImage::onValidate(%this,%obj,%slot)
 {
-	// this = repairgunimage datablock
-	// obj = player wielding the repair gun
-	// slot = weapon slot
+   // this = repairgunimage datablock
+   // obj = player wielding the repair gun
+   // slot = weapon slot
 
-	if(%obj.getEnergyLevel() <= %this.cutOffEnergy)
-	{
-		stopRepairing(%obj);
-		return;
-	}
+   if(%obj.getEnergyLevel() <= %this.cutOffEnergy)
+   {
+      stopRepairing(%obj);
+      return;
+   }
    %repGun = %obj.getMountedImage(%slot);
    // muzVec is the vector coming from the repair gun's "muzzle"
    %muzVec = %obj.getMuzzleVector(%slot);
@@ -261,7 +261,7 @@ function RepairGunImage::onValidate(%this,%obj,%slot)
       $TypeMasks::StaticShapeObjectType | $TypeMasks::TurretObjectType | $TypeMasks::InteriorObjectType; 
    // search for objects within the beam's range that fit the masks above
    %scanTarg = ContainerRayCast(%muzPoint, %rangeEnd, %searchMasks, %obj);
-	// screen out interiors
+   // screen out interiors
    if(%scanTarg && !(%scanTarg.getType() & $TypeMasks::InteriorObjectType))
    {
       // a target in range was found
@@ -270,13 +270,13 @@ function RepairGunImage::onValidate(%this,%obj,%slot)
       if(%repTgt.getDamageLevel())
       {
          // yes, it's damaged
-			if(%repTgt != %obj.repairing)
-			{
-     			if(isObject(%obj.repairing))
-         		stopRepairing(%obj);
+         if(%repTgt != %obj.repairing)
+         {
+            if(isObject(%obj.repairing))
+               stopRepairing(%obj);
 
             %obj.repairing = %repTgt;
-			}
+         }
          // setting imageLoaded to true sends us to repair state (function onRepair)
          %obj.setImageLoaded(%slot, true);
       }
@@ -295,43 +295,43 @@ function RepairGunImage::onValidate(%this,%obj,%slot)
       }
    }
 
-	//AI hack - too many things influence the aiming, so I'm going to force the repair object for bots only
-	else if (%obj.client.isAIControlled() && isObject(%obj.client.repairObject))
-	{
-		%repTgt = %obj.client.repairObject;
-		%repPoint = %repTgt.getAIRepairPoint();
-		if (%repPoint $= "0 0 0")
-			%repPoint = %repTgt.getWorldBoxCenter();
-		%repTgtVector = VectorNormalize(VectorSub(%muzPoint, %repPoint));
-		%aimVector = VectorNormalize(VectorSub(%muzPoint, %rangeEnd));
+   //AI hack - too many things influence the aiming, so I'm going to force the repair object for bots only
+   else if (%obj.client.isAIControlled() && isObject(%obj.client.repairObject))
+   {
+      %repTgt = %obj.client.repairObject;
+      %repPoint = %repTgt.getAIRepairPoint();
+      if (%repPoint $= "0 0 0")
+         %repPoint = %repTgt.getWorldBoxCenter();
+      %repTgtVector = VectorNormalize(VectorSub(%muzPoint, %repPoint));
+      %aimVector = VectorNormalize(VectorSub(%muzPoint, %rangeEnd));
 
-		//if the dot product is very close (ie. we're aiming in the right direction)
-		if (VectorDot(%repTgtVector, %aimVector) > 0.85)
-		{
-			//do an LOS to make sure nothing is in the way...
-		   %scanTarg = ContainerRayCast(%muzPoint, %repPoint, %searchMasks, %obj);
-			if (firstWord(%scanTarg) == %repTgt)
-			{
-	         // yes, it's damaged
+      //if the dot product is very close (ie. we're aiming in the right direction)
+      if (VectorDot(%repTgtVector, %aimVector) > 0.85)
+      {
+         //do an LOS to make sure nothing is in the way...
+         %scanTarg = ContainerRayCast(%muzPoint, %repPoint, %searchMasks, %obj);
+         if (firstWord(%scanTarg) == %repTgt)
+         {
+            // yes, it's damaged
 
-     			if(isObject(%obj.repairing))
-         		stopRepairing(%obj);
+            if(isObject(%obj.repairing))
+               stopRepairing(%obj);
 
-	         %obj.repairing = %repTgt;
-	         // setting imageLoaded to true sends us to repair state (function onRepair)
-	         %obj.setImageLoaded(%slot, true);
-			}
-		}
-	}
+            %obj.repairing = %repTgt;
+            // setting imageLoaded to true sends us to repair state (function onRepair)
+            %obj.setImageLoaded(%slot, true);
+         }
+      }
+   }
    else if(%obj.getDamageLevel())
    {
       // there is no target in range, but the player is damaged
       // check to see if we were repairing something before -- if so, stop repairing old target
       if(%obj.repairing != 0)
          if(%obj.repairing != %obj)
-				stopRepairing(%obj);
-     	if(isObject(%obj.repairing))
-      	stopRepairing(%obj);
+            stopRepairing(%obj);
+      if(isObject(%obj.repairing))
+         stopRepairing(%obj);
       
       %obj.repairing = %obj;
       // quick, to onRepair!
@@ -346,32 +346,32 @@ function RepairGunImage::onValidate(%this,%obj,%slot)
          messageClient(%obj.client, 'MsgRepairPackNoTarget', '\c2No target to repair.');
          %obj.errMsgSent = true;
       }
-		stopRepairing(%obj);
+      stopRepairing(%obj);
    }
 }
 
 function RepairGunImage::onRepair(%this,%obj,%slot)
 {
-	// this = repairgunimage datablock
-	// obj = player wielding the repair gun
-	// slot = weapon slot
+   // this = repairgunimage datablock
+   // obj = player wielding the repair gun
+   // slot = weapon slot
 
-	if(%obj.getEnergyLevel() <= %this.cutOffEnergy)
-	{
-		stopRepairing(%obj);
-		return;
-	}
+   if(%obj.getEnergyLevel() <= %this.cutOffEnergy)
+   {
+      stopRepairing(%obj);
+      return;
+   }
    // reset the flag that indicates an error message has been sent
    %obj.errMsgSent = false;
    %target = %obj.repairing;
    if(!%target)
    {
       // no target -- whoops! never mind
-		stopRepairing(%obj);
+      stopRepairing(%obj);
    }
    else
    {
-	   %target.repairedBy = %obj.client;  //keep track of who last repaired this item
+      %target.repairedBy = %obj.client;  //keep track of who last repaired this item
       if(%obj.repairing == %obj)
       {
          // player is self-repairing
@@ -405,22 +405,31 @@ function RepairGunImage::onRepair(%this,%obj,%slot)
          %searchMasks = $TypeMasks::PlayerObjectType   | $TypeMasks::VehicleObjectType     | 
                         $TypeMasks::StaticShapeObjectType | $TypeMasks::TurretObjectType;
 
- 			//AI hack to help "fudge" the repairing stuff...
- 			if (%obj.client.isAIControlled() && isObject(%obj.client.repairObject) && %obj.client.repairObject == %obj.repairing)
- 			{
- 				%repTgt = %obj.client.repairObject;
-				%repPoint = %repTgt.getAIRepairPoint();
-				if (%repPoint $= "0 0 0")
-					%repPoint = %repTgt.getWorldBoxCenter();
- 				%repTgtVector = VectorNormalize(VectorSub(%muzPoint, %repPoint));
- 				%aimVector = VectorNormalize(VectorSub(%muzPoint, %rangeEnd));
+         //AI hack to help "fudge" the repairing stuff...
+         if (%obj.client.isAIControlled() && isObject(%obj.client.repairObject) && %obj.client.repairObject == %obj.repairing)
+         {
+            %repTgt = %obj.client.repairObject;
+            %repPoint = %repTgt.getAIRepairPoint();
+            if (%repPoint $= "0 0 0")
+               %repPoint = %repTgt.getWorldBoxCenter();
+            %repTgtVector = VectorNormalize(VectorSub(%muzPoint, %repPoint));
+            %aimVector = VectorNormalize(VectorSub(%muzPoint, %rangeEnd));
  
- 				//if the dot product is very close (ie. we're aiming in the right direction)
- 				if (VectorDot(%repTgtVector, %aimVector) > 0.85)
- 				   %scanTarg = ContainerRayCast(%muzPoint, %repPoint, %searchMasks, %obj);
- 			}
- 			else
-	         %scanTarg = ContainerRayCast(%muzPoint, %rangeEnd, %searchMasks, %obj);
+            //if the dot product is very close (ie. we're aiming in the right direction)
+            if (VectorDot(%repTgtVector, %aimVector) > 0.85)
+               %scanTarg = ContainerRayCast(%muzPoint, %repPoint, %searchMasks, %obj);
+         }
+         else
+            %scanTarg = ContainerRayCast(%muzPoint, %rangeEnd, %searchMasks, %obj);
+
+         if (%scanTarg)
+         {
+            %pos = getWords(%scanTarg, 1, 3);
+            %obstructMask = $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType;
+            %obstruction = ContainerRayCast(%muzPoint, %pos, %obstructMask, %obj);
+            if (%obstruction)
+               %scanTarg = "0";
+         }
 
          if(%scanTarg)
          {
@@ -433,9 +442,9 @@ function RepairGunImage::onRepair(%this,%obj,%slot)
                {
                   // the target is not the same as the one we were just repairing
                   // stop repairing old target, start repairing new target
-						stopRepairing(%obj);
-                 	if(isObject(%obj.repairing))
-                    	stopRepairing(%obj);
+                  stopRepairing(%obj);
+                  if(isObject(%obj.repairing))
+                     stopRepairing(%obj);
  
                   %obj.repairing = %repTgt;
                   // extract the name of what player is repairing based on what it is
@@ -470,12 +479,12 @@ function RepairGunImage::onRepair(%this,%obj,%slot)
             }
             else
             {
-					%rateOfRepair = %this.repairFactorObject;
+               %rateOfRepair = %this.repairFactorObject;
                if(%repTgt.getClassName() $= Player)
-					{
+               {
                   %tgtName = getTaggedString(%repTgt.client.name);
-						%rateOfRepair = %this.repairFactorPlayer;
-					}
+                  %rateOfRepair = %this.repairFactorPlayer;
+               }
                else if(%repTgt.getGameName() !$= "")
                   %tgtName = %repTgt.getGameName();
                else
@@ -488,8 +497,8 @@ function RepairGunImage::onRepair(%this,%obj,%slot)
                else
                {
                   // same target, but not damaged -- we must be done
-						messageClient(%obj.client, 'MsgRepairPackDone', '\c2Repairs completed.');
-						Game.objectRepaired(%repTgt, %tgtName);
+                  messageClient(%obj.client, 'MsgRepairPackDone', '\c2Repairs completed.');
+                  Game.objectRepaired(%repTgt, %tgtName);
                }
                %obj.errMsgSent = true;
                stopRepairing(%obj);
@@ -507,7 +516,7 @@ function RepairGunImage::onRepair(%this,%obj,%slot)
 
 function RepairGunImage::onDeactivate(%this,%obj,%slot)
 {
-	stopRepairing(%obj);
+   stopRepairing(%obj);
 }
 
 function stopRepairing(%player)
@@ -536,10 +545,10 @@ function stopRepairing(%player)
          %player.repairProjectile = 0;
       }
    }
-	%player.repairing = 0;
-	%player.repairingRate = 0;
-	%player.setImageTrigger($WeaponSlot, false);
-	%player.setImageLoaded($WeaponSlot, false);
+   %player.repairing = 0;
+   %player.repairingRate = 0;
+   %player.setImageTrigger($WeaponSlot, false);
+   %player.setImageLoaded($WeaponSlot, false);
 }
 
 function startRepairing(%player, %self)
@@ -552,7 +561,7 @@ function startRepairing(%player, %self)
       // one repair, hold the projectile
       %player.setRepairRate(%player.getRepairRate() + RepairGunImage.repairFactorPlayer);
       %player.selfRepairing = true;
-		%player.repairingRate = RepairGunImage.repairFactorPlayer;
+      %player.repairingRate = RepairGunImage.repairFactorPlayer;
    }
    else
    {
@@ -561,21 +570,21 @@ function startRepairing(%player, %self)
       //else
       //   %player.repairing.beingRepaired++;
 
-		//AI hack...
-		if (%player.client.isAIControlled() && %player.client.repairObject == %player.repairing)
-		{
+      //AI hack...
+      if (%player.client.isAIControlled() && %player.client.repairObject == %player.repairing)
+      {
          %initialPosition  = %player.getMuzzlePoint($WeaponSlot);
          %initialDirection = VectorSub(%initialPosition, %player.repairing.getWorldBoxCenter());
-		}
-		else
-		{
+      }
+      else
+      {
          %initialDirection = %player.getMuzzleVector($WeaponSlot);
          %initialPosition  = %player.getMuzzlePoint($WeaponSlot);
-		}
-		if(%player.repairing.getClassName() $= Player)
-			%repRate = RepairGunImage.repairFactorPlayer;
-		else
-			%repRate = RepairGunImage.repairFactorObject;
+      }
+      if(%player.repairing.getClassName() $= Player)
+         %repRate = RepairGunImage.repairFactorPlayer;
+      else
+         %repRate = RepairGunImage.repairFactorObject;
       %player.repairing.setRepairRate(%player.repairing.getRepairRate() + %repRate);
  
       %player.repairingRate = %repRate;

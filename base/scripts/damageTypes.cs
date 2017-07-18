@@ -379,7 +379,7 @@ datablock SimDataBlock(TankDamageProfile)
    shieldDamageScale[$DamageType::SatchelCharge] = 2.0;
    shieldDamageScale[$DamageType::Default] = 1.0;
    shieldDamageScale[$DamageType::Impact] = 0.75;
-   shieldDamageScale[$DamageType::Ground] = 1.0;
+   shieldDamageScale[$DamageType::Ground] = 0.75;
    shieldDamageScale[$DamageType::Explosion] = 2.0;
    shieldDamageScale[$DamageType::Lightning] = 10.0;
 
@@ -408,7 +408,7 @@ datablock SimDataBlock(TankDamageProfile)
    damageScale[$DamageType::SatchelCharge] = 2.0;
    damageScale[$DamageType::Default] = 1.0;
    damageScale[$DamageType::Impact] = 0.75;
-   damageScale[$DamageType::Ground] = 1.0;
+   damageScale[$DamageType::Ground] = 0.75;
    damageScale[$DamageType::Explosion] = 1.0;
    damageScale[$DamageType::Lightning]	= 10.0;
 };
@@ -441,7 +441,7 @@ datablock SimDataBlock(MPBDamageProfile)
    shieldDamageScale[$DamageType::SatchelCharge] = 2.0;
    shieldDamageScale[$DamageType::Default] = 1.0;
    shieldDamageScale[$DamageType::Impact] = 0.5;
-   shieldDamageScale[$DamageType::Ground] = 1.0;
+   shieldDamageScale[$DamageType::Ground] = 0.5;
    shieldDamageScale[$DamageType::Explosion] = 2.0;
    shieldDamageScale[$DamageType::Lightning] = 10.0;
 
@@ -470,7 +470,7 @@ datablock SimDataBlock(MPBDamageProfile)
    damageScale[$DamageType::SatchelCharge] = 2.0;
    damageScale[$DamageType::Default] = 1.0;
    damageScale[$DamageType::Impact] = 0.5;
-   damageScale[$DamageType::Ground] = 1.0;
+   damageScale[$DamageType::Ground] = 0.5;
    damageScale[$DamageType::Explosion] = 1.0;
    damageScale[$DamageType::Lightning]	= 10.0;
 };

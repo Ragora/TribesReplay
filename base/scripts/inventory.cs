@@ -128,7 +128,10 @@ function ShapeBase::throw(%this,%data)
    if (%this.inv[%data.getName()] > 0) {
       // Throw item first...
       %this.throwItem(%data);
-      %this.decInventory(%data,1);
+      if($AmmoIncrement[%data.getName()] !$= "")
+         %this.decInventory(%data,$AmmoIncrement[%data.getName()]);
+      else
+         %this.decInventory(%data,1);
       return true;
    }
    return false;

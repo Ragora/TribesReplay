@@ -107,7 +107,9 @@ function setUpDifficultySettings(%skill)
 	if(%skill < 2)
 	{
 		nameToId(DownStairsSentry).hide(true);
+      freeTarget(nameToId(DownStairsSentry).getTarget());
 		nameToId(UpstairsTurret).hide(true);
+      freeTarget(nameToId(UpstairsTurret).getTarget());
 	}
 	if(%skill == 3)
 		nameToId(SatchelChargePack).hide(true);

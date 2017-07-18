@@ -620,7 +620,7 @@ datablock SeekerProjectileData(ShoulderMissile)
    indirectDamage      = 0.8;
    damageRadius        = 8.0;
    radiusDamageType    = $DamageType::Missile;
-   kickBackStrength    = 3000;
+   kickBackStrength    = 2000;
 
    explosion           = "MissileExplosion";
    splash              = MissileSplash;

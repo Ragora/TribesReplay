@@ -184,7 +184,7 @@ datablock ShockLanceProjectileData(BasicShocker)
    sound               = "";
 
    zapDuration = 1.0;
-   impulse = 2500;
+   impulse = 1800;
    boltLength = 14.0;
    extension = 14.0;            // script variable indicating distance you can shock people from
    lightningFreq = 25.0;

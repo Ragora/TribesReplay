@@ -120,7 +120,7 @@ datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
    gyroDamping = 0.3;
    stabilizerForce = 10;
    minDrag = 10;
-   softImpactSpeed = 20;       // Play SoftImpact Sound
+   softImpactSpeed = 15;       // Play SoftImpact Sound
    hardImpactSpeed = 25;      // Play HardImpact Sound
 
    // Ground Impact Damage (uses DamageType::Ground)
@@ -132,8 +132,8 @@ datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
    collDamageMultiplier   = 0.040;
 
    // Engine
-   engineTorque = 4.5 * 745;
-   breakTorque = 4.5 * 745;
+   engineTorque = 7.0 * 745;
+   breakTorque = 7.0 * 745;
    maxWheelSpeed = 20;
 
    // Springs
@@ -144,7 +144,7 @@ datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
 
    // Tires
    tireRadius = 1.6;
-   tireFriction = 2.0;
+   tireFriction = 10.0;
    tireRestitution = 0.5;
    tireLateralForce = 3000;
    tireLateralDamping = 400;

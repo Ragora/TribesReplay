@@ -233,25 +233,6 @@ function CnHGame::equip(%game, %player)
 }                  
 
 //--------------- Scoring functions -----------------
-//NOTE - if we revert to this method of scoring, the function DefaultGame::awardScoreSuicide() no longer increments %client.deaths
-// function CnHGame::recalcScore(%game, %cl)
-// {
-// 	//%cl.offenseScore =	((%cl.kills * %game.SCORE_PER_KILL) * (%cl.kills * %game.SCORE_PER_KILL)) / ((%cl.kills * %game.SCORE_PER_KILL) + (%cl.deaths * %game.SCORE_PER_DEATH));  //currently 1 pt per
-// 	%cl.offenseScore =	%cl.kills * %game.SCORE_PER_KILL; // 1
-// 	%cl.offenseScore +=  %cl.deaths * %game.SCORE_PER_DEATH;  // -1
-// 	%cl.offenseScore +=	%cl.teamKills * %game.SCORE_PER_TEAMKILL; // -1
-// 	%cl.offenseScore += %cl.flipFlopsCapped * %game.SCORE_PER_PLYR_FLIPFLOP_CAP;
-// 
-// 	
-// 	%cl.defenseScore =	%cl.turretKills * %game.SCORE_PER_TURRET_KILL;  // 1
-// 	%cl.defenseScore += %cl.flipFlopDefends *  %game.SCORE_PER_FLIPFLOP_DEFEND;
-// 
-// 	%cl.score =	%cl.offenseScore + %cl.defenseScore;
-// 	//track switches held (not touched), switches defended, kills, deaths, suicides, tks
-// 	
-// 	%game.recalcTeamRanks(%cl);
-// }
-
 function CnHGame::recalcScore(%game, %cl)
 {
 	%killValue = %cl.kills * %game.SCORE_PER_KILL;
@@ -263,7 +244,7 @@ function CnHGame::recalcScore(%game, %cl)
 		%killPoints = (%killValue * %killValue) / (%killValue - %deathValue);
 
 	%cl.offenseScore = %killPoints;
-	%cl.offenseScore +=	%cl.suicides * %game.SCORE_PER_SUICIDE + //-1
+	%cl.offenseScore +=	%cl.suicides * %game.SCORE_PER_SUICIDE; //-1
 	%cl.offenseScore +=	%cl.teamKills * %game.SCORE_PER_TEAMKILL; // -1
 	%cl.offenseScore += %cl.flipFlopsCapped * %game.SCORE_PER_PLYR_FLIPFLOP_CAP;
 	
@@ -287,8 +268,10 @@ function CnHGame::updateKillScores(%game, %clVictim, %clKiller, %damageType, %im
 	  %game.awardScoreKill(%clKiller);
 	  %game.awardScoreDeath(%clVictim);
 
-	  if (%game.testPlayerFFDefend(%clVictim, %clKiller))
-	     %game.awardScorePlayerFFDefend(%clVictim, %clKiller);	  		
+      //see if we were defending a flip flop
+      %flipflop = %game.testPlayerFFDefend(%clVictim, %clKiller);
+      if (isObject(%flipflop))
+	     %game.awardScorePlayerFFDefend(%clKiller, %flipflop);	  		
    }
    else
    {  		
@@ -306,25 +289,33 @@ function CnHGame::updateKillScores(%game, %clVictim, %clKiller, %damageType, %im
 
 function CnHGame::testPlayerFFDefend(%game, %victimID, %killerID)
 {
-   InitContainerRadiusSearch(%victimID.plyrPointOfDeath, %game.RADIUS_FLIPFLOP_DEFENSE, $TypeMasks::ItemObjectType);
-   %objID = containerSearchNext();   
-   while(%objID != 0) 
+   if (!isObject(%victimId) || !isObject(%killerId) || %killerId.team <= 0)
+      return -1;
+
+   //loop through the flipflops looking for one within range that belongs to the killer...
+   %ffGroup = nameToID("MissionCleanup/FlipFlops");
+   for (%i = 0; %i < %ffGroup.getCount(); %i++)
    {
-	  %objType = %objID.getDataBlock().getName();
-	  //echo("tFD  found " @ %objType @ " belonging to team " @ %objID.team);
-	  if ((%objType $= "FlipFlop") && (%objID.team == %killerID.team)) 
-	   	 return true;  //found a killer's team flipflop near the point of victim's death
-	  else
-	     %objID = containerSearchNext();	  
+      %ffObj = %ffGroup.getObject(%i);
+      if (VectorDist(%ffObj.position, %victimID.plyrPointOfDeath) < %game.RADIUS_FLIPFLOP_DEFENSE)
+      {
+         if (%ffObj.team == %killerID.team)
+            return %ffObj;
+      }
    }
-   return false; //didn't find a qualifying flipflop within required radius of victims point of death	
+
+   //none were found
+   return -1;
 }
 
-function CnHGame::awardScorePlayerFFDefend(%game, %cl, %this)
+function CnHGame::awardScorePlayerFFDefend(%game, %cl, %flipflop)
 {
 	%cl.flipFlopDefends++;
-	//if (%game.SCORE_PER_FLIPFLOP_DEFEND != 0)
-      //messageClient(%cl, $scoreFliDefMsg, 'You receive a %1 point bonus for defending the %2.', %game.SCORE_PER_FLIPFLOP_DEFEND, %game.cleanWord(%this.name));	
+   if (%game.SCORE_PER_FLIPFLOP_DEFEND != 0)
+   {
+      messageClient(%cl, 'msgFFDef', '\c0You received a %1 point bonus for defending %2.', %game.SCORE_PER_FLIPFLOP_DEFEND, %game.cleanWord(%flipflop.name));	
+      messageTeamExcept(%cl, 'msgFFDef', '\c0Teammate %1 received a %2 point bonus for defending %3', %cl.name, %game.SCORE_PER_FLIPFLOP_DEFEND, %game.cleanWord(%flipflop.name));
+   }      
 	%game.recalcScore(%cl);
 }
 
@@ -334,6 +325,11 @@ function CnHGame::awardScorePlayerFFCap(%game, %cl, %this)
 		return;
 
 	%cl.flipFlopsCapped++;
+   if (%game.SCORE_PER_PLYR_FLIPFLOP_CAP != 0)
+   {
+      messageClient(%cl, 'msgFFDef', '\c0You received a %1 point bonus for holding the %2.', %game.SCORE_PER_PLYR_FLIPFLOP_CAP, %game.cleanWord(%this.name));	
+      messageTeamExcept(%cl, 'msgFFDef', '\c0Teammate %1 received a %2 point bonus for holding the %3', %cl.name, %game.SCORE_PER_PLYR_FLIPFLOP_CAP, %game.cleanWord(%this.name));
+   }      
 	%game.recalcScore(%cl);
 } 
 
