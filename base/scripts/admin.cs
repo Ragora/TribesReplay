@@ -6,6 +6,8 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
 	   %gender = (%client.sex $= "Male" ? 'he' : 'she');
       if ( Game.scheduleVote $= "" ) 
       {
+         %clientsVoting = 0;
+
 			//send a message to everyone about the vote...
          if (%playerVote)
 	      {   
@@ -36,14 +38,13 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
                }
                
                Game.kickClient = %arg1;
-               %clientsVoting = 0;
                if(%teamSpecific)
                {   
-                  for ( %clientIndex = 0; %clientIndex < ClientGroup.getCount(); %clientIndex++ ) 
+                  for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ ) 
                   {
-                     %cl = ClientGroup.getObject( %clientIndex );
+                     %cl = ClientGroup.getObject( %idx );
             
-                     if(%cl.team == %client.team)
+                     if (%cl.team == %client.team && !%cl.isAIControlled())
                      {   
                         messageClient( %cl, 'VoteStarted', '\c2%1 initiated a vote to %2 %3.', %client.name, %actionMsg, %arg1.name); 
                         %clientsVoting++;
@@ -51,15 +52,43 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
                   }
                }
                else
-                  messageAll( 'VoteStarted', '\c2%1 initiated a vote to %2 %3.', %client.name, %actionMsg, %arg1.name); 
+               {
+                  for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ )
+                  {
+                     %cl = ClientGroup.getObject( %idx );
+                     if ( !%cl.isAIControlled() )
+                     {
+                        messageClient( %cl, 'VoteStarted', '\c2%1 initiated a vote to %2 %3.', %client.name, %actionMsg, %arg1.name); 
+                        %clientsVoting++;
+                     }
+                  }
+               }
             }
             else
             {
-               messageAll( 'VoteStarted', '\c2%1 initiated a vote to %2 %3.', %client.name, %actionMsg, %arg1.name); 
+               for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ )
+               {
+                  %cl = ClientGroup.getObject( %idx );
+                  if ( !%cl.isAIControlled() )
+                  {
+                     messageClient( %cl, 'VoteStarted', '\c2%1 initiated a vote to %2 %3.', %client.name, %actionMsg, %arg1.name); 
+                     %clientsVoting++;
+                  }
+               }
             }   
          }
          else if ( %typeName $= "VoteChangeMission" )
-            messageAll( 'VoteStarted', '\c2%1 initiated a vote to %2 %3 (%4).', %client.name, %actionMsg, %arg1, %arg2 );
+         {
+            for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ )
+            {
+               %cl = ClientGroup.getObject( %idx );
+               if ( !%cl.isAIControlled() )
+               {
+                  messageClient( %cl, 'VoteStarted', '\c2%1 initiated a vote to %2 %3 (%4).', %client.name, %actionMsg, %arg1, %arg2 );
+                  %clientsVoting++;
+               }
+            }
+         }
          else if (%arg1 !$= 0)
          {
 				if (%arg2 !$= 0)
@@ -68,7 +97,17 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
                {   
                   %admin = getAdmin();
                   if(%admin > 0)
-                     messageAll( 'VoteStarted', '\c2%1 initiated a vote to %2 Tournament Mode (%3).', %client.name, %actionMsg, %arg1); 
+                  {
+                     for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ )
+                     {
+                        %cl = ClientGroup.getObject( %idx );
+                        if ( !%cl.isAIControlled() )
+                        {
+                           messageClient( %cl, 'VoteStarted', '\c2%1 initiated a vote to %2 Tournament Mode (%3).', %client.name, %actionMsg, %arg1); 
+                           %clientsVoting++;
+                        }
+                     }
+                  }
                   else
                   {   
                      messageClient( %client, 'clientMsg', 'There must be a server admin to play in Tournament Mode.');
@@ -76,14 +115,43 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
                   }
                }
                else
-                  messageAll( 'VoteStarted', '\c2%1 initiated a vote to %2 %3 %4.', %client.name, %actionMsg, %arg1, %arg2); 
-				
+               {
+                  for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ )
+                  {
+                     %cl = ClientGroup.getObject( %idx );
+                     if ( !%cl.isAIControlled() )
+                     {
+                        messageClient( %cl, 'VoteStarted', '\c2%1 initiated a vote to %2 %3 %4.', %client.name, %actionMsg, %arg1, %arg2); 
+                        %clientsVoting++;
+                     }
+                  }
+				   }
             }
             else
-		         messageAll( 'VoteStarted', '\c2%1 initiated a vote to %2 %3.', %client.name, %actionMsg, %arg1);
+            {
+               for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ )
+               {
+                  %cl = ClientGroup.getObject( %idx );
+                  if ( !%cl.isAIControlled() )
+                  {
+		               messageClient( %cl, 'VoteStarted', '\c2%1 initiated a vote to %2 %3.', %client.name, %actionMsg, %arg1);
+                     %clientsVoting++;
+                  }
+               }
+            }
          }
 			else
-	         messageAll( 'VoteStarted', '\c2%1 initiated a vote to %2.', %client.name, %actionMsg); 
+         {
+            for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ )
+            {
+               %cl = ClientGroup.getObject( %idx );
+               if ( !%cl.isAIControlled() )
+               {
+	               messageClient( %cl, 'VoteStarted', '\c2%1 initiated a vote to %2.', %client.name, %actionMsg); 
+                  %clientsVoting++;
+               }
+            }
+         }
 
          // open the vote hud for all clients that will participate in this vote
          if(%teamSpecific)
@@ -92,7 +160,7 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
             {
                %cl = ClientGroup.getObject( %clientIndex );
       
-               if(%cl.team == %client.team)
+               if(%cl.team == %client.team && !%cl.isAIControlled())
                   messageClient(%cl, 'openVoteHud', "", %clientsVoting, ($Host::VotePassPercent / 100));    
             }
          }
@@ -101,7 +169,8 @@ function serverCmdStartNewVote(%client, %typeName, %actionMsg, %arg1, %arg2, %ar
             for ( %clientIndex = 0; %clientIndex < ClientGroup.getCount(); %clientIndex++ ) 
             {
                %cl = ClientGroup.getObject( %clientIndex );
-               messageClient(%cl, 'openVoteHud', "", $HostGamePlayerCount, ($Host::VotePassPercent / 100));    
+               if ( !%cl.isAIControlled() )
+                  messageClient(%cl, 'openVoteHud', "", %clientsVoting, ($Host::VotePassPercent / 100));    
             }
          }
          

@@ -5,13 +5,18 @@ if ( $platform $= "linux" ) {
 } else {
    $pref::Audio::drivers = "Miles";
 }
-$pref::Audio::frequency = 22100;
+$pref::Audio::frequency = 22050;
 $pref::Audio::sampleBits = 16;
 $pref::Audio::channels = 2;
 $pref::Audio::enableVoiceCapture = 1;
 $pref::Audio::voiceChannels = 1;
-$pref::Audio::encodingLevel = 0;             
-$pref::Audio::decodingMask = 1;
+if ( $platform $= "linux" ) {
+   $pref::Audio::encodingLevel = 3;             
+   $pref::Audio::decodingMask = 15;
+} else {
+   $pref::Audio::encodingLevel = 0;             
+   $pref::Audio::decodingMask = 1;
+}
 $pref::Audio::forceMaxDistanceUpdate = 0;
 $pref::Audio::environmentEnabled = 0;
 $pref::Audio::musicEnabled = 1;

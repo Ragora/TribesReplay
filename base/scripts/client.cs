@@ -224,8 +224,6 @@ function PlayGui::onWake(%this)
    // hack city - these controls are floating around and need to be clamped
    schedule(0, 0, "refreshCenterTextCtrl");
    schedule(0, 0, "refreshBottomTextCtrl");
-   
-   CursorOff();
 }
 
 function refreshBottomTextCtrl()
@@ -251,8 +249,6 @@ function PlayGui::onSleep(%this)
    if ( isObject( observerMap ) )
       observerMap.pop();
    //flyingCameraMove.pop();
-
-   CursorOn();
 }
 
 function onConnectRequestRejected( %msg )
@@ -1652,7 +1648,8 @@ function clientCmdMissionStartPhase2(%seq)
    // clean some stuff up.
    MessageHud.close();
    purgeResources();
-   cls();
+   if (!$pref::NoClearConsole)
+      cls();
    commandToServer('MissionStartPhase2Done', %seq);
 }
 

@@ -236,6 +236,10 @@ function DisconnectedCleanup()
    clearTextureHolds();
    purgeResources();
 
+   // Restart the email check:
+   if ( !EmailGui.checkingEmail && EmailGui.checkSchedule $= "" )
+      CheckEmail( true );
+
 	IRCClient::onLeaveGame();
 }
 
@@ -884,7 +888,7 @@ function serverSetClientTeamState( %client )
             }
             else  // let this player join the team he was on last game
             {
-               if(Game.numTeams > 1)
+               if(Game.numTeams > 1 && %client.lastTeam <= Game.numTeams )
                {   
                   Game.clientJoinTeam( %client, %client.lastTeam, false );
                }
@@ -1444,12 +1448,15 @@ function dumpGameString()
 
 function isOnAdminList(%client)
 {
-   if( !%totalRecords = getRecordCount( $Host::adminList ) )
+   if( !%totalRecords = getRecordCount( $Host::AdminList ) )
+   {   
       return false;
+   }
    
    for(%i = 0; %i < %totalRecords; %i++)
    {
-      %record = getField(getRecord( $Host::adminList, %i ), 0 );
+      %record = getField( getRecord( $Host::AdminList, 0 ), %i);
+      echo( "record: " @ %record @ "guid: " @ %client.guid );
       if(%record == %client.guid)
          return true;
    }
@@ -1460,11 +1467,14 @@ function isOnAdminList(%client)
 function isOnSuperAdminList(%client)
 {
    if( !%totalRecords = getRecordCount( $Host::superAdminList ) )
+   {   
       return false;
+   }
    
    for(%i = 0; %i < %totalRecords; %i++)
    {
-      %record = getField( getRecord( $Host::superAdminList, %i ), 0);
+      %record = getField( getRecord( $Host::superAdminList, 0 ), %i);
+      echo( "record: " @ %record @ "guid: " @ %client.guid );
       if(%record == %client.guid)
          return true;
    }
@@ -1472,8 +1482,11 @@ function isOnSuperAdminList(%client)
    return false;
 }
 
-function addToAdminList( %client )
+function ServerCmdAddToAdminList( %admin, %client )
 {
+   if( !%admin.isSuperAdmin )
+      return;
+   
    %count = getRecordCount( $Host::AdminList );
 
    for ( %i = 0; %i < %count; %i++ )
@@ -1483,11 +1496,17 @@ function addToAdminList( %client )
          return;  // They're already there!
    }
 
-   $Host::AdminList = $Host::AdminList NL %client.guid;
+   if( %count == 0 )
+      $Host::AdminList = %client.guid;
+   else
+      $Host::AdminList = $Host::AdminList TAB %client.guid;
 }
 
-function addToSuperAdminList( %client )
+function ServerCmdAddToSuperAdminList( %admin, %client )
 {
+   if( !%admin.isSuperAdmin )
+      return;
+
    %count = getRecordCount( $Host::SuperAdminList );
 
    for ( %i = 0; %i < %count; %i++ )
@@ -1497,7 +1516,10 @@ function addToSuperAdminList( %client )
          return;  // They're already there!
    }
 
-   $Host::SuperAdminList = $Host::SuperAdminList NL %client.guid;
+   if( %count == 0 )
+      $Host::SuperAdminList = %client.guid;
+   else
+      $Host::SuperAdminList = $Host::SuperAdminList TAB %client.guid;
 }
 
 function resetTournamentPlayers()

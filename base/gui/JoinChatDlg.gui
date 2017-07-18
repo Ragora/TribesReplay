@@ -7,62 +7,112 @@ new GuiControl(JoinChatDlg) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "0";
+	bypassHideCursor = "0";
 	helpTag = "0";
 
 	new ShellPaneCtrl(JoinChatPane) {
 		profile = "ShellDlgPaneProfile";
 		horizSizing = "center";
 		vertSizing = "center";
-		position = "117 47";
+		position = "120 60";
 		extent = "400 360";
 		minExtent = "48 92";
 		visible = "1";
+		hideCursor = "0";
+		bypassHideCursor = "0";
 		helpTag = "0";
 		text = "CHOOSE CHAT CHANNEL";
+		maxLength = "255";
 		noTitleBar = "0";
 
-		new ShellScrollCtrl() {
-			profile = "NewScrollCtrlProfile";
-			horizSizing = "center";
-			vertSizing = "height";
-			position = "91 36";
-			extent = "218 232";
-			minExtent = "24 52";
+		new ShellFancyArrayScrollCtrl() {
+			profile = "GuiDefaultProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "48 39";
+			extent = "304 227";
+			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
-			willFirstRespond = "1";
-			hScrollBar = "alwaysOff";
-			vScrollBar = "alwaysOn";
-			constantThumbHeight = "0";
-			defaultLineHeight = "15";
-			childMargin = "0 3";
-			fieldBase = "gui/shll_field";
+			fixedHorizontal = "1";
+			vertSpacerBitmap = "gui/shll_vertspacer";
+			horzSpacerBitmap = "gui/shll_horzspacer";
 
-			new GuiScrollContentCtrl() {
-				profile = "GuiDefaultProfile";
+			new VirtualScrollCtrl() {
+				profile = "NewScrollCtrlProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "4 7";
-				extent = "194 218";
+				position = "0 16";
+				extent = "304 211";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
+				willFirstRespond = "0";
+				hScrollBar = "alwaysOff";
+				vScrollBar = "alwaysOn";
+				constantThumbHeight = "0";
+				defaultLineHeight = "15";
+				childMargin = "0 0";
 
-				new ShellTextList(JoinChatList) {
-					profile = "ShellTextArrayProfile";
+				new VirtualScrollContentCtrl() {
+					profile = "GuiDefaultProfile";
 					horizSizing = "right";
 					vertSizing = "bottom";
-					position = "0 0";
-					extent = "194 8";
+					position = "4 4";
+					extent = "280 203";
 					minExtent = "8 8";
 					visible = "1";
+					hideCursor = "0";
+					bypassHideCursor = "0";
 					helpTag = "0";
-					enumerate = "1";
-					resizeCell = "1";
-					columns = "0";
-					fitParentWidth = "1";
-					clipColumnText = "0";
+
+					new GuiControl() {
+						profile = "GuiDefaultProfile";
+						horizSizing = "right";
+						vertSizing = "bottom";
+						position = "0 0";
+						extent = "288 9616";
+						minExtent = "8 8";
+						visible = "1";
+						hideCursor = "0";
+						bypassHideCursor = "0";
+						helpTag = "0";
+					};
 				};
+			};
+			new ShellFancyTextList(JoinChatList) {
+				profile = "ShellServerBrowserProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "0 0";
+				extent = "284 223";
+				minExtent = "8 20";
+				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				altCommand = "JoinChatDlg.join();";
+				helpTag = "0";
+				startScrollRegion = "0 0";
+				headerBitmap = "gui/server_tabs";
+				sortArrowBitmap = "gui/shll_sortarrow";
+				fieldBase = "gui/shll_field";
+				barBase = "gui/shll_bar";
+				glowOffset = "4";
+				rowHeight = "19";
+				headerFontSize = "0";
+				headerFontColor = "8 19 6 255";
+				headerFontColorHL = "25 68 56 255";
+				separatorColor = "192 192 192 255";
+				drawSeparators = "0";
+				headerSort = "1";
+				allowReposition = "0";
+				noSelect = "0";
+				allowColorChars = "0";
 			};
 		};
 		new ShellBitmapButton() {
@@ -73,8 +123,10 @@ new GuiControl(JoinChatDlg) {
 			extent = "128 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "Canvas.popDialog(JoinChatDlg); LaunchTabView.viewTab(\"CHAT\",ChatGui,0);";
-         accelerator = "escape";
+			accelerator = "escape";
 			helpTag = "0";
 			text = "CANCEL";
 			simpleStyle = "0";
@@ -83,10 +135,12 @@ new GuiControl(JoinChatDlg) {
 			profile = "GuiDefaultProfile";
 			horizSizing = "center";
 			vertSizing = "top";
-			position = "86 269";
-			extent = "228 36";
+			position = "67 269";
+			extent = "272 36";
 			minExtent = "8 8";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			helpTag = "0";
 
 			new ShellTextEditCtrl(JoinChatName) {
@@ -94,13 +148,19 @@ new GuiControl(JoinChatDlg) {
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "48 0";
-				extent = "180 38";
+				extent = "223 38";
 				minExtent = "32 38";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
+				command = "JoinChatName.onCharInput();";
+				altCommand = "JoinChatDlg.join();";
 				helpTag = "0";
+				maxLength = "24";
 				historySize = "0";
-				maxLength = "255";
 				password = "0";
+				tabComplete = "0";
+				deniedSound = "InputDeniedSound";
 				glowOffset = "9 9";
 			};
 			new GuiTextCtrl() {
@@ -111,8 +171,11 @@ new GuiControl(JoinChatDlg) {
 				extent = "44 22";
 				minExtent = "8 8";
 				visible = "1";
+				hideCursor = "0";
+				bypassHideCursor = "0";
 				helpTag = "0";
 				text = "Channel:";
+				maxLength = "255";
 			};
 		};
 		new ShellBitmapButton() {
@@ -123,6 +186,8 @@ new GuiControl(JoinChatDlg) {
 			extent = "128 38";
 			minExtent = "32 38";
 			visible = "1";
+			hideCursor = "0";
+			bypassHideCursor = "0";
 			command = "JoinChatDlg.join();";
 			helpTag = "0";
 			text = "JOIN CHAT";

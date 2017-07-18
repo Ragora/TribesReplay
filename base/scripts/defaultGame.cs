@@ -1209,9 +1209,15 @@ function DefaultGame::assignClientTeam(%game, %client, %respawn )
    if ( %client.isAIControlled() )
    {
       if ( %leastTeam & 1 )
+      {
+         %client.skin = addTaggedString( "basebot" );
          setTargetSkin( %client.target, 'basebot' );
+      }
       else
+      {
+         %client.skin = addTaggedString( "basebbot" );
          setTargetSkin( %client.target, 'basebbot' );
+      }
    }
    else
       setTargetSkin( %client.target, $teamSkin[%client.team] );
@@ -1253,6 +1259,11 @@ function DefaultGame::clientJoinTeam( %game, %client, %team, %respawn )
    logEcho(%client.nameBase@" (cl "@%client@") joined team "@%client.team);
 }
 
+function DefaultGame::AIHasJoined(%game, %client)
+{
+   //defined to prevent console spam
+}
+
 function DefaultGame::AIChangeTeam(%game, %client, %newTeam)
 {
    //make sure we're trying to drop an AI
@@ -1283,6 +1294,19 @@ function DefaultGame::AIChangeTeam(%game, %client, %newTeam)
    %client.team = %newTeam;
    if (%newTeam < 0)
       Game.assignClientTeam(%client);
+   else
+   {
+      if ( %client.team & 1 )
+      {
+         %client.skin = addTaggedString( "basebot" );
+         setTargetSkin( %client.target, 'basebot' );
+      }
+      else
+      {
+         %client.skin = addTaggedString( "basebbot" );
+         setTargetSkin( %client.target, 'basebbot' );
+      }
+   }
    
    messageAllExcept( %client, -1, 'MsgClientJoinTeam', '\c1bot %1 has switched to team %2.', %client.name, $teamName[%client.team], %client, %client.team );
 }
@@ -2326,8 +2350,14 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
       %outrankTarget = !%targetClient.isAdmin;
       
    if( ! %targetClient.matchStartReady )
-      return;   
-
+      return;
+      
+   if( %client.isSuperAdmin )
+   {   
+      messageClient( %client, 'MsgPlayerPopupItem', "", %key, "addAdmin", "", 'Add to Server Admin List', 10);
+      messageClient( %client, 'MsgPlayerPopupItem', "", %key, "addSuperAdmin", "", 'Add to Server SuperAdmin List', 11);
+   }
+   
    //mute options
    if ( !%isTargetSelf )
    {
@@ -2355,9 +2385,6 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
       if ( !%isTargetSelf )
       {   
          messageClient( %client, 'MsgPlayerPopupItem', "", %key, "KickPlayer", "", 'Vote to Kick', 3 );
-
-         if ( !%isTargetBot )
-            messageClient( %client, 'MsgPlayerPopupItem', "", %key, "BanPlayer", "", 'Vote to Ban', 4 );
       }
    }
 
@@ -2373,7 +2400,8 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
 
          if ( !%isTargetBot )
          {
-            messageClient( %client, 'MsgPlayerPopupItem', "", %key, "BanPlayer", "", 'Ban', 4 );
+            if( %client.isSuperAdmin )
+               messageClient( %client, 'MsgPlayerPopupItem', "", %key, "BanPlayer", "", 'Ban', 4 );
 
             if ( !%isTargetObserver )
                messageClient( %client, 'MsgPlayerPopupItem', "", %key, "ToObserver", "", 'Force observer', 5 );

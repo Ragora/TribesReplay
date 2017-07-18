@@ -9,6 +9,7 @@ new GameTSCtrl(PlayGui) {
    visible = "1";
    setFirstResponder = "1";
    modal = "1";
+	hideCursor = "1";
    helpTag = "0";
    beaconBaseTextureName = "gui/beacon_base";
    beaconTargetTextureName = "gui/crosshairs";

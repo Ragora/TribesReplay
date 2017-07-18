@@ -8,6 +8,7 @@ new GuiControl(TaskHudDlg) {
 	minExtent = "8 8";
 	visible = "0";
 	helpTag = "0";
+	bypassHideCursor = "1";
 
 	new ShellFieldCtrl() {
 		profile = "GuiChatBackProfile";

@@ -1563,21 +1563,6 @@ else
                helpTag = "0";
                text = "Confirm Password:";
             };
-            new ShellTextEditCtrl() {
-               profile = "NewTextEditProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "133 115";
-               extent = "269 38";
-               minExtent = "32 38";
-               visible = "1";
-               variable = "$CreateAccountEmail";
-               helpTag = "0";
-               historySize = "0";
-               maxLength = "128";
-               password = "0";
-               glowOffset = "9 9";
-            };
             new GuiTextCtrl() {
                profile = "ShellTextRightProfile";
                horizSizing = "right";
@@ -1589,17 +1574,20 @@ else
                helpTag = "0";
                text = "Email:";
             };
-            new ShellToggleButton() {
-               profile = "ShellRadioProfile";
+            new GuiLoginPasswordCtrl(EditAccountPasswordBox) {
+               profile = "NewTextEditProfile";
                horizSizing = "right";
                vertSizing = "bottom";
-               position = "63 156";
-               extent = "366 30";
-               minExtent = "26 27";
+               position = "222 43";
+               extent = "180 38";
+               minExtent = "32 38";
                visible = "1";
-               variable = "$CreateAccountSendInfo";
+               variable = "$CreateAccountPassword";
                helpTag = "0";
-               text = "SEND ME INFORMATION ABOUT TRIBES 2 AND OTHER PRODUCTS";
+               historySize = "0";
+               maxLength = "16";
+               password = "1";
+               glowOffset = "9 9";
             };
             new ShellTextEditCtrl() {
                profile = "NewTextEditProfile";
@@ -1616,20 +1604,32 @@ else
                password = "1";
                glowOffset = "9 9";
             };
-            new GuiLoginPasswordCtrl(EditAccountPasswordBox) {
+            new ShellTextEditCtrl() {
                profile = "NewTextEditProfile";
                horizSizing = "right";
                vertSizing = "bottom";
-               position = "222 43";
-               extent = "180 38";
+               position = "133 115";
+               extent = "269 38";
                minExtent = "32 38";
                visible = "1";
-               variable = "$CreateAccountPassword";
+               variable = "$CreateAccountEmail";
                helpTag = "0";
                historySize = "0";
-               maxLength = "16";
-               password = "1";
+               maxLength = "128";
+               password = "0";
                glowOffset = "9 9";
+            };
+            new ShellToggleButton() {
+               profile = "ShellRadioProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "63 156";
+               extent = "366 30";
+               minExtent = "26 27";
+               visible = "1";
+               variable = "$CreateAccountSendInfo";
+               helpTag = "0";
+               text = "SEND ME INFORMATION ABOUT TRIBES 2 AND OTHER PRODUCTS";
             };
             new ShellBitmapButton() {
                profile = "ShellButtonProfile";

@@ -578,16 +578,7 @@ function PasswordDlg::accept( %this )
 //------------------------------------------------------------------------------
 function JoinSelectedGame()
 {
-   // This stuff must go soon!
-   %info = GMJ_Browser.getValue();
-   LoadingGui.map = getField( %info, 3 );
-   LoadingGui.missionType = getField( %info, 4 );
-   //
-
-	%info = GMJ_Browser.getServerInfoString();
-	%desc = "a" SPC getField(%info,4) @ "(" @ getField(%info,3) @ ") game on the \"" @ getField(%info,0) @ "\" server.  Click here to follow";   
-
-	IRCClient::onJoinGame($JoinGameAddress,%desc);
+	$ServerInfo = GMJ_Browser.getServerInfoString();
 
 	JoinGame($JoinGameAddress);
 }
@@ -914,7 +905,7 @@ function StartHostedGame()
       return;
    }
 
-	IRCClient::onJoinGame("", "");
+	//IRCClient::onJoinGame("", "");
 
    MessagePopup( "STARTING SERVER", "Initializing..." );
    Canvas.repaint();

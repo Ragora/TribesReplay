@@ -148,13 +148,8 @@ function InteriorDontRestrict::onAction()
 
 function interiorDebugDialog::onWake( %this )
 {
-   %this.cursor = isCursorOn();
-   if ( !%this.cursor )
-      CursorOn();
 }
 
 function interiorDebugDialog::onSleep( %this )
 {
-   if ( !%this.cursor )
-      CursorOff();
 }

@@ -7,6 +7,7 @@ new GuiControl(MainChatHud) {
 	minExtent = "8 8";
 	visible = "1";
    modal = "1";
+	bypassHideCursor = "1";
 	setFirstResponder = "0";
 
 	new GuiNoMouseCtrl() {

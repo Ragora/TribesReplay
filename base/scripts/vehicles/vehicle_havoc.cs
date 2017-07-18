@@ -158,6 +158,9 @@ datablock FlyingVehicleData(HAPCFlyer) : HavocDamageProfile
 
    checkRadius = 7.8115;
    observeParameters = "1 15 15";
+
+   stuckTimerTicks = 32;   // If the hapc spends more than 1 sec in contact with something
+   stuckTimerAngle = 80;   //  with a > 80 deg. pitch, BOOM!
 };
 
 function HAPCFlyer::hasDismountOverrides(%data, %obj)

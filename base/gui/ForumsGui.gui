@@ -10,6 +10,16 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 	variable = "$ShellBackground";
 	helpTag = "0";
 	useVariable = "1";
+		forumCount = "-1";
+		refreshFlag = "0";
+		state = "done";
+		eid = "112";
+		ebstat = "1";
+		initialized = "1";
+		key = "163";
+		TDialogOpen = "0";
+		bflag = "4";
+		TextCheck = "0";
 
 	new ShellPaneCtrl(ForumShell) {
 		profile = "ShellPaneProfile";
@@ -152,6 +162,13 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						drawSeparators = "0";
 						headerSort = "0";
 						allowReposition = "0";
+						noSelect = "0";
+							lastID = "413653";
+							state = "done";
+							highestUpdate = "413653";
+							lastDate = "04/20/2001 11:09am";
+							allRead = "1";
+							key = "162";
 					};
 				};
 				new ShellScrollCtrl() {
@@ -186,12 +203,14 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 							horizSizing = "width";
 							vertSizing = "height";
 							position = "0 0";
-							extent = "532 180";
+							extent = "532 36";
 							minExtent = "8 8";
 							visible = "1";
 							helpTag = "0";
 							lineSpacing = "2";
 							allowColorChars = "0";
+							maxChars = "-1";
+							deniedSound = "InputDeniedSound";
 						};
 					};
 				};
@@ -336,7 +355,7 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						horizSizing = "right";
 						vertSizing = "bottom";
 						position = "0 0";
-						extent = "137 1908";
+						extent = "137 414";
 						minExtent = "8 8";
 						visible = "1";
 						helpTag = "0";
@@ -392,7 +411,7 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 							horizSizing = "right";
 							vertSizing = "bottom";
 							position = "0 0";
-							extent = "52 1161";
+							extent = "52 1902";
 							minExtent = "8 8";
 							visible = "1";
 							helpTag = "0";
@@ -424,6 +443,7 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 					drawSeparators = "0";
 					headerSort = "1";
 					allowReposition = "0";
+					noSelect = "0";
 				};
 			};
 			new GuiTextCtrl() {
@@ -455,39 +475,39 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "top";
-				position = "234 300";
-				extent = "117 38";
+				position = "291 300";
+				extent = "82 38";
 				minExtent = "32 38";
 				visible = "1";
 				command = "ForumsRefreshTopics();";
 				helpTag = "0";
-				text = "REFRESH TOPICS";
+				text = "REFRESH ";
 				simpleStyle = "0";
 			};
-			new ShellBitmapButton(FM_NextThreads) {
+			new ShellBitmapButton(FTNextBtn) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "top";
-				position = "406 309";
-				extent = "90 38";
+				position = "357 300";
+				extent = "53 38";
 				minExtent = "32 38";
-				visible = "0";
-				command = "ForumsGoTopics(1);";
+				visible = "1";
+				command = "ForumsGui.NextThreadPage();";
 				helpTag = "0";
-				text = "NEXT TOPICS";
+				text = "--->";
 				simpleStyle = "0";
 			};
-			new ShellBitmapButton(FM_PrevThreads) {
+			new ShellBitmapButton(FTPrevBtn) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "top";
-				position = "324 309";
-				extent = "90 38";
+				position = "254 300";
+				extent = "53 38";
 				minExtent = "32 38";
-				visible = "0";
-				command = "ForumsGoTopics(2);";
+				visible = "1";
+				command = "ForumsGui.PreviousThreadPage();";
 				helpTag = "0";
-				text = "PREV TOPICS";
+				text = "<---";
 				simpleStyle = "0";
 			};
 			new ShellBitmapButton(RForumsBtn) {

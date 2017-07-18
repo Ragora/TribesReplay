@@ -10,7 +10,8 @@ new GuiChunkedBitmapCtrl(CreditsGui) {
 	variable = "$ShellBackground";
 	helpTag = "0";
 	useVariable = "1";
-		qLineCount = "0";
+	hideCursor = "1";
+	qLineCount = "0";
 
 	new ShellPaneCtrl() {
 		profile = "ShellPaneProfile";

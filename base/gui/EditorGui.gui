@@ -283,7 +283,6 @@ function Editor::onSleep(%this)
    MoveMap.pop();
    GlobalActionMap.unbind(keyboard, "tab");
    lockMouse(false);
-   CursorOn();
    
    %this.popDialogs();
 

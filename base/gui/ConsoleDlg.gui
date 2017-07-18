@@ -63,18 +63,13 @@ function ToggleConsole(%make)
       {
          Canvas.popDialog(ConsoleDlg);
          $ConsoleActive = false;
-         if(!ConsoleDlg.mouseOn)
-            CursorOff();
          if ( $enableDirectInput )
             activateKeyboard();
       }
       else
       {
          Canvas.pushDialog(ConsoleDlg, 99);
-         ConsoleDlg.mouseOn = Canvas.isCursorOn();
          $ConsoleActive = true;
-         if(!ConsoleDlg.mouseOn)
-            CursorOn();
          deactivateKeyboard();
       }
    }

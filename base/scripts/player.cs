@@ -1082,13 +1082,13 @@ datablock DebrisData( PlayerDebris )
 {
    explodeOnMaxBounce = false;
 
-   elasticity = 0.15;
+   elasticity = 0.35;
    friction = 0.5;
 
    lifetime = 4.0;
    lifetimeVariance = 0.0;
 
-   minSpinSpeed = 40;
+   minSpinSpeed = 60;
    maxSpinSpeed = 600;
 
    numBounces = 5;
@@ -1100,7 +1100,7 @@ datablock DebrisData( PlayerDebris )
    useRadiusMass = true;
    baseRadius = 1;
 
-   velocity = 20.0;
+   velocity = 18.0;
    velocityVariance = 12.0;
 };             
 
@@ -1892,6 +1892,8 @@ datablock PlayerData(LightMaleBiodermArmor) : LightMaleHumanArmor
    shapeFile = "bioderm_light.dts";
    jetEmitter = BiodermArmorJetEmitter;
 
+   debrisShapeName = "bio_player_debris.dts";
+
    //Foot Prints
    decalData   = LightBiodermFootprint;
    decalOffset = 0.3;
@@ -1911,6 +1913,8 @@ datablock PlayerData(MediumMaleBiodermArmor) : MediumMaleHumanArmor
 {
    shapeFile = "bioderm_medium.dts";
    jetEmitter = BiodermArmorJetEmitter;
+
+   debrisShapeName = "bio_player_debris.dts";
 
    //Foot Prints
    decalData   = MediumBiodermFootprint; 
@@ -1933,6 +1937,8 @@ datablock PlayerData(HeavyMaleBiodermArmor) : HeavyMaleHumanArmor
 
    shapeFile = "bioderm_heavy.dts";
    jetEmitter = BiodermArmorJetEmitter;
+
+   debrisShapeName = "bio_player_debris.dts";
 
    //Foot Prints
    decalData    = HeavyBiodermFootprint;
@@ -2522,30 +2528,27 @@ function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %am
       // where did this guy get it?
       %damLoc = %targetObject.getDamageLocation(%position);
       
-//       if(%targetClient.race !$= "Bioderm")
-//       {
-//          // should this guy be blown apart?
-//          if( %damageType == $DamageType::Explosion || 
-//              %damageType == $DamageType::TankMortar ||
-//              %damageType == $DamageType::Mortar ||
-//              %damageType == $DamageType::MortarTurret ||
-//              %damageType == $DamageType::BomberBombs ||
-//              %damageType == $DamageType::SatchelCharge )
-//          {
-//             if( %previousDamage >= 0.35 ) // only if <= 35 percent damage remaining
-//             {
-//                %targetObject.setMomentumVector(%momVec);
-//                %targetObject.blowup(); 
-//             }
-//          }
-//       }
-      
+      // should this guy be blown apart?
+      if( %damageType == $DamageType::Explosion || 
+          %damageType == $DamageType::TankMortar ||
+          %damageType == $DamageType::Mortar ||
+          %damageType == $DamageType::MortarTurret ||
+          %damageType == $DamageType::BomberBombs ||
+          %damageType == $DamageType::SatchelCharge )
+      {
+         if( %previousDamage >= 0.35 ) // only if <= 35 percent damage remaining
+         {
+            %targetObject.setMomentumVector(%momVec);
+            %targetObject.blowup(); 
+         }
+      }
+   
       // this should be funny...
-//       if( %damageType == $DamageType::VehicleSpawn && %targetClient.race !$= "Bioderm" )
-//       {   
-//          %targetObject.setMomentumVector("0 0 1");
-//          %targetObject.blowup();
-//       }
+      if( %damageType == $DamageType::VehicleSpawn )
+      {   
+         %targetObject.setMomentumVector("0 0 1");
+         %targetObject.blowup();
+      }
       
       // If we were killed, max out the flash
       %targetObject.setDamageFlash(0.75);

@@ -473,11 +473,6 @@ function AIConnection::onAIConnect(%client, %name, %team, %skill, %offense, %voi
       %voicePitch = 1.0;
 	%client.voicePitch = %voicePitch;
 
-   if ( getRandom() > 0.5 )
-      %client.skin = addTaggedString( "basebot" );
-   else
-      %client.skin = addTaggedString( "basebbot" );
-
    %client.name = addTaggedString( "\cp\c9" @ %name @ "\co" );
 	%client.nameBase = %name;
 
@@ -485,17 +480,21 @@ function AIConnection::onAIConnect(%client, %name, %team, %skill, %offense, %voi
    echo("CADD: " @ %client @ " " @ %client.getAddress());
    $HostGamePlayerCount++;
    
+   //set the initial team - Game.assignClientTeam() should be called later on...
+   %client.team = %team;
+   if ( %client.team & 1 )
+      %client.skin = addTaggedString( "basebot" );
+   else
+      %client.skin = addTaggedString( "basebbot" );
+
 	//setup the target for use with the sensor net, etc...
-   %client.target = allocClientTarget(%client, %client.name, "", %client.voiceTag, '_ClientConnection', 0, 0, %client.voicePitch);
+   %client.target = allocClientTarget(%client, %client.name, %client.skin, %client.voiceTag, '_ClientConnection', 0, 0, %client.voicePitch);
    
    //i need to send a "silent" version of this for single player but still use the callback  -jr`
    if($currentMissionType $= "SinglePlayer")
 		messageAllExcept(%client, -1, 'MsgClientJoin', "", %name, %client, %client.target, true);
    else
 	   messageAllExcept(%client, -1, 'MsgClientJoin', '\c1%1 joined the game.', %name, %client, %client.target, true);
-
-   //set the initial team - Game.assignClientTeam() should be called later on...
-   %client.team = %team;
 
 	//assign the skill
 	%client.setSkillLevel(%skill);

@@ -55,8 +55,7 @@ $MasterServerAddress = "IP:198.74.40.152:28000";
 
 // 0: .v12 (1.2 kbits/sec), 1: .v24 (2.4 kbits/sec), 2: .v29 (2.9kbits/sec)
 // 3:  gsm (6.6 kbits/sec)
-// GSM: $Audio::maxEncodingLevel = 3;
-$Audio::maxEncodingLevel = 2;
+$Audio::maxEncodingLevel = 3;
 $Audio::maxVoiceChannels = 2;
 
 $Host::MapPlayerLimits["Abominable", "CnH"] = "-1 32";

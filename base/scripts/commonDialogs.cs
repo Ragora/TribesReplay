@@ -18,16 +18,11 @@ function MessageBoxOK( %title, %message, %callback )
 //------------------------------------------------------------------------------
 function MessageBoxOKDlg::onWake( %this )
 {
-   %this.mouseOn = Canvas.isCursorOn();
-   if ( !%this.mouseOn )
-      CursorOn();
 }
 
 //------------------------------------------------------------------------------
 function MessageBoxOKDlg::onSleep( %this )
 {
-   if ( !%this.mouseOn )
-      CursorOff();
    %this.callback = "";
 }
 
@@ -46,16 +41,11 @@ function MessageBoxOKCancel( %title, %message, %callback, %cancelCallback )
 //------------------------------------------------------------------------------
 function MessageBoxOKCancelDlg::onWake( %this )
 {
-   %this.mouseOn = Canvas.isCursorOn();
-   if ( !%this.mouseOn )
-      CursorOn();
 }
 
 //------------------------------------------------------------------------------
 function MessageBoxOKCancelDlg::onSleep( %this )
 {
-   if ( !%this.mouseOn )
-      CursorOff();
    %this.callback = "";
 }
 
@@ -74,16 +64,11 @@ function MessageBoxYesNo( %title, %message, %yesCallback, %noCallback )
 //------------------------------------------------------------------------------
 function MessageBoxYesNoDlg::onWake( %this )
 {
-   %this.mouseOn = Canvas.isCursorOn();
-   if ( !%this.mouseOn )
-      CursorOn();
 }
 
 //------------------------------------------------------------------------------
 function MessageBoxYesNoDlg::onSleep( %this )
 {
-   if ( !%this.mouseOn )
-      CursorOff();
    %this.yesCallback = "";
    %this.noCallback = "";
 }
@@ -112,16 +97,11 @@ function CloseMessagePopup()
 //------------------------------------------------------------------------------
 function PickTeamDlg::onWake( %this )
 {
-   %this.mouseOn = Canvas.isCursorOn();
-   if ( !%this.mouseOn )
-      CursorOn();
 }
 
 //------------------------------------------------------------------------------
 function PickTeamDlg::onSleep( %this )
 {
-   if ( !%this.mouseOn )
-      CursorOff();
 }
 
 //------------------------------------------------------------------------------
@@ -159,6 +139,7 @@ function fillLoadSaveList( %ctrl, %fileSpec, %validate, %isSave )
          %id++;
       }
    }
+   %ctrl.sort( 0 );
 }
 
 //------------------------------------------------------------------------------

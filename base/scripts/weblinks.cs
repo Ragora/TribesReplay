@@ -1,6 +1,8 @@
 addWebLink( "Tribes 2 Home Page", "www.tribes2.com" );
 addWebLink( "T2 Technical Information", "sierrastudios.com/games/tribes2/support" );
 addWebLink( "5 Assed Monkey", "www.5assedmonkey.com" );
+addWebLink( "Arc 2055", "www.arc2055.com" );
+addWebLink( "Atari Secret Society", "www.atarisecretsociety.org" );
 addWebLink( "BarrysWorld", "www.barrysworld.com" );
 addWebLink( "Clan Happytyme", "www.happytyme.com" );
 addWebLink( "ClanBase", "www.clanbase.com" );
@@ -14,17 +16,21 @@ addWebLink( "Long Dongles", "www.longdongles.com" );
 addWebLink( "MaxBaud.Net", "www.maxbaud.net" );
 addWebLink( "MoreGaming", "www.moregaming.com" );
 addWebLink( "NetGames UK", "www.nguk.net" );
+addWebLink( "NGI", "www.ngi.it" );
 addWebLink( "PlanetTribes", "www.planettribes.com" );
+addWebLink( "Raging Angels", "www.ragingangels.org" );
 addWebLink( "Rogue Disciples", "www.roguedisciples.com" );
 addWebLink( "StrikeForce", "www.strikeforcecenter.com" );
 addWebLink( "TeamSound", "www.teamsound.com" );
 addWebLink( "Telepresence Heavy Assault Team", "www.that.co.nz" );
-addWebLink( "Tribes2 Database", "www.tribes2database.com" );
-addWebLink( "TribesMaps", "www.tribesmaps.com" );
+addWebLink( "The Ghostbear Tribe", "www.ghostbear.net" );
 addWebLink( "TribalWar", "www.tribalwar.com" );
+addWebLink( "Tribes2 Database", "www.tribes2database.com" );
+addWebLink( "Tribes Gamers", "www.tribesgamers.com" );
+addWebLink( "TribesMaps", "www.tribesmaps.com" );
+addWebLink( "Tribes Worlds", "www.tribesworlds.com" );
 addWebLink( "Tribes-Universe", "www.tribes-universe.com" );
 addWebLink( "WirePlay", "www.wireplay.com.au" );
-addWebLink( "ClanServ", "www.clanserv.com" );
 //addWebLink( "Z Free", "games13.clear.net.nz" );
 
 

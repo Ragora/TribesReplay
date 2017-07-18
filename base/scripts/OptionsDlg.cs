@@ -11,11 +11,6 @@ $max_TSDetailAdjust = 1.0;
 //------------------------------------------------------------------------------
 function OptionsDlg::onWake( %this )
 {
-   // Save the cursor state since it's possible we will be coming from the sim:
-   %this.wasCursorOn = Canvas.isCursorOn();
-   if ( !%this.wasCursorOn )
-      CursorOn();
-
    $enableDirectInput = "1";
    activateDirectInput();
    
@@ -269,10 +264,6 @@ function OptionsDlg::deviceDependent( %this )
 //------------------------------------------------------------------------------
 function OptionsDlg::onSleep( %this )
 {
-   // Restore the cursor state:
-   if ( !%this.wasCursorOn )
-      CursorOff();
-
    $enableDirectInput = "0";
    deactivateDirectInput();
    
@@ -1153,15 +1144,19 @@ function OP_VoiceListenMenu::init( %this )
    %this.add( ".v12",         1 );
    %this.add( ".v12 - .v24",  3 );
    %this.add( ".v12 - .v29",  7 );
-//   %this.add( ".v12 - .gsm",  15 );
+   %this.add( ".v12 - .gsm",  15 );
 
    switch ( $pref::Audio::decodingMask )
    {
-//      case 0 or 3 or 7 or 15:
-      case 0 or 3 or 7:
+      case 0 or 3 or 7 or 15:
          %this.setSelected( $pref::Audio::decodingMask );
       default:
          %this.setSelected( 1 );
+   }
+
+   // Linux only has the GSM codec available for now
+   if ( $platform $= "linux" ) {
+      %this.setActive(false);
    }
 }
 
@@ -1172,9 +1167,14 @@ function OP_VoiceSendMenu::init( %this )
    %this.add( ".v12",   0 );
    %this.add( ".v24",   1 );
    %this.add( ".v29",   2 );
-//   %this.add( ".gsm",   3 );
+   %this.add( ".gsm",   3 );
 
    %this.setSelected($pref::Audio::encodingLevel);
+
+   // Linux only has the GSM codec available for now
+   if ( $platform $= "linux" ) {
+      %this.setActive(false);
+   }
 }
 
 function OP_VoiceCodecInfo::init( %this )
@@ -1182,10 +1182,10 @@ function OP_VoiceCodecInfo::init( %this )
    %headerStyle = "<font:" @ $ShellLabelFont @ ":" @ $ShellFontSize @ "><color:00DC00>";
    %displayText = "<spush>" @ %headerStyle @ "Voice Codec Information:<spop>" NL
                   "\n" @
-                  "  .v12: variable bitrate codec (~1.2 kbits/sec win)" NL
-                  "  .v24: fixed bitrate codec (2.4 kbits/sec win)" NL
-                  "  .v29: fixed bitrate codec (2.9 kbits/sec win)" NL
-//                  "  .gsm: fixed bitrate codec (6.6 kbits/sec win/linux)" NL
+                  "  .v12: variable bitrate codec (~1.2 kbits/sec win only)" NL
+                  "  .v24: fixed bitrate codec (2.4 kbits/sec win only)" NL
+                  "  .v29: fixed bitrate codec (2.9 kbits/sec win only)" NL
+                  "  .gsm: fixed bitrate codec (6.6 kbits/sec win/linux)" NL
                   "\n" @
                   "<bitmap:bullet_2><lmargin:24>" @ 
                      "Setting your codec levels too high can have adverse" @
@@ -1831,13 +1831,11 @@ function RemapDlg::onWake( %this )
 	   RemapText.setText( "<just:center>Press a key to assign it to this action" NL "or Esc to cancel..." );
    else
 	   RemapText.setText( "<just:center>Press a key or button to assign it to this action" NL "or Esc to cancel..." );
-   //CursorOff();
 }
 
 //------------------------------------------------------------------------------
 function RemapDlg::onSleep( %this )
 {
-   //CursorOn();
 }
 
 //------------------------------------------------------------------------------

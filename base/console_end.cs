@@ -523,12 +523,33 @@ function abs(%val)
 
 function ServerConnectionAccepted()
 {
-   Canvas.setContent("LoadingGui");
+	%info = GMJ_Browser.getServerInfoString();
+	%desc = "joined a" SPC getField(%info,4) @ " game (" @ getField(%info,3) @ ") on the \"" @ getField(%info,0) @ "\" server.";   
+
+	IRCClient::onJoinGame($JoinGameAddress,%desc);
+
+   if ( !$pref::Net::CheckEmail )
+      CancelEmailCheck();
+
+// 	if($pref::Net::DisconnectChat)
+//    		IRCClient::quit();
+
+	Canvas.setContent("LoadingGui");
 }
 
 function LocalConnectionAccepted()
-{
-   Canvas.setContent("LoadingGui");
+{   
+	%desc = $pref::IRCClient::hostmsg;
+
+	IRCClient::onJoinGame("", %desc);
+
+   if ( !$pref::Net::CheckEmail )
+      CancelEmailCheck();
+
+// 	if($pref::Net::DisconnectChat)
+//    		IRCClient::quit();  //this is screwed up right now ^^
+
+	Canvas.setContent("LoadingGui");
 }
 
 function DispatchLaunchMode()

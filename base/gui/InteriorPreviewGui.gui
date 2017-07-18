@@ -93,6 +93,5 @@ function InteriorPreviewGui::onSleep(%this)
    GlobalActionMap.unbind(keyboard, "tab");
    GlobalActionMap.unbind(keyboard, "f9");
    lockMouse(false);
-   CursorOn();
 }
 

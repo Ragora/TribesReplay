@@ -31,6 +31,7 @@ $NotDeployableReason::NoTerrainFound            =  6;
 $NotDeployableReason::NoInteriorFound           =  7;
 $NotDeployableReason::TurretTooClose            =  8;
 $NotDeployableReason::TurretSaturation          =  9;
+$NotDeployableReason::SurfaceTooNarrow          =  10;
 
 $MinDeployableDistance                       =   0.5;
 $MaxDeployableDistance                       =  4.0;  //meters from body
@@ -570,6 +571,20 @@ function ShapeBaseImageData::testNoInteriorFound(%item, %surface)
 }
 
 //-------------------------------------------------
+function TurretIndoorDeployableImage::testHavePurchase(%item, %xform)
+{
+   %footprintRadius = 0.34;
+   %collMask = $TypeMasks::InteriorObjectType;
+   return %item.deployed.checkDeployPurchase(%xform, %footprintRadius, %collMask);
+}
+
+function ShapeBaseImageData::testHavePurchase(%item, %xform)
+{
+   //don't check this for non-Clasping turret deployables
+   return true;
+}
+
+//-------------------------------------------------
 function TurretIndoorDeployableImage::testTurretTooClose(%item, %plyr)
 {
    InitContainerRadiusSearch(%item.surfacePt, $TurretIndoorSpaceRadius, $TypeMasks::StaticShapeObjectType);
@@ -767,6 +782,10 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
       {
          %disqualified = $NotDeployableReason::ObjectTooClose;
       }
+      else if (!%item.testHavePurchase(%xform))
+      {
+         %disqualified = $NotDeployableReason::SurfaceTooNarrow;
+      }
    }
       
    if (%plyr.getMountedImage($BackpackSlot) == %item)  //player still have the item?
@@ -856,6 +875,9 @@ function Deployables::displayErrorMsg(%item, %plyr, %slot, %error)
 
       case $NotDeployableReason::TurretSaturation:
          %msg = '\c2There are too many turrets nearby.%1';
+         
+      case $NotDeployableReason::SurfaceTooNarrow:
+         %msg = '\c2There is not adequate surface to clamp to here.%1';
 
       default:
          %msg = '\c2Deploy failed.';

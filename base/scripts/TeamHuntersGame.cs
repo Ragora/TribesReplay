@@ -170,23 +170,6 @@ function TeamHuntersGame::resetScore(%game, %client)
 	%client.deaths = 0;
 }
 
-//NOTE - if we revert to this method of scoring, the function DefaultGame::awardScoreSuicide() no longer increments %client.deaths
-// function TeamHuntersGame::recalcScore(%game, %cl)
-// {
-// 	if (%cl <= 0)
-// 		return;
-// 
-// 	%cl.score = 0;
-//    %cl.score += %cl.kills * %game.SCORE_PER_KILL;
-//    %cl.score += %cl.deaths * %game.SCORE_PER_DEATH;
-//    %cl.score += %cl.suicides * %game.SCORE_PER_SUICIDE;
-// 
-// 	//must send the message to update the HUD
-// 	messageClient(%cl, 'MsgYourScoreIs', "", %cl.score);
-// 	
-// 	%game.recalcTeamRanks(%cl);
-// }	
- 
 function TeamHuntersGame::recalcScore(%game, %cl)
 {
 	if (%cl <= 0)

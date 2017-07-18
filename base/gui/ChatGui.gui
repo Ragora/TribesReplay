@@ -89,7 +89,7 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 					lineSpacing = "0";
 					lineContinuedIndex = "5";
 					allowedMatches[0] = "http";
-					matchColor = "0 0 255 255";
+					matchColor = "4 235 105 255";
 				};
 			};
 		};
@@ -152,6 +152,7 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			maxLength = "255";
 			password = "0";
 			glowOffset = "9 9";
+			tabComplete = "1";
 		};
 		new GuiTextCtrl() {
 			profile = "ShellTextRightProfile";

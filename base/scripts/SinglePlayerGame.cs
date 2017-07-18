@@ -337,8 +337,7 @@ function SinglePlayerGame::onClientKilled(%game, %clVictim, %clKiller, %damageTy
 			if(%num == 1)
 				%textNum = "one life";
 			else %textNum = %num SPC "lives";
-			messageBoxOk("Restart", "You have" SPC %textNum SPC "remaining.", "CursorOff(); spawnSinglePlayer();");
-			//canvas.cursorOn();
+			messageBoxOk("Restart", "You have" SPC %textNum SPC "remaining.", "spawnSinglePlayer();");
 		}
 		else schedule(3000, $player.player, singlePlayerDead);
 	}
@@ -418,7 +417,6 @@ function trainingBiodermSpeaks(%client)
 function singlePlayerDead()
 {
 	missionFailed($player.miscMsg[trainingDeathLoss]);
-	CursorOn();
 	AIMissionEnd();
 	$objectiveQ[$enemyTeam].clear();
 	cancel($player.distanceCheckSchedule);
@@ -839,7 +837,6 @@ function missionComplete(%text)
 	$player.endMission = schedule(15000, game, forceFinish);
 	
 	messageBoxOk("Victory", %text, "forceFinish();");
-	//canvas.cursorOn();
 
 	//AI stop
 	clearQueue();
@@ -877,7 +874,6 @@ function reloadMission()
 {
 	cancel($player.endMission);
 	Game.gameOver();
-   CursorOn();
 	loadMission($currentMission, singlePlayer);
 	debriefContinue();
 }
@@ -992,10 +988,6 @@ function SinglePlayerGame::createCustomKeymap(%game)
 //=======================================================================================
 function SinglePlayerEscapeDlg::onWake( %this )
 {
-	%this.wasCursorOn = Canvas.isCursorOn();
-	if ( !%this.wasCursorOn )
-		CursorOn();
-	
 	$timeScale = 0;
 
 	if( OptionsDlg.isAwake())
@@ -1014,16 +1006,12 @@ function SinglePlayerEscapeDlg::onSleep( %this )
 function SinglePlayerEscapeDlg::leaveGame( %this )
 {
    Canvas.popDialog( SinglePlayerEscapeDlg );
-   if ( !%this.wasCursorOn )
-      CursorOff();
-   MessageBoxYesNo( "LEAVE GAME", $player.miscMsg[LeaveGame], "forceFinish();", "CursorOff(); $timeScale = 1;" );
+   MessageBoxYesNo( "LEAVE GAME", $player.miscMsg[LeaveGame], "forceFinish();", "$timeScale = 1;" );
 }
 
 function SinglePlayerEscapeDlg::gotoSettings( %this )
 {
    Canvas.popDialog( SinglePlayerEscapeDlg );
-   //if ( !%this.wasCursorOn )
-   //   CursorOff();
    Canvas.pushDialog( OptionsDlg );
 }
 
@@ -1032,7 +1020,6 @@ function SinglePlayerEscapeDlg::returnToGame( %this )
    //error( "** CALLING SinglePlayerEscapeDlg::returnToGame **" );
 	$timeScale = 1;
 	Canvas.popDialog( SinglePlayerEscapeDlg );
-	CursorOff();
 
 	movemap.push();
 	//trainingmap.push();
@@ -1041,6 +1028,9 @@ function SinglePlayerEscapeDlg::returnToGame( %this )
 
 function singlePlayerGame::OptionsDlgSleep(%game)
 {
+   $enableDirectInput = 1;
+   activateDirectInput();
+
    Canvas.pushDialog( SinglePlayerEscapeDlg );
 	// the player may have changed his keys
 	// we need to reload the big spdialog string table that

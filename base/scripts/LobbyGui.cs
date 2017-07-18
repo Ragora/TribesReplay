@@ -45,9 +45,6 @@ function LobbyGui::onWake( %this )
    }
 
    $InLobby = true;
-   %this.mouseOn = Canvas.isCursorOn();
-   if ( !%this.mouseOn )
-      CursorOn();
 
 	//pop any key maps
    moveMap.pop();
@@ -57,7 +54,6 @@ function LobbyGui::onWake( %this )
       observerBlockMap.pop();
    if ( isObject( observerMap ) )
       observerMap.pop();
-   //flyingCameraMove.pop();
 
    $enableDirectInput = "0";
    deactivateDirectInput();
@@ -91,9 +87,6 @@ function LobbyGui::onSleep( %this )
    LobbyVoteMenu.mode = "";
    LobbyCancelBtn.setVisible( false );
    LobbyStatusText.setText( "" );
-   if ( !%this.mouseOn )
-      CursorOff();
-   %this.mouseOn = "";
    $InLobby = false;
 }
 
@@ -114,7 +107,6 @@ function lobbyLeaveGame()
 function lobbyReturnToGame()
 {
    Canvas.setContent( PlayGui );
-   CursorOff();
 }
 
 //------------------------------------------------------------------------------
@@ -139,8 +131,7 @@ function LobbyPlayerList::initColumns( %this )
    %this.clear();
    %this.clearColumns();
    %this.addColumn( 0, " ", 24, 24, 24, "center" );   // Flag column
-   %this.addColumn( 6, " ", 20, 20, 20, "icon" );   // Voice Enabled column
-   %this.addColumn( 7, " ", 20, 20, 20, "icon" );   // Listening column
+   %this.addColumn( 6, "lobby_headset", 36, 36, 36, "headericon" );   // Voice Com column
    %this.addColumn( 1, "Player", $pref::Lobby::Column1, 50, 200 );
    if ( $clTeamCount > 1 )
       %this.addColumn( 2, "Team", $pref::Lobby::Column2, 50, 200 );
@@ -197,11 +188,17 @@ function lobbyUpdatePlayer( %clientId )
 
    if ( %player.canListen )
    {
-      %voiceEnabled = %player.voiceEnabled ? "lobby_icon_speak" : "";
-      %listening = %player.isListening ? "lobby_icon_listen" : "";
+      if ( %player.voiceEnabled )
+      {
+         %voiceIcons = "lobby_icon_speak";
+         if ( %player.isListening )
+            %voiceIcons = %voiceIcons @ ":lobby_icon_listen";
+      }
+      else
+         %voiceIcons = %player.isListening ? "lobby_icon_listen" : "";
    }
    else
-      %voiceEnabled = %listening = "shll_icon_timedout";
+      %voiceIcons = "shll_icon_timedout";
 
    if ( $clTeamCount > 1 )
    {
@@ -209,10 +206,10 @@ function lobbyUpdatePlayer( %clientId )
          %teamName = "Observer";
       else
          %teamName = $clTeamScore[%player.teamId, 0] $= "" ? "-" : $clTeamScore[%player.teamId, 0];
-      %text = %tag TAB %voiceEnabled TAB %listening TAB %player.name TAB %teamName TAB %player.score TAB %player.ping TAB %player.packetLoss;
+      %text = %tag TAB %voiceIcons TAB %player.name TAB %teamName TAB %player.score TAB %player.ping TAB %player.packetLoss;
    }
    else
-      %text = %tag TAB %voiceEnabled TAB %listening TAB %player.name TAB %player.score TAB %player.ping TAB %player.packetLoss;
+      %text = %tag TAB %voiceIcons TAB %player.name TAB %player.score TAB %player.ping TAB %player.packetLoss;
 
    if ( LobbyPlayerList.getRowNumById( %clientId ) == -1 )
       LobbyPlayerList.addRow( %clientId, %text );
@@ -299,9 +296,34 @@ function LobbyPlayerPopup::onSelect( %this, %id, %text )
 
       case 9: // enable/disable voice communication
          togglePlayerVoiceCom( %this.player );
+
+      case 10:
+         confirmAdminListAdd( %this.player, false );
+
+      case 11:
+         confirmAdminListAdd( %this.player, true );
    }
 
    Canvas.popDialog( LobbyPlayerActionDlg );
+}
+
+function confirmAdminListAdd( %client, %super )
+{
+   if( %super )
+      MessageBoxYesNo( "CONFIRM", "Are you sure you want to add " @ %client.name @ " to the server super admin list?", "toSuperList( " @ %client.clientId @ " );" );
+         
+   else
+      MessageBoxYesNo( "CONFIRM", "Are you sure you want to add " @ %client.name @ " to the server admin list?", "toAdminList( " @ %client.clientId @ " );" );
+}
+
+function toSuperList( %client )
+{
+   commandToServer( 'AddToSuperAdminList', %client );
+}
+
+function toAdminList( %client )
+{
+   commandToServer( 'AddToAdminList', %client );
 }
 
 //------------------------------------------------------------------------------

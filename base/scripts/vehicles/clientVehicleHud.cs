@@ -116,19 +116,13 @@ function clientCmdStationVehicleShowHud()
    if ( Canvas.getContent() != PlayGui.getId() )
       return;
 
-   if ( !Canvas.isCursorOn() )
-      CursorOn();
    showHud( 'vehicleHud' );
-
 	clientCmdTogglePlayHuds(false);
 }
 
 //------------------------------------------------------------------------------
 function clientCmdStationVehicleHideHud()
 {
-   if ( Canvas.isCursorOn() )
-      CursorOff();
    hideHud( 'vehicleHud' );
-
 	clientCmdTogglePlayHuds(true);
 }

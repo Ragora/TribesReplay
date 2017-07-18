@@ -213,24 +213,6 @@ function DMGame::updateKillScores(%game, %clVictim, %clKiller, %damageType, %imp
    messageClient(%clVictim, 'MsgDMPlayerDies', "", %clVictim.deaths + %clVictim.suicides);
 }
 
-//NOTE - if we revert to this method of scoring, the function DefaultGame::awardScoreSuicide() no longer increments %client.deaths
-//function DMGame::recalcScore(%game, %client)
-//{
-// // MES - just in case :)
-// if((%client.kills + %client.deaths) == 0)
-//    %client.efficiency = 0;
-// else
-//    %client.efficiency = ((%client.kills) * (%client.kills)) / (%client.kills + %client.deaths);
-
-   //TINMAN - I changed this since DM seems based on efficiency, and the previous score doesn't appear anywhere...
-   //%client.score = (%client.kills * %game.SCORE_PER_KILL) + (%client.deaths * %game.SCORE_PER_DEATH);
-// %client.score = mFloatLength(%client.efficiency, 1);
-
-// messageClient(%client, 'MsgDMYourEfficIs', "", %client.score);
-// %game.recalcTeamRanks(%client);
-// %game.checkScoreLimit(%client);
-//}
-
 function DMGame::recalcScore(%game, %client)
 {
    %killValue = %client.kills * %game.SCORE_PER_KILL;
@@ -272,7 +254,7 @@ function DMGame::gameOver(%game)
    cancel(%game.timeThread);
    messageAll('MsgClearObjHud', "");
    for(%i = 0; %i < ClientGroup.getCount(); %i ++) {
-      %client = %group.getObject(%i);
+      %client = ClientGroup.getObject(%i);
       %game.resetScore(%client);
    }
 }

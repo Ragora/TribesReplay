@@ -54,10 +54,20 @@ function JoinChatDlg::onWake(%this)
 }
 																 
 //------------------------------------------------------------------------------
+function JoinChatList::onAdd( %this )
+{
+   %this.addColumn( 0, "Channel Name", 210, 210, 210 );
+   %this.addColumn( 1, "Users", 74, 74, 74, "numeric center" );
+   %this.addColumn( 2, "", 0, 0, 0, "numeric" );
+   %this.setSortColumn( 2 );
+   %this.setSortIncreasing( false );
+   %this.addStyle( 1, $ShellBoldFont, $ShellFontSize, "180 180 180", "220 220 220", "40 40 40" );
+}
+																 
+//------------------------------------------------------------------------------
 function JoinChatList::onSelect(%this,%id,%text)
 {
-   %stripped = stripChars( %text, "\c4");
-   JoinChatName.setValue(%stripped);
+   JoinChatName.setValue( getField( %text, 0 ) );
 }
 
 //------------------------------------------------------------------------------
@@ -74,6 +84,24 @@ function JoinChatDlg::join(%this)
 		Canvas.popDialog(JoinChatDlg);
 		LaunchTabView.viewTab("CHAT", ChatGui, 0);
 	}
+}
+
+//------------------------------------------------------------------------------
+function JoinChatName::onCharInput( %this )
+{
+   %text = %this.getValue();
+   if ( %text !$= "" )
+   {
+      %count = JoinChatList.rowCount();
+      for ( %row = 0; %row < %count; %row++ )
+      {
+         if ( %text $= getSubStr( getField( JoinChatList.getRowText( %row ), 0 ), 0, strlen( %text ) ) )
+            break;
+      }
+
+      if ( %row < %count )
+         JoinChatList.scrollVisible( %row );
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -145,7 +173,7 @@ function ChatTabView::onSelect(%this,%obj,%name)
       if ($IRCClient::currentChannel == $IRCClient::attachedChannel)
          ChatGuiMessageVector.detach();
       ChatGuiMessageVector.attach(%obj);
-	  ChatGuiMessageVector.scrollToBottom();
+	  //ChatGuiMessageVector.scrollToBottom();
 		$IRCClient::attachedChannel = %obj;
    }
    $IRCClient::currentChannel = %obj;
@@ -197,12 +225,17 @@ function ChatGuiMessageVector::urlClickCallback(%this,%type,%url,%content)
 		case "http":
 			gotoWebPage(%url);
 		case "server":
-			IRCClient::onJoinGame(%content,%url);
-
+			//IRCClient::onJoinGame(%content,%url);
 			%url = nextToken(%url,a," ");
 			%url = nextToken(%url,map,"(");
 			%url = nextToken(%url,type,")");
 
+			if(getSubStr(%content, 0, 1) $= "#")
+			{
+				// this is a fake server, its really a channel for invites
+				IRCClient::join(%content);
+				return;
+			}
 			// set the loading gui
 //          LoadingGui.map = %map;
 //    		LoadingGui.missionType = %type;
@@ -755,17 +788,18 @@ function IRCClient::notify(%event)
 			JoinChatList.clear();
 			for (%i = 0; %i < $IRCClient::numChannels; %i++)
 			{
-				%officailChannelMod = IRCClient::getOfficailChannelMod($IRCClient::channelNames[%i]);
-				%channelListDisplayName = %officailChannelMod @ IRCClient::displayChannel($IRCClient::channelNames[%i]) @"\c1  ["@ $IRCClient::channelUsers[%i] @"]";
-				JoinChatList.addRow(%i, %channelListDisplayName);
+            switch$ ( $IRCClient::channelNames[%i] )
+            {
+               case "#Tribes2":              %temp = 3;
+               case "#Tribes2-recruiting":   %temp = 2;
+               case "#Help":                 %temp = 1;
+               default:                      %temp = 0;
+            }
+				JoinChatList.addRow(%i, IRCClient::displayChannel( $IRCClient::channelNames[%i]) TAB $IRCClient::channelUsers[%i] TAB %temp );
+            JoinChatList.setRowStyle( %i, %temp > 0 );
 			}
-			JoinChatList.sort(0);
-			if (strlen(JoinChatName.getValue()))
-			{
-				%i = JoinChatList.findTextIndex(JoinChatName.getValue());   
-				JoinChatList.scrollVisible(%i);
-				JoinChatList.setSelectedById(JoinChatList.getRowId(%i));
-			}
+			JoinChatList.sort();
+         JoinChatName.onCharInput();
 		case IDIRC_CHANNEL_HAS_KEY:
 			KeyChannelName.setValue(IRCClient::displayChannel($IRCClient::keyChannel));
 			Canvas.pushDialog(ChannelKeyDlg);
@@ -799,11 +833,8 @@ function IRCClient::notify(%event)
 			}
 			ChatTabView.removeTab($IRCClient::deletedChannel);
 		case IDIRC_INVITED:
-			MessageBoxOKCancel("Invite",
-									 "You have been invited to channel " @
-									 IRCClient::displayChannel($IRCClient::invitechannel) @
-									 " by " @ $IRCClient::inviteperson @ ".",
-									 "IRCClient::join($IRCClient::invitechannel);");
+			//MessageBoxOKCancel("Invite", "You have been invited to channel " @ IRCClient::displayChannel($IRCClient::invitechannel) @ " by " @ $IRCClient::inviteperson @ ".", "IRCClient::join($IRCClient::invitechannel);");
+			IRCClient::newMessage($IRCClient::CurrentChannel, "You have been invited to channel " @ $IRCClient::invitechannel @ " by " @ $IRCClient::inviteperson @ ".");
 		case IDIRC_BAN_LIST:
 			ChannelBannedList_refresh();
 		case IDIRC_TOPIC:
@@ -859,6 +890,8 @@ function IRCClient::connected()
 //------------------------------------------------------------------------------
 function IRCClient::newMessage(%channel,%message)
 {
+	%message = IRCClient::findChannelURL(%message);
+
    if (%channel == $IRCClient::channels.getObject(0) ||
 	   %channel $= "")
       $IRCClient::channels.getObject(0).pushBackLine(%message);
@@ -1135,20 +1168,6 @@ function IRCClient::findChannel(%name,%create)
       return %c;   
    }
 }
-
-//------------------------------------------------------------------------------
-function IRCClient::getOfficailChannelMod(%name)
-{
-	if(%name $= "#Tribes2"
-	|| %name $= "#Tribes2-recruiting"
-	|| %name $= "#Help")
-	{
-		return "\c4";
-	}
-	else return "";
-
-}
-
 
 //------------------------------------------------------------------------------
 function IRCClient::displayChannel(%channel)
@@ -1445,8 +1464,7 @@ function IRCClient::dispatch(%prefix,%command,%params)
 	  case "JOIN":
 		 IRCClient::onJoin(%prefix,%params);
  	  case "NICK":
- 		 error("onNick has been removed!");
- 		 //IRCClient::onNick(%prefix,%params);
+ 		 IRCClient::onNick(%prefix,%params);
 	  case "QUIT":
 		 IRCClient::onQuit(%prefix,%params);
 	  case "ERROR":
@@ -1638,7 +1656,7 @@ function IRCClient::onPrivMsg(%prefix,%params)
 	// should we highlight this message
 	if($pref::IRCClient::highlightOn)
 		%msg = IRCClient::nickHighLight(%msg);
-
+	
    %nick = %ch;
    if (getSubStr(%ch,0,1) $= "@" || getSubStr(%ch,0,1) $= "+")
       %nick = getSubStr(%nick,1,strlen(%nick)-1);
@@ -1666,6 +1684,54 @@ function IRCClient::onPrivMsg(%prefix,%params)
 }
 
 //------------------------------------------------------------------------------
+function IRCClient::findChannelURL(%msg)
+{
+	%numWords = getWordCount(%msg);
+	for(%i = 0; %i < %numWords; %i++)
+	{
+		%word = getWord(%msg, %i);
+		%firstLetter = getSubStr(%word, 0, 1);
+
+		if(%firstLetter $= "#")
+		{
+			// this is a fake server link that will get parsed to an
+			// IRCClient::join by the urlCallback hack
+			%newWord =  "<t2server:" @ %word @ ">"@ IRCClient::displayChannel(%word)@"</t2server>";
+			%word = %newWord;	
+		}
+	
+		if(%newText $= "")
+			%newText = %word;
+		else %newText = %newText SPC %word;
+	}
+	
+	return %newText;
+}
+
+//------------------------------------------------------------------------------
+function IRCClient::onNick(%prefix,%params)
+{
+   %person = IRCClient::findPerson2(%prefix,false);
+   
+   if (%person)
+   { 
+      if (!(%person.flags & $PERSON_IGNORE))
+         IRCClient::newMessage($IRCClient::currentChannel,%person.getName() @ " is now known as " @ %params @ ".");
+
+      %channel = IRCClient::findChannel(%person.getName());
+      
+      if (%channel)
+	     %channel.setName(%params); 
+
+      %person.setName(%params);
+
+      // If this is me, re-set the console variable
+      if (%person == $IRCClient::people.getObject(0))
+         $IRCClient::NickName = %person.getName();
+   }
+}
+
+//------------------------------------------------------------------------------
 function IRCClient::onQuit(%prefix,%params)
 {
    %p = IRCClient::findPerson2(%prefix,false);
@@ -1681,7 +1747,11 @@ function IRCClient::onQuit(%prefix,%params)
 				if (!(%p.flags & $PERSON_IGNORE))
 					IRCClient::newMessage(%c,"\c4" @ IRCClient::taggedNick(%p) @ " has disconnected from IRC.");
 				if (%c == $IRCClient::currentChannel)
+				{
 					IRCClient::notify(IDIRC_PART);
+					//IRCClient::part(%c.getName());
+				}
+
 			}
 		}
 
@@ -2668,17 +2738,180 @@ function IRCClient::nick(%nick)
    if (($IRCClient::state $= IDIRC_CONNECTED || $IRCClient::state $= IDIRC_CONNECTING_IRC) &&
    	   strlen(nick))
    {
-      if (stricmp(%nick, $IRCClient::people.getObject(0).displayName))
+      if (stricmp(%nick, $IRCClient::people.getObject(0).getName()))
          IRCClient::send("NICK " @ %nick);
    }
    else
-	  $IRCClient::people.getObject(0).displayName = %nick;
+   {
+	  $IRCClient::people.getObject(0).setName(%nick);
+      $IRCClient::NickName = %nick;
+   }
 }
 
 //------------------------------------------------------------------------------
 function IRCClient::name(%name)
 {
    $IRCClient::people.getObject(0).real = %name;
+}
+
+//--------------------------------------------------------------------------------
+function ChatMessageEntry::onTabComplete(%this)
+{
+	// the word that the cursor is on or just behind
+	// and exchange it for a matching nick from this channel 
+	
+	//%channel = $IRCClient::channels.getObject(0);
+	%me = $IRCClient::people.getObject(0);
+
+	// if there is no text just iterate through the channel members
+
+	%text = %this.getValue();
+
+	if(%text $= "")
+	{
+		error("null string completion not implemented yet.");
+		return;
+	}
+		
+	%cursorPos = %this.getCursorPos();
+	%textLen = 	strLen(%text);
+	
+	// find the first space behind the cursor
+	for(%a = %cursorPos; %a >= 0; %a--)
+	{
+		%letter = getSubStr(%text, %a, 1);
+		if(%letter $= " ")
+		{
+			%space = %a + 1; // add 1 so we dont INCLUDE the space
+			%begining = %space; 
+			//echo("first space is at pos" SPC %begining);
+			break;
+		}
+		if(%a == 0)
+		{
+			//echo("there are no prev spaces.");
+			%begining = 0; 
+		}
+	} 
+	
+	// find the first space in front of the cursor
+	for(%b = %cursorPos; %b <= %textLen; %b++)
+	{
+		%letter = getSubStr(%text, %b, 1);
+		if(%letter $= " ")
+		{
+			%end = %b;
+			//echo("end space is at pos" SPC %end);
+			
+			break;
+		}
+		if(%b == %textLen)
+		{
+			//echo("there are no end spaces.");
+			%end = %textLen; 
+		}
+
+	}
+
+	//why dont we move the cursor to the end of the word if they try and tab complete
+	//successfull or not
+	%this.setCursorPos(%b);
+	
+	// this forms a word
+	%wordLen = %end - %begining;
+	%word = getSubStr(%text, %begining, %wordLen);
+	//error("Word to tabComplete: "@%word@".");
+
+	//we interupt here
+	// if we have the last word we tab completed then we are trying to cycle
+	// we want to cycle with the stem of the last word we completed from
+	// so we use the stem instead of the word
+	if(%word $= %me.lastCompletion)
+	{
+		%word = %me.lastCompletionStub;
+		%wordLen = strLen(%word);
+	}
+
+	// is it a tab-completable word?
+	for (%i = 0; %i < $IRCClient::people.getCount(); %i++)
+	{
+	   	%person = $IRCClient::people.getObject(%i);
+		if(%person.untagged !$= "")
+			%personName = %person.untagged;
+		else %personName = %person;
+
+		%personSnip = getSubStr(%personName, 0, %wordLen);
+
+		if(%personSnip $= %word)
+		{
+			%nickPossiblity[%numMatches++] = %personName;
+		}
+	}
+	
+	if(!%numMatches)
+	{
+		//error("no matches...sorry.");
+		return;
+	}
+	
+	// we have ALL the possible tab completes for the word
+	// if we have just tab completed on of them give us the next one instead
+	// cycle through the possiblities
+
+	for(%i = 1; %i <= %numMatches; %i++)
+	{
+		if(%nickPossiblity[%i] $= %me.lastCompletion)
+		{
+			%newWord = %nickPossiblity[%i+1];
+			break;
+		}
+	}
+	if(%newWord $= "" )
+		%newWord = %nickPossiblity1; 
+
+	%newWordLenDif = strLen(%newWord) - strLen(%word);
+
+	if(%newWord $= "")
+	{
+		//error("There is no word to tab complete");
+		return -1;	
+	}
+
+	// there is a word (%newWord) find out which word it is
+	for(%i = 0; %i < getWordCount(%text); %i++)
+	{
+		%wordCheck = getWord(%text, %i);
+		//echo("is this word our candidate? "@%wordCheck);
+		if(%wordCheck $= %word)
+		{
+			%wordNum = %i;
+		}
+		//what if there are multiple instances of this word?
+	}
+
+	// replace the word with the new word and move the cursor
+	
+	for(%x = 0; %x < getWordCount(%text); %x++)
+	{
+		%thisWord = getWord(%text, %x);
+		
+		if(%wordNum == %x)
+		{
+			%thisWord = %newWord;
+		}
+	
+		if(%newText $= "")
+			%newText = %thisWord;
+		else %newText = %newText SPC %thisWord;
+	}
+	
+	%this.setCursorPos( %this.getCursorPos() + %newWordLenDif -1 );
+	
+	// replace what the current text is, with new text
+   %this.setValue(%newText);
+
+	%me.lastCompletion = %newWord;
+	%me.lastCompletionStub = %word;
 }
 
 //----------------------------------------------------------------------
@@ -2978,21 +3211,25 @@ function IRCClient::onJoinServer(%mission,%server,%address,%mayprequire,%prequir
 }
 
 //------------------------------------------------------------------------------
- function IRCClient::onJoinGame(%address,%desc)
+ function IRCClient::onJoinGame(%address, %desc)
 {
 	//error("IRCClient::onJoinGame( "@ %address @", "@ %desc @" )");
-	IRCClient::away("joined a game.");
+	//IRCClient::away("joined a game.");
 
 	%me = $IRCClient::people.getObject(0);
 	if(%address $= %me.lastAddress)
+	{
 		return;
+	}
 
 	%me.lastAddress = %address;
 
-	if (%address $= "")
-		%msg = $pref::IRCClient::hostMsg;
+	%joinLink = "<t2server:" @ %address @ ">Click here to follow</t2server>.";
+
+	if(%address $= "")
+		%msg = %desc;
 	else
-		%msg = "launched into <t2server:" @ %address @ ">" @ %desc @ "</t2server>.";
+		%msg = %desc SPC %joinLink; 
 
 	//IRCClient::sendAction(%msg);
 
@@ -3000,7 +3237,10 @@ function IRCClient::onJoinServer(%mission,%server,%address,%mayprequire,%prequir
 	{
 		%c = $IRCClient::channels.getObject(%i);
 		if (!%c.private)
+		{
 			IRCClient::send("PRIVMSG " @ %c.getName() @ " :\x01ACTION " @ %msg @  "\x01");
+			IRCClient::newMessage($IRCClient::currentChannel, IRCClient::taggedNick($IRCClient::people.getObject(0)) @ "\c9 " @ %msg);
+		}
 	}
 }
 
@@ -3012,6 +3252,6 @@ function IRCClient::onLeaveGame()
 
 if ($LaunchMode $= "Normal")
 {
- 	IRCClient::init();
- 	IRCClient::connect();
+	IRCClient::init();
+	IRCClient::connect();
 }

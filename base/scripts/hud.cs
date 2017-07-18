@@ -1133,26 +1133,15 @@ function clientCmdTogglePlayHuds(%val)
 }
 
 //------------------------------------------------------------------------------
-// - check if anything currently up needs the cursor to be enabled
-function keepCursorOn()
-{
-   return(CommanderMapGui.open || $ConsoleActive);
-}
-
-//------------------------------------------------------------------------------
 function toggleCursorHuds(%tag)
 {
    if($Hud[%tag] !$= "" && $Hud[%tag].pushed)
    {
-      if (Canvas.isCursorOn() && !keepCursorOn())
-         CursorOff();
       hideHud(%tag);
       clientCmdTogglePlayHuds(true);
    }
    else
    {
-      if (!Canvas.isCursorOn())
-         CursorOn();
       showHud(%tag);
       clientCmdTogglePlayHuds(false);
    }
@@ -1243,8 +1232,6 @@ function closeHud(%msgType, %msgString, %tag)
       $Hud[%tag].setVisible(false);
       Canvas.popDialog($Hud[%tag]);
       $Hud[%tag].pushed = 0;
-      if (Canvas.isCursorOn() && !keepCursorOn())
-         CursorOff();
    }
 }
 

@@ -268,8 +268,6 @@ function LaunchGui::onAdd(%this)
 //----------------------------------------------------------------------------
 function LaunchGui::onWake(%this)
 {
-   if ( !Canvas.isCursorOn() )
-      CursorOn();
    $enableDirectInput = "0";
    deactivateDirectInput();
    Canvas.pushDialog(LaunchToolbarDlg);

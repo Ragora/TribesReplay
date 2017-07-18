@@ -20,10 +20,6 @@ function cancelCredits()
 
    //delete the contents of the ML ctrl so as to free up memory...
    Credits_Text.setText("");
-
-   //restore the mouse
-   ConsoleDlg.mouseOn = true;
-   cursorOn();
 }
 
 function CreditsGui::onWake(%this)
@@ -40,9 +36,6 @@ function CreditsGui::onWake(%this)
       CreditsActionMap.bindCmd(mouse, button2, "creditsNextPic();", "");
    }
    CreditsActionMap.push();
-
-   //hide the mouse
-   cursorOff();
 
    //build the ML text ctrl...
    exec("scripts/creditsText.cs");

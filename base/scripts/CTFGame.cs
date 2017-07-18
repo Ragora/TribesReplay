@@ -479,7 +479,7 @@ function CTFGame::gameOver(%game)
    messageAll('MsgClearObjHud', "");
    for(%i = 0; %i < ClientGroup.getCount(); %i ++) 
    {
-      %client = %group.getObject(%i);
+      %client = ClientGroup.getObject(%i);
       %game.resetScore(%client);
    }
    for(%j = 1; %j <= %game.numTeams; %j++)
@@ -519,30 +519,6 @@ function CTFGame::clientMissionDropReady(%game, %client)
 
    DefaultGame::clientMissionDropReady(%game, %client);
 }
-
-//NOTE - if we revert to this method of scoring, the function DefaultGame::awardScoreSuicide() no longer increments %client.deaths
-// function CTFGame::recalcScore(%game, %cl)
-// {
-//    // currently no penalty for suicide?
-//    //%cl.offenseScore = ((%cl.kills * %game.SCORE_PER_KILL) * (%cl.kills * %game.SCORE_PER_KILL)) / ((%cl.kills * %game.SCORE_PER_KILL) + (%cl.deaths * %game.SCORE_PER_DEATH));  //currently 1 pt per
-//    %cl.offenseScore =   %cl.kills * %game.SCORE_PER_KILL + // 1
-//                         %cl.deaths * %game.SCORE_PER_DEATH + // -1
-//                         %cl.escortAssists * %game.SCORE_PER_ESCORT_ASSIST + // 1
-//                         %cl.teamKills * %game.SCORE_PER_TEAMKILL + // -1
-//                         %cl.flagCaps * %game.SCORE_PER_PLYR_FLAG_CAP + // 3
-//                         %cl.genDestroys * %game.SCORE_PER_GEN_DESTROY + // 2
-// 
-//    %cl.defenseScore =   %cl.genDefends * %game.SCORE_PER_GEN_DEFEND +   // 1
-//                         %cl.carrierKills * %game.SCORE_PER_CARRIER_KILL +  // 1
-//                         %cl.escortAssists * %game.SCORE_PER_ESCORT_ASSIST + // 1
-//                         %cl.turretKills * %game.SCORE_PER_TURRET_KILL +  // 1
-//                         %cl.flagReturns * %game.SCORE_PER_FLAG_RETURN +  // 1
-//                         %cl.genRepairs * %game.SCORE_PER_GEN_REPAIR +    // 1
-// 
-//    %cl.score = %cl.offenseScore + %cl.defenseScore;
-// 
-//    %game.recalcTeamRanks(%cl);
-// }
 
 function CTFGame::assignClientTeam(%game, %client, %respawn)
 {

@@ -3,6 +3,9 @@
 //------------------------------------------
 $ForumCacheVersion = 8; //lucky seven...NOT!
 $ForumCachePath = "webcache/" @ getField(wonGetAuthInfo(),3) @ "/";
+$currentForumPage = 0;
+$topicPageLength = 60;
+
 $ForumsConnecting = "CONNECTING";
 $ForumsGetForums = "FETCHING FORUM LIST ";
 $ForumsGetTopics = "FETCHING TOPICS ";
@@ -65,6 +68,12 @@ $ForumColumnCount++;
 if(!isObject(ForumsMessageVector))
 {
    new MessageVector(ForumsMessageVector);
+}
+//-----------------------------------------------------------------------------
+function updateTopicPageBtn(%prev,%next)
+{		
+   FTPrevBtn.setActive( %prev );
+   FTNextBtn.setActive( %next );
 }
 //-----------------------------------------------------------------------------
 function DateStrCompare(%date1,%date2)
@@ -212,15 +221,13 @@ function ForumsGetTextDisplay(%text, %offSet)
 //-----------------------------------------------------------------------------
 function ForumsGoTopics(%direction)
 {
-//   ForumsTopicsList.direction = %direction;
-   ForumsTopicsList.MaxDate = "";
-   ForumsTopicsList.MinDate = "";
    ForumShell.setTitle($ForumsConnecting);
    ForumsThreadPane.setVisible(false);
    ForumsTopicsPane.setVisible(true);
    FO_RejectBtn.visible = false;
    FO_EditBtn.visible = false;
    FO_AcceptBtn.visible = false;
+   
    if ( ForumsTopicsList.rowCount() == 0 || ForumsTopicsList.refreshFlag )
    {
 		FM_NewTopic.setActive(true);
@@ -235,8 +242,8 @@ function ForumsGoTopics(%direction)
 function ForumsRefreshTopics()
 {
 	ForumsTopicsList.refreshFlag = true;
-//   ForumsMessageVector.clear();
-//   ForumsMessageVector.tid = "";
+   $currentForumPage = 0;
+   updateTopicPageBtn(0,0);
 	ForumsGui.eid = schedule(250,ForumsGui,GetTopicsList);
 }
 //-----------------------------------------------------------------------------
@@ -328,12 +335,11 @@ function ForumsNewTopic()
 	}
 	else
 	{	
-//  		ForumsGui.LaunchForum = getField(ForumsList.getRowTextById(ForumsList.getSelectedID()),0);
 		$ForumsSubject = "";
 		Canvas.pushDialog( ForumsComposeDlg );
 		ForumsBodyText.setValue( "" );
 		ForumsComposeDlg.parentPost = 0;
-		ForumsComposeDlg.action = "Post";
+		ForumsComposeDlg.action = "Post";       
 	}
 }
 //-----------------------------------------------------------------------------
@@ -498,15 +504,13 @@ function GetForumsList()
 //-----------------------------------------------------------------------------
 function GetTopicsList()
 {
-//   error("GTL: " @ ForumsComposeDlg.forum);
 	ForumsGui.key = LaunchGui.key++;
 	ForumShell.setTitle($ForumsGetTopics);
    ForumsGui.state = "getTopicList";
 	ForumsTopicsList.clear();
    canvas.SetCursor(ArrowWaitCursor);
    ForumsTopicsList.clearList();
-//   error("DQA:" @ 8 TAB ForumsComposeDlg.forum);
-	DatabaseQueryArray(8,80,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key,true);
+	DatabaseQueryArray(8,$currentForumPage,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key,true);
 	ForumsTopicsList.refreshFlag = 0;
 }
 //-----------------------------------------------------------------------------
@@ -565,9 +569,12 @@ function ForumsGui::onWake(%this)
       ForumShell.setTitle($ForumsConnecting);
       ForumsGui.state = "getForumList";
      canvas.SetCursor(ArrowWaitCursor);
+     $currentForumPage = 0;
 	  DatabaseQueryArray(7,100,"",ForumsGui,ForumsGui.key);
    }
 	// Make these buttons inactive until a message is selected:
+   FTPrevBtn.setActive(false);
+   FTNextBtn.setActive(false);
 	FO_ReplyBtn.setActive( false );
 	FO_NextBtn.setActive( false );
 	FO_PreviousBtn.setActive( false );
@@ -615,6 +622,22 @@ function ForumsGui::onDatabaseQueryResult(%this,%status,%resultString,%key)
 				{
 					ForumShell.setTitle($ForumsGetTopics @ ": " @ getField(%resultString,0));
 					%this.state = "TopicList";
+                   %recordCount = getField(%resultString,0);
+					if(%recordCount > $topicPageLength)
+					{
+						if($currentForumPage == 0)
+							updateTopicPageBtn(0,1);
+						else if($currentForumPage > 0)
+							updateTopicPageBtn(1,1);
+					}
+					else
+					{
+						if($currentForumPage == 0)
+							updateTopicPageBtn(0,0);
+						else if($currentForumPage > 0)
+							updateTopicPageBtn(1,0);
+					}
+                   
 				}
 				else
                {
@@ -812,6 +835,36 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 	}
 }
 //-----------------------------------------------------------------------------
+function ForumsGui::NextThreadPage()
+{
+   if($currentForumPage >= 5)
+       return;
+	ForumsGui.key = LaunchGui.key++;
+	ForumShell.setTitle($ForumsGetTopics);
+   ForumsGui.state = "getTopicList";
+	ForumsTopicsList.clear();
+   canvas.SetCursor(ArrowWaitCursor);
+   ForumsTopicsList.clearList();
+   $currentForumPage++;
+	DatabaseQueryArray(8,$currentForumPage,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key,true);
+	ForumsTopicsList.refreshFlag = 0;
+}
+//-----------------------------------------------------------------------------
+function ForumsGui::PreviousThreadPage()
+{
+   if($currentForumPage == 0)
+       return;
+	ForumsGui.key = LaunchGui.key++;
+	ForumShell.setTitle($ForumsGetTopics);
+   ForumsGui.state = "getTopicList";
+	ForumsTopicsList.clear();
+   canvas.SetCursor(ArrowWaitCursor);
+   ForumsTopicsList.clearList();
+   $currentForumPage--;
+	DatabaseQueryArray(8,80,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key,true);
+	ForumsTopicsList.refreshFlag = 0;
+}
+//-----------------------------------------------------------------------------
 //-- ForumsList --------------------------------------------------------------
 //-----------------------------------------------------------------------------
 function ForumsList::onSelect(%this)
@@ -821,6 +874,7 @@ function ForumsList::onSelect(%this)
 	FM_NewTopic.setActive(true);
 	ForumsComposeDlg.forum = ForumsList.getSelectedID();
 	ForumShell.setTitle("FORUMS: " @ getField(ForumsList.getRowTextbyID(ForumsList.getSelectedID()),0));
+   $currentForumPage = 0;
 	ForumsGui.eid = schedule(250,ForumsGui,GetTopicsList);
 }
 //-----------------------------------------------------------------------------

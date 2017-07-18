@@ -747,7 +747,8 @@ function TribeAdminMemberDlg::onDatabaseQueryResult( %this, %status, %resultStri
 		{
 			case "setMemberProfile":
 				%this.state = "done";
-				messageBoxOK("COMPLETE","Member Profile has been updated","WonUpdateCertificate();TL_Roster.setValue(1);");
+				ForumsTopicsList.refreshFlag = true;
+				messageBoxOK("COMPLETE","Member Profile has been updated","WonUpdateCertificate();TL_Profile.setValue(1);");
 		}
 	}
 	else if (getSubStr(getField(%status,1),0,9) $= "ORA-04061")
@@ -1684,7 +1685,25 @@ function PlayerPane::ButtonClick( %this, %senderid )
 	        W_MemberList.addColumn( 1, "TITLE", 80, 0, 300 );
     	    W_MemberList.addColumn( 2, "RNK", 38, 0, 50, "numeric center" );
         	%playerName = TWBTabView.getTabText(TWBTabView.GetSelectedID());
-	        TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQueryArray,13,0,%playerName,%this,%this.key,true);
+			if(%playerName $= getField(getRecord(wonGetAuthInfo(),0),0))
+			{
+				%ai = wonGetAuthInfo();
+				for(%ix=0;%ix<getField(getRecord(%ai,1),0);%ix++)
+				{
+					%row = getRecord(%ai,2+%ix);
+					%wid = getField(%row,2);
+					%name = getField(%row,0);
+					%title = getField(%row,4);
+					if(%title $= "")
+						%title = "Not Shown";
+					%adminLevel = getField(%row,3);
+					%editkick = %adminLevel >= 2;
+					W_MemberList.AddMember(%wid,%name,%adminLevel,%editkick,%row);
+		   			W_MemberList.AddRow(%wid,%name TAB %title TAB %adminLevel);
+				}
+			}
+			else
+		        TribeAndWarriorBrowserGui.eid = schedule(500,0,DatabaseQueryArray,13,0,%playerName,%this,%this.key,true);
 	     case 3:	//Player Buddylist
     	    W_MemberList.Clear();
         	W_MemberList.ClearColumns();

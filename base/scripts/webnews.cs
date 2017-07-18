@@ -1,8 +1,14 @@
 $WebLinkCount = 0;
-
+$currentPage = 0;
 function LaunchNews()
 {
    LaunchTabView.viewTab( "NEWS", NewsGui, 0 );
+}
+//-----------------------------------------------------------------------------
+function updatePageBtn(%prev,%next)
+{		
+   NewsPrevBtn.setActive( %prev );
+   NewsNextBtn.setActive( %next );
 }
 //-----------------------------------------------------------------------------
 function NewsGui::onWake(%this)
@@ -104,39 +110,21 @@ function NewsGui::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
 		   			%this.acl = getField(%status,3);
 					%this.ttlRecords = getField( %status,2 );
 					%this.recordCount = getField( %RowCount_Result,0 );
-					%this.pages = 0;
-					// RecordSet = least of 24 or rows returned
-					if(getField(%RowCount_Result,0) < 24)
-						%this.recordSet = getField(%RowCount_Result,0);
-					else
-						%this.recordSet = 24;
-
-					// Calculate the Number of Pages
-					for( %temprec = %this.ttlRecords; %temprec > 0; %temprec -= 24 )
+					if(%this.recordCount > 23)
 					{
-						%this.pages++;
-					}
-					// SET = which page we are on
-					if( %this.set == 1 && %this.pages >= 2 )
-					{
-						NewsNextBtn.setActive( true );
-						NewsPrevBtn.setActive( false );
-					}
-					else if ( %this.set == %this.pages && %this.pages >= 2 )
-					{
-						NewsNextBtn.setActive( false );
-						NewsPrevBtn.setActive( true );
-					}
-					else if (%this.set == %this.pages && %this.pages <= 1)
-					{
-						NewsNextBtn.setActive( false );
-						NewsPrevBtn.setActive( false );						
+						if($currentPage == 0)
+							updatePageBtn(0,1);
+						else if($currentPage > 0)
+							updatePageBtn(1,1);
 					}
 					else
 					{
-						NewsNextBtn.setActive( true );
-						NewsPrevBtn.setActive( true );
+						if($currentPage == 0)
+							updatePageBtn(0,0);
+						else if($currentPage > 0)
+							updatePageBtn(1,0);
 					}
+						
 			default: // result string
 		}
 	}
@@ -313,14 +301,14 @@ function NewsHeadlines::onSelect( %this, %id, %text )
 function NewsGui::getPreviousNewsItems( %this )
 {
    // Fetch the next batch of newer news items:
-   if ( %this.set == 1 )
-      return;
+   if($currentPage == 0)
+	return;
    canvas.SetCursor(ArrowWaitCursor);
    NewsGui.key = LaunchGui.key++;
    %this.state = "status";
    %this.articleCount = 0;
-   %this.set--;
-   DatabaseQueryArray(0,0,"1" TAB getField(%this.setList[%this.set],1), NewsGui, NewsGui.key );
+   $currentPage--;
+   DatabaseQueryArray(0,$currentPage,"1" TAB getField(%this.setList[%this.set],1), NewsGui, NewsGui.key );
 }
 //-----------------------------------------------------------------------------
 function NewsGui::getNextNewsItems( %this )
@@ -330,8 +318,8 @@ function NewsGui::getNextNewsItems( %this )
    NewsGui.key = LaunchGui.key++;
    %this.state = "status";
    %this.articleCount = 0;
-   DatabaseQueryArray(0,0,"1" TAB getField(%this.setList[%this.set],0), NewsGui, NewsGui.key );
-   %this.set++;															  
+   $currentPage++;
+   DatabaseQueryArray(0,$currentPage,"1" TAB getField(%this.setList[%this.set],0), NewsGui, NewsGui.key );
 }
 //-----------------------------------------------------------------------------
 function NewsMOTDText::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)

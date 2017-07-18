@@ -444,6 +444,7 @@ function CnHGame::resetScore(%game, %client)
 	%client.offenseScore = 0;
 	%client.kills = 0;
 	%client.deaths = 0;
+   %client.suicides = 0;
 	%client.teamKills = 0;
 	%client.flipFlopsCapped = 0;
 

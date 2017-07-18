@@ -267,4 +267,7 @@ function DnDGame::resetScore(%game, %client)
 	%client.scoreSelfKills = 0;
 	%client.teamKills = 0;
 	%client.objScore = 0;
+   %client.kills = 0;
+   %client.deaths = 0;
+   %client.suicides = 0;
 }

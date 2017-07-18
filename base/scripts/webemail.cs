@@ -380,6 +380,16 @@ function CheckEmail(%calledFromSched)
 	EmailGui.checkingEmail = true;
 }
 //-----------------------------------------------------------------------------
+function CancelEmailCheck()
+{
+   if ( EmailGui.checkSchedule )
+   {
+      error( ">> SCHEDULED EMAIL CHECK " @ EmailGui.checkSchedule @ " CANCELED <<" );
+      cancel( EmailGui.checkSchedule );
+      EmailGui.checkSchedule = "";
+   }
+}
+//-----------------------------------------------------------------------------
 function EmailEditBlocks()
 {
    Canvas.pushDialog(EmailBlockDlg);

@@ -171,7 +171,6 @@ function CommanderMapGui::onWake(%this)
       alxStop( $HudHandle['CommandScreen'] );
    alxPlay(CommandMapActivateSound, 0, 0, 0);
    $HudHandle['CommandScreen'] = alxPlay(CommandMapHumSound, 0, 0, 0);
-   CursorOn();
 
    CMDTextButton.setValue(CommanderMap.renderText);
 
@@ -198,7 +197,6 @@ function CommanderMapGui::onSleep(%this)
    %this.open = false;
 
    commandToServer('ScopeCommanderMap', false);
-   CursorOff();
 
    if(CMContextPopup.visible == true)
       CMContextPopup.reset();
@@ -214,6 +212,9 @@ function CommanderMapGui::onSleep(%this)
    // if this gui is being removed outside of CommanderMapGui::close()
    if(CommanderTV.open && CommanderTV.attached)
       commandToServer('AttachCommanderCamera', -1);
+
+   //always set the cursor back to an arrow when you leave...
+   Canvas.setCursor(CMDCursorArrow);
 }
 
 function CommanderMapGui::open(%this)
@@ -775,6 +776,7 @@ function clientCmdCameraAttachResponse(%attached)
 new ActionMap(CommanderTVControl);
 CommanderTVControl.bind(mouse, xaxis, yaw);
 CommanderTVControl.bind(mouse, yaxis, pitch);
+
 
 function CommanderTV_ButtonPress(%val)
 {

@@ -332,7 +332,7 @@ function RabbitGame::gameOver(%game)
    messageAll('MsgClearObjHud', "");
    for(%i = 0; %i < ClientGroup.getCount(); %i++)
    {
-      %client = %group.getObject(%i);
+      %client = ClientGroup.getObject(%i);
       %game.resetScore(%client);
       cancel(%client.waypointSchedule);
    }
@@ -344,6 +344,8 @@ function RabbitGame::resetScore(%game, %client)
 {
    %client.score = 0;
    %client.kills = 0;
+   %client.deaths = 0;
+   %client.suicides = 0;
    %client.flagGrabs = 0;
    %client.flagTimeMS = 0;
 }
