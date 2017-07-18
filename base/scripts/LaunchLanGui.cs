@@ -33,6 +33,11 @@ function OnlineLogIn()
    queryMasterGameTypes();
    // Start the Email checking...
    EmailGui.checkSchedule = schedule( 5000, 0, CheckEmail, true );
+   
+   // Load the player database...
+   %guid = getField( WONGetAuthInfo(), 3 );
+   if ( %guid > 0 )
+      loadPlayerDatabase( "prefs/pyrdb" @ %guid );
    Canvas.setContent(LaunchGui);
 }
 
@@ -62,7 +67,10 @@ function LaunchToolbarMenu::onSelect(%this, %id, %text)
       case 9: // Quit
          IRCClient::quit();
          LaunchTabView.closeAllTabs();
-         quit();
+         if (!isDemo())
+            quit();
+         else
+            Canvas.setContent(DemoEndGui);
       //case 10: // Log Off
       //   LaunchTabView.closeAllTabs();
       //   PlayOffline();
@@ -88,10 +96,10 @@ function LaunchToolbarDlg::onWake(%this)
       LaunchToolbarMenu.add( 1, "TRAINING" );
       LaunchToolbarMenu.add( 0, "GAME" );
       LaunchToolbarMenu.add( 2, "NEWS" );
-      //LaunchToolbarMenu.add( 3, "FORUMS" );
-      //LaunchToolbarMenu.add( 4, "EMAIL" );
-      //LaunchToolbarMenu.add( 5, "CHAT" );
-      //LaunchToolbarMenu.add( 6, "BROWSER" );
+   }
+   else if ( isDemoServer() )
+   {
+      LaunchToolbarMenu.add( 0, "GAME" );
    }
    else if ( $PlayingOnline )
    {
@@ -156,6 +164,11 @@ function OpenLaunchTabs( %gotoWarriorSetup )
       LaunchTabView.addLaunchTab( "BROWSER",    "", true );
       %launchGui = GameGui;
    }
+   else if ( isDemoServer() )
+   {
+      LaunchTabView.addLaunchTab( "GAME",       GameGui );
+      %launchGui = GameGui;
+   }
    else if ( $PlayingOnline )
    {
       LaunchTabView.addLaunchTab( "GAME",    GameGui );
@@ -205,9 +218,12 @@ function LaunchTabView::onSelect( %this, %id, %text )
    // Ignore the ID - it can't be trusted.
    %tab = %this.getSelectedTab();
 
-   Canvas.setContent( %this.gui[%tab] );
-   %this.gui[%tab].setKey( %this.key[%tab] );
-   %this.lastTab = %tab;
+   if ( isObject( %this.gui[%tab] ) )
+   {
+      Canvas.setContent( %this.gui[%tab] );
+      %this.gui[%tab].setKey( %this.key[%tab] );
+      %this.lastTab = %tab;
+   }
 }
 
 //--------------------------------------------------------
@@ -286,7 +302,8 @@ function LaunchTabView::closeAllTabs( %this )
    %tabCount = %this.tabCount();
    for ( %i = 0; %i < %tabCount; %i++ )
    {
-      %this.gui[%i].onClose( %this.key[%i] );
+      if ( isObject( %this.gui[%i] ) )
+         %this.gui[%i].onClose( %this.key[%i] );
       %this.gui[%i] = "";
       %this.key[%i] = "";
    }
@@ -311,7 +328,7 @@ function LaunchGui::onWake(%this)
    if ( !$FirstLaunch )
       LaunchTabView.viewLastTab();
 
-	if ( !isDemo() )
+	if ( !isDemo() && !isDemoServer() )
    	checkNamesAndAliases();
 	else
 		OpenLaunchTabs();

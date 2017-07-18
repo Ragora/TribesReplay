@@ -405,6 +405,10 @@ function AIRespondToEvent(%client, %eventTag, %targetClient)
 	//record the event time
 	$EventTagTimeArray[%eventTag] = getSimTime();
 
+	//abort if AI chat has been disabled
+	if ($AIDisableChatResponse)
+		return;
+
 	%clientPos = %client.player.getWorldBoxCenter();
   	switch$ (%eventTag)
 	{

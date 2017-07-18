@@ -157,7 +157,7 @@ datablock FlyingVehicleData(BomberFlyer) : BomberDamageProfile
    maxSteeringAngle = 5;    // Max radiens you can rotate the wheel. Smaller number is more maneuverable.
    horizontalSurfaceForce = 5;   // Horizontal center "wing" (provides "bite" into the wind for climbing/diving and turning)
    verticalSurfaceForce = 8;     // Vertical center "wing" (controls side slip. lower numbers make MORE slide.)
-   maneuveringForce = 4700;      // Horizontal jets (W,S,D,A key thrust)
+   maneuveringForce = 4500;      // Horizontal jets (W,S,D,A key thrust)
    steeringForce = 1100;         // Steering jets (force applied when you move the mouse)
    steeringRollForce = 300;      // Steering jets (how much you heel over when you turn)
    rollForce = 8;                // Auto-roll (self-correction to right you after you roll/invert)
@@ -165,10 +165,10 @@ datablock FlyingVehicleData(BomberFlyer) : BomberDamageProfile
    createHoverHeight = 3;  // Height off the ground when created
 
    // Turbo Jet
-   jetForce = 3000;      // Afterburner thrust (this is in addition to normal thrust)
+   jetForce = 2000;      // Afterburner thrust (this is in addition to normal thrust)
    minJetEnergy = 40.0;     // Afterburner can't be used if below this threshhold.
    jetEnergyDrain = 3.0;       // Energy use of the afterburners (low number is less drain...can be fractional)
-   vertThrustMultiple = 2.0;
+   vertThrustMultiple = 3.0;
 
    dustEmitter = LargeVehicleLiftoffDustEmitter;
    triggerDustHeight = 4.0;
@@ -327,31 +327,31 @@ datablock ExplosionData(BomberFusionBoltExplosion)
 
 datablock LinearFlareProjectileData(BomberFusionBolt)
 {
-   projectileShapeName = "";
-   directDamage        = 0.35;
-   directDamageType    = $DamageType::BellyTurret;
-   hasDamageRadius     = false;
-   explosion           = BomberFusionBoltExplosion;
-   sound               = BlasterProjectileSound;
+   projectileShapeName        = "";
+   directDamage               = 0.35;
+   directDamageType           = $DamageType::BellyTurret;
+   hasDamageRadius            = false;
+   explosion                  = BomberFusionBoltExplosion;
+   sound                      = BlasterProjectileSound;
 
-   dryVelocity       = 200.0;
-   wetVelocity       = 200.0;
-   velInheritFactor  = 1.0;
-   fizzleTimeMS      = 2000;
-   lifetimeMS        = 3000;
-   explodeOnDeath    = false;
-   reflectOnWaterImpactAngle = 0.0;
-   explodeOnWaterImpact      = true;
-   deflectionOnWaterImpact   = 0.0;
-   fizzleUnderwaterMS        = -1;
+   dryVelocity                = 200.0;
+   wetVelocity                = 200.0;
+   velInheritFactor           = 1.0;
+   fizzleTimeMS               = 2000;
+   lifetimeMS                 = 3000;
+   explodeOnDeath             = false;
+   reflectOnWaterImpactAngle  = 0.0;
+   explodeOnWaterImpact       = true;
+   deflectionOnWaterImpact    = 0.0;
+   fizzleUnderwaterMS         = -1;
 
-   activateDelayMS = 100;
+   activateDelayMS            = 100;
 
-   numFlares         = 0;
-   size              = 0.15;
-   flareColor        = "0.7 0.3 1.0";
-   flareModTexture   = "flaremod";
-   flareBaseTexture  = "flarebase";
+   numFlares                  = 0;
+   size                       = 0.15;
+   flareColor                 = "0.7 0.3 1.0";
+   flareModTexture            = "flaremod";
+   flareBaseTexture           = "flarebase";
 };
 
 //-------------------------------------
@@ -360,119 +360,178 @@ datablock LinearFlareProjectileData(BomberFusionBolt)
 
 datablock TurretData(BomberTurret) : TurretDamageProfile
 {
-   className      = VehicleTurret;
-   catagory       = "Turrets";
-   shapeFile      = "turret_belly_base.dts";
-   preload        = true;
+   className               = VehicleTurret;
+   catagory                = "Turrets";
+   shapeFile               = "turret_belly_base.dts";
+   preload                 = true;
 
-   mass           = 1.0;  // Not really relevant
-   repairRate     = 0;
-   maxDamage      = BomberFlyer.maxDamage;
-   destroyedLevel = BomberFlyer.destroyedLevel;
+   mass                    = 1.0;  // Not really relevant
+   repairRate              = 0;
+   maxDamage               = BomberFlyer.maxDamage;
+   destroyedLevel          = BomberFlyer.destroyedLevel;
 
-   thetaMin = 90;
-   thetaMax = 180;
+   thetaMin                = 90;
+   thetaMax                = 180;
+
+   // capacitor
+   maxCapacitorEnergy      = 250;
+   capacitorRechargeRate   = 0.8;
    
-   inheritEnergyFromMount = true;
-   firstPersonOnly = true;
-   useEyePoint = true;
-   numWeapons = 3;
+   inheritEnergyFromMount  = true;
+   firstPersonOnly         = true;
+   useEyePoint             = true;
+   numWeapons              = 3;
 
-   targetNameTag = 'Thundersword Belly';
-   targetTypeTag = 'Turret';
+   targetNameTag           = 'Thundersword Belly';
+   targetTypeTag           = 'Turret';
 };
 
-datablock TurretImageData(BomberTurretBarrelPair)
+datablock TurretImageData(BomberTurretBarrel)
 {
-   shapeFile      = "turret_belly_barrell.dts";
-   mountPoint = 0;
+   shapeFile                        = "turret_belly_barrell.dts";
+   mountPoint                       = 0;
 
-   projectile = BomberFusionBolt;
-   projectileType = LinearFlareProjectile;
+   projectile                       = BomberFusionBolt;
+   projectileType                   = LinearFlareProjectile;
 
-   usesEnergy = true;
-   useMountEnergy = true;
-   fireEnergy = 6.25;
-   minEnergy = 25.0;
+   usesEnergy                       = true;
+   useCapacitor                     = true;
+   useMountEnergy                   = true;
+   fireEnergy                       = 16.0;
+   minEnergy                        = 16.0;
 
    // Turret parameters
-   activationMS      = 1000;
-   deactivateDelayMS = 1500;
-   thinkTimeMS       = 200;
-   degPerSecTheta    = 360;
-   degPerSecPhi      = 360;
+   activationMS                     = 1000;
+   deactivateDelayMS                = 1500;
+   thinkTimeMS                      = 200;
+   degPerSecTheta                   = 360;
+   degPerSecPhi                     = 360;
    
-   attackRadius      = 75;
+   attackRadius                     = 75;
 
    // State transitions
-   stateName[0]                = "Activate";
-   stateTransitionOnTimeout[0] = "WaitFire";
-   stateTimeoutValue[0]        = 0.5;
-   stateSequence[0]            = "Activate";
-   stateSound[0]           = BomberTurretActivateSound;
+   stateName[0]                     = "Activate";
+   stateTransitionOnTimeout[0]      = "WaitFire1";
+   stateTimeoutValue[0]             = 0.5;
+   stateSequence[0]                 = "Activate";
+   stateSound[0]                    = BomberTurretActivateSound;
 
-   stateName[1] = "WaitFire";
-   stateTransitionOnTriggerDown[1] = "InitFire";
-   stateTransitionOnNoAmmo[1]      = "NoAmmo";
-//   stateSound[1]                   = BomberTurretIdleSound;
+   stateName[1]                     = "WaitFire1";
+   stateTransitionOnTriggerDown[1]  = "Fire1";
+   stateTransitionOnNoAmmo[1]       = "NoAmmo1";
 
-   stateName[2] = "InitFire";
-   stateWaitForTimeout[2]        = false;
-   stateTransitionOnTimeout[2]   = "Fire";
- 
-   stateName[3]                = "Fire";
-   stateTransitionOnTimeout[3] = "Reload";
-   stateTimeoutValue[3]        = 0.35;
-   stateFire[3]                = true;
-   stateRecoil[3]              = LightRecoil;
-   stateAllowImageChange[3]    = false;
-   stateSequence[3]            = "Fire";
-   stateScript[3]              = "onFire";
-   stateSound[3]               = BomberTurretFireSound;
+   stateName[2]                     = "Fire1";
+   stateTransitionOnTimeout[2]      = "Reload1";
+   stateTimeoutValue[2]             = 0.13;
+   stateFire[2]                     = true;
+   stateRecoil[2]                   = LightRecoil;
+   stateAllowImageChange[2]         = false;
+   stateSequence[2]                 = "Fire";
+   stateScript[2]                   = "onFire";
+   stateSound[2]                    = BomberTurretFireSound;
 
-   stateName[4]                  = "Reload";
-   stateTimeoutValue[4]          = 0.05;
-   stateAllowImageChange[4]      = false;
-   stateSequence[4]              = "Reload";
-   stateTransitionOnTimeout[4]   = "WaitFire";
-   stateTransitionOnNotLoaded[4] = "NoAmmo";
-//   stateSound[4]                 = BomberTurretReloadSound;
+   stateName[3]                     = "Reload1";
+   stateSequence[3]                 = "Reload";
+   stateTimeoutValue[3]             = 0.1;
+   stateAllowImageChange[3]         = false;
+   stateTransitionOnTimeout[3]      = "WaitFire2";
+   stateTransitionOnNoAmmo[3]       = "NoAmmo1";
 
-   stateName[5]                    = "NoAmmo";
-   stateTransitionOnAmmo[5]        = "Reload";
-   stateSequence[5]                = "NoAmmo";
-   stateTransitionOnTriggerDown[5] = "DryFire";
+   stateName[4]                     = "NoAmmo1";
+   stateTransitionOnAmmo[4]         = "Reload1";
+   stateSequence[4]                 = "NoAmmo";
+   stateTransitionOnTriggerDown[4]  = "DryFire1";
 
-   stateName[6]                = "DryFire";
-   stateSound[6]               = BomberTurretDryFireSound;
-   stateTimeoutValue[6]        = 1.5;
-   stateTransitionOnTimeout[6] = "NoAmmo";
+   stateName[5]                     = "DryFire1";
+   stateSound[5]                    = BomberTurretDryFireSound;
+   stateTimeoutValue[5]             = 0.5;
+   stateTransitionOnTimeout[5]      = "NoAmmo1";
    
+   stateName[6]                     = "WaitFire2";
+   stateTransitionOnTriggerDown[6]  = "Fire2";
+   stateTransitionOnNoAmmo[6]       = "NoAmmo";
+
+   stateName[7]                     = "Fire2";
+   stateTransitionOnTimeout[7]      = "Reload2";
+   stateTimeoutValue[7]             = 0.13;
+   stateScript[7]                   = "FirePair";
+
+   stateName[8]                     = "Reload2";
+   stateSequence[8]                 = "Reload";
+   stateTimeoutValue[8]             = 0.1;
+   stateAllowImageChange[8]         = false;
+   stateTransitionOnTimeout[8]      = "WaitFire1";
+   stateTransitionOnNoAmmo[8]       = "NoAmmo2";
+
+   stateName[9]                     = "NoAmmo2";
+   stateTransitionOnAmmo[9]         = "Reload2";
+   stateSequence[9]                 = "NoAmmo";
+   stateTransitionOnTriggerDown[9]  = "DryFire2";
+
+   stateName[10]                     = "DryFire2";
+   stateSound[10]                    = BomberTurretDryFireSound;
+   stateTimeoutValue[10]             = 0.5;
+   stateTransitionOnTimeout[10]      = "NoAmmo2";
+                                              
 };
 
-datablock TurretImageData(BomberTurretBarrel) : BomberTurretBarrelPair 
+datablock TurretImageData(BomberTurretBarrelPair) 
 {
-   shapeFile      = "turret_belly_barrelr.dts";
-   mountPoint = 1;
-   stateScript[2]           = "onTriggerDown";
-   stateScript[4]           = "onTriggerUp";
+   shapeFile                = "turret_belly_barrelr.dts";
+   mountPoint               = 1;
+   
+   projectile                       = BomberFusionBolt;
+   projectileType                   = LinearFlareProjectile;
+
+   usesEnergy                       = true;
+   useCapacitor                     = true;
+   useMountEnergy                   = true;
+   fireEnergy                       = 16.0;
+   minEnergy                        = 16.0;
+
+   // Turret parameters
+   activationMS                     = 1000;
+   deactivateDelayMS                = 1500;
+   thinkTimeMS                      = 200;
+   degPerSecTheta                   = 360;
+   degPerSecPhi                     = 360;
+   
+   attackRadius                     = 75;
+
+   stateName[0]                     = "WaitFire";
+   stateTransitionOnTriggerDown[0]  = "Fire";
+
+   stateName[1]                     = "Fire";
+   stateTransitionOnTimeout[1]      = "StopFire";
+   stateTimeoutValue[1]             = 0.13;
+   stateFire[1]                     = true;
+   stateRecoil[1]                   = LightRecoil;
+   stateAllowImageChange[1]         = false;
+   stateSequence[1]                 = "Fire";
+   stateScript[1]                   = "onFire";
+   stateSound[1]                    = BomberTurretFireSound;
+
+   stateName[2]                     = "StopFire";
+   stateTimeoutValue[2]             = 0.1;
+   stateTransitionOnTimeout[2]      = "WaitFire";
+   stateScript[2]                   = "stopFire";
 };
 
 datablock TurretImageData(AIAimingTurretBarrel) 
 {
-   shapeFile = "turret_muzzlepoint.dts";
-   mountPoint = 3;
+   shapeFile            = "turret_muzzlepoint.dts";
+   mountPoint           = 3;
 
-   projectile = BomberFusionBolt;
+   projectile           = BomberFusionBolt;
 
    // Turret parameters
-   activationMS      = 1000;
-   deactivateDelayMS = 1500;
-   thinkTimeMS       = 200;
-   degPerSecTheta    = 500;
-   degPerSecPhi      = 800;
+   activationMS         = 1000;
+   deactivateDelayMS    = 1500;
+   thinkTimeMS          = 200;
+   degPerSecTheta       = 500;
+   degPerSecPhi         = 800;
    
-   attackRadius      = 75;
+   attackRadius         = 75;
 };
 
 //-------------------------------------
@@ -481,29 +540,29 @@ datablock TurretImageData(AIAimingTurretBarrel)
 
 datablock BombProjectileData(BomberBomb)
 {
-   projectileShapeName = "bomb.dts";
-   emitterDelay        = -1;
-   directDamage        = 0.0;
-   hasDamageRadius     = true;
-   indirectDamage      = 1.1;
-   damageRadius        = 30;
-   radiusDamageType    = $DamageType::BomberBombs;
-   kickBackStrength    = 2500;
+   projectileShapeName  = "bomb.dts";
+   emitterDelay         = -1;
+   directDamage         = 0.0;
+   hasDamageRadius      = true;
+   indirectDamage       = 1.1;
+   damageRadius         = 30;
+   radiusDamageType     = $DamageType::BomberBombs;
+   kickBackStrength     = 2500;
 
-   explosion           = "VehicleBombExplosion";
-   velInheritFactor    = 1.0;
+   explosion            = "VehicleBombExplosion";
+   velInheritFactor     = 1.0;
 
-   grenadeElasticity = 0.25;
-   grenadeFriction   = 0.4;
-   armingDelayMS     = 2000;
-   muzzleVelocity    = 0.1;
-   drag              = 0.3;
+   grenadeElasticity    = 0.25;
+   grenadeFriction      = 0.4;
+   armingDelayMS        = 2000;
+   muzzleVelocity       = 0.1;
+   drag                 = 0.3;
 
-   minRotSpeed       = "60.0 0.0 0.0";
-   maxRotSpeed       = "80.0 0.0 0.0";
-   scale             = "1.0 1.0 1.0";
+   minRotSpeed          = "60.0 0.0 0.0";
+   maxRotSpeed          = "80.0 0.0 0.0";
+   scale                = "1.0 1.0 1.0";
    
-   sound = BomberBombProjectileSound;
+   sound                = BomberBombProjectileSound;
 };
 
 //-------------------------------------
@@ -512,95 +571,134 @@ datablock BombProjectileData(BomberBomb)
 
 datablock ItemData(BombAmmo)
 {
-   className = Ammo;
-   catagory = "Ammo";
-   shapeFile = "repair_kit.dts";
-   mass = 1;
-   elasticity = 0.2;
-   friction = 0.6;
-   pickupRadius = 1;
-   computeCRC = true;
+   className         = Ammo;
+   catagory          = "Ammo";
+   shapeFile         = "repair_kit.dts";
+   mass              = 1;
+   elasticity        = 0.2;
+   friction          = 0.6;
+   pickupRadius      = 1;
+   computeCRC        = true;
 };
 
 datablock StaticShapeData(DropBombs)
 {
-   catagory       = "Turrets";
-   shapeFile      = "bombers_eye.dts";
-   maxDamage     = 1.0;
-   disabledLevel  = 0.6;
-   destroyedLevel = 0.8;
+   catagory             = "Turrets";
+   shapeFile            = "bombers_eye.dts";
+   maxDamage            = 1.0;
+   disabledLevel        = 0.6;
+   destroyedLevel       = 0.8;
 };
 
-datablock ShapeBaseImageData(BomberBombPairImage)
+datablock TurretImageData(BomberBombImage)
 {
-   className = WeaponImage;
-   shapeFile = "turret_muzzlepoint.dts";
-//   ammo = BombAmmo;
-   offset = "2 -4 -0.5";
-   mountPoint = 10;
+   shapeFile                        = "turret_muzzlepoint.dts";
+   offset                           = "2 -4 -0.5";
+   mountPoint                       = 10;
 
-   projectile = BomberBomb;
-   projectileType = BombProjectile;
-   usesEnergy = true;
-   useMountEnergy = true;
+   projectile                       = BomberBomb;
+   projectileType                   = BombProjectile;
+   usesEnergy                       = true;
+   useMountEnergy                   = true;
+   useCapacitor                     = true;
 
-   fireEnergy = 37.50;
-   minEnergy = 37.50;
+   fireEnergy                       = 53.0;
+   minEnergy                        = 53.0;
 
-   stateName[0] = "Activate";
-//   stateTransitionOnTimeout[0] = "ActivateReady";
-   stateTransitionOnTimeout[0] = "WaitFire";
-   stateTimeoutValue[0] = 0.5;
-   stateSequence[0] = "Activate";
-//   stateSound[0] = MortarSwitchSound;
-
-   stateName[1] = "ActivateReady";
-   stateTransitionOnLoaded[1] = "WaitFire";
-//   stateTransitionOnNoAmmo[1] = "NoAmmo";
-
-   stateName[2] = "WaitFire";
-//   stateSound[2] = BomberBombIdleSound;
-   stateTransitionOnNoAmmo[2] = "NoAmmo";
-   stateTransitionOnTriggerDown[2] = "InitFire";
-      
-   stateName[3] = "InitFire";
-   stateWaitForTimeout[3]        = false;
-   stateTransitionOnTimeout[3]   = "Fire";
    
-   stateName[4] = "Fire";
-   stateTransitionOnTimeout[4] = "Reload";
-   stateTimeoutValue[4] = 0.35;
-   stateFire[4] = true;
-   stateRecoil[4] = LightRecoil;
-   stateAllowImageChange[4] = false;
-   stateScript[4] = "onFire";
-   stateSound[4] = BomberBombFireSound;
+   stateName[0]                     = "Activate";
+   stateTransitionOnTimeout[0]      = "WaitFire1";
+   stateTimeoutValue[0]             = 0.5;
+   stateSequence[0]                 = "Activate";
 
-   stateName[5] = "Reload";
-   stateTransitionOnNoAmmo[5] = "NoAmmo";
-   stateTransitionOnTimeout[5] = "WaitFire";
-   stateTimeoutValue[5] = 0.5;
-   stateAllowImageChange[5] = false;
-   stateSequence[5] = "Reload";
-//   stateSound[5] = BomberBombReloadSound;
-   
-   stateName[6] = "NoAmmo";
-   stateTransitionOnAmmo[6] = "Reload";
-   stateSequence[6] = "NoAmmo";
-   stateTransitionOnTriggerDown[6] = "DryFire";
+   stateName[1]                     = "WaitFire1";
+   stateTransitionOnTriggerDown[1]  = "Fire1";
+   stateTransitionOnNoAmmo[1]       = "NoAmmo1";
 
-   stateName[7]       = "DryFire";
-   stateSound[7]      = BomberBombDryFireSound;
-   stateTimeoutValue[7]        = 1.5;
-   stateTransitionOnTimeout[7] = "NoAmmo";
+   stateName[2]                     = "Fire1";
+   stateTransitionOnTimeout[2]      = "Reload1";
+   stateTimeoutValue[2]             = 0.32;
+   stateFire[2]                     = true;
+   stateAllowImageChange[2]         = false;
+   stateSequence[2]                 = "Fire";
+   stateScript[2]                   = "onFire";
+   stateSound[2]                    = BomberBombFireSound;
+
+   stateName[3]                     = "Reload1";
+   stateSequence[3]                 = "Reload";
+   stateTimeoutValue[3]             = 0.1;
+   stateAllowImageChange[3]         = false;
+   stateTransitionOnTimeout[3]      = "WaitFire2";
+   stateTransitionOnNoAmmo[3]       = "NoAmmo1";
+
+   stateName[4]                     = "NoAmmo1";
+   stateTransitionOnAmmo[4]         = "Reload1";
+   stateSequence[4]                 = "NoAmmo";
+   stateTransitionOnTriggerDown[4]  = "DryFire1";
+
+   stateName[5]                     = "DryFire1";
+   stateSound[5]                    = BomberBombDryFireSound;
+   stateTimeoutValue[5]             = 0.5;
+   stateTransitionOnTimeout[5]      = "NoAmmo1";
    
+   stateName[6]                     = "WaitFire2";
+   stateTransitionOnTriggerDown[6]  = "Fire2";
+   stateTransitionOnNoAmmo[6]       = "NoAmmo";
+
+   stateName[7]                     = "Fire2";
+   stateTransitionOnTimeout[7]      = "Reload2";
+   stateTimeoutValue[7]             = 0.32;
+   stateScript[7]                   = "FirePair";
+
+   stateName[8]                     = "Reload2";
+   stateSequence[8]                 = "Reload";
+   stateTimeoutValue[8]             = 0.1;
+   stateAllowImageChange[8]         = false;
+   stateTransitionOnTimeout[8]      = "WaitFire1";
+   stateTransitionOnNoAmmo[8]       = "NoAmmo2";
+
+   stateName[9]                     = "NoAmmo2";
+   stateTransitionOnAmmo[9]         = "Reload2";
+   stateSequence[9]                 = "NoAmmo";
+   stateTransitionOnTriggerDown[9]  = "DryFire2";
+
+   stateName[10]                     = "DryFire2";
+   stateSound[10]                    = BomberBombDryFireSound;
+   stateTimeoutValue[10]             = 0.5;
+   stateTransitionOnTimeout[10]      = "NoAmmo2";
 };
 
-datablock ShapeBaseImageData(BomberBombImage) : BomberBombPairImage
+datablock TurretImageData(BomberBombPairImage)
 {
-   offset = "-2 -4 -0.5";
-   stateScript[3]           = "onTriggerDown";
-   stateScript[5]           = "onTriggerUp";
+   shapeFile                        = "turret_muzzlepoint.dts";
+   offset                           = "-2 -4 -0.5";
+   mountPoint                       = 10;
+
+   projectile                       = BomberBomb;
+   projectileType                   = BombProjectile;
+   usesEnergy                       = true;
+   useMountEnergy                   = true;
+   useCapacitor                     = true;
+   fireEnergy                       = 53.0;
+   minEnergy                        = 53.0;
+
+   stateName[0]                     = "WaitFire";
+   stateTransitionOnTriggerDown[0]  = "Fire";
+
+   stateName[1]                     = "Fire";
+   stateTransitionOnTimeout[1]      = "StopFire";
+   stateTimeoutValue[1]             = 0.13;
+   stateFire[1]                     = true;
+   stateAllowImageChange[1]         = false;
+   stateSequence[1]                 = "Fire";
+   stateScript[1]                   = "onFire";
+   stateSound[1]                    = BomberBombFireSound;
+
+   stateName[2]                     = "StopFire";
+   stateTimeoutValue[2]             = 0.1;
+   stateTransitionOnTimeout[2]      = "WaitFire";
+   stateScript[2]                   = "stopFire";
+                         
 };
 
 //**************************************************************
@@ -620,35 +718,35 @@ datablock ParticleData(FusionExplosionParticle)
    lifetimeMS           = 750;
    lifetimeVarianceMS   = 150;
    textureName          = "particleTest";
-   colors[0]     = "0.56 0.36 0.26 1.0";
-   colors[1]     = "0.56 0.36 0.26 0.0";
-   sizes[0]      = 1;
-   sizes[1]      = 2;
+   colors[0]            = "0.56 0.36 0.26 1.0";
+   colors[1]            = "0.56 0.36 0.26 0.0";
+   sizes[0]             = 1;
+   sizes[1]             = 2;
 };
 
 datablock ParticleEmitterData(FusionExplosionEmitter)
 {
-   ejectionPeriodMS = 7;
-   periodVarianceMS = 0;
-   ejectionVelocity = 12;
-   velocityVariance = 1.75;
-   ejectionOffset   = 0.0;
-   thetaMin         = 0;
-   thetaMax         = 60;
-   phiReferenceVel  = 0;
-   phiVariance      = 360;
-   overrideAdvances = false;
-   particles = "FusionExplosionParticle";
+   ejectionPeriodMS     = 7;
+   periodVarianceMS     = 0;
+   ejectionVelocity     = 12;
+   velocityVariance     = 1.75;
+   ejectionOffset       = 0.0;
+   thetaMin             = 0;
+   thetaMax             = 60;
+   phiReferenceVel      = 0;
+   phiVariance          = 360;
+   overrideAdvances     = false;
+   particles            = "FusionExplosionParticle";
 };
 
 datablock ExplosionData(FusionBoltExplosion)
 {
-   explosionShape = "effect_plasma_explosion.dts";
-   soundProfile   = FusionExpSound;
-   particleEmitter = FusionExplosionEmitter;
-   particleDensity = 250;
-   particleRadius = 1.25;
-   faceViewer = true;
+   explosionShape       = "effect_plasma_explosion.dts";
+   soundProfile         = FusionExpSound;
+   particleEmitter      = FusionExplosionEmitter;
+   particleDensity      = 250;
+   particleRadius       = 1.25;
+   faceViewer           = true;
 };
                                     
 //--------------------------------------------------------------------------
@@ -659,14 +757,14 @@ datablock AudioProfile(BomberTargetingSwitchSound)
 {
    filename    = "fx/weapons/generic_switch.wav";
    description = AudioClosest3d;
-   preload = true;
+   preload     = true;
 };
 
 datablock AudioProfile(BomberTargetingPaintSound)
 {
    filename    = "fx/weapons/targetinglaser_paint.wav";
    description = CloseLooping3d;
-   preload = true;
+   preload     = true;
 };
 
 //--------------------------------------
@@ -704,50 +802,48 @@ datablock TargetProjectileData(BomberTargeter)
 //-------------------------------------
 datablock ShapeBaseImageData(BomberTargetingImage)
 {
-   className = WeaponImage;
+   className                           = WeaponImage;
 
-   shapeFile = "turret_muzzlepoint.dts";
-   offset = "0 -0.04 -0.01";
-   mountPoint = 2;
+   shapeFile                           = "turret_muzzlepoint.dts";
+   offset                              = "0 -0.04 -0.01";
+   mountPoint                          = 2;
 
-   projectile = BomberTargeter;
-   projectileType = TargetProjectile;
-   deleteLastProjectile = true;
+   projectile                          = BomberTargeter;
+   projectileType                      = TargetProjectile;
+   deleteLastProjectile                = true;
 
-   usesEnergy = true;
-   minEnergy = 3;
+   usesEnergy                          = true;
+   minEnergy                           = 3;
 
-   stateName[0]                = "Activate";
-   stateSequence[0]            = "Activate";
-   stateSound[0]               = BomberTargetingSwitchSound;
-   stateTimeoutValue[0]        = 0.5;
-   stateTransitionOnTimeout[0] = "ActivateReady";
+   stateName[0]                        = "Activate";
+   stateSequence[0]                    = "Activate";
+   stateSound[0]                       = BomberTargetingSwitchSound;
+   stateTimeoutValue[0]                = 0.5;
+   stateTransitionOnTimeout[0]         = "ActivateReady";
 
-   stateName[1]               = "ActivateReady";
-   stateTransitionOnAmmo[1]   = "Ready";
-   stateTransitionOnNoAmmo[1] = "NoAmmo";
+   stateName[1]                        = "ActivateReady";
+   stateTransitionOnAmmo[1]            = "Ready";
+   stateTransitionOnNoAmmo[1]          = "NoAmmo";
 
-   stateName[2]                    = "Ready";
-   stateTransitionOnNoAmmo[2]      = "NoAmmo";
-   stateTransitionOnTriggerDown[2] = "Fire";
+   stateName[2]                        = "Ready";
+   stateTransitionOnNoAmmo[2]          = "NoAmmo";
+   stateTransitionOnTriggerDown[2]     = "Fire";
 
-   stateName[3]                  = "Fire";
-   stateEnergyDrain[3]           = 3;
-   stateFire[3]                  = true;
-   stateAllowImageChange[3]      = false;
-   stateScript[3]                = "onFire";
-   stateTransitionOnTriggerUp[3] = "Deconstruction";
-   stateTransitionOnNoAmmo[3]    = "Deconstruction";
-   stateSound[3] = BomberTargetingPaintSound;
+   stateName[3]                        = "Fire";
+   stateEnergyDrain[3]                 = 3;
+   stateFire[3]                        = true;
+   stateAllowImageChange[3]            = false;
+   stateScript[3]                      = "onFire";
+   stateTransitionOnTriggerUp[3]       = "Deconstruction";
+   stateTransitionOnNoAmmo[3]          = "Deconstruction";
+   stateSound[3]                       = BomberTargetingPaintSound;
 
-   stateName[4]             = "NoAmmo";
-   stateTransitionOnAmmo[4] = "Ready";
+   stateName[4]                        = "NoAmmo";
+   stateTransitionOnAmmo[4]            = "Ready";
 
-   stateName[5]               = "Deconstruction";
-// Deconstruct is now being called from weapTurretCode.cs
-//   stateScript[5]             = "deconstruct";
-   stateTransitionOnTimeout[5] = "ActivateReady";
-   stateTimeoutValue[5]        = 0.05;
+   stateName[5]                        = "Deconstruction";
+   stateTransitionOnTimeout[5]         = "ActivateReady";
+   stateTimeoutValue[5]                = 0.05;
 };
 
 function BomberTargetingImage::onFire(%data,%obj,%slot)
@@ -801,4 +897,3 @@ datablock StaticShapeData(BomberBeacon)
    
    dynamicType = $TypeMasks::SensorObjectType;
 };
-

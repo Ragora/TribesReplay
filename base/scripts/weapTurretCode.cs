@@ -8,7 +8,7 @@ function Ammo::onCollision(%data, %obj, %col)
    {
       %ammoName = %data.getName();
       %ammoStore = %col.inv[%ammoName];
-
+      
       // if player has ammo pack, increase max amount of ammo
       if(%col.getMountedImage($BackpackSlot) != 0)
       {
@@ -22,7 +22,10 @@ function Ammo::onCollision(%data, %obj, %col)
 
       if(%col.inv[%ammoName] < %aMax)
       {
-         %col.incInventory(%ammoName, $AmmoIncrement[%ammoName]);
+         if( %obj.ammoStore $= "" )
+            %obj.ammoStore = $AmmoIncrement[ %ammoName ];
+
+         %col.incInventory(%ammoName, %obj.ammoStore);
          serverPlay3D(ItemPickupSound, %col.getTransform());
          %obj.respawn();
          if (%col.client > 0)
@@ -155,6 +158,9 @@ function ScoutFlyer::playerDismounted(%data, %obj, %player)
    %obj.setImageTrigger(2, false);
    %obj.setImageTrigger(3, false);
    setTargetSensorGroup(%obj.getTarget(), %obj.team);
+
+   if( %player.client.observeCount > 0 )
+      resetObserveFollow( %player.client, true );
 }
 
 function ScoutChaingunImage::onFire(%data,%obj,%slot)
@@ -235,11 +241,12 @@ function BomberTurret::onDamage(%data, %obj)
    %obj.lastDamageVal = %newDamageVal;
 }
 
-function BomberTurret::damageObject(%this, %damageObj, %projectile, %amount, %damageType)
+function BomberTurret::damageObject(%this, %targetObject, %sourceObject, %position, %amount, %damageType ,%vec, %client, %projectile)
 {
    //If vehicle turret is hit then apply damage to the vehicle
-   %vehicle = %damageObj.getObjectMount();
-   %vehicle.getDataBlock().damageObject(%vehicle, %projectile, %amount, %damageType);
+   %vehicle = %targetObject.getObjectMount();
+   if(%vehicle)
+      %vehicle.getDataBlock().damageObject(%vehicle, %sourceObject, %position, %amount, %damageType, %vec, %client, %projectile);
 }
 
 function VehicleTurret::onEndSequence(%data, %obj, %thread)
@@ -315,6 +322,7 @@ function BomberTurret::playerDismount(%data, %obj)
       ShapeBaseImageData::deconstruct(%obj.getMountedImage(6), %obj);
    }
    %client = %obj.getControllingClient();
+   %client.player.isBomber = false;
    commandToClient(%client, 'endBomberSight');
 //   %client.player.setControlObject(%client.player);
    %client.player.mountVehicle = false;
@@ -345,14 +353,13 @@ function BomberBombPairImage::onUnmount(%this,%obj,%slot)
 {
 }
 
-function BomberTurretBarrel::onTriggerDown(%this, %obj, %slot)
+function BomberTurretBarrel::firePair(%this, %obj, %slot)
 {
-   %obj.turretBarrelSchedule = %obj.schedule(300, "setImageTrigger", 3, true);
+   %obj.setImageTrigger( 3, true);
 }
 
-function BomberTurretBarrel::onTriggerUp(%this, %obj, %slot)
+function BomberTurretBarrelPair::stopFire(%this, %obj, %slot)
 {
-   cancel(%obj.turretBarrelSchedule);
    %obj.setImageTrigger( 3, false);
 }
 
@@ -366,15 +373,14 @@ function BomberTurretBarrel::onMount(%this, %obj, %slot)
 //   %obj.setImageAmmo(%slot,true);
 }
 
-
-function BomberBombImage::onTriggerDown(%this, %obj, %slot)
+function BomberBombImage::firePair(%this, %obj, %slot)
 {
-   %obj.schedule(500, "setImageTrigger", 5, true);
+   %obj.setImageTrigger( 5, true);
 }
 
-function BomberBombImage::onTriggerUp(%this, %obj, %slot)
+function BomberBombPairImage::stopFire(%this, %obj, %slot)
 {
-   %obj.schedule(600, "setImageTrigger", 5, false);
+   %obj.setImageTrigger( 5, false);
 }
 
 function BomberBombPairImage::onMount(%this, %obj, %slot)
@@ -410,12 +416,12 @@ function MobileTurretBase::onDamage(%data, %obj)
    %obj.lastDamageVal = %newDamageVal;
 }
 
-function MobileTurretBase::damageObject(%this, %targetObject, %sourceObject, %position, %amount, %damageType)
+function MobileTurretBase::damageObject(%this, %targetObject, %sourceObject, %position, %amount, %damageType ,%vec, %client, %projectile)
 {
    //If vehicle turret is hit then apply damage to the vehicle
    %vehicle = %targetObject.getObjectMount();
    if(%vehicle)
-      %vehicle.getDataBlock().damageObject(%vehicle, %sourceObject, %position, %amount, %damageType);
+      %vehicle.getDataBlock().damageObject(%vehicle, %sourceObject, %position, %amount, %damageType, %vec, %client, %projectile);
 }
 
 function MobileTurretBase::onEndSequence(%data, %obj, %thread)
@@ -432,11 +438,12 @@ function AssaultPlasmaTurret::onDamage(%data, %obj)
    %obj.lastDamageVal = %newDamageVal;
 }
 
-function AssaultPlasmaTurret::damageObject(%this, %damageObj, %projectile, %amount, %damageType)
+function AssaultPlasmaTurret::damageObject(%this, %targetObject, %sourceObject, %position, %amount, %damageType ,%vec, %client, %projectile)
 {                                           
    //If vehicle turret is hit then apply damage to the vehicle
-   %vehicle = %damageObj.getObjectMount();
-   %vehicle.getDataBlock().damageObject(%vehicle, %projectile, %amount, %damageType);
+   %vehicle = %targetObject.getObjectMount();
+   if(%vehicle)
+      %vehicle.getDataBlock().damageObject(%vehicle, %sourceObject, %position, %amount, %damageType, %vec, %client, %projectile);
 }
 
 function AssaultPlasmaTurret::onTrigger(%data, %obj, %trigger, %state)
@@ -747,6 +754,7 @@ function MineDeployed::onThrow(%this, %mine, %thrower)
    %mine.damaged = 0;
    %mine.detonated = false;
    %mine.depCount = 0;
+   %mine.theClient = %thrower.client;
    schedule(1500, %mine, "deployMineCheck", %mine, %thrower);
 }
 
@@ -881,7 +889,7 @@ function MineDeployed::damageObject(%data, %targetObject, %sourceObject, %positi
 function MineDeployed::onDestroyed(%data, %obj, %lastState)
 {
    %obj.boom = true;
-   %mineTeam = %obj.sourceObject.team;
+   %mineTeam = %obj.team;
    $TeamDeployedCount[%mineTeam, MineDeployed]--;
    // %noDamage is a boolean flag -- don't want to set off all other mines in
    // vicinity if there's a "mine overload", so apply no damage/impulse if true

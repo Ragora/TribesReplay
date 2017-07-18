@@ -1,16 +1,16 @@
- //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
 $InvincibleTime = 6;
 // Load dts shapes and merge animations
-exec("shapes/light_male.cs");
-exec("shapes/medium_male.cs");
-exec("shapes/heavy_male.cs");
-exec("shapes/light_female.cs");
-exec("shapes/medium_female.cs");
-exec("shapes/bioderm_light.cs");
-exec("shapes/bioderm_medium.cs");
-exec("shapes/bioderm_heavy.cs");
+exec("scripts/light_male.cs");
+exec("scripts/medium_male.cs");
+exec("scripts/heavy_male.cs");
+exec("scripts/light_female.cs");
+exec("scripts/medium_female.cs");
+exec("scripts/bioderm_light.cs");
+exec("scripts/bioderm_medium.cs");
+exec("scripts/bioderm_heavy.cs");
 
 $CorpseTimeoutValue = 22 * 1000;
 
@@ -954,7 +954,7 @@ datablock ParticleData(HumanArmorJetParticle)
    gravityCoefficient   = 0;
    inheritedVelFactor   = 0.2;
    constantAcceleration = 0.0;
-   lifetimeMS           = 50;
+   lifetimeMS           = 100;
    lifetimeVarianceMS   = 0;
    textureName          = "particleTest";
    colors[0]     = "0.32 0.47 0.47 1.0";
@@ -1175,8 +1175,8 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    cmdIcon = CMDPlayerIcon;
    cmdMiniIconName = "commander/MiniIcons/com_player_grey";
 
-   hudImageNameFriendly[0] = "gui/hud_playertriangle.png";
-   hudImageNameEnemy[0] = "gui/hud_playertriangle_enemy.png";
+   hudImageNameFriendly[0] = "gui/hud_playertriangle";
+   hudImageNameEnemy[0] = "gui/hud_playertriangle_enemy";
    hudRenderModulated[0] = true;
 
    hudImageNameFriendly[1] = "commander/MiniIcons/com_flag_grey";
@@ -1216,8 +1216,8 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    energyPerDamagePoint = 75.0; // shield energy required to block one point of damage
 
    rechargeRate = 0.256;
-   jetForce = 28.2 * 90;
-   underwaterJetForce = 26.2 * 90 * 2.0;
+   jetForce = 27.51 * 90;
+   underwaterJetForce = 27.51 * 90 * 2.0;
    underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  0.8;
    underwaterJetEnergyDrain = 0.5;
@@ -1227,9 +1227,9 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    runForce = 55.20 * 90;
    runEnergyDrain = 0;
    minRunEnergy = 0;
-   maxForwardSpeed = 15;
-   maxBackwardSpeed = 14;
-   maxSideSpeed = 14;
+   maxForwardSpeed = 14;
+   maxBackwardSpeed = 13;
+   maxSideSpeed = 13;
 
    maxUnderwaterForwardSpeed = 8.4;
    maxUnderwaterBackwardSpeed = 7.8;
@@ -1440,8 +1440,8 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    cmdIcon = CMDPlayerIcon;
    cmdMiniIconName = "commander/MiniIcons/com_player_grey";
 
-   hudImageNameFriendly[0] = "gui/hud_playertriangle.png";
-   hudImageNameEnemy[0] = "gui/hud_playertriangle_enemy.png";
+   hudImageNameFriendly[0] = "gui/hud_playertriangle";
+   hudImageNameEnemy[0] = "gui/hud_playertriangle_enemy";
    hudRenderModulated[0] = true;
 
    hudImageNameFriendly[1] = "commander/MiniIcons/com_flag_grey";
@@ -1474,8 +1474,8 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    energyPerDamagePoint = 75.0; // shield energy required to block one point of damage
 
    rechargeRate = 0.256;
-   jetForce = 27.06 * 130;
-   underwaterJetForce = 24.6 * 130 * 2.0;
+   jetForce = 25.83 * 130;
+   underwaterJetForce = 25.83 * 130 * 2.0;
    underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  1.0;
    underwaterJetEnergyDrain =  0.5;
@@ -1485,9 +1485,9 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    runForce = 46 * 130;
    runEnergyDrain = 0;
    minRunEnergy = 0;
-   maxForwardSpeed = 12;
-   maxBackwardSpeed = 11;
-   maxSideSpeed = 11;
+   maxForwardSpeed = 11;
+   maxBackwardSpeed = 10;
+   maxSideSpeed = 10;
 
    maxUnderwaterForwardSpeed = 6.6;
    maxUnderwaterBackwardSpeed = 6;
@@ -1696,8 +1696,8 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    cmdIcon = CMDPlayerIcon;
    cmdMiniIconName = "commander/MiniIcons/com_player_grey";
 
-   hudImageNameFriendly[0] = "gui/hud_playertriangle.png";
-   hudImageNameEnemy[0] = "gui/hud_playertriangle_enemy.png";
+   hudImageNameFriendly[0] = "gui/hud_playertriangle";
+   hudImageNameEnemy[0] = "gui/hud_playertriangle_enemy";
    hudRenderModulated[0] = true;
 
    hudImageNameFriendly[1] = "commander/MiniIcons/com_flag_grey";
@@ -1730,8 +1730,8 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    energyPerDamagePoint = 75.0; // shield energy required to block one point of damage
 
    rechargeRate = 0.256;
-   jetForce = 23.54 * 180;
-   underwaterJetForce = 21.4 * 180 * 2.0;
+   jetForce = 22.47 * 180;
+   underwaterJetForce = 22.47 * 180 * 2.0;
    underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  1.1;
    underwaterJetEnergyDrain =  0.55;
@@ -1741,9 +1741,9 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    runForce = 40.25 * 180;
    runEnergyDrain = 0;
    minRunEnergy = 0;
-   maxForwardSpeed = 7.5;
-   maxBackwardSpeed = 6;
-   maxSideSpeed = 6;
+   maxForwardSpeed = 6.5;
+   maxBackwardSpeed = 5;
+   maxSideSpeed = 5;
 
    maxUnderwaterForwardSpeed = 3.9;
    maxUnderwaterBackwardSpeed = 3;
@@ -2073,8 +2073,12 @@ function Armor::onMount(%this,%obj,%vehicle,%node)
       // Node 0 is the pilot's pos.
       %obj.setTransform("0 0 0 0 0 1 0");
       %obj.setActionThread(%vehicle.getDatablock().mountPose[%node],true,true);
-      %obj.lastWeapon = %obj.getMountedImage($WeaponSlot);
-      %obj.unmountImage($WeaponSlot);
+   
+      if(!%obj.inStation)
+         %obj.lastWeapon = (%obj.getMountedImage($WeaponSlot) == 0 ) ? "" : %obj.getMountedImage($WeaponSlot).getName().item;
+         
+       %obj.unmountImage($WeaponSlot);
+   
       if(!%obj.client.isAIControlled())
       {
          %obj.setControlObject(%vehicle);
@@ -2136,7 +2140,14 @@ function Armor::onUnmount( %this, %obj, %vehicle, %node )
    if ( %node == 0 )
    {
       commandToClient( %obj.client, 'VehicleDismount' );
-      %obj.mountImage(%obj.lastWeapon, $WeaponSlot);
+      commandToClient(%obj.client, 'removeReticle');
+
+      if(%obj.inv[%obj.lastWeapon])
+         %obj.use(%obj.lastWeapon);
+      
+      if(%obj.getMountedImage($WeaponSlot) == 0) 
+         %obj.selectWeaponSlot( 0 );
+                                
       //Inform gunner position when pilot leaves...
       //if(%vehicle.getDataBlock().showPilotInfo !$= "")
       //   if((%gunner = %vehicle.getMountNodeObject(1)) != 0)
@@ -2172,7 +2183,7 @@ function Armor::onCollision(%this,%obj,%col,%forceVehicleNode)
    // player collided with a vehicle
    %node = -1;
    if (%forceVehicleNode !$= "" || (%className $= WheeledVehicleData || %className $= FlyingVehicleData || %className $= HoverVehicleData) &&
-         %obj.mountVehicle && %obj.getState() $= "Move" && %col.mountable) {
+         %obj.mountVehicle && %obj.getState() $= "Move" && %col.mountable && !%obj.inStation && %col.getDamageState() !$= "Destroyed") {
 
       //if the player is an AI, he should snap to the mount points in node order,
       //to ensure they mount the turret before the passenger seat, regardless of where they collide...
@@ -2206,7 +2217,12 @@ function Armor::onCollision(%this,%obj,%col,%forceVehicleNode)
             // check to see if attempting to enter a "sitting" node
             if(nodeIsSitting(%datablock, %node)) {
                // send the player a message -- can't sit here with large pack
-               messageClient(%obj.client, 'MsgCantSitHere', '\c2Pack too large, can\'t occupy this seat.~wfx/misc/misc.error.wav');
+               if(!%obj.noSitMessage)
+               {
+                  %obj.noSitMessage = true;
+                  %obj.schedule(2000, "resetSitMessage");
+                  messageClient(%obj.client, 'MsgCantSitHere', '\c2Pack too large, can\'t occupy this seat.~wfx/misc/misc.error.wav');
+               }
                return;
             }
          }
@@ -2220,7 +2236,11 @@ function Armor::onCollision(%this,%obj,%col,%forceVehicleNode)
          else
             commandToClient(%obj.client,'SetPassengerVehicleKeys', true);
 
-         %col.lastWeapon = %col.getMountedImage($WeaponSlot);
+         if(!%obj.inStation)
+            %col.lastWeapon = ( %col.getMountedImage($WeaponSlot) == 0 ) ? "" : %col.getMountedImage($WeaponSlot).getName().item;
+         else
+            %col.lastWeapon = %obj.lastWeapon;
+         
          %col.mountObject(%obj,%node);
          %col.playAudio(0, MountVehicleSound);
          %obj.mVehicle = %col;
@@ -2377,6 +2397,11 @@ function Armor::onCollision(%this,%obj,%col,%forceVehicleNode)
    }
 }
 
+function Player::resetSitMessage(%obj)
+{
+   %obj.noSitMessage = false;   
+}
+
 function Player::setInvincible(%this, %val)
 {
    %this.invincible = %val;
@@ -2485,13 +2510,14 @@ function Armor::doDismount(%this, %obj, %forced)
    %obj.unmount();
    if(%obj.mVehicle)
       %obj.mVehicle.getDataBlock().playerDismounted(%obj.mVehicle, %obj);
+   
    // bots don't change their control objects when in vehicles
    if(!%obj.client.isAIControlled())
    {
       %vehicle = %obj.getControlObject();
       %obj.setControlObject(0);
    }
-   
+
    %obj.mountVehicle = false;
    %obj.schedule(4000, "setMountVehicle", true);
 
@@ -2501,6 +2527,37 @@ function Armor::doDismount(%this, %obj, %forced)
    %obj.applyImpulse(%pos, VectorScale(%impulseVec, %obj.getDataBlock().mass * 3));
    %obj.setPilot(false);
    %obj.vehicleTurret = "";
+}
+
+function resetObserveFollow( %client, %dismount )
+{
+   if( %dismount )
+   {
+      if( !isObject( %client.player ) )
+         return;
+
+      for( %i = 0; %i < %client.observeCount; %i++ )
+      {
+         %client.observers[%i].camera.setOrbitMode( %client.player, %client.player.getTransform(), 0.5, 4.5, 4.5); 
+      }
+   }
+   else
+   {
+      if( !%client.player.isMounted() )
+         return;
+
+      // grab the vehicle...
+      %mount = %client.player.getObjectMount();
+      if( %mount.getDataBlock().observeParameters $= "" )
+         %params = %client.player.getTransform();
+      else
+         %params = %mount.getDataBlock().observeParameters;
+      
+      for( %i = 0; %i < %client.observeCount; %i++ )
+      {
+         %client.observers[%i].camera.setOrbitMode(%mount, %mount.getTransform(), getWord( %params, 0 ), getWord( %params, 1 ), getWord( %params, 2 ));
+      }
+   }   
 }
 
 
@@ -2513,7 +2570,7 @@ function Player::scriptKill(%player, %damageType)
    %player.damage(0, %player.getPosition(), 10000, %damageType);
 }
 
-function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %amount, %damageType, %momVec)
+function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %amount, %damageType, %momVec, %mineSC)
 {
 //error("Armor::damageObject( "@%data@", "@%targetObject@", "@%sourceObject@", "@%position@", "@%amount@", "@%damageType@", "@%momVec@" )");
    if(%targetObject.invincible || %targetObject.getState() $= "Dead")
@@ -2546,7 +2603,10 @@ function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %am
    }
 
    %targetClient = %targetObject.getOwnerClient();
-   %sourceClient = isObject(%sourceObject) ? %sourceObject.getOwnerClient() : 0;
+   if(isObject(%mineSC))
+      %sourceClient = %mineSC;   
+   else
+      %sourceClient = isObject(%sourceObject) ? %sourceObject.getOwnerClient() : 0;
 
    %targetTeam = %targetClient.team;
 

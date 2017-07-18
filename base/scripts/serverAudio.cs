@@ -23,6 +23,7 @@ datablock AudioDescription(ProjectileLooping3d)
    minDistance= 5.0;
    MaxDistance= 20.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(ClosestLooping3d)
@@ -34,6 +35,7 @@ datablock AudioDescription(ClosestLooping3d)
    minDistance= 5.0;
    MaxDistance= 30.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(CloseLooping3d)
@@ -45,6 +47,7 @@ datablock AudioDescription(CloseLooping3d)
    minDistance= 10.0;
    MaxDistance= 50.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(AudioDefaultLooping3d)
@@ -56,6 +59,7 @@ datablock AudioDescription(AudioDefaultLooping3d)
    minDistance= 20.0;
    MaxDistance= 100.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(AudioClosest3d)
@@ -67,6 +71,7 @@ datablock AudioDescription(AudioClosest3d)
    minDistance= 5.0;
    MaxDistance= 30.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(AudioClose3d)
@@ -78,6 +83,7 @@ datablock AudioDescription(AudioClose3d)
    minDistance= 10.0;
    MaxDistance= 60.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(AudioDefault3d)
@@ -89,6 +95,7 @@ datablock AudioDescription(AudioDefault3d)
    minDistance= 20.0;
    MaxDistance= 100.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(AudioExplosion3d)
@@ -101,6 +108,7 @@ datablock AudioDescription(AudioExplosion3d)
    minDistance= 20.0;
    MaxDistance= 150.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(AudioBomb3d)
@@ -113,6 +121,7 @@ datablock AudioDescription(AudioBomb3d)
    minDistance= 80.0;
    MaxDistance= 250.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(AudioBIGExplosion3d)
@@ -125,6 +134,7 @@ datablock AudioDescription(AudioBIGExplosion3d)
    minDistance= 50.0;
    MaxDistance= 250.0;
    type     = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(AudioLooping2D)
@@ -134,6 +144,7 @@ datablock AudioDescription(AudioLooping2D)
    isLooping = true;
    is3D = false;
    type = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
 datablock AudioDescription(Audio2D)
@@ -143,6 +154,26 @@ datablock AudioDescription(Audio2D)
    isLooping = false;
    is3D = false;
    type = $EffectAudioType;
+   environmentLevel = 1.0;
 };
 
+// Audio Environment Settings --- Used for EAX and EAX2 sounds //
+
+datablock AudioEnvironment(Underwater)
+{
+   useRoom = true;
+   room = UNDERWATER;
+};
+
+datablock AudioEnvironment(BigRoom)
+{
+   useRoom = true;
+   room = CAVE;
+};
+
+datablock AudioEnvironment(SmallRoom)
+{
+   useRoom = true;
+   room = HALLWAY;
+};
 

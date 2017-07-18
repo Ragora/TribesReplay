@@ -101,7 +101,10 @@ function serverCmdControlObject(%client, %targetId)
 //------------------------------------------------------------------------------
 function resetControlObject(%client)
 {
-   if((%client.player != 0) && !%client.player.isDestroyed() && $MatchStarted)
+   if( isObject( %client.comCam ) )
+      %client.comCam.delete();
+
+   if(isObject(%client.player) && !%client.player.isDestroyed() && $MatchStarted)
       %client.setControlObject(%client.player);
    else
       %client.setControlObject(%client.camera);
@@ -111,14 +114,27 @@ function serverCmdResetControlObject(%client)
 {
    resetControlObject(%client);
    commandToClient(%client, 'ControlObjectReset');
+   commandToClient(%client, 'RemoveReticle');
+   
+   if(isObject(%client.player))
+   {
+      %weapon = %client.player.getMountedImage($WeaponSlot);
+      %client.setWeaponsHudActive(%weapon.item);
+   }
 }
 
 function serverCmdAttachCommanderCamera(%client, %target)
 {
+   // dont allow observing until match has started
+   if(!$MatchStarted)
+   {
+      commandToClient(%client, 'CameraAttachResponse', false);
+      return;
+   }
+
    %obj = getTargetObject(%target);
    if((%obj == -1) || (%target == -1))
    {
-      resetControlObject(%client);
       commandToClient(%client, 'CameraAttachResponse', false);
       return;
    }
@@ -129,7 +145,7 @@ function serverCmdAttachCommanderCamera(%client, %target)
       commandToClient(%client, 'CameraAttachResponse', false);
       return;
    }
-      
+   
    // can be observed?
    if(!%obj.getDataBlock() || !%obj.getDataBlock().canObserve)
    {
@@ -157,8 +173,9 @@ function serverCmdAttachCommanderCamera(%client, %target)
       %player = %obj.player;
       if(%obj == %client)
       {
-         if((%player != 0) && !%player.isDestroyed())
+         if(isObject(%player) && !%player.isDestroyed())
          {
+
             %client.setControlObject(%player);
             commandToClient(%client, 'CameraAttachResponse', true);
             return;
@@ -168,7 +185,7 @@ function serverCmdAttachCommanderCamera(%client, %target)
       %obj = %player;
    }
 
-   if((%obj == 0) || %obj.isDestroyed())
+   if(!isObject(%obj) || %obj.isDestroyed())
    {
       commandToClient(%client, 'CameraAttachResponse', false);
       return;
@@ -182,9 +199,22 @@ function serverCmdAttachCommanderCamera(%client, %target)
 
    // don't set the camera mode so that it does not interfere with spawning
    %transform = %obj.getTransform();
-   %client.camera.setTransform(%transform);
-   %client.camera.setOrbitMode(%obj, %transform, %obsX, %obsY, %obsZ);
-   %client.setControlObject(%client.camera);
+
+   // create a fresh camera to observe through... (could add to a list on
+   // the observed camera to be removed when that object dies/...)   
+   if( !isObject( %client.comCam ) )
+   {
+      %client.comCam = new Camera() 
+      {
+         dataBlock = CommanderCamera;
+      };
+      MissionCleanup.add(%client.comCam);
+   }
+
+   %client.comCam.setTransform(%transform);
+   %client.comCam.setOrbitMode(%obj, %transform, %obsX, %obsY, %obsZ);
+
+   %client.setControlObject(%client.comCam);
    commandToClient(%client, 'CameraAttachResponse', true);
 }
 

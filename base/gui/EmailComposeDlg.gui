@@ -10,12 +10,14 @@ new GuiControl(EMailComposeDlg) {
 	hideCursor = "0";
 	bypassHideCursor = "0";
 	helpTag = "0";
+		state = "done";
+		key = "6";
 
 	new ShellWindowCtrl(EmailComposeWindow) {
 		profile = "ShellWindowProfile";
 		horizSizing = "right";
 		vertSizing = "bottom";
-		position = "67 37";
+		position = "77 37";
 		extent = "500 408";
 		minExtent = "386 230";
 		visible = "1";
@@ -32,7 +34,7 @@ new GuiControl(EMailComposeDlg) {
 		canClose = "1";
 		closeCommand = "EmailComposeDlg.Cancel();";
 
-		new ShellTextEditCtrl(Email_ToEdit) {
+		new ShellTextEditCtrl(Email_TOEdit) {
 			profile = "NewTextEditProfile";
 			horizSizing = "width";
 			vertSizing = "bottom";
@@ -42,16 +44,15 @@ new GuiControl(EMailComposeDlg) {
 			visible = "1";
 			hideCursor = "0";
 			bypassHideCursor = "0";
-			variable = "$EmailToAddress";
 			helpTag = "0";
-			maxLength = "2000";
+			maxLength = "2001";
 			historySize = "0";
 			password = "0";
 			tabComplete = "0";
 			deniedSound = "InputDeniedSound";
 			glowOffset = "9 9";
 		};
-		new ShellTextEditCtrl(EMail_CCEdit) {
+		new ShellTextEditCtrl(Email_CCEdit) {
 			profile = "NewTextEditProfile";
 			horizSizing = "width";
 			vertSizing = "bottom";
@@ -61,9 +62,8 @@ new GuiControl(EMailComposeDlg) {
 			visible = "1";
 			hideCursor = "0";
 			bypassHideCursor = "0";
-			variable = "$EmailCCAddress";
 			helpTag = "0";
-			maxLength = "2000";
+			maxLength = "2001";
 			historySize = "0";
 			password = "0";
 			tabComplete = "0";

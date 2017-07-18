@@ -951,8 +951,8 @@ datablock ParticleData(VehicleBombExplosionParticle)
    gravityCoefficient   = 0.2;
    inheritedVelFactor   = 0.2;
    constantAcceleration = 0.0;
-   lifetimeMS           = 1050;
-   lifetimeVarianceMS   = 250;
+   lifetimeMS           = 900;
+   lifetimeVarianceMS   = 225;
    textureName          = "particleTest";
    colors[0]     = "0.56 0.36 0.26 1.0";
    colors[1]     = "0.56 0.36 0.26 0.0";
@@ -1016,7 +1016,7 @@ datablock ExplosionData(VehicleBombSubExplosion1)
    playSpeed = 1.5;
 
    sizes[0] = "1.5 1.5 1.5";
-   sizes[1] = "2.0 2.0 2.0";
+   sizes[1] = "3.0 3.0 3.0";
    times[0] = 0.0;
    times[1] = 1.0;
 
@@ -1031,10 +1031,10 @@ datablock ExplosionData(VehicleBombSubExplosion2)
 
    offset = 7.0;
 
-   playSpeed = 1.0;
+   playSpeed = 1.1;
 
-   sizes[0] = "3.0 3.0 3.0";
-   sizes[1] = "4.0 4.0 4.0";
+   sizes[0] = "5.0 5.0 5.0";
+   sizes[1] = "8.0 8.0 8.0";
    times[0] = 0.0;
    times[1] = 1.0;
 };
@@ -1048,11 +1048,11 @@ datablock ExplosionData(VehicleBombSubExplosion3)
 
    offset = 0.0;
 
-   playSpeed = 0.7;
+   playSpeed = 0.9;
 
 
-   sizes[0] = "3.0 3.0 3.0";
-   sizes[1] = "7.0 7.0 7.0";
+   sizes[0] = "7.0 7.0 7.0";
+   sizes[1] = "10.0 10.0 10.0";
    times[0] = 0.0;
    times[1] = 1.0;
 

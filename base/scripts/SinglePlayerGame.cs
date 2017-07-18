@@ -552,6 +552,7 @@ function singlePlayerGame::gameOver(%game)
 
 	//disable the AI system
 	AISystemEnabled(false);
+	$AIDisableChatResponse = "";
 	
 	game.deactivatePackages();
 
@@ -566,6 +567,7 @@ function singlePlayerGame::gameOver(%game)
 
 	resetSinglePlayerGlobals();
 
+   $currentMissionType = "";
 	DefaultGame::GameOver(%game);
 }
 

@@ -1,40 +1,40 @@
 $HandInvThrowTimeout = 0.8 * 1000; // 1/2 second between throwing grenades or mines
 
-$WeaponsHudData[0, bitmapName] = "gui/hud_blaster.png";
+$WeaponsHudData[0, bitmapName] = "gui/hud_blaster";
 $WeaponsHudData[0, itemDataName] = "Blaster";
 //$WeaponsHudData[0, ammoDataName] = "";
-$WeaponsHudData[1, bitmapName] = "gui/hud_plasma.png";
+$WeaponsHudData[1, bitmapName] = "gui/hud_plasma";
 $WeaponsHudData[1, itemDataName] = "Plasma";
 $WeaponsHudData[1, ammoDataName] = "PlasmaAmmo";
-$WeaponsHudData[2, bitmapName] = "gui/hud_chaingun.png";
+$WeaponsHudData[2, bitmapName] = "gui/hud_chaingun";
 $WeaponsHudData[2, itemDataName] = "Chaingun";
 $WeaponsHudData[2, ammoDataName] = "ChaingunAmmo";
-$WeaponsHudData[3, bitmapName] = "gui/hud_disc.png";
+$WeaponsHudData[3, bitmapName] = "gui/hud_disc";
 $WeaponsHudData[3, itemDataName] = "Disc";
 $WeaponsHudData[3, ammoDataName] = "DiscAmmo";
-$WeaponsHudData[4, bitmapName] = "gui/hud_grenlaunch.png";
+$WeaponsHudData[4, bitmapName] = "gui/hud_grenlaunch";
 $WeaponsHudData[4, itemDataName] = "GrenadeLauncher";
 $WeaponsHudData[4, ammoDataName] = "GrenadeLauncherAmmo";
-$WeaponsHudData[5, bitmapName] = "gui/hud_sniper.png";
+$WeaponsHudData[5, bitmapName] = "gui/hud_sniper";
 $WeaponsHudData[5, itemDataName] = "SniperRifle";
 //$WeaponsHudData[5, ammoDataName] = "";
-$WeaponsHudData[6, bitmapName] = "gui/hud_elfgun.png";
+$WeaponsHudData[6, bitmapName] = "gui/hud_elfgun";
 $WeaponsHudData[6, itemDataName] = "ELFGun";
 //$WeaponsHudData[6, ammoDataName] = "";
-$WeaponsHudData[7, bitmapName] = "gui/hud_mortor.png";
+$WeaponsHudData[7, bitmapName] = "gui/hud_mortor";
 $WeaponsHudData[7, itemDataName] = "Mortar";
 $WeaponsHudData[7, ammoDataName] = "MortarAmmo";
-$WeaponsHudData[8, bitmapName] = "gui/hud_missiles.png";
+$WeaponsHudData[8, bitmapName] = "gui/hud_missiles";
 $WeaponsHudData[8, itemDataName] = "MissileLauncher";
 $WeaponsHudData[8, ammoDataName] = "MissileLauncherAmmo";
 // WARNING!!! If you change the weapon index of the targeting laser,
 // you must change the HudWeaponInvBase::addWeapon function to test
 // for the new value!
-$WeaponsHudData[9, bitmapName]   = "gui/hud_targetlaser.png";
+$WeaponsHudData[9, bitmapName]   = "gui/hud_targetlaser";
 $WeaponsHudData[9, itemDataName] = "TargetingLaser";
 //$WeaponsHudData[9, ammoDataName] = "";
 //
-$WeaponsHudData[10, bitmapName]   = "gui/hud_shocklance.png";
+$WeaponsHudData[10, bitmapName]   = "gui/hud_shocklance";
 $WeaponsHudData[10, itemDataName] = "ShockLance";
 //$WeaponsHudData[10, ammoDataName] = "";
 
@@ -123,6 +123,7 @@ function WeaponImage::onUnmount(%this,%obj,%slot)
 {
    %obj.client.setWeaponsHudActive(%this.item, 1);
    %obj.client.setAmmoHudCount(-1);
+   commandToClient(%obj.client,'removeReticle');
    // try to avoid running around with sniper/missile arm thread and no weapon
    %obj.setArmThread(look);
    Parent::onUnmount(%this, %obj, %slot);
@@ -141,7 +142,8 @@ function Ammo::onInventory(%this,%obj,%amount)
       }
    }
    ItemData::onInventory(%this,%obj,%amount);
-   if(%obj.getClassname() $= "Player")
+   // Uh, don't update the hud ammo counters if this is a corpse...that's bad.
+   if ( %obj.getClassname() $= "Player" && %obj.getState() !$= "Dead" )
    {
       %obj.client.setWeaponsHudAmmo(%this.getName(), %amount);
       if(%obj.getMountedImage($WeaponSlot).ammo $= %this.getName())
@@ -153,7 +155,9 @@ function Weapon::onInventory(%this,%obj,%amount)
 {
    if(Game.weaponOnInventory(%this, %obj, %amount))
    {
-      %obj.client.setWeaponsHudItem(%this.getName(), 0, 1);   
+      // Do not update the hud if this object is a corpse:
+      if ( %obj.getState() !$= "Dead" )
+         %obj.client.setWeaponsHudItem(%this.getName(), 0, 1);   
       ItemData::onInventory(%this,%obj,%amount);
       // if a player threw a weapon (which means that player isn't currently
       // holding a weapon), set armthread to "no weapon"
@@ -217,6 +221,7 @@ function HandInventory::onUse(%data, %obj)
       
 
       %thrownItem.sourceObject = %obj;
+      %thrownItem.team = %obj.team;
       %thrownItem.setTransform(%pos);
       
       %thrownItem.applyImpulse(%pos, %vec);

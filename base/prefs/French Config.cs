@@ -93,4 +93,5 @@ moveMap.bind(mouse0, "yaxis", pitch);
 moveMap.bind(mouse0, "button0", mouseFire);
 moveMap.bind(mouse0, "button1", mouseJet);
 moveMap.bind(mouse0, "zaxis", cycleWeaponAxis);
-GlobalActionMap.bind(keyboard, "super2", toggleConsole);
+if (!isDemo())
+   GlobalActionMap.bind(keyboard, "super2", toggleConsole);

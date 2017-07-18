@@ -232,40 +232,28 @@ function TurretData::selectTarget(%this, %turret)
 
 function TurretData::replaceCallback(%this, %turret, %engineer)
 {
-   // First, is the player in range?
-   %pos         = %turret.getWorldBoxCenter();
-   %engineerPos = %engineer.getWorldBoxCenter();
-   %len = VectorLen(VectorSub(%pos, %engineerPos));
-   
-   if (%len < 5)
+   // This is a valid replacement.  First, let's see if the engineer
+   //  still has the correct pack in place...
+   if (%engineer.getMountedImage($BackPackSlot) != 0)
    {
-      // This is a valid replacement.  First, let's see if the engineer
-      //  still has the correct pack in place...
-      if (%engineer.getMountedImage($BackPackSlot) != 0)
+      %barrel = %engineer.getMountedImage($BackPackSlot).turretBarrel;
+      if (%barrel !$= "")
       {
-         %barrel = %engineer.getMountedImage($BackPackSlot).turretBarrel;
-         if (%barrel !$= "")
-         {
-            // if there was a barrel there before, get rid of it
-            %turret.unmountImage(0);
-            // remove the turret barrel pack
-            %engineer.setInventory(%engineer.getMountedImage($BackPackSlot).item, 0);
-            // mount new barrel on base
-            %turret.mountImage(%barrel, 0, false);
-         }
-         else
-         {
-            // Player doesn't have the correct pack on...
-         }
+         // if there was a barrel there before, get rid of it
+         %turret.unmountImage(0);
+         // remove the turret barrel pack
+         %engineer.setInventory(%engineer.getMountedImage($BackPackSlot).item, 0);
+         // mount new barrel on base
+         %turret.mountImage(%barrel, 0, false);
       }
       else
       {
-         // Player doesn't have any pack on...
+         // Player doesn't have the correct pack on...
       }
    }
    else
    {
-      // Player is too far away to replace the barrel...
+      // Player doesn't have any pack on...
    }
 }
 

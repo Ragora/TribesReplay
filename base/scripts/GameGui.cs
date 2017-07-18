@@ -18,7 +18,7 @@ function GameGui::onWake( %this )
 {
    Canvas.pushDialog( LaunchToolbarDlg );
 
-	if ( isDemo() || $PlayingOnline )
+	if ( isDemo() || isDemoServer() || $PlayingOnline )
    	GM_Frame.setTitle( "GAME" );
 	else
    	GM_Frame.setTitle( "LAN GAME" );
@@ -26,15 +26,23 @@ function GameGui::onWake( %this )
    // This is essentially an "isInitialized" flag...
    if ( GM_TabView.tabCount() == 0 )
    {
-      GM_TabView.addTab( 1, "JOIN" );
-		if ( !isDemo() )
+      if ( isDemo() )
+      {
+         GM_TabView.addTab( 1, "JOIN" );
+         %this.pane = "Join";
+      }
+      else if ( isDemoServer() )
+      {
+         GM_TabView.addTab( 2, "HOST" );
+         %this.pane = "Host";
+      }
+		else
 		{
+         GM_TabView.addTab( 1, "JOIN" );
       	GM_TabView.addTab( 2, "HOST" );
       	GM_TabView.addTab( 3, "WARRIOR SETUP", 1 );
       	queryMasterGameTypes();
 		}
-		else
-			%this.pane = "Join";
    }
 
    switch$ ( %this.pane )
@@ -130,7 +138,10 @@ function GM_JoinPane::onActivate( %this )
       BrowserMap.delete();
    }
    new ActionMap( BrowserMap );
-   BrowserMap.bindCmd( keyboard, insert, "GMJ_Browser.insertIPAddress();", "" );
+   if ( !isDemo() )
+      BrowserMap.bindCmd( keyboard, insert, "GMJ_Browser.insertIPAddress();", "" );
+   BrowserMap.bindCmd( keyboard, "ctrl f", "Canvas.pushDialog( FindServerDlg );", "" );
+   BrowserMap.bindCmd( keyboard, F3, "GMJ_Browser.findNextServer();", "" );
    BrowserMap.push();
 
    GM_VersionText.setVisible( !isDemo() );
@@ -142,8 +153,11 @@ function GM_JoinPane::onActivate( %this )
 //------------------------------------------------------------------------------
 function GM_JoinPane::onDeactivate( %this )
 {
-   BrowserMap.pop();
-   BrowserMap.delete();
+   if ( isObject( BrowserMap ) )
+   {
+      BrowserMap.pop();
+      BrowserMap.delete();
+   }
    
    GM_VersionText.setVisible( false );
 
@@ -172,9 +186,12 @@ $BrowserColumnCount++;
 $BrowserColumnName[5] = "Mission Name";
 $BrowserColumnRange[5] = "25 300";
 $BrowserColumnCount++;
-$BrowserColumnName[6] = "Rules Set";
-$BrowserColumnRange[6] = "25 300";
-$BrowserColumnCount++;
+if ( !isDemo() )
+{
+   $BrowserColumnName[6] = "Rules Set";
+   $BrowserColumnRange[6] = "25 300";
+   $BrowserColumnCount++;
+}
 $BrowserColumnName[7] = "# Players (Bots)";
 $BrowserColumnRange[7] = "25 150";
 $BrowserColumnCount++;
@@ -488,10 +505,37 @@ function EnterIPDlg::onDone( %this )
       %address = "IP:" @ %address;
    if ( strpos( %address, ":", 3 ) == -1 )
       %address = %address @ ":28000";
-      
-   error( ">> address = \"" @ %address @ "\" <<" );
+   
+   echo( "Starting ping to server " @ %address @ "..." );   
    pushServerAddress( %address );
-   GMJ_Browser.selectRowByAddress( %address );
+   GMJ_Browser.selectRowByAddress( %address, true );
+}
+
+//------------------------------------------------------------------------------
+function FindServerDlg::onWake( %this )
+{
+   FS_SearchPattern.validate();
+   FS_SearchPattern.selectAll();
+}
+
+//------------------------------------------------------------------------------
+function FindServerDlg::onGo( %this )
+{
+   %pattern = FS_SearchPattern.getValue();
+   if ( %pattern !$= "" )
+   {
+      Canvas.popDialog( FindServerDlg );
+      if ( !GMJ_Browser.findServer( %pattern ) )
+         MessageBoxOK( "NOT FOUND", "No servers with \"" @ %pattern @ "\" in their name were found." );
+   }
+   else
+      alxPlay( InputDeniedSound, 0, 0, 0 );
+}
+
+//------------------------------------------------------------------------------
+function FS_SearchPattern::validate( %this )
+{
+   FS_GoBtn.setActive( %this.getValue() !$= "" );
 }
 
 //------------------------------------------------------------------------------
@@ -558,7 +602,7 @@ function ServerInfoDlg::update( %this )
       %temp = getRecord( %info, 5 );
       if ( %temp !$= "" )
          %infoText = %infoText NL "<spush>" @ %this.headerStyle @ "MAP NAME:<spop><lmargin:70>" TAB %temp @ "<lmargin:0>";
-      %temp = getRecord( %info, 6 );
+      %temp = getRecords( %info, 6, 10 );
       if ( %temp !$= "" )
          %infoText = %infoText NL "<spush>" @ %this.headerStyle @ "SERVER INFO:<spop><lmargin:10>" TAB %temp @ "<lmargin:0>";
 
@@ -607,22 +651,22 @@ function SI_ContentWindow::fill( %this, %content )
    %record++;
    if ( %teamCount > 1 )
    {
-      %string = "<tab:110,220><spush>" @ ServerInfoDlg.headerStyle @ "TEAMS" TAB "SCORE<spop><tab:5,115,225>";
+      %string = "<spush>" @ ServerInfoDlg.headerStyle @ "TEAMS<lmargin%:50>SCORE<spop>";
       for ( %i = 0; %i < %teamCount; %i++ )
       {
          %teamEntry = getRecord( %content, %record );
-         %string = %string NL "<clip:110>\t" @ getField( %teamEntry, 0 ) @ "</clip>" TAB getField( %teamEntry, 1 );
+         %string = %string NL "<lmargin:0><clip%:50>" SPC getField( %teamEntry, 0 ) @ "</clip><lmargin%:50>" SPC getField( %teamEntry, 1 );
          %record++;
       }
 
       %playerCount = getRecord( %content, %record );
       %record++;
-      %string = %string NL "\n<tab:110,220><spush>" @ ServerInfoDlg.headerStyle @ "PLAYERS" TAB "TEAM" TAB "SCORE<spop><tab:5,115,225>";
+      %string = %string NL "\n<lmargin:0><spush>" @ ServerInfoDlg.headerStyle @ "PLAYERS<lmargin%:40>TEAM<lmargin%:75>SCORE<spop>";
       for ( %i = 0; %i < %playerCount; %i++ )
       {
          %playerEntry = getRecord( %content, %record ); 
-         %string = %string NL "<clip:110>\t" @ getField( %playerEntry, 0 ) @ "</clip>" 
-               TAB "<clip:105>" @ getField( %playerEntry, 1 ) @ "</clip>" TAB getField( %playerEntry, 2 );
+         %string = %string NL "<lmargin:0><clip%:40>" SPC getField( %playerEntry, 0 ) @ "</clip><lmargin%:40><clip%:35>" 
+               SPC getField( %playerEntry, 1 ) @ "</clip><lmargin%:75><clip%:25>" SPC getField( %playerEntry, 2 ) @ "</clip>";
          %record++;
       }
    }
@@ -631,11 +675,11 @@ function SI_ContentWindow::fill( %this, %content )
       %record++;
       %playerCount = getRecord( %content, %record );
       %record++;
-      %string = "<tab:150><spush>" @ ServerInfoDlg.headerStyle @ "PLAYERS" TAB "SCORE<spop><tab:5,155>";
+      %string = "<spush>" @ ServerInfoDlg.headerStyle @ "PLAYERS<lmargin%:60>SCORE<spop>";
       for ( %i = 0; %i < %playerCount; %i++ )
       {
          %playerEntry = getRecord( %content, %record ); 
-         %string = %string NL "<clip:150>\t" @ getField( %playerEntry, 0 ) @ "</clip>" TAB getField( %playerEntry, 2 );
+         %string = %string NL "<lmargin:0><clip%:60>" SPC getField( %playerEntry, 0 ) @ "</clip><lmargin%:60>" SPC getField( %playerEntry, 2 );
          %record++;
       }
    }
@@ -689,6 +733,7 @@ function JoinGame(%address)
 	%playerSkin = getField( %playerPref, 2 );
 	%playerVoice = getField( %playerPref, 3 );
 	%playerVoicePitch = getField( %playerPref, 4 );
+   LoadingGui.gotLoadInfo = "";
    connect( %address, $JoinGamePassword, %playerName, %playerRaceGender, %playerSkin, %playerVoice, %playerVoicePitch );
 }
 
@@ -758,6 +803,7 @@ function buildMissionTypePopup( %popup )
    %popup.clear();
    for( %type = 0; %type < $HostTypeCount; %type++ )
       %popup.add( $HostTypeDisplayName[%type], %type );
+   %popup.sort( true );   
 }
 
 //------------------------------------------------------------------------------
@@ -994,8 +1040,8 @@ function StartHostedGame()
    if ( $Host::Dedicated )
    {
       MessageBoxYesNo( "WARNING", 
-            "You are about to launch a dedicated server and leave Tribes 2.  Do you want to continue?", 
-            "tryToLaunchDedicatedServer();" );
+            "You are about to launch a dedicated server and quit Tribes 2.  Do you want to continue?", 
+            "tryToLaunchDedicatedServer(" @ $Host::PureServer @ ");" );
       return;
    }
 
@@ -1023,10 +1069,10 @@ function StartHostedGame()
 }
 
 //------------------------------------------------------------------------------
-function tryToLaunchDedicatedServer()
+function tryToLaunchDedicatedServer( %pure )
 {
    %numBots = $Host::BotsEnabled ? $Host::BotCount : 0;
-   if ( launchDedicatedServer( $Host::MissionType, $Host::Map, %numBots ) )
+   if ( launchDedicatedServer( $Host::MissionType, $Host::Map, %numBots, %pure ) )
       quit();
    else
    {
@@ -1162,6 +1208,7 @@ function AdvancedHostDlg::onWake( %this )
    // Set all of the controls to the current pref states:
    AH_HostPort.setText( $Host::Port );
    AH_DedicatedTgl.setValue( $Host::Dedicated );
+   AH_DedicatedTgl.onAction();
    AH_TournamentTgl.setValue( $Host::TournamentMode );
    AH_AdminVoteTgl.setValue( $Host::allowAdminPlayerVotes );
    AH_AllowSmurfTgl.setValue( !$Host::NoSmurfs );
@@ -1180,6 +1227,8 @@ function AdvancedHostDlg::accept( %this )
    // Apply all of the changes:
    $Host::Port = AH_HostPort.getValue();
    $Host::Dedicated = AH_DedicatedTgl.getValue();
+   if ( $Host::Dedicated )
+      $Host::PureServer = AH_PureServerTgl.getValue();
    $Host::TournamentMode = AH_TournamentTgl.getValue();
    $Host::allowAdminPlayerVotes = AH_AdminVoteTgl.getValue();
    $Host::NoSmurfs = !AH_AllowSmurfTgl.getValue();
@@ -1195,6 +1244,21 @@ function AdvancedHostDlg::accept( %this )
    export( "$Host::*", "prefs/ServerPrefs.cs", false );
 
    Canvas.popDialog( AdvancedHostDlg );
+}
+
+//------------------------------------------------------------------------------
+function AH_DedicatedTgl::onAction( %this )
+{
+   if ( %this.getValue() )
+   {
+      AH_PureServerTgl.setValue( $Host::PureServer );
+      AH_PureServerTgl.setActive( true );
+   }
+   else
+   {
+      AH_PureServerTgl.setValue( false );
+      AH_PureServerTgl.setActive( false );
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1522,6 +1586,8 @@ function GMW_SkinPopup::fillList( %this, %raceGender )
          %count++;
       }
    }
+   
+   %this.sort( true );
 }
 
 //------------------------------------------------------------------------------

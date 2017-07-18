@@ -431,4 +431,5 @@ function GuiEditor::onSelect(%this, %ctrl)
    GuiEditorInspectName.setValue(%ctrl.getName());
 }
 
-GlobalActionMap.bind(keyboard, "alt f1", GuiEdit);
+if (!isDemo())
+	GlobalActionMap.bind(keyboard, "alt f1", GuiEdit);

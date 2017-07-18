@@ -505,12 +505,19 @@ function buyFavorites(%client)
    %newArmor = %client.player.getDataBlock();
 
    %client.player.setDamageLevel(%curDmgPct * %newArmor.maxDamage);
-
+   %weaponCount = 0;
+   
    // weapons
    for(%i = 0; %i < getFieldCount( %client.weaponIndex ); %i++)
    {
       %inv = $NameToInv[%client.favorites[getField( %client.weaponIndex, %i )]];
-      %client.player.setInventory( %inv, 1 );      
+      
+      if( %inv !$= "" )
+      {   
+         %weaponCount++;
+         %client.player.setInventory( %inv, 1 );
+      }
+      
       switch$ ( %inv )
       {
          case Plasma:
@@ -527,7 +534,7 @@ function buyFavorites(%client)
             %client.player.setInventory( ChaingunAmmo, 400 );
       }
    }
-   %client.player.weaponCount = getFieldCount( %client.weaponIndex );
+   %client.player.weaponCount = %weaponCount;
 
    // pack
    %pCh = $NameToInv[%client.favorites[%client.packIndex]];

@@ -76,7 +76,15 @@ function ShapeBaseImageData::onFire(%data, %obj, %slot)
       }
       else
          %energy = %obj.getEnergyLevel();
-      if(%energy < %data.minEnergy)
+      
+      if(%data.useCapacitor && %data.usesEnergy)
+      {   
+         if( %useEnergyObj.turretObject.getCapacitorLevel() < %data.minEnergy )
+         {   
+            return;
+         }
+      }
+      else if(%energy < %data.minEnergy)
          return;
    }
    if(%data.projectileSpread)
@@ -123,7 +131,14 @@ function ShapeBaseImageData::onFire(%data, %obj, %slot)
    if(%data.usesEnergy)
    {
       if(%data.useMountEnergy)
-         %useEnergyObj.setEnergyLevel(%energy - %data.fireEnergy);
+      {   
+         if( %data.useCapacitor )
+         {   
+            %vehicle.turretObject.setCapacitorLevel( %vehicle.turretObject.getCapacitorLevel() - %data.fireEnergy );
+         }
+         else
+            %useEnergyObj.setEnergyLevel(%energy - %data.fireEnergy);
+      }
       else
          %obj.setEnergyLevel(%energy - %data.fireEnergy);
    }
@@ -374,11 +389,16 @@ function ELFProjectileData::zapTarget(%data, %projectile, %target, %targeter)
 {
 	%oldERate = %target.getRechargeRate();
 	%target.teamDamageStateOnZap = $teamDamage;
+   %teammates = %target.client.team == %targeter.client.team;
+
+   echo("targeter team: " @ %targeter.team );
+   echo("target team: " @ %target.team );
 	
-	if(!%target.teamDamageStateOnZap && %target.team == %targeter.team)
-		%target.setRechargeRate(%oldERate);	
-	else	 
+	if( %target.teamDamageStateOnZap || !%teammates )
 		%target.setRechargeRate(%oldERate - %data.drainEnergy);
+	else	 
+		%target.setRechargeRate(%oldERate);	
+	
 	%projectile.checkELFStatus(%data, %target, %targeter);
 }
 
@@ -389,14 +409,15 @@ function ELFProjectileData::unzapTarget(%data, %projectile, %target, %targeter)
 	%targeter.stopAudio($ELFFireSound);
 	%target.zapSound = false;
 	%targeter.zappingSound = false;
+   %teammates = %target.client.team == %targeter.client.team;
 	
-	if(!%target.isDisabled())
+	if(!%target.isDestroyed())
 	{
 		%oldERate = %target.getRechargeRate();
-		if(!%target.teamDamageStateOnZap && %target.team == %targeter.team)
-			%target.setRechargeRate(%oldERate);
-		else	 
+		if( %target.teamDamageStateOnZap || !%teammates )
 			%target.setRechargeRate(%oldERate + %data.drainEnergy);
+		else	 
+			%target.setRechargeRate(%oldERate);
 	}
 }
 
@@ -506,7 +527,13 @@ function RadiusExplosion(%explosionSource, %position, %radius, %damage, %impulse
       if (%coverage == 0)
          continue;
 
-      %amount = (1.0 - (%dist / %radius)) * %coverage * %damage;
+      //if ( $splashTest )
+         %amount = (1.0 - ((%dist / %radius) * 0.75)) * %coverage * %damage;
+      //else
+         //%amount = (1.0 - (%dist / %radius)) * %coverage * %damage;
+
+      //error( "damage: " @ %amount @ " at distance: " @ %dist @ " radius: " @ %radius @ " maxDamage: " @ %damage );
+      
       %data = %targetObject.getDataBlock();
       %className = %data.className;
 
@@ -541,7 +568,7 @@ function RadiusExplosion(%explosionSource, %position, %radius, %damage, %impulse
       }
       
       if(%amount > 0)
-         %data.damageObject(%targetObject, %sourceObject, %position, %amount, %damageType, %momVec);
+         %data.damageObject(%targetObject, %sourceObject, %position, %amount, %damageType, %momVec, %explosionSource.theClient, %explosionSource);
       else if( %explosionSource.getDataBlock().getName() $= "ConcussionGrenadeThrown" && %data.getClassName() $= "PlayerData" )
 	  {
          %data.applyConcussion( %dist, %radius, %sourceObject, %targetObject );

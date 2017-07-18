@@ -94,14 +94,6 @@ function GameConnection::sensorJammed(%this, %jam)
 
 function SensorHud::update(%this)
 {
-   // dont change anything if lag is up
-   if(lagHudIndicator.isVisible())
-   {
-      %this.setVisible(false);
-      sensorHudBack.setVisible(false);
-      return;
-   }
-
    if(!%this.ping && !%this.jam)
    {
       %this.setVisible(false);
@@ -123,7 +115,6 @@ function clientCmdResetHud()
 {
    deploySensor.setVisible(false);
    controlObjectText.setVisible(false);
-   lagHudIndicator.setVisible(false);
 
    sensorHud.jam = false;
    sensorHud.ping = false;
@@ -142,16 +133,16 @@ function clientCmdSyncHudClock(%time)
 }
 
 //--------------------------------------------------------------------------
-$vehicleReticle[AssaultVehicle, 1, bitmap] = "gui/hud_ret_tankchaingun.png";
+$vehicleReticle[AssaultVehicle, 1, bitmap] = "gui/hud_ret_tankchaingun";
 $vehicleReticle[AssaultVehicle, 1, frame] = true;
-$vehicleReticle[AssaultVehicle, 2, bitmap] = "gui/hud_ret_tankmortar.png";
+$vehicleReticle[AssaultVehicle, 2, bitmap] = "gui/hud_ret_tankmortar";
 $vehicleReticle[AssaultVehicle, 2, frame] = true;
 
-$vehicleReticle[BomberFlyer, 1, bitmap] = "gui/hud_ret_shrike.png";
+$vehicleReticle[BomberFlyer, 1, bitmap] = "gui/hud_ret_shrike";
 $vehicleReticle[BomberFlyer, 1, frame] = false;
 $vehicleReticle[BomberFlyer, 2, bitmap] = "";
 $vehicleReticle[BomberFlyer, 2, frame] = false;
-$vehicleReticle[BomberFlyer, 3, bitmap] = "gui/hud_ret_targlaser.png";
+$vehicleReticle[BomberFlyer, 3, bitmap] = "gui/hud_ret_targlaser";
 $vehicleReticle[BomberFlyer, 3, frame] = false;
 
 function GameConnection::setVWeaponsHudActive(%client, %slot)
@@ -298,44 +289,44 @@ function clientCmdSetWeaponsHudActive(%slot)
    switch$($WeaponNames[%slot])
    {
       case "Blaster":
-         reticleHud.setBitmap("gui/ret_blaster.png");
+         reticleHud.setBitmap("gui/ret_blaster");
          reticleFrameHud.setVisible(true);
       case "Plasma":
-         reticleHud.setBitmap("gui/ret_plasma.png");
+         reticleHud.setBitmap("gui/ret_plasma");
          reticleFrameHud.setVisible(true);
       case "Chaingun":
-         reticleHud.setBitmap("gui/ret_chaingun.png");
+         reticleHud.setBitmap("gui/ret_chaingun");
          reticleFrameHud.setVisible(true);
       case "Disc":  
-         reticleHud.setBitmap("gui/ret_disc.png");
+         reticleHud.setBitmap("gui/ret_disc");
          reticleFrameHud.setVisible(true);
       case "GrenadeLauncher":
-         reticleHud.setBitmap("gui/ret_grenade.png");
+         reticleHud.setBitmap("gui/ret_grenade");
          reticleFrameHud.setVisible(true);
       case "SniperRifle":
-         reticleHud.setBitmap("gui/hud_ret_sniper.png");
+         reticleHud.setBitmap("gui/hud_ret_sniper");
          reticleFrameHud.setVisible(false);
       case "ELFGun":
-         reticleHud.setBitmap("gui/ret_elf.png");
+         reticleHud.setBitmap("gui/ret_elf");
          reticleFrameHud.setVisible(true);
       case "Mortar":
-         reticleHud.setBitmap("gui/ret_mortor.png");
+         reticleHud.setBitmap("gui/ret_mortor");
          reticleFrameHud.setVisible(true);
       case "MissileLauncher":
-         reticleHud.setBitmap("gui/ret_missile.png");
+         reticleHud.setBitmap("gui/ret_missile");
          reticleFrameHud.setVisible(true);
       case "ShockLance":
-         reticleHud.setBitmap("gui/hud_ret_shocklance.png");
+         reticleHud.setBitmap("gui/hud_ret_shocklance");
          reticleFrameHud.setVisible(false);
       case "TargetingLaser":
-         reticleHud.setBitmap("gui/hud_ret_targlaser.png");
+         reticleHud.setBitmap("gui/hud_ret_targlaser");
          reticleFrameHud.setVisible(false);
    }
 }
 
 function clientCmdSetRepairReticle()
 {
-   reticleHud.setBitmap("gui/ret_chaingun.png");
+   reticleHud.setBitmap("gui/ret_chaingun");
    reticleFrameHud.setVisible(true);
 }
 
@@ -413,41 +404,41 @@ function clientCmdSetAmmoHudCount(%amount)
 //----------------------------------------------------------------------------
 
 $BackpackHudData[0, itemDataName] = "AmmoPack";
-$BackpackHudData[0, bitmapName] = "gui/hud_new_packammo.png";
+$BackpackHudData[0, bitmapName] = "gui/hud_new_packammo";
 $BackpackHudData[1, itemDataName] = "CloakingPack";
-$BackpackHudData[1, bitmapName] = "gui/hud_new_packcloak.png";
+$BackpackHudData[1, bitmapName] = "gui/hud_new_packcloak";
 $BackpackHudData[2, itemDataName] = "EnergyPack";
-$BackpackHudData[2, bitmapName] = "gui/hud_new_packenergy.png";
+$BackpackHudData[2, bitmapName] = "gui/hud_new_packenergy";
 $BackpackHudData[3, itemDataName] = "RepairPack";
-$BackpackHudData[3, bitmapName] = "gui/hud_new_packrepair.png";
+$BackpackHudData[3, bitmapName] = "gui/hud_new_packrepair";
 $BackpackHudData[4, itemDataName] = "SatchelCharge";
-$BackpackHudData[4, bitmapName] = "gui/hud_new_packsatchel.png";
+$BackpackHudData[4, bitmapName] = "gui/hud_new_packsatchel";
 $BackpackHudData[5, itemDataName] = "ShieldPack";
-$BackpackHudData[5, bitmapName] = "gui/hud_new_packshield.png";
+$BackpackHudData[5, bitmapName] = "gui/hud_new_packshield";
 $BackpackHudData[6, itemDataName] = "InventoryDeployable";
-$BackpackHudData[6, bitmapName] = "gui/hud_new_packinventory.png";
+$BackpackHudData[6, bitmapName] = "gui/hud_new_packinventory";
 $BackpackHudData[7, itemDataName] = "MotionSensorDeployable";
-$BackpackHudData[7, bitmapName] = "gui/hud_new_packmotionsens.png";
+$BackpackHudData[7, bitmapName] = "gui/hud_new_packmotionsens";
 $BackpackHudData[8, itemDataName] = "PulseSensorDeployable";
-$BackpackHudData[8, bitmapName] = "gui/hud_new_packradar.png";
+$BackpackHudData[8, bitmapName] = "gui/hud_new_packradar";
 $BackpackHudData[9, itemDataName] = "TurretOutdoorDeployable";
-$BackpackHudData[9, bitmapName] = "gui/hud_new_packturretout.png";
+$BackpackHudData[9, bitmapName] = "gui/hud_new_packturretout";
 $BackpackHudData[10, itemDataName] = "TurretIndoorDeployable";
-$BackpackHudData[10, bitmapName] = "gui/hud_new_packturretin.png";
+$BackpackHudData[10, bitmapName] = "gui/hud_new_packturretin";
 $BackpackHudData[11, itemDataName] = "SensorJammerPack";
-$BackpackHudData[11, bitmapName] = "gui/hud_new_packsensjam.png";
+$BackpackHudData[11, bitmapName] = "gui/hud_new_packsensjam";
 $BackpackHudData[12, itemDataName] = "AABarrelPack";
-$BackpackHudData[12, bitmapName] = "gui/hud_new_packturret.png";
+$BackpackHudData[12, bitmapName] = "gui/hud_new_packturret";
 $BackpackHudData[13, itemDataName] = "FusionBarrelPack";
-$BackpackHudData[13, bitmapName] = "gui/hud_new_packturret.png";
+$BackpackHudData[13, bitmapName] = "gui/hud_new_packturret";
 $BackpackHudData[14, itemDataName] = "MissileBarrelPack";
-$BackpackHudData[14, bitmapName] = "gui/hud_new_packturret.png";
+$BackpackHudData[14, bitmapName] = "gui/hud_new_packturret";
 $BackpackHudData[15, itemDataName] = "PlasmaBarrelPack";
-$BackpackHudData[15, bitmapName] = "gui/hud_new_packturret.png";
+$BackpackHudData[15, bitmapName] = "gui/hud_new_packturret";
 $BackpackHudData[16, itemDataName] = "ELFBarrelPack";
-$BackpackHudData[16, bitmapName] = "gui/hud_new_packturret.png";
+$BackpackHudData[16, bitmapName] = "gui/hud_new_packturret";
 $BackpackHudData[17, itemDataName] = "MortarBarrelPack";
-$BackpackHudData[17, bitmapName] = "gui/hud_new_packturret.png";
+$BackpackHudData[17, bitmapName] = "gui/hud_new_packturret";
 
 $BackpackHudCount = 18;
 
@@ -493,35 +484,35 @@ function clientCmdUpdatePackText(%num)
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-$InventoryHudData[0, bitmapName]   = "gui/hud_handgren.png";
+$InventoryHudData[0, bitmapName]   = "gui/hud_handgren";
 $InventoryHudData[0, itemDataName] = Grenade;
 $InventoryHudData[0, ammoDataName] = Grenade;
 $InventoryHudData[0, slot]         = 0;
-$InventoryHudData[1, bitmapName]   = "gui/hud_mine.png";
+$InventoryHudData[1, bitmapName]   = "gui/hud_mine";
 $InventoryHudData[1, itemDataName] = Mine;
 $InventoryHudData[1, ammoDataName] = Mine;
 $InventoryHudData[1, slot]         = 1;
-$InventoryHudData[2, bitmapName]   = "gui/hud_medpack.png";
+$InventoryHudData[2, bitmapName]   = "gui/hud_medpack";
 $InventoryHudData[2, itemDataName] = RepairKit;
 $InventoryHudData[2, ammoDataName] = RepairKit;
 $InventoryHudData[2, slot]         = 3;
-$InventoryHudData[3, bitmapName]   = "gui/hud_handgren.png";
+$InventoryHudData[3, bitmapName]   = "gui/hud_handgren";
 $InventoryHudData[3, itemDataName] = FlashGrenade;
 $InventoryHudData[3, ammoDataName] = FlashGrenade;
 $InventoryHudData[3, slot]         = 0;
-$InventoryHudData[4, bitmapName]   = "gui/hud_handgren.png";
+$InventoryHudData[4, bitmapName]   = "gui/hud_handgren";
 $InventoryHudData[4, itemDataName] = ConcussionGrenade;
 $InventoryHudData[4, ammoDataName] = ConcussionGrenade;
 $InventoryHudData[4, slot]         = 0;
-$InventoryHudData[5, bitmapName]   = "gui/hud_handgren.png";
+$InventoryHudData[5, bitmapName]   = "gui/hud_handgren";
 $InventoryHudData[5, itemDataName] = FlareGrenade;
 $InventoryHudData[5, ammoDataName] = FlareGrenade;
 $InventoryHudData[5, slot]         = 0;
-$InventoryHudData[6, bitmapName]   = "gui/hud_handgren.png";
+$InventoryHudData[6, bitmapName]   = "gui/hud_handgren";
 $InventoryHudData[6, itemDataName] = CameraGrenade;
 $InventoryHudData[6, ammoDataName] = CameraGrenade;
 $InventoryHudData[6, slot]         = 0;
-$InventoryHudData[7, bitmapName]   = "gui/hud_beacon.png";
+$InventoryHudData[7, bitmapName]   = "gui/hud_beacon";
 $InventoryHudData[7, itemDataName] = Beacon;
 $InventoryHudData[7, ammoDataName] = Beacon;
 $InventoryHudData[7, slot]         = 2;
@@ -941,6 +932,9 @@ function updateActionMaps()
       observerBlockMap.pop();
    if ( isObject( observerMap ) )
       observerMap.pop();
+   if ( isObject( pickTeamMap ) )
+      pickTeamMap.pop();
+
    //if (isObject(flyingCameraMove))
    //   flyingCameraMove.pop();
    if (isObject(ControlActionMap))
@@ -977,7 +971,13 @@ function updateActionMaps()
             observerMap.copyBind( moveMap, mouseFire );
       
       case "PickTeam":
-        // no mapping 
+         ////////////////////////
+         // pickTeam Keys
+         //////////////////////
+         if( !isObject( pickTeamMap ) )
+            new ActionMap( pickTeamMap );
+         pickTeamMap.copyBind( moveMap, toggleMessageHud );
+         pickTeamMap.push();        
 
       //case 'Standard':
       default:
@@ -994,8 +994,9 @@ function ClientCmdDisplayHuds()
    // only update action maps if playGui is current content
    %content = Canvas.getContent();
    if(isObject(%content) && (%content.getName() $= "PlayGui"))
+   {   
       updateActionMaps();
-
+   }
    ammoHud.setVisible(false);
    objectiveHud.setVisible(false);
    inventoryHud.setVisible(false);
@@ -1005,7 +1006,6 @@ function ClientCmdDisplayHuds()
    HudClusterBack.setVisible(false);
    outerChatHud.setVisible(false);
    clockHud.setVisible(false);
-   lagHudIndicator.setVisible(false);
    controlObjectText.setVisible(false);
    clientCmdToggleDashHud(false);
 
@@ -1017,10 +1017,7 @@ function ClientCmdDisplayHuds()
          retCenterHud.setVisible(true);
          HudClusterBack.setVisible(true);
          outerChatHud.setVisible(true);
-         if (!$showLagIcon)
-            clockHud.setVisible(true);
-         else
-            lagHudIndicator.setVisible(true);
+         clockHud.setVisible(true);
 
       case "Passenger":
          clientCmdShowVehicleGauges($HudModeType, $HudModeNode);
@@ -1034,21 +1031,14 @@ function ClientCmdDisplayHuds()
          retCenterHud.setVisible(true);
          HudClusterBack.setVisible(true);
          outerChatHud.setVisible(true);
-         if (!$showLagIcon)
-            clockHud.setVisible(true);
-         else
-            lagHudIndicator.setVisible(true);
-         clientCmdSetWeaponsHudActive(0);
+         clockHud.setVisible(true);
 
       case "Object":
          ammoHud.setVisible(true);
          HudClusterBack.setVisible(true);
          outerChatHud.setVisible(true);
          controlObjectText.setVisible(true);
-         if (!$showLagIcon)
-            clockHud.setVisible(true);
-         else
-            lagHudIndicator.setVisible(true);
+         clockHud.setVisible(true);
 
          setControlObjectReticle($HudModeType);
 
@@ -1056,10 +1046,7 @@ function ClientCmdDisplayHuds()
          objectiveHud.setVisible(true);
          HudClusterBack.setVisible(true);
          outerChatHud.setVisible(true);
-         if (!$showLagIcon)
-            clockHud.setVisible(true);
-         else
-            lagHudIndicator.setVisible(true);
+         clockHud.setVisible(true);
          
       case "PickTeam":
          ammoHud.setVisible(false);
@@ -1069,7 +1056,7 @@ function ClientCmdDisplayHuds()
          weaponsHud.setVisible(false);
          retCenterHud.setVisible(false);
          HudClusterBack.setVisible(false);
-         outerChatHud.setVisible(false);
+         outerChatHud.setVisible(true);
          controlObjectText.setVisible(false);
          clockHud.setVisible(false);
 
@@ -1084,10 +1071,7 @@ function ClientCmdDisplayHuds()
          retCenterHud.setVisible(true);
          HudClusterBack.setVisible(true);
          outerChatHud.setVisible(true);
-         if (!$showLagIcon)
-            clockHud.setVisible(true);
-         else
-            lagHudIndicator.setVisible(true);
+         clockHud.setVisible(true);
          
          if(voteHud.voting)
             mainVoteHud.setVisible(1);
@@ -1108,19 +1092,7 @@ function clientcmdTogglePlayHuds(%val)
    retCenterHud.setVisible(%val);
    HudClusterBack.setVisible(%val);
    outerChatHud.setVisible(%val);
-
-   if (%val)
-   {
-      if (!$showLagIcon)
-         clockHud.setVisible(true);
-      else
-         lagHudIndicator.setVisible(true);
-   }
-   else
-   {
-      clockHud.setVisible(false);
-      lagHudIndicator.setVisible(false);
-   }
+   clockHud.setVisible(%val);
    
    if(%val)
    {   
@@ -1756,4 +1728,20 @@ function testChatHud()
    $testCount++;
    messageAll( '', "This is test number " @ $testCount );
    $tester = schedule( 50, 0, "testChatHud");
+}
+
+//-------------------------------------------------------------------------
+function HudNetDisplay::getPrefs(%this)
+{
+   for(%i = 0; %i < 6; %i++)
+      %this.renderField[%i] = ($pref::Net::graphFields >> %i) & 1;
+}
+
+function NetBarHud::infoUpdate(%this, %ping, %packetLoss, %sendPackets, %sendBytes, %receivePackets, %receiveBytes)
+{
+   NetBarHudPingText.setText(mFormatFloat(%ping, "%4.0f") @ "ms");
+   NetBarHudPacketLossText.setText(mFormatFloat(%packetLoss, "%3.0f") @ "%");
+   
+   NetBarHudSendBar.value = %sendPackets / $pref::Net::PacketRateToServer;
+   NetBarHudReceiveBar.value = %receivePackets / $pref::Net::PacketRateToClient;
 }

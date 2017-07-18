@@ -6,6 +6,17 @@ datablock CameraData(Observer)
    firstPersonOnly = true;
 };
 
+datablock CameraData(CommanderCamera)
+{
+   mode = "observerStatic";
+   firstPersonOnly = true;
+};
+
+function CommanderCamera::onTrigger( %data, %obj, %trigger, %state )
+{
+   // no need to do anything here.
+}
+
 function Observer::onTrigger(%data,%obj,%trigger,%state)
 {
    // state = 0 means that a trigger key was released
@@ -28,6 +39,9 @@ function Observer::onTrigger(%data,%obj,%trigger,%state)
    switch$ (%obj.mode)
    {
       case "justJoined":
+         if ( isDemoServer() )
+            clearCenterPrint( %client );
+            
          //press FIRE
          if (%trigger == 0)
          {
@@ -163,6 +177,8 @@ function Observer::onTrigger(%data,%obj,%trigger,%state)
                serverCmdObserveClient(%client, %client.observeFlyClient);
             else
                serverCmdObserveClient(%client, -1);
+            
+            observerFollowUpdate( %client, %client.observeClient, false );
             displayObserverHud(%client, %client.observeClient);
             messageClient(%client.observeClient, 'Observer', '\c1%1 is now observing you.', %client.name);  
          }
@@ -212,6 +228,10 @@ function Observer::onTrigger(%data,%obj,%trigger,%state)
                serverCmdObserveClient(%client, %client.observeFlyClient);
             else
                serverCmdObserveClient(%client, -1);
+            
+            // update the observer list for this client
+            observerFollowUpdate( %client, %client.observeClient, false );
+            
             displayObserverHud(%client, %client.observeClient);
             messageClient(%client.observeClient, 'Observer', '\c1%1 is now observing you.', %client.name);  
          }
@@ -225,11 +245,28 @@ function Observer::onTrigger(%data,%obj,%trigger,%state)
             %prevObsClient = %client.observeClient;
             if (%nextClient > 0 && %nextClient != %client.observeClient)
             {
+               // update the observer list for this client
+               observerFollowUpdate( %client, %nextClient, true );
+               
                //set the new object
                %transform = %nextClient.player.getTransform();
-               %obj.setOrbitMode(%nextClient.player, %transform, 0.5, 4.5, 4.5);
-               %client.observeClient = %nextClient;
-
+               if( !%nextClient.isMounted() )
+               {
+                  %obj.setOrbitMode(%nextClient.player, %transform, 0.5, 4.5, 4.5);
+                  %client.observeClient = %nextClient;
+               }
+               else
+               {
+                  %mount = %nextClient.player.getObjectMount();
+                  if( %mount.getDataBlock().observeParameters $= "" )
+                     %params = %transform;
+                  else
+                     %params = %mount.getDataBlock().observeParameters;
+            
+                  %obj.setOrbitMode(%mount, %mount.getTransform(), getWord( %params, 0 ), getWord( %params, 1 ), getWord( %params, 2 ));
+                  %client.observeClient = %nextClient;
+               }
+               
                //send the message(s)
                displayObserverHud(%client, %nextClient);
                messageClient(%nextClient, 'Observer', '\c1%1 is now observing you.', %client.name);  
@@ -244,10 +281,27 @@ function Observer::onTrigger(%data,%obj,%trigger,%state)
             %prevObsClient = %client.observeClient;
             if (%prevClient > 0 && %prevClient != %client.observeClient)
             {
+               // update the observer list for this client
+               observerFollowUpdate( %client, %prevClient, true );
+               
                //set the new object
                %transform = %prevClient.player.getTransform();
-               %obj.setOrbitMode(%prevClient.player, %transform, 0.5, 4.5, 4.5);
-               %client.observeClient = %prevClient;
+               if( !%prevClient.isMounted() )
+               {
+                  %obj.setOrbitMode(%prevClient.player, %transform, 0.5, 4.5, 4.5);
+                  %client.observeClient = %prevClient;
+               }
+               else
+               {
+                  %mount = %prevClient.player.getObjectMount();
+                  if( %mount.getDataBlock().observeParameters $= "" )
+                     %params = %transform;
+                  else
+                     %params = %mount.getDataBlock().observeParameters;
+            
+                  %obj.setOrbitMode(%mount, %mount.getTransform(), getWord( %params, 0 ), getWord( %params, 1 ), getWord( %params, 2 ));
+                  %client.observeClient = %prevClient;
+               }
 
                //send the message(s)
                displayObserverHud(%client, %prevClient);
@@ -259,6 +313,9 @@ function Observer::onTrigger(%data,%obj,%trigger,%state)
          //press JUMP
          else if (%trigger == 2)
          {
+            // update the observer list for this client
+            observerFollowUpdate( %client, -1, false );
+            
             //toggle back to observer fly mode
             %obj.mode = "observerFly";
             %obj.setFlyMode();
@@ -309,7 +366,7 @@ function Observer::setMode(%data, %obj, %mode, %targetObj)
       
       case "pre-game":
 		   commandToClient(%client, 'setHudMode', 'Observer');
-         %obj.setOrbitMode( %targetObj, %targetObj.getWorldBoxCenter() @ " 0.5 0.5 0.5 1", 0.5, 4.5, 4.5, true);
+         %obj.setOrbitMode( %targetObj, %targetObj.getTransform(), 0.5, 4.5, 4.5);
       
       case "observerFly":
          // Free-flying observer camera
@@ -328,7 +385,19 @@ function Observer::setMode(%data, %obj, %mode, %targetObj)
       case "observerFollow":
          // Observer attached to a moving object (assume player for now...)
          %transform = %targetObj.getTransform();
-         %obj.setOrbitMode(%targetObj, %transform, 0.5, 4.5, 4.5);
+         
+         if( !%targetObj.isMounted() )
+            %obj.setOrbitMode(%targetObj, %transform, 0.5, 4.5, 4.5);
+         else
+         {
+            %mount = %targetObj.getObjectMount();
+            if( %mount.getDataBlock().observeParameters $= "" )
+               %params = %transform;
+            else
+               %params = %mount.getDataBlock().observeParameters;
+            
+            %obj.setOrbitMode(%mount, %mount.getTransform(), getWord( %params, 0 ), getWord( %params, 1 ), getWord( %params, 2 ));
+         }
       
       case "observerTimeout":
 		   commandToClient(%client, 'setHudMode', 'Observer');
@@ -516,6 +585,67 @@ function serverCmdObserveClient(%client, %target)
 
    //tag is used if a client who is being observed dies...
    %client.observeClient = %target;
+}
+
+function observerFollowUpdate( %client, %nextClient, %cycle )
+{
+   %Oclient = %client.observeClient;
+   if( %Oclient $= "" )
+      return;
+   
+   // changed to observer fly...
+   if( %nextClient == -1 )
+   {
+      // find us in their observer list and remove, then reshuffle the list...
+      for( %i = 0; %i < %Oclient.observeCount; %i++ )
+      {
+         if( %Oclient.observers[%i] == %client )
+         {
+            %Oclient.observeCount--;
+            %Oclient.observers[%i] = %Oclient.observers[%Oclient.observeCount];
+            %Oclient.observers[%Oclient.observeCount] = "";
+            break;
+         }
+      }
+      return; // were done..
+   }
+
+   // changed from observer fly to observer follow...
+   if( !%cycle && %nextClient != -1 )
+   {
+      // if nobody is observing this guy, initialize their observer count...
+      if( %nextClient.observeCount $= "" )
+         %nextClient.observeCount = 0;
+
+      // add us to their list of observers...
+      %nextClient.observers[%nextClient.observeCount] = %client;
+      %nextClient.observeCount++;
+      return; // were done.
+   }
+
+   if( %nextClient != -1 )
+   {
+      // cycling to the next client...
+      for( %i = 0; %i < %Oclient.observeCount; %i++ )
+      {
+         // first remove us from our prev client's list...
+         if( %Oclient.observers[%i] == %client )
+         {
+            %Oclient.observeCount--;
+            %Oclient.observers[%i] = %Oclient.observers[%Oclient.observeCount];
+            %Oclient.observers[%Oclient.observeCount] = "";
+            break; // screw you guys, i'm goin home!
+         }
+      }
+
+      // if nobody is observing this guy, initialize their observer count...
+      if( %nextClient.observeCount $= "" )
+         %nextClient.observeCount = 0;
+
+      // now add us to the new clients list...
+      %nextClient.observeCount++;
+      %nextClient.observers[%nextClient.observeCount - 1] = %client;
+   }
 }
 
 function updateObserverFlyHud(%client)

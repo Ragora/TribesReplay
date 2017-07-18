@@ -1,6 +1,3 @@
-$numDeathMsgLines = 10;
-$currentDeathMsgLine = 0;
-$deathMsgTimeOut = 5 * 1000;
 $MaxMessageWavLength = 5200;
 
 function addMessageCallback(%msgType, %func)
@@ -56,27 +53,6 @@ function defaultMessageCallback(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %
    }
    else
 	  addMessageHudLine( %message );
-   //else if (strstr(%message, "~x") != -1)
-   //{
-   //	  %mess = getSubStr(%message, 2, 1000);
-   //	  addDeathMsgHudLine(%mess);
-   //}
-}
-
-function getPlayerPrefs( %player )
-{
-   // test against %player.guid
-
-   // For now, mute smurfs and listen to real players:
-   commandToServer( 'ListenTo', %player.clientId, !%player.isSmurf, false ); 
-
-	// MES -- queryClientPlayerDatabase function call causes console error
-
-   //if(queryClientPlayerDatabase(%player.guid, "muted"))
-   //{
-   //   %player.chatMuted = true;
-   //   addMessageHudLine("Spamming punk \c3" @ %player.name @ "\cr joined and has been auto muted!");
-   //}
 }
 
 //--------------------------------------------------------------------------
@@ -146,7 +122,10 @@ function handleClientNameChanged( %msgType, %msgString, %oldName, %newName, %cli
 {
    %player = $PlayerList[%clientId];
    if( %player )
+   {
       %player.name = detag( %newName );
+      lobbyUpdatePlayer( %clientId );
+   }
 }
 
 addMessageCallback("", defaultMessageCallback);
@@ -421,192 +400,3 @@ function messageAllExcept(%client, %team, %msgtype, %msgString, %a1, %a2, %a3, %
 //   }
 //}
 //#####################################################
-
-//modified defaultgame and added deathmessages.cs to handle this - EL
-// addMessageCallback('MsgSuicide', suicideMessage);
-// 
-// function suicideMessage(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10)
-// {
-// 	%victim = detag(%a1);
-// 	%suicideMsg = %victim @ " hits CTRL-K. What a wimp!";
-// 	addDeathMsgHudLine(%suicideMsg);
-// }
-
-//modified defaultgame and added deathmessages.cs to handle this - EL
-// addMessageCallback('MsgSelfKill', selfKillMessage);
-// 
-// function selfKillMessage(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10)
-// {
-// 	%victim = detag(%a1);
-// 	%gender = detag(%a2);
-// 	// gender will be HIM or HER
-// 	%poss = detag(%a3);
-// 	// poss will be HIS or HER	 (possessive)
-// 	%damageType = detag(%a4);
-// 	switch$ (%damageType) {
-// 		case $DamageType::Plasma :
-// 			%suicideMsg = %victim @ " gets a taste of " @ %poss @ " own plasma.";
-// 		case $DamageType::Bullet :
-// 			%suicideMsg = %victim @ " shoots " @ %gender @ "self in the foot.";
-// 		case $DamageType::Disc :
-// 			%suicideMsg = %victim @ " blasts " @ %gender @ "self with a disc.";
-// 		case $DamageType::Grenade :
-// 			%suicideMsg = %victim @ " eats " @ %poss @ " own grenade.";
-// 		case $DamageType::Mortar :
-// 			%suicideMsg = %victim @ " launches a mortar too close to home.";
-// 		case $DamageType::Missile :
-// 			%suicideMsg = %victim @ " blows " @ %gender @ "self up with a missile.";
-// 		case $DamageType::Explosion :
-// 			%suicideMsg = %victim @ " gets too close to an explosion.";
-// 		case $DamageType::Ground :
-// 			%suicideMsg = %victim @ " hits the ground hard.";
-// 		default:
-// 			%suicideMsg = %victim @ " kills " @ %gender @ "self.";
-// 	}
-// 	addDeathMsgHudLine(%suicideMsg);
-// }
-
-//modified defaultgame and added deathmessages.cs to handle this - EL
-// addMessageCallback('MsgPlayerTeamKill', playerTeamKillMessage);
-// 
-// function playerTeamKillMessage(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10)
-// {
-// 	%victim = detag(%a1);
-// 	%killer = detag(%a2);
-// 	%killPoss = detag(%a3);
-// 	%teamKillMsg = %killer @ " mows down " @ %killPoss @ " teammate " @ %victim @ ".";
-// 	addDeathMsgHudLine(%teamKillMsg);
-// }
-
-//modified defaultgame and added deathmessages.cs to handle this - EL
-// addMessageCallback('MsgPlayerIsKilled', playerIsKilledMessage);
-// 
-// function playerIsKilledMessage(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10)
-// {
-// 	%victim = detag(%a1);
-// 	%killer = detag(%a2);
-// 	%vicGen = detag(%a3);
-// 	%vicPoss = detag(%a4);
-// 	//%kilGen = detag(%a5);
-// 	//%kilPoss = detag(%a6);
-// 	// vicGen and kilGen will be HIM or HER
-// 	// vicPoss and kilPoss will be HIS or HER
-// 	%damType = detag(%a5);
-// 	switch$ (%damType) {
-// 		case $DamageType::Blaster :
-// 			%dMsg = %killer @ " blasts the life out of " @ %victim @ ".";
-// 		case $DamageType::Plasma :
-// 			%dMsg = %killer @ " gives " @ %victim @ " a plasma transfusion.";
-// 		case $DamageType::Bullet :
-// 			%dMsg = %killer @ " gives " @ %victim @ " " @ %vicPoss @ " daily dose of lead.";
-// 		case $DamageType::Disc :
-// 			%dMsg = %killer @ " gives " @ %victim @ " a Stormhammer salute.";
-// 		case $DamageType::Grenade :
-// 			%dMsg = %killer @ " takes " @ %victim @ " out with a grenade.";
-// 		case $DamageType::Laser :
-// 			%dMsg = %killer @ " picks off " @ %victim @ " with a sniper shot.";
-// 		case $DamageType::ELF :
-// 			%dMsg = %killer @ " drains " @ %victim @ "\'s life force.";
-// 		case $DamageType::Mortar :
-// 			%dMsg = %killer @ " mortars " @ %victim @ " into oblivion.";
-// 		case $DamageType::Missile :
-// 			%dMsg = %killer @ "\'s missile catches up with " @ %victim @ ".";
-// 		case $DamageType::ShockLance :
-// 			%dMsg = %killer @ " assassinates " @ %victim @ ".";
-// 		case $DamageType::Mine :
-// 			%dMsg = %killer @ "\'s mine takes out " @ %victim @ ".";
-// 		case $DamageType::Explosion :
-// 			%dMsg = %killer @ " blows up " @ %victim @ ".";
-// 		case $DamageType::Impact :
-// 			%dMsg = %killer @ " runs over " @ %victim @ ".";
-// 		case $DamageType::Turret :
-// 			%dMsg = %killer @ "\'s turret kills " @ %victim @ ".";
-// 		default:
-// 			%dMsg = %victim @ " falls victim to " @ %killer @ ".";
-// 	}
-// 	addDeathMsgHudLine(%dMsg);
-// }
-
-//function addDeathMsgHudLine(%msg)
-//{
-//	if(!isObject(deathMsgHud)){
-//		%dmHudX = firstWord(getResolution()) - 245;
-//		%dmHudY = (getWord(objectiveHud.extent, 1) + getWord(objectiveHud.position, 1)) + 10;
-//		%dmhPos = %dmHudX @ " " @ %dmHudY;
-//		//error("y coords = " @ getWord(objectiveHud.extent, 1) @ " + " @ getWord(objectiveHud.position, 1) @ " + 10");
-//		%dmHud = new GuiControl(deathMsgHud) {
-//			profile = "GuiDeathMsgHudProfile";
-//			horizSizing = "left";
-//			vertSizing = "bottom";
-//			position = %dmhPos;
-//			extent = "240 170";
-//			visible = "1";
-//			modal = "0";
-//		};
-//		PlayGui.add(%dmHud);
-//	}
-//	%msgName = "deathMsg" @ $currentDeathMsgLine;
-//	if(nameToId(%msgName) > 0)
-//		%msgName.delete();
-//	%msgYCoord = ($currentDeathMsgLine * 15);
-//	%msgCoords = "3 " @ %msgYCoord;
-//	// calculate how many lines the message will need to use
-//	%multiLine = false;
-//	if(strLen(%msg) > 52) {
-//		%multiLine = true;
-//		// find first space before character 52 and break the line there
-//		%lBr = -1;
-//		for(%i = 51; %i > 0; %i--)
-//			if(getSubStr(%msg, %i, 1) $= " ") {
-//				%lBr = %i;
-//				break;
-//			}
-//		if(%lBr > -1) {
-//			%msg1 = getSubStr(%msg, 0, %lBr);
-//			%msg2 = getSubStr(%msg, %lBr + 1, strLen(%msg));
-//			//error("Message line 1: |" @ %msg1 @ "|");
-//			//error("Message line 2: |" @ %msg2 @ "|");
-//		}
-//	}
-//	else
-//		%msg1 = %msg;
-//	%addDeathMsg = new GuiTextCtrl(%msgName) {
-//		profile = "DeathMsgTextProfile";
-//		horizSizing = "left";
-//		vertSizing = "bottom";
-//		position = %msgCoords;
-//		extent = "235 15";
-//		minExtent = "8 8";
-//		visible = "1";
-//		helpTag = "0";
-//		text = "";
-//	};
-//	deathMsgHud.add(%msgName);
-//	%msgName.setValue(%msg1);
-//	$currentDeathMsgLine++;
-//	%msgName.schedule($deathMsgTimeOut, "delete");
-//	if(%multiLine) {
-//		%msgName2 = "deathMsg" @ ($currentDeathMsgLine + 1);
-//		if(nameToId(%msgName2) > 0)
-//			%msgName2.delete();
-//		%msgYCoord = ($currentDeathMsgLine * 15);
-//		%msgCoords = "3 " @ %msgYCoord;
-//		%addDeathMsg2 = new GuiTextCtrl(%msgName2) {
-//			profile = "DeathMsgTextProfile";
-//			horizSizing = "left";
-//			vertSizing = "bottom";
-//			position = %msgCoords;
-//			extent = "235 15";
-//			minExtent = "8 8";
-//			visible = "1";
-//			helpTag = "0";
-//			text = "";
-//		};
-//		deathMsgHud.add(%msgName2);
-//		%msgName2.setValue(%msg2);
-//		$currentDeathMsgLine++;
-//		%msgName2.schedule($deathMsgTimeOut, "delete");
-//	}
-//	if($currentDeathMsgLine >= $numDeathMsgLines)
-//		$currentDeathMsgLine = 0;
-//}

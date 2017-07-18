@@ -86,7 +86,7 @@ datablock FlyingVehicleData(HAPCFlyer) : HavocDamageProfile
    jetForce = 5000;
    minJetEnergy = 55;
    jetEnergyDrain = 3.6;
-   vertThrustMultiple = 2.0;
+   vertThrustMultiple = 3.0;
 
 
    dustEmitter = LargeVehicleLiftoffDustEmitter;

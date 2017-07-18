@@ -7,6 +7,8 @@ new GuiControl(RemapDlg) {
 	extent = "640 480";
 	minExtent = "8 8";
 	visible = "1";
+	hideCursor = "1";
+	bypassHideCursor = "0";
 	helpTag = "0";
 
 	new ShellPaneCtrl(RemapFrame) {

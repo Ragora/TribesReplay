@@ -90,8 +90,7 @@ function debriefDisconnect()
 //------------------------------------------------------------------------------
 function debriefContinue()
 {
-   Canvas.setContent( LoadingGui );
-   Canvas.repaint();
+   checkGotLoadInfo();
 }
 
 //------------------------------------------------------------------------------

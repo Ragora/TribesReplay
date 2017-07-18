@@ -13,6 +13,7 @@
 //echo("Added email: " @ %tag SPC %text);
 
 $EmailCachePath = "webcache/" @ getField(getRecord(wonGetAuthInfo(),0),3) @ "/";
+$EmailFileName = "email1";
 $EmailColumnCount = 0;
 $EmailColumnName[0] = "Status";
 $EmailColumnRange[0] = "50 75";
@@ -41,13 +42,13 @@ function LaunchEmail()
 //-----------------------------------------------------------------------------
 function EmailMessageNew()
 {
-   $EmailToAddress = "";
-   $EmailCCAddress = "";
+	Email_ToEdit.setText("");
+	Email_CCEdit.setText("");
    $EmailSubject = "";
+   EmailBodyText.setValue("");
 
    EMailComposeDlg.state = "sendMail";
    Canvas.pushDialog(EmailComposeDlg);
-   EmailBodyText.setValue("");
    Email_ToEdit.makeFirstResponder(1);
 }
 //-----------------------------------------------------------------------------
@@ -55,12 +56,12 @@ function EmailMessageReply()
 {
    EMailComposeDlg.state = "replyMail";
    %text = EmailMessageVector.getLineTextByTag( EM_Browser.getSelectedId() );
-   $EmailToAddress = getField(getRecord(%text, 1), 0);
-   $EmailCCAddress = "";
+	Email_ToEdit.setText(getField(getRecord(%text, 1), 0));
+	Email_CCEdit.setText("");
    $EmailSubject = "RE: " @ getRecord(%text, 6);
    %date = getRecord(%text, 3);
    Canvas.pushDialog(EmailComposeDlg);
-   EmailBodyText.setValue("\n\n----------------------------------\n On " @ %date SPC $EmailToAddress @ " wrote:\n\n" @ EmailGetBody(%text) );
+   EmailBodyText.setValue("\n\n----------------------------------\n On " @ %date SPC Email_toEdit.getValue() @ " wrote:\n\n" @ EmailGetBody(%text) );
    EmailBodyText.SetCursorPosition(0);
    EmailBodyText.makeFirstResponder(1);
 }
@@ -68,8 +69,8 @@ function EmailMessageReply()
 function EmailMessageForward()
 {
    %text = EmailMessageVector.getLineTextByTag( EM_Browser.getSelectedId() );
-   $EmailToAddress = "";
-   $EmailCCAddress = "";
+	Email_ToEdit.setText("");
+	Email_CCEdit.setText("");
    $EmailSubject = "FW: " @ getRecord(%text, 6);
    Canvas.pushDialog(EmailComposeDlg);
    EmailBodyText.setValue("\n\n\n--- Begin Forwarded Message ---\n\n" @ EmailGetTextDisplay(%text));
@@ -82,12 +83,12 @@ function EmailMessageReplyAll()
 {
    EMailComposeDlg.state = "replyAll";
    %text = EmailMessageVector.getLineTextByTag( EM_Browser.getSelectedId() );
-   $EmailToAddress = getField(getRecord(%text, 1), 0);
-   $EmailCCAddress = getRecord(%text, 4) @ getRecord(%text,5);
+   Email_ToEdit.setText(getField(getRecord(%text, 1), 0));
+   Email_CCEdit.setText(getRecord(%text, 4) @ getRecord(%text,5));
    $EmailSubject = "RE: " @ getRecord(%text, 6);
    %date = getRecord(%text, 3);
    Canvas.pushDialog(EmailComposeDlg);
-   EmailBodyText.setValue("\n\n===========================\n On " @ %date SPC $EmailToAddress @ " wrote:\n\n" @ EmailGetBody(%text) );
+   EmailBodyText.setValue("\n\n===========================\n On " @ %date SPC Email_ToEdit.getValue() @ " wrote:\n\n" @ EmailGetBody(%text) );
    EmailBodyText.makeFirstResponder(1);
    EmailBodyText.SetCursorPosition(0);
 }
@@ -144,10 +145,14 @@ function DoEmailDelete(%qnx, %mid, %owner, %key, %row)
 function EmailSend()
 {
 	EMailComposeDlg.key = LaunchGui.key++;
-	CheckEmailNames();
 	EMailComposeDlg.state = "sendMail";
-	%text = $EMailToAddress TAB $EMailCCAddress TAB $EmailSubject TAB EMailBodyText.getValue();
-	DatabaseQuery(5,getsubstr(%text,0,3600),EMailComposeDlg,EMailComposeDlg.key);
+	CheckEmailNames();
+	%to = Email_ToEdit.getValue();
+	%cc = Email_CCEdit.getValue();
+	%subj = $EmailSubject;
+	%text = EMailBodyText.getValue();
+	%lenny = strLen(%to @ %cc @ %subj);
+	DatabaseQuery(5, %to TAB %cc TAB %subj TAB getSubStr(%text,0,4000-%lenny),EMailComposeDlg,EMailComposeDlg.key);
 	Canvas.popDialog(EmailComposeDlg);
 }
 //-----------------------------------------------------------------------------
@@ -203,37 +208,38 @@ function getLinkNameList(%line)
 //-----------------------------------------------------------------------------
 function CheckEmailNames()
 {
-	$EmailTOAddress = strUpr(trim($EmailTOAddress));
-	$EmailCCAddress = strUpr(trim($EmailCCAddress));
-	%toLength = strLen($EmailTOAddress);
-	%ccLength = strLen($EmailCCAddress);
+	%EmailTOAddress = strUpr(trim(Email_ToEdit.getValue()));
+	%EmailCCAddress = strUpr(trim(Email_CCEdit.getValue()));
+	%toLength = strLen(%EmailTOAddress);
+	%ccLength = strLen(%EmailCCAddress);
 	%checkList = "";
 	if(%toLength > 0)
 	{
-		if(trim(getSubStr($EmailTOAddress,%toLength-1,1)) !$= "," || trim(getSubStr($EmailTOAddress,%toLength,1)) !$= ",")
-			$EmailTOAddress = $EmailTOAddress @ ",";
+		if(trim(getSubStr(%EmailTOAddress,%toLength-1,1)) !$= "," || trim(getSubStr(%EmailTOAddress,%toLength,1)) !$= ",")
+			%EmailTOAddress = %EmailTOAddress @ ",";
 	}
 	else
-		$EmailTOAddress = ",";
+		%EmailTOAddress = ",";
 
 	if(%ccLength > 0)
 	{
-		if(trim(getSubStr($EmailCCAddress,%ccLength-1,1)) !$= "," || trim(getSubStr($EmailCCAddress,%ccLength,1)) !$= ",")
-			$EmailCCAddress = $EmailCCAddress @ ",";
+		if(trim(getSubStr(%EmailCCAddress,%ccLength-1,1)) !$= "," || trim(getSubStr(%EmailCCAddress,%ccLength,1)) !$= ",")
+			%EmailCCAddress = %EmailCCAddress @ ",";
 	}
 	else
 		%ccList = ",";
+
 	for(%x=0;%x<2;%x++)
 	{
 		%pos = 0;
 		%start = 0;
 
 		if(%x == 0)
-			%nList = $EmailTOAddress;
+			%nList = %EmailTOAddress;
 		else if(%x == 1)
 		{
-			$EmailTOAddress = %nList;
-			%nList = $EmailCCAddress;
+			%EmailTOAddress = %nList;
+			%nList = %EmailCCAddress;
 		}
 
 		if(strLen(%nList)>1)
@@ -283,7 +289,9 @@ function CheckEmailNames()
 			}
 		}
 	}
-	$EmailCCAddress = %nList;
+	%EmailCCAddress = %nList;
+	Email_ToEdit.setText(%EMailToAddress);
+	Email_CCEdit.setText(%EmailCCAddress);
 }
 //-----------------------------------------------------------------------------
 function EmailGetTextDisplay(%text)
@@ -500,14 +508,14 @@ function EmailComposeDlg::Cancel(%this)
 //-----------------------------------------------------------------------------
 function EmailComposeDlg::SendMail(%this)
 {
-	$EmailToAddress = Email_ToEdit.getValue();
-	$EmailSubject = EMail_Subject.getValue();
+	%EmailToAddress = Email_ToEdit.getValue();
+	%EmailSubject = EMail_Subject.getValue();
 	// NEED TO CHECK FOR DUPLICATES
-	if(trim($EmailToAddress) $= "")
+	if(trim(%EmailToAddress) $= "")
 		MessageBoxOK("No Address","TO Address may not be left blank.  Please enter a player name to send this message to.");
 	else
 	{
-   		if(trim($EmailSubject) $= "")
+   		if(trim(%EmailSubject) $= "")
 			MessageBoxOK("No Subject","Please enter a Subject for your message.");
 		else
 			EMailSend();
@@ -633,12 +641,6 @@ function StrToList(%listName, %str, %delim)
   }
 }
 //-----------------------------------------------------------------------------
-// NOTE: This control is not a ShellFancyTextList, so the addStyle method is not valid
-// function LC_BigList::onAdd(%this)
-// {
-// 	LC_BigList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
-// }
-//-----------------------------------------------------------------------------
 function LC_BigList::GetOnlineStatus(%this)
 {
     %this.key = LaunchGui.key++;
@@ -657,14 +659,14 @@ function LC_BigList::onDatabaseQueryResult(%this,%status,%resultString,%key)
 {
   if(%key != %this.key)
     return;
-  switch$(%this.status)
-  {
-    case "getOnline": if(getField(%status,0) == 0)
-                        for(%str=0;%str<strLen(%resultString);%str++)
-                        {
-                          %this.setRowStyle( %str, !getSubStr(%resultString,%str,1) );
-                        }
-  }
+//  switch$(%this.status)
+//  {
+//    case "getOnline": if(getField(%status,0) == 0)
+//                        for(%str=0;%str<strLen(%resultString);%str++)
+//                        {
+//                          %this.setRowStyle( %str, !getSubStr(%resultString,%str,1) );
+//                        }
+//  }
 }
 //-----------------------------------------------------------------------------
 function AddressDlg::onDatabaseQueryResult(%this,%status,%resultString,%key)
@@ -976,8 +978,8 @@ function AddressDlg::onWake(%this)
 	LC_ListBox.Add("Buddy List",1);
 	LC_ListBox.setSelected(0);
 	LC_Search.clear();
-	StrToList(LC_ToList,$EmailToAddress,",");
-	StrToList(LC_CCList,$EmailCCAddress,",");
+	StrToList(LC_ToList,Email_ToEdit.getValue(),",");
+	StrToList(LC_CCList,Email_CCEdit.getValue(),",");
    %info = WONGetAuthInfo();
    %tribeCount = getField( getRecord( %info, 1 ), 0 ); //%cert
    for ( %i = 0; %i < %tribeCount; %i++ )
@@ -998,15 +1000,10 @@ function EmailGui::onWake(%this)
    	%selId = EM_Browser.getSelectedId();
 	Canvas.pushDialog(LaunchToolbarDlg);
 
-	// Set the minimum extent of the frame panes:
-	%minExtent = EM_BrowserPane.getMinExtent();
-	EM_Frame.frameMinExtent( 0, firstWord( %minExtent ), restWords( %minExtent ) );
-	%minExtent = EM_MessagePane.getMinExtent();
-	EM_Frame.frameMinExtent( 1, firstWord( %minExtent ), restWords( %minExtent ) );
 
 	if(!%this.cacheFile)
 	{
-		%this.cacheFile = "email1";
+		%this.cacheFile = $EmailFileName;
 		EmailGui.getCache();
 	}
 	if ( !EmailGui.cacheLoaded || EM_Browser.rowCount() == 0 )
@@ -1193,7 +1190,7 @@ function EmailGui::getCache(%this)
 	EM_Browser.clear();
 	EMailMessageVector.clear();
 	EmailInboxBodyText.setText("");
-	%fileName = $EmailCachePath @ "email1";
+	%fileName = $EmailCachePath @ $EmailFileName;
    %file = new FileObject();
    if ( %this.cacheFile $= "" )
    {
@@ -1203,7 +1200,7 @@ function EmailGui::getCache(%this)
             if ( %guid $= getField( WonGetAuthInfo(), 3 ) )
             {
                // This is the right one!
-               %this.cacheFile = "email1";
+               %this.cacheFile = $EmailFileName;
                %this.messageCount = %file.readLine();
                while( !%file.isEOF() )
                {
@@ -1248,7 +1245,7 @@ function EmailGui::loadCache( %this )
    EM_Browser.clear();
    EMailMessageVector.clear();
    EMailInboxBodyText.setText("");
-   %fileName = $EmailCachePath @ "email1";
+   %fileName = $EmailCachePath @ $EmailFileName;
    %file = new FileObject();
    if ( %this.cacheFile $= "" )
    {
@@ -1258,7 +1255,7 @@ function EmailGui::loadCache( %this )
             if ( %guid $= getField( WonGetAuthInfo(), 3 ) )
             {
                // This is the right one!
-               %this.cacheFile = "email1";
+               %this.cacheFile = $EmailFileName;
                %this.messageCount = %file.readLine();
                while( !%file.isEOF() )
                {
@@ -1291,7 +1288,7 @@ function EmailGui::loadCache( %this )
 function EmailGui::dumpCache( %this )
 {
    %guid = getField( WONGetAuthInfo(), 3 );
-   if ( %this.cacheFile $= "" ) %this.cacheFile = "email1";
+   if ( %this.cacheFile $= "" ) %this.cacheFile = $EmailFileName;
    EmailMessageVector.dump( $EmailCachePath @ %this.cacheFile, %guid );
 }
 //-----------------------------------------------------------------------------
@@ -1307,15 +1304,30 @@ function EMailGui::getEmail(%this,%fromSchedule)
 function EmailGui::setKey( %this, %key )
 {
 }
+//-----------------------------------------------------------------------------
+function EmailGui::onClose( %this, %key )
+{
+}
 //-- EM_Browser --------------------------------------------------------------
 function EM_Browser::onAdd( %this )
 {
-	// Add the columns with widths from the prefs:
-	for ( %i = 0; %i < $EmailColumnCount; %i++ )
-		%this.addColumn( %i, $EmailColumnName[%i], $pref::Email::Column[%i], firstWord( $EmailColumnRange[%i] ), getWord( $EmailColumnRange[%i], 1 ) );
+   if ( !EMailGui.initialized )
+   {
+		// Add the columns with widths from the prefs:
+		for ( %i = 0; %i < $EmailColumnCount; %i++ )
+			EM_Browser.addColumn( %i, $EmailColumnName[%i], $pref::Email::Column[%i], firstWord( $EmailColumnRange[%i] ), getWord( $EmailColumnRange[%i], 1 ) );
 
-	%this.setSortColumn( $pref::Email::SortColumnKey );
-	%this.setSortIncreasing( $pref::Email::SortInc );
+		EM_Browser.setSortColumn( $pref::Email::SortColumnKey );
+		EM_Browser.setSortIncreasing( $pref::Email::SortInc );
+
+		// Set the minimum extent of the frame panes:
+		%minExtent = EM_BrowserPane.getMinExtent();
+		EM_Frame.frameMinExtent( 0, firstWord( %minExtent ), restWords( %minExtent ) );
+		%minExtent = EM_MessagePane.getMinExtent();
+		EM_Frame.frameMinExtent( 1, firstWord( %minExtent ), restWords( %minExtent ) );
+
+		EmailGui.initialized = true;
+   }
 }
 //-----------------------------------------------------------------------------
 function EM_Browser::onSelect( %this, %id )

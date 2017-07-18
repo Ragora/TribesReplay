@@ -168,10 +168,43 @@ function ForceFieldBareData::gainPower(%data, %obj)
 		}
 		if(%ffp > 0) {
 			%ffp.activate();
+         if( %data.getName() $= "defaultForceFieldBare" )
+         {   
+            killAllPlayersWithinZone( %data, %obj );
+		   }
+         else if( %data.getName() $= "defaultTeamSlowFieldBare" )
+         {
+            %team = %obj.team;
+            killAllPlayersWithinZone( %data, %obj, %team );
+         }   
 		}
 	}
 	//else
 	//	error("No PZones group to search!");
+}
+
+function killAllPlayersWithinZone( %data, %obj, %team )
+{
+   for( %c = 0; %c < ClientGroup.getCount(); %c++ )
+   {
+      %client = ClientGroup.getObject(%c);
+      if( isObject( %client.player ) )
+      {
+         if( %forceField = %client.player.isInForceField() )// isInForceField() will return the id of the ff or zero
+         {
+            if( %forceField == %obj )
+            {
+               if( %team !$= "" && %team == %client.team )
+                  return; 
+               else
+               {   
+                  %client.player.blowup(); // chunkOrama!
+                  %client.player.scriptkill($DamageType::ForceFieldPowerup);
+               }
+            }
+         }
+      }
+   }  
 }
 
 function ForceFieldBareData::losePower(%data, %obj)

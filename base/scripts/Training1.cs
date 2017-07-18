@@ -69,6 +69,21 @@ package Training1 {
 
 //------------------------------------------------------------------------------
 
+//scriptlet
+//we have to jump through a lot of hoops to get those dead bodies in training1
+function deadArmor::onAdd(%this, %obj)
+{
+	%skin = (%obj.trainingSkin == 1 ? 'swolf' : 'beagle');
+	//echo("skin = " SPC %skin);
+	createTarget(%obj, 'Dead Body', %skin, "", 'deadArmor', 0);
+}
+
+function deadArmor::onRemove(%this, %obj)
+{
+	//echo("singleplayerGame -- deadArmor::onRemove");
+	freeTarget(%obj.getTarget());
+}
+
 function MP3Audio::play(%this)
 {
 	//too bad...no mp3 in training
@@ -524,6 +539,7 @@ function singlePlayerGame::playerSpawned(%game, %player)
 function singlePlayerGame::gameOver(%game)
 {
    //moveMap.bindCmd( keyboard, "backspace", "", game.returnBinding );
+	$AIDisableChatResponse = "";
    cancel($Training1Blackout);
    cancel($Training1HitGround);
    LightMaleHumanArmor.minImpactSpeed = 45;
@@ -882,6 +898,7 @@ function beginTraining1Intro()
    //moveMap.bindCmd( keyboard, "backspace", "", "skipIntroCinematic();" );
 
    //set the intro started bools
+	$AIDisableChatResponse = true;
    game.playedIntro = true;
    game.trainingIntro = true;
 
@@ -967,6 +984,7 @@ function trainingIntroFlightEnd()
 {
    //put the player back in his body, give him control back,
    //a little dramatic flash, start the rest of the mission
+	$AIDisableChatResponse = "";
    game.trainingIntro = false;
    $player.player.invincible = false;
    serverConnection.setBlackout(false, 5000);

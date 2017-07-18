@@ -33,22 +33,38 @@ function CreditsGui::onWake(%this)
       CreditsActionMap.bindCmd(keyboard, escape, "cancelCredits();", "");
       CreditsActionMap.bindCmd(mouse, button0, "$CreditsPaused = true;", "$CreditsPaused = false;");
       CreditsActionMap.bindCmd(mouse, button1, "$CreditsSpeedUp = true;", "$CreditsSpeedUp = false;");
-      CreditsActionMap.bindCmd(mouse, button2, "creditsNextPic();", "");
+      if (!isDemo())
+         CreditsActionMap.bindCmd(mouse, button2, "creditsNextPic();", "");
    }
    CreditsActionMap.push();
 
    //build the ML text ctrl...
    exec("scripts/creditsText.cs");
-
-   $CreditsPicIndex = 1;
-   CREDITS_Pic.setBitmap("gui/Cred_" @ $CreditsPicIndex @ ".png");
+   if (!isDemo() && !isDemoServer())
+   {
+      $CreditsPicIndex = 1;
+      CREDITS_Pic.setBitmap("gui/Cred_" @ $CreditsPicIndex @ ".png");
+   }
+   else
+      CREDITS_Pic.setBitmap("gui/Cred_1.bm8");
 
    //music array
-   $CreditsMusic[0] = "badlands";
-   $CreditsMusic[1] = "desert";
-   $CreditsMusic[2] = "ice";
-   $CreditsMusic[3] = "lush";
-   $CreditsMusic[4] = "volcanic";
+   if (!isDemo())
+   {
+      $CreditsMusic[0] = "badlands";
+      $CreditsMusic[1] = "desert";
+      $CreditsMusic[2] = "ice";
+      $CreditsMusic[3] = "lush";
+      $CreditsMusic[4] = "volcanic";
+   }
+   else
+   {
+      $CreditsMusic[0] = "lush";
+      $CreditsMusic[1] = "desert";
+      $CreditsMusic[2] = "desert";
+      $CreditsMusic[3] = "lush";
+      $CreditsMusic[4] = "desert";
+   }
 
    //start the credits from the beginning
    $CreditsOffset = 0.0;
@@ -64,7 +80,8 @@ function CreditsGui::onWake(%this)
    $CreditsScrollSchedule = schedule(3000, 0, scrollTheCredits);
 
    //start cycling the bitmaps
-   $CreditsSlideShow = schedule(5000, 0, creditsNextPic);
+   if (!isDemo())
+      $CreditsSlideShow = schedule(5000, 0, creditsNextPic);
 
    //start some music
    %chooseTrack = mFloor(getRandom() * 4.99);
@@ -107,6 +124,10 @@ function scrollTheCredits()
 
 function creditsNextPic()
 {
+   //no slide show in the demo...
+   if (isDemo())
+      return;
+
    cancel($CreditsSlideShow);
    if (!$CreditsPaused)
    {

@@ -21,7 +21,7 @@ $TopicColumnRange[1] = "25 100";
 $TopicColumnFlags[1] = "numeric center";
 $TopicColumnCount++;
 $TopicColumnName[2]  = "Last Poster";
-$TopicColumnRange[2] = "50 300";
+$TopicColumnRange[2] = "50 500";
 $TopicColumnCount++;
 $TopicColumnName[3]  = "Last Post Date";
 $TopicColumnRange[3] = "50 300";
@@ -29,13 +29,13 @@ $TopicColumnCount++;
 
 $ForumColumnCount = 0;
 $ForumColumnName[0]  = "Message Tree";
-$ForumColumnRange[0] = "50 1000";
+$ForumColumnRange[0] = "50 800";
 $ForumColumnCount++;
 $ForumColumnName[1]  = "Posted By";
-$ForumColumnRange[1] = "50 300";
+$ForumColumnRange[1] = "50 500";
 $ForumColumnCount++;
 $ForumColumnName[2]  = "Date Posted";
-$ForumColumnRange[2] = "50 300";
+$ForumColumnRange[2] = "50 500";
 $ForumColumnCount++;
 
 $GuidTribes = 0;
@@ -70,6 +70,22 @@ $GuidTribes = 0;
 if(!isObject(ForumsMessageVector))
 {
    new MessageVector(ForumsMessageVector);
+}
+//-----------------------------------------------------------------------------
+function LaunchForums( %forum, %topic )
+{
+	ForumsGui.setVisible(false);
+	ForumsGui.launchForum = %forum;
+	ForumsGui.launchTopic = %topic;
+	forumsList.clear();
+
+   if(trim(ForumsGui.launchTopic) $= "")
+   {
+      ForumsThreadPane.setVisible(false);
+       ForumsTopicsPane.setVisible(true);
+   }
+       
+	LaunchTabView.viewTab( "FORUMS", ForumsGui, 0 );
 }
 //-----------------------------------------------------------------------------
 function isModerator()
@@ -248,7 +264,7 @@ function CacheForumTopic()
        ForumsMessageList.highestUpdate = 0;
 
    %newGroup = TopicsListGroup.getObject(ForumsTopicsList.getSelectedRow());
-   ForumsMessageList.lastID = %newGroup.updateid-1;
+   ForumsMessageList.lastID = %newGroup.updateid;
    %latest = GetField(ForumsTopicsList.getRowTextbyID(ForumsTopicsList.getSelectedID()),3);
 	ForumsMessageVector.dump( $ForumCachePath @ "tpc" @ ForumsMessageVector.tid , ForumsMessageList.lastID TAB $ForumCacheVersion TAB %allRead TAB %latest);
 }
@@ -393,6 +409,8 @@ function ForumsMessageAddRow(%text)
                		break;
 
            	 		%row = ForumsMessageList.getRowTextById(%rowParent);
+                  if(%rowParent == %row)
+                     break;
 				}
          		if(%row $= "")
             	break;
@@ -568,21 +586,6 @@ function GetQuotedText()
 //   ForumsBodyText.setCursorPosition(strLen(ForumsBodyTExt.getText())+5);
 }
 //-----------------------------------------------------------------------------
-function LaunchForums( %forum, %topic )
-{
-	ForumsGui.setVisible(false);
-	ForumsGui.launchForum = %forum;
-	ForumsGui.launchTopic = %topic;
-	forumsList.clear();
-   if(trim(ForumsGui.launchTopic) $= "")
-   {
-      ForumsThreadPane.setVisible(false);
-       ForumsTopicsPane.setVisible(true);
-   }
-       
-	LaunchTabView.viewTab( "FORUMS", ForumsGui, 0 );
-}
-//-----------------------------------------------------------------------------
 function GetForumsList()
 {
 	ForumsList.clear();
@@ -644,6 +647,29 @@ function ForumsGui::onWake(%this)
    // First time only:
    if ( !%this.initialized )
    {
+	   // Add the columns from the prefs:TopicsList
+	   for ( %i = 0; %i < $TopicColumnCount; %i++ )
+	   {
+	      ForumsTopicsList.addColumn( %i,
+	                       $TopicColumnName[%i],
+	                       $pref::Topics::Column[%i],
+	                       firstWord( $TopicColumnRange[%i] ),
+	                       getWord( $TopicColumnRange[%i], 1 ),
+	                       $TopicColumnFlags[%i] );
+	   }
+	   ForumsTopicsList.setSortColumn( $pref::Topics::SortColumnKey );
+	   ForumsTopicsList.setSortIncreasing( $pref::Topics::SortInc );
+
+	   // Add columns from the prefs:MessageList
+	   for ( %i = 0; %i < $ForumColumnCount; %i++ )
+	      ForumsMessageList.addColumn( %i,
+	                       $ForumColumnName[%i],
+	                       $pref::Forum::Column[%i],
+	                    	firstWord( $ForumColumnRange[%i] ),
+	                    	getWord( $ForumColumnRange[%i], 1 ) );
+	   // We want no sorting done on this list -- leave them in the order that they are entered.
+
+
       FM_NewTopic.setActive(false);
       ForumsThreadPane.setVisible(false);
       ForumsTopicsPane.setVisible(true);
@@ -713,6 +739,7 @@ function ForumsGui::onDatabaseQueryResult(%this,%status,%resultString,%key)
 			case "getTopicList":
 				if(getField(%resultString,0)>0)
 				{
+					%this.txid = 0;
 					ForumShell.setTitle($ForumsGetTopics @ ": " @ getField(%resultString,0));
 					%this.state = "TopicList";
                    %recordCount = getField(%resultString,0);
@@ -785,7 +812,6 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %row);
 	%forumTID = getField(ForumsList.getRowTextbyId(ForumsList.getSelectedID()),2);
 	switch$(%this.state)
 	{
@@ -809,6 +835,7 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 	         		ForumsList.setSelectedRow( 1 );
 			}
 		case "TopicList":
+
 			%id = getField(%row, 1);
       		%topic = getField(%row, 2);
       		%postCount = getField(%row, 3);
@@ -816,13 +843,15 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
       		%name = getField(%row, 8);
 	   		%hasDeletes = getField(%row,12);
            %slevel = getField(%row,13);
-           %maxUpdateId = getField(%row,14)-1;
-           ForumsTopicsList.addTopic( %id, %topic, %date, %maxUpdateID, %slevel, %row);
- 			ForumsTopicsList.addRow( %id, %topic TAB %postCount TAB %name TAB %date TAB %hasDeletes);
+           %maxUpdateId = getField(%row,14);
+            ForumsTopicsList.addTopic( %this.txid, %id, %topic, %date, %maxUpdateID, %slevel, %row);
+ 			ForumsTopicsList.addRow( %id, %topic TAB %postCount TAB %name TAB %date TAB %hasDeletes TAB %this.txid);
+		    %this.txid++;
  			if ( %isLastRow ) //is last line
  	   		{
  				%this.state = "done";
  				ForumShell.setTitle("FORUMS: " @ getField(ForumsList.getRowTextbyID(ForumsList.getSelectedID()),0));
+//				ForumsTopicsList.sort();
 				ForumsTopicsList.updateReadStatus();
       			%this.refreshFlag = false;
  				if ( ForumsGui.LaunchTopic !$= "" )
@@ -873,7 +902,7 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 				{
                    ForumsMessageVector.tid = ForumsTopicsList.getSelectedID();
 	                ForumsTopicsList.thread = TopicsListGroup.getObject(ForumsTopicsList.getSelectedRow());
-                   ForumsTopicsList.thread.updateID = %high-1;
+                   ForumsTopicsList.thread.updateID = %high;
 				    CacheForumTopic();
 					ForumsMessageList.loadCache(ForumsTopicsList.getSelectedID());
 				}
@@ -971,19 +1000,6 @@ function ForumsTopicsList::onAdd( %this )
       };
    };
 
-   // Add the columns from the prefs:
-   for ( %i = 0; %i < $TopicColumnCount; %i++ )
-   {
-      %this.addColumn( %i,
-                       $TopicColumnName[%i],
-                       $pref::Topics::Column[%i],
-                       firstWord( $TopicColumnRange[%i] ),
-                       getWord( $TopicColumnRange[%i], 1 ),
-                       $TopicColumnFlags[%i] );
-   }
-
-   %this.setSortColumn( $pref::Topics::SortColumnKey );
-   %this.setSortIncreasing( $pref::Topics::SortInc );
    // Add the "Unread" style:
    %this.addStyle( 1, $ShellBoldFont, $ShellFontSize, "80 220 200", "30 255 225", "10 60 40" );
    // Add the "Ignored" style:
@@ -992,19 +1008,20 @@ function ForumsTopicsList::onAdd( %this )
    %this.addStyle( 3, $ShellFont, $ShellFontSize, "200 50 50", "200 100 100", "200 50 50" );
 }
 //-----------------------------------------------------------------------------
-function ForumsTopicsList::AddTopic(%this, %id, %topicname, %date, %mid, %slevel, %vline)
+function ForumsTopicsList::AddTopic(%this, %iRow, %id, %topicname, %date, %mid, %slevel, %vline)
 {
    if(!isObject(TopicsListGroup))
        new SimGroup(TopicsListGroup);
    %topic = new scriptObject()
    {
       className = "TTopic";
+	  rowID = %iRow;
       Id = %id;
       name = %topicname;
       date = %date;
-      updateid = %mid-1;
+      updateid = %mid;
       slevel = %slevel;
-	   rcvrec = %vline;
+	  rcvrec = %vline;
    };
    TopicsListGroup.Add(%topic);
 }
@@ -1017,8 +1034,12 @@ function ForumsTopicsList::ClearList()
 //-----------------------------------------------------------------------------
 function ForumsTopicsList::onRightMouseDown( %this, %column, %row, %mousePos )
 {  
-   ForumsTopicsList.setSelectedRow(%row);
-	TopicsPopupMenu.topic = TopicsListGroup.getObject(%row);
+    ForumsTopicsList.setSelectedRow(%row);
+//	for(%i=0;%i<ForumsTopicsList.rowCount();%i++)
+//	{
+//		ForumsTopicsList.
+		TopicsPopupMenu.topic = TopicsListGroup.getObject(getField(ForumsTopicsList.getRowText(ForumsTopicsList.getSelectedRow()),5));
+//	}
    if ( trim(TopicsPopupMenu.topic.name) !$= "")
    {
       Canvas.pushDialog(TopicsPopupDlg);
@@ -1076,7 +1097,7 @@ function TopicsPopupMenu::onSelect( %this, %id, %text )
                ForumsTopicsList.UpdateReadStatus();
 //               ForumsRefreshTopics();
       case 2: //  2 Flag To ALL Read              
-               ForumsMessageVector.updateID = 99999999;
+               ForumsMessageVector.updateID = 100;
                %cacheFile = $ForumCachePath @ "tpc" @ TopicsPopupMenu.topic.id;
                if(ForumsMessageVector.tid == TopicsPopupMenu.topic.id)
                {
@@ -1229,8 +1250,8 @@ function TopicsPopupDlg::onDatabaseQueryResult(%this,%status,%recordCount,%key)
 	if(getField(%status,0)==0)
        if (%this.state $= "adminRemoveTopicPlus")
        {
-           $EmailToAddress = getField(%status,3);
-           $EmailCCAddress = "";
+           Email_TOEdit.setText(getField(%status,3));
+           Email_CCEdit.setText("");
            switch(getField(%status,2))
            {
                case 1: $EmailSubject = "Policy Violation Warning";
@@ -1312,7 +1333,7 @@ function ForumsTopicsList::updateReadStatus( %this )
       {
          %header = %file.readLine();
          %topicDate = getField( %this.getRowText( %row ), 3 );
-         %updateID = getField(%header,0)-1;
+         %updateID = getField(%header,0);
          if ( getField( %header, 1 ) == $ForumCacheVersion        // Must have same cache version
               && getField( %header, 2 ) == 1                         // "all read" flag must be set
               && strcmp( getField( %header, 3 ), %topicDate ) >= 0
@@ -1354,14 +1375,6 @@ function ForumsMessageList::onAdd( %this )
       };
    };
 
-   // Add columns from the prefs:
-   for ( %i = 0; %i < $ForumColumnCount; %i++ )
-      %this.addColumn( %i,
-                       $ForumColumnName[%i],
-                       $pref::Forum::Column[%i],
-                    	firstWord( $ForumColumnRange[%i] ),
-                    	getWord( $ForumColumnRange[%i], 1 ) );
-   // We want no sorting done on this list -- leave them in the order that they are entered.
    // Add the "Unread" style:
    %this.addStyle( 1, $ShellBoldFont, $ShellFontSize, "80 220 200", "30 255 225", "0 0 0" );
 }
@@ -1378,7 +1391,7 @@ function ForumsMessageList::AddPost(%this, %id, %postname, %authorID, %authorNam
       author = %authorName;
       authorID = %authorID;
       date = %date;
-      updateid = %mid-1;
+      updateid = %mid;
       slevel = %slevel;
 	   rcvrec = %vline;
    };
@@ -1453,14 +1466,19 @@ function PostsPopupMenu::onSelect( %this, %id, %text )
                PostsPopupDlg.key = LaunchGui.key++;
                PostsPopupDlg.state = "requestPostReview";
                %fieldData = ForumsList.getSelectedID() TAB ForumsTopicsList.getSelectedID() TAB ForumsMessageList.getSelectedID() TAB PostsPopupMenu.post.authorID;
-               databaseQuery(61, %fieldData, PostsPopupDlg, PostsPopupDlg.key);
+			   MessageBoxYesNo("CONFIRM","Request Admin Review?","PostsPopupMenu.adminCall(61,\"" @ %fieldData @ "\");","");
        case 10: //Remove Post
                PostsPopupDlg.key = LaunchGui.key++;
                PostsPopupDlg.state = "adminRemovePost";
                %fieldData = 0 TAB ForumsList.getSelectedID() TAB ForumsTopicsList.getSelectedID() TAB ForumsMessageList.getSelectedID() TAB PostsPopupMenu.post.authorID;
-               databaseQuery(63, %fieldData, PostsPopupDlg, PostsPopupDlg.key);
+			   MessageBoxYesNo("CONFIRM","Remove Post?","PostsPopupMenu.adminCall(63,\"" @ %fieldData @ "\");","");
    }           
    canvas.popDialog(PostsPopupDlg);
+}
+//-----------------------------------------------------------------------------
+function PostsPopupMenu::AdminCall(%this, %ord, %fields)
+{
+	databaseQuery(%ord, %fields, PostsPopupDlg, PostsPopupDlg.key);	
 }
 //-----------------------------------------------------------------------------
 function PostsPopupDlg::onSleep(%this)
@@ -1481,8 +1499,8 @@ function PostsPopupDlg::onDatabaseQueryResult(%this,%status,%recordCount,%key)
            ForumsMessageList.removeRow( %selRow );
            ForumsMessageList.setSelectedRow( %selRow );
   		    CacheForumTopic();
-           $EmailToAddress = getField(%status,3);
-           $EmailCCAddress = "";
+           Email_ToEdit.setText(getField(%status,3));
+           Email_CCEdit.setText("");
            switch(getField(%status,2))
            {
                case 1: $EmailSubject = "Policy Violation Warning";

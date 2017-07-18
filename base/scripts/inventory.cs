@@ -92,7 +92,7 @@ function serverCmdEndThrowCount(%client, %data)
       return;
 
    // throwStrength will be how many seconds the key was held
-   %throwStrength = (getSimTime() - %client.player.throwStart) / 300;
+   %throwStrength = (getSimTime() - %client.player.throwStart) / 150;
    // trim the time to fit between 0.5 and 1.5
    if(%throwStrength > 1.5)
       %throwStrength = 1.5;
@@ -126,6 +126,13 @@ function ShapeBase::throwPack(%this)
 function ShapeBase::throw(%this,%data)
 {
    if (%this.inv[%data.getName()] > 0) {
+      
+      // save off the ammo count on this item
+      if( %this.getInventory( %data ) < $AmmoIncrement[%data.getName()] )
+         %data.ammoStore = %this.getInventory( %data );
+      else
+         %data.ammoStore = $AmmoIncrement[%data.getName()];
+
       // Throw item first...
       %this.throwItem(%data);
       if($AmmoIncrement[%data.getName()] !$= "")
@@ -183,6 +190,7 @@ function ShapeBase::pickup(%this,%obj,%amount)
 {
    %data = %obj.getDatablock();
    %delta = %this.incInventory(%data,%amount);
+   
    if (%delta)
       %data.onPickup(%obj,%this,%delta);
    return %delta;
@@ -357,6 +365,8 @@ function ShapeBase::throwItem(%this,%data)
       dataBlock = %data;
       rotation = "0 0 1 " @ (getRandom() * 360);
    };
+   
+   %item.ammoStore = %data.ammoStore;
    MissionCleanup.add(%item);
    %this.throwObject(%item);
 }

@@ -39,6 +39,9 @@ $DeathMessageSuicide[4] = '\c0%1 self-destructs in a fit of ennui.';
 $DeathMessageVehPadCount = 1;
 $DeathMessageVehPad[0] = '\c0%1 got caught in a vehicle\'s spawn field.'; 
 
+$DeathMessageFFPowerupCount = 1;
+$DeathMessageFFPowerup[0] = '\c0%1 got caught up in a forcefield during power up.'; 
+
 $DeathMessageRogueMineCount = 1;
 $DeathMessageRogueMine[$DamageType::Mine, 0] = '\c0%1 is all mine.';
 
@@ -348,9 +351,9 @@ $DeathMessageCTurretKill[$DamageType::TankChainGun, 0] = '\c0%1 enjoys the rich,
 $DeathMessageCTurretKill[$DamageType::TankChainGun, 1] = '\c0%4\'s tank chaingun plays sweet music all over %1.';
 $DeathMessageCTurretKill[$DamageType::TankChainGun, 2] = '\c0%1 receives a stellar exit wound from %4\'s tank slug.';
 
-$DeathMessageCTurretKill[$DamageType::TankMortars, 0] = '\c0Whoops! %1 + %4\'s tank mortar = Dead %1.';
-$DeathMessageCTurretKill[$DamageType::TankMortars, 1] = '\c0%1 learns the happy explosion dance from %4\'s tank mortar.';
-$DeathMessageCTurretKill[$DamageType::TankMortars, 2] = '\c0%4\'s tank mortar has a blast with %1.';
+$DeathMessageCTurretKill[$DamageType::TankMortar, 0] = '\c0Whoops! %1 + %4\'s tank mortar = Dead %1.';
+$DeathMessageCTurretKill[$DamageType::TankMortar, 1] = '\c0%1 learns the happy explosion dance from %4\'s tank mortar.';
+$DeathMessageCTurretKill[$DamageType::TankMortar, 2] = '\c0%4\'s tank mortar has a blast with %1.';
 
 $DeathMessageCTurretKill[$DamageType::ShrikeBlaster, 0] = '\c0%1 dines on a Shrike blaster sandwich, courtesy of %4.';
 $DeathMessageCTurretKill[$DamageType::ShrikeBlaster, 1] = '\c0The blaster of %4\'s Shrike turns %1 into finely shredded meat.';

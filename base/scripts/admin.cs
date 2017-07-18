@@ -56,11 +56,9 @@ function serverCmdStartNewVote(%client, %typeName, %arg1, %arg2, %arg3, %arg4, %
       %actionMsg = $VoteMessage[ %typeName ];
    
    if( !%client.canVote && !%isAdmin )
-   {
       return;
-   }
    
-   if ( !%client.isAdmin || ( ( %arg1.isAdmin && ( %client != %arg1 ) ) ) )
+   if ( !%isAdmin || ( ( %arg1.isAdmin && ( %client != %arg1 ) ) ) )
    {
       %teamSpecific = false;
 	   %gender = (%client.sex $= "Male" ? 'he' : 'she');
@@ -71,7 +69,7 @@ function serverCmdStartNewVote(%client, %typeName, %arg1, %arg2, %arg3, %arg4, %
 			//send a message to everyone about the vote...
          if ( %playerVote )
 	      {   
-            %teamSpecific = ( %typeName $= "VoteKickPlayer" );
+            %teamSpecific = ( %typeName $= "VoteKickPlayer" ) && ( Game.numTeams > 1 );
             %kickerIsObs = %client.team == 0;
             %kickeeIsObs = %arg1.team == 0;
             %sameTeam = %client.team == %arg1.team;
@@ -98,8 +96,10 @@ function serverCmdStartNewVote(%client, %typeName, %arg1, %arg2, %arg3, %arg4, %
                }
                
                Game.kickClient = %arg1;
+               Game.kickClientName = %arg1.name;
                Game.kickGuid = %arg1.guid;
                Game.kickTeam = %arg1.team;
+
                if(%teamSpecific)
                {   
                   for ( %idx = 0; %idx < ClientGroup.getCount(); %idx++ ) 
@@ -261,7 +261,22 @@ function serverCmdStartNewVote(%client, %typeName, %arg1, %arg2, %arg3, %arg4, %
       if(%arg1 != %client)
       {   
          if(!%arg1.isSuperAdmin)
-            eval( "Game." @ %typeName @ "(true,\"" @ %arg1 @ "\",\"" @ %arg2 @ "\",\"" @ %arg3 @ "\",\"" @ %arg4 @ "\");" );
+         {
+            // Set up kick/ban values:
+            if ( %typeName $= "VoteBanPlayer" || %typeName $= "VoteKickPlayer" )
+            {
+               Game.kickClient = %arg1;
+               Game.kickClientName = %arg1.name;
+               Game.kickGuid = %arg1.guid;
+               Game.kickTeam = %arg1.team;
+            }
+            
+            //Tinman - PURE servers can't call "eval"
+            if (!isPureServer())
+               eval( "Game." @ %typeName @ "(true,\"" @ %arg1 @ "\",\"" @ %arg2 @ "\",\"" @ %arg3 @ "\",\"" @ %arg4 @ "\");" );
+            else
+               Game.evalVote(%typeName, true, %arg1, %arg2, %arg3, %arg4);
+         }
          else
             messageClient(%client, '', '\c2You can not %1 %2, %3 is a Super Admin!', %actionMsg, %arg1.name, %gender);
       }      
@@ -323,7 +338,11 @@ function calcVotes(%typeName, %arg1, %arg2, %arg3, %arg4)
          Game.totalVotesNone++;
       }
    }   
-   eval( "Game." @ %typeName @ "(false,\"" @ %arg1 @ "\",\"" @ %arg2 @ "\",\"" @ %arg3 @ "\",\"" @ %arg4 @ "\");" );
+   //Tinman - PURE servers can't call "eval"
+   if (!isPureServer())
+      eval( "Game." @ %typeName @ "(false,\"" @ %arg1 @ "\",\"" @ %arg2 @ "\",\"" @ %arg3 @ "\",\"" @ %arg4 @ "\");" );
+   else
+      Game.evalVote(%typeName, false, %arg1, %arg2, %arg3, %arg4);
    Game.scheduleVote = "";
    Game.kickClient = "";
    clearVotes();

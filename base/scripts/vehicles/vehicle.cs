@@ -79,7 +79,8 @@ function VehicleData::onDamage(%this,%obj)
 
 function VehicleData::playerDismounted(%data, %obj, %player)
 {
-	//this function is declared to prevent console error msg spam...
+   if( %player.client.observeCount > 0 )
+      resetObserveFollow( %player.client, true );
 }
 
 function HoverVehicle::useCreateHeight()
@@ -219,12 +220,20 @@ function VehicleData::onLeaveLiquid(%data, %obj, %type)
 
 function VehicleData::onDestroyed(%data, %obj, %prevState)
 {
+    if(%obj.lastDamagedBy)
+    {
+        %destroyer = %obj.lastDamagedBy;
+        game.vehicleDestroyed(%obj, %destroyer);
+        //error("vehicleDestroyed( "@ %obj @", "@ %destroyer @")");
+    }
+    
 	radiusVehicleExplosion(%data, %obj);
    if(%obj.turretObject)
       if(%obj.turretObject.getControllingClient())
          %obj.turretObject.getDataBlock().playerDismount(%obj.turretObject);
    for(%i = 0; %i < %obj.getDatablock().numMountPoints; %i++)
    {
+      echo("damaging objects...");
       if (%obj.getMountNodeObject(%i)) {
          %flingee = %obj.getMountNodeObject(%i);
          %flingee.getDataBlock().doDismount(%flingee, true);
@@ -233,9 +242,12 @@ function VehicleData::onDestroyed(%data, %obj, %prevState)
          %zVel = (getRandom() * 100.0) + 50.0;
          %flingVel = %xVel @ " " @ %yVel @ " " @ %zVel;
          %flingee.applyImpulse(%flingee.getTransform(), %flingVel);
-         %flingee.damage(0, %obj.getPosition(), 0.4, $DamageType::Explosion); 
+         echo("got player..." @ %flingee.getClassName());
+         %flingee.damage(0, %obj.getPosition(), 0.4, $DamageType::Crash); 
       }
    }
+
+   %data.deleteAllMounted(%obj);
    %obj.schedule(2000, "delete");
 }
 
@@ -356,6 +368,7 @@ function BomberFlyer::onAdd(%this, %obj)
    %turret.mountImage(BomberBombPairImage, 5);
    %turret.mountImage(BomberTargetingImage, 6);
    %obj.turretObject = %turret;
+   %turret.setCapacitorRechargeRate( %turret.getDataBlock().capacitorRechargeRate );
    %turret.vehicleMounted = %obj;
    
    //vehicle turrets should not auto fire at targets
@@ -396,8 +409,9 @@ function AssaultVehicle::onAdd(%this, %obj)
    %obj.mountObject(%turret, 10);
    %turret.mountImage(AssaultPlasmaTurretBarrel, 2);
    %turret.mountImage(AssaultMortarTurretBarrel, 4);
+   %turret.setCapacitorRechargeRate( %turret.getDataBlock().capacitorRechargeRate );
    %obj.turretObject = %turret;
-
+   
    //vehicle turrets should not auto fire at targets
    %turret.setAutoFire(false);
    
@@ -471,6 +485,7 @@ function BomberFlyer::deleteAllMounted(%data, %obj)
       %client.player.mountVehicle = false;
 
       %client.player.bomber = false;
+      %client.player.isBomber = false;
    }
    %turret.delete();
 }
@@ -522,6 +537,10 @@ function ScoutFlyer::playerMounted(%data, %obj, %player, %node)
    // scout flyer == SUV (single-user vehicle)
    commandToClient(%player.client, 'setHudMode', 'Pilot', "Shrike", %node);
    $numVWeapons = 1;
+
+   // update observers who are following this guy...
+   if( %player.client.observeCount > 0 )
+      resetObserveFollow( %player.client, false );
 }
 
 //----------------------------
@@ -556,6 +575,7 @@ function BomberFlyer::playerMounted(%data, %obj, %player, %node)
       commandToClient(%player.client,'SetWeaponryVehicleKeys', true);
 
 	   commandToClient(%player.client, 'setHudMode', 'Pilot', "Bomber", %node);
+      %player.isBomber = true;
    }
    else
    {
@@ -569,6 +589,10 @@ function BomberFlyer::playerMounted(%data, %obj, %player, %node)
 	for(%i = 0; %i < %data.numMountPoints; %i++)
 		if(%obj.getMountNodeObject(%i) > 0)
 		   commandToClient(%obj.getMountNodeObject(%i).client, 'checkPassengers', %passString);
+
+   // update observers who are following this guy...
+   if( %player.client.observeCount > 0 )
+      resetObserveFollow( %player.client, false );
 }
 
 //----------------------------
@@ -592,6 +616,10 @@ function HAPCFlyer::playerMounted(%data, %obj, %player, %node)
 	for(%i = 0; %i < %data.numMountPoints; %i++)
 		if(%obj.getMountNodeObject(%i) > 0)
 		   commandToClient(%obj.getMountNodeObject(%i).client, 'checkPassengers', %passString);
+
+   // update observers who are following this guy...
+   if( %player.client.observeCount > 0 )
+      resetObserveFollow( %player.client, false );
 }
 
 //----------------------------
@@ -602,6 +630,10 @@ function ScoutVehicle::playerMounted(%data, %obj, %player, %node)
 {
    // scout vehicle == SUV (single-user vehicle)
    commandToClient(%player.client, 'setHudMode', 'Pilot', "Hoverbike", %node);
+
+   // update observers who are following this guy...
+   if( %player.client.observeCount > 0 )
+      resetObserveFollow( %player.client, false );
 }
 
 //----------------------------
@@ -613,7 +645,7 @@ function AssaultVehicle::playerMounted(%data, %obj, %player, %node)
    if(%node == 0) {
       // driver position
       // is there someone manning the turret?
-      %turreteer = %obj.getMountedNodeObject(1);
+      //%turreteer = %obj.getMountedNodeObject(1);
 	   commandToClient(%player.client, 'setHudMode', 'Pilot', "Assault", %node);
    }
    else if(%node == 1)
@@ -639,6 +671,11 @@ function AssaultVehicle::playerMounted(%data, %obj, %player, %node)
       %obj.getMountNodeObject(10).selectedWeapon = 1;
 	   commandToClient(%player.client, 'setHudMode', 'Pilot', "Assault", %node);
    }
+
+   // update observers who are following this guy...
+   if( %player.client.observeCount > 0 )
+      resetObserveFollow( %player.client, false );
+
    // build a space-separated string representing passengers
    // 0 = no passenger; 1 = passenger (e.g. "1 0 ")
    %passString = buildPassengerString(%obj);
@@ -673,9 +710,15 @@ function MobileBaseVehicle::playerMounted(%data, %obj, %player, %node)
       %obj.station.goingOut=false;
       %obj.station.notDeployed = 1;
       %obj.station.playAudio($DeploySound, MobileBaseStationUndeploySound);
+      
+      if((%turretClient = %obj.turret.getControllingClient()) !$= "")
+      {   
+         CommandToServer( 'resetControlObject', %turretClient );
+      }
+      
       %obj.turret.setThreadDir($DeployThread, false);
       %obj.turret.clearTarget();
-      %obj.turret.setTarget(-1);
+      %obj.turret.setTargetObject(-1);
 
       %obj.turret.playAudio($DeploySound, MobileBaseTurretUndeploySound);
       %obj.shield.open();  
@@ -690,6 +733,10 @@ function MobileBaseVehicle::playerMounted(%data, %obj, %player, %node)
       %obj.noEnemyControl = 0;
    }
    %obj.deployed = 0;
+
+   // update observers who are following this guy...
+   if( %player.client.observeCount > 0 )
+      resetObserveFollow( %player.client, false );
 }
 
 function buildPassengerString(%vehicle)
@@ -709,6 +756,7 @@ function buildPassengerString(%vehicle)
 function MobileBaseVehicle::playerDismounted(%data, %obj, %player)
 {
    %obj.schedule(500, "deployVehicle", %data, %player);
+   Parent::playerDismounted( %data, %obj, %player );
 }
 
 function WheeledVehicle::deployVehicle(%obj, %data, %player)
@@ -782,8 +830,9 @@ function MobileBaseVehicle::vehicleDeploy(%data, %obj, %player, %force)
          if(%deployMessage $= "" || %force)
          {
             if(%obj.turret.getTarget() == -1)
+            {   
                %obj.turret.setTarget(%obj.turret.target);
-               
+            }   
             %obj.turret.setThreadDir($DeployThread, true);
             %obj.turret.playThread($DeployThread,"deploy");
             %obj.turret.playAudio($DeploySound, MobileBaseTurretDeploySound);
@@ -866,9 +915,12 @@ function MobileInvStation::onEndSequence(%data, %obj, %thread)
    {
       %obj.notDeployed = 0;
       %obj.vehicle.fullyDeployed = 1;
-      %obj.vehicle.teleporter.setThreadDir($ActivateThread, TRUE);
-      %obj.vehicle.teleporter.playThread($ActivateThread,"activate");	
-      %obj.vehicle.teleporter.playAudio($ActivateSound, StationTeleportAcitvateSound);
+      if(isObject(%obj.vehicle.teleporter))
+      {
+         %obj.vehicle.teleporter.setThreadDir($ActivateThread, TRUE);
+         %obj.vehicle.teleporter.playThread($ActivateThread,"activate");	
+         %obj.vehicle.teleporter.playAudio($ActivateSound, StationTeleportAcitvateSound);
+      }
    }
    Parent::onEndSequence(%data, %obj, %thread);
 }
@@ -1076,7 +1128,12 @@ function findEmptySeat(%vehicle, %player, %forceNode)
             %message = '\c2Only Scout or Assault Armors can use that position.~wfx/misc/misc.error.wav';
       }
       
-      messageClient(%player.client, 'MsgArmorCantMountVehicle', %message);   
+      if(!%player.noSitMessage)
+      {
+         %player.noSitMessage = true;
+         %player.schedule(2000, "resetSitMessage");
+         messageClient(%player.client, 'MsgArmorCantMountVehicle', %message);   
+      }
       %node = -1;
    }
    return %node;
@@ -1094,8 +1151,21 @@ function findFirstHeavyNode(%data)
 //* DAMAGE FUNCTIONS
 //**************************************************************
 
-function VehicleData::damageObject(%data, %targetObject, %sourceObject, %position, %amount, %damageType, %momVec)
+function VehicleData::damageObject(%data, %targetObject, %sourceObject, %position, %amount, %damageType, %momVec, %theClient, %proj)
 {
+   if(%proj !$= "")
+   {
+      if(%amount > 0 && %targetObject.lastDamageProj !$= %proj)
+      {
+         %targetObject.lastDamageProj = %proj;
+         %targetObject.lastDamageAmount = %amount;
+      }
+      else if(%targetObject.lastDamageAmount < %amount)
+         %amount = %amount - %targetObject.lastDamageAmount;
+      else
+         return;
+   }
+      
    // check for team damage
    %sourceClient = %sourceObject ? %sourceObject.getOwnerClient() : 0;
    %targetTeam = getTargetSensorGroup(%targetObject.getTarget());
@@ -1107,8 +1177,18 @@ function VehicleData::damageObject(%data, %targetObject, %sourceObject, %positio
    else
       %sourceTeam = %sourceObject ? getTargetSensorGroup(%sourceObject.getTarget()) : -1;
 
-   if(!$teamDamage && (%targetTeam == %sourceTeam) && %targetObject.getDamagePercent() > 0.5)
-      return;
+    // vehicles no longer obey team damage -JR
+//    if(!$teamDamage && (%targetTeam == %sourceTeam) && %targetObject.getDamagePercent() > 0.5)
+//       return;
+    //but we do want to track the destroyer
+    if(%sourceObject)
+    {
+        %targetObject.lastDamagedBy = %sourceObject;
+        %targetObject.lastDamageType = %damageType;
+    }
+    else 
+        %targetObject.lastDamagedBy = 0;
+
 
    // Scale damage type & include shield calculations...
    if (%data.isShielded)

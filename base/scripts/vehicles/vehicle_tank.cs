@@ -211,7 +211,7 @@ datablock HoverVehicleData(AssaultVehicle) : TankDamageProfile
    mainThrustForce    = 50;
    reverseThrustForce = 40;
    strafeThrustForce  = 40;
-   turboFactor        = 1.25;
+   turboFactor        = 1.7;
 
    brakingForce = 25;
    brakingActivationSpeed = 4;
@@ -357,10 +357,14 @@ datablock TurretData(AssaultPlasmaTurret) : TurretDamageProfile
 
    mass           = 1.0;  // Not really relevant
 
-   maxEnergy      = 1;
-   maxDamage      = AssaultVehicle.maxDamage;
-   destroyedLevel = AssaultVehicle.destroyedLevel;
-   repairRate     = 0;
+   maxEnergy               = 1;
+   maxDamage               = AssaultVehicle.maxDamage;
+   destroyedLevel          = AssaultVehicle.destroyedLevel;
+   repairRate              = 0;
+   
+   // capacitor
+   maxCapacitorEnergy      = 250;
+   capacitorRechargeRate   = 1.0;
 
    thetaMin = 0;
    thetaMax = 100;
@@ -394,10 +398,11 @@ datablock TurretImageData(AssaultPlasmaTurretBarrel)
 
    projectileSpread = 12.0 / 1000.0;
 
+   useCapacitor = true;
    usesEnergy = true;
    useMountEnergy = true;
-   fireEnergy = 3.75;
-   minEnergy = 20.0;
+   fireEnergy = 7.5;
+   minEnergy = 15.0;
 
    // Turret parameters
    activationMS      = 4000;
@@ -408,65 +413,62 @@ datablock TurretImageData(AssaultPlasmaTurretBarrel)
    attackRadius      = 75;
 
    // State transitions
-   stateName[0]                  = "Activate";
-   stateTransitionOnNotLoaded[0] = "Dead";
-   stateTransitionOnLoaded[0]    = "ActivateReady";
-   stateSound[0]                 = AssaultTurretActivateSound;
+   stateName[0]                        = "Activate";
+   stateTransitionOnNotLoaded[0]       = "Dead";
+   stateTransitionOnLoaded[0]          = "ActivateReady";
+   stateSound[0]                       = AssaultTurretActivateSound;
 
-   stateName[1]                  = "ActivateReady";
-   stateSequence[1]              = "Activate";
-   stateSound[1]                 = AssaultTurretActivateSound;
-   stateTimeoutValue[1]          = 1;
-   stateTransitionOnTimeout[1]   = "Ready";
-   stateTransitionOnNotLoaded[1] = "Deactivate";
+   stateName[1]                        = "ActivateReady";
+   stateSequence[1]                    = "Activate";
+   stateSound[1]                       = AssaultTurretActivateSound;
+   stateTimeoutValue[1]                = 1;
+   stateTransitionOnTimeout[1]         = "Ready";
+   stateTransitionOnNotLoaded[1]       = "Deactivate";
 
-   stateName[2]                    = "Ready";
-   stateTransitionOnNotLoaded[2]   = "Deactivate";
-   stateTransitionOnTriggerDown[2] = "Fire";
-//   stateSound[2]                   = AssaultChaingunIdleSound;
+   stateName[2]                        = "Ready";
+   stateTransitionOnNotLoaded[2]       = "Deactivate";
+   stateTransitionOnTriggerDown[2]     = "Fire";
+   stateTransitionOnNoAmmo[2]          = "NoAmmo";
 
-   stateName[3]                = "Fire";
-   stateSequence[3]            = "Fire";
-   stateSequenceRandomFlash[3] = true;
-   stateFire[3]                = true;
-//   stateRecoil[3]              = LightRecoil;
-   stateAllowImageChange[3]    = false;
-   stateSound[3]               = AssaultChaingunFireSound;
-   stateScript[3]              = "onFire";
-   stateTimeoutValue[3]        = 0.15;
-   stateTransitionOnTimeout[3]   = "Fire";
-   stateTransitionOnTriggerUp[3] = "Reload";
-   stateTransitionOnNoAmmo[3]    = "Reload";
+   stateName[3]                        = "Fire";
+   stateSequence[3]                    = "Fire";
+   stateSequenceRandomFlash[3]         = true;
+   stateFire[3]                        = true;
+   stateAllowImageChange[3]            = false;
+   stateSound[3]                       = AssaultChaingunFireSound;
+   stateScript[3]                      = "onFire";
+   stateTimeoutValue[3]                = 0.1;
+   stateTransitionOnTimeout[3]         = "Fire";
+   stateTransitionOnTriggerUp[3]       = "Reload";
+   stateTransitionOnNoAmmo[3]          = "noAmmo";
 
-   stateName[4]                  = "Reload";
-   stateTimeoutValue[4]          = 0.1;
-   stateAllowImageChange[4]      = false;
-   stateSequence[4]              = "Reload";
-   stateTransitionOnTimeout[4]   = "Ready";
-   stateTransitionOnNotLoaded[4] = "Deactivate";
-//   stateSound[4]                 = AssaultChaingunReloadSound;
-                                 
-   stateName[5]                = "Deactivate";
-   stateSequence[5]            = "Activate";
-   stateDirection[5]           = false;
-   stateTimeoutValue[5]        = 30;
-//   stateTransitionOnLoaded[5]  = "ActivateReady";
-//   stateTransitionOnTimeout[5] = "Dead";
-   stateTransitionOnTimeout[5] = "ActivateReady";
+   stateName[4]                        = "Reload";
+   stateSequence[4]                    = "Reload";
+   stateTimeoutValue[4]                = 0.1;
+   stateAllowImageChange[4]            = false;
+   stateTransitionOnTimeout[4]         = "Ready";
+   stateTransitionOnNoAmmo[4]          = "NoAmmo";
+   stateWaitForTimeout[4]              = true;
 
-   stateName[6]               = "Dead";
-   stateTransitionOnLoaded[6] = "ActivateReady";
-   stateTransitionOnTriggerDown[6] = "DryFire";
+   stateName[5]                        = "Deactivate";
+   stateSequence[5]                    = "Activate";
+   stateDirection[5]                   = false;
+   stateTimeoutValue[5]                = 30;
+   stateTransitionOnTimeout[5]         = "ActivateReady";
 
-   stateName[7]       = "DryFire";
-   stateSound[7]      = AssaultChaingunDryFireSound;
-   stateTimeoutValue[7]        = 0.5;
-   stateTransitionOnTimeout[7] = "NoAmmo";
+   stateName[6]                        = "Dead";
+   stateTransitionOnLoaded[6]          = "ActivateReady";
+   stateTransitionOnTriggerDown[6]     = "DryFire";
 
-   stateName[8]                      = "NoAmmo";
-   stateTransitionOnAmmo[8]          = "Reload";
-   stateSequence[8]                  = "NoAmmo";
-   stateTransitionOnTriggerDown[8]   = "DryFire";
+   stateName[7]                        = "DryFire";
+   stateSound[7]                       = AssaultChaingunDryFireSound;
+   stateTimeoutValue[7]                = 0.5;
+   stateTransitionOnTimeout[7]         = "NoAmmo";
+
+   stateName[8]                        = "NoAmmo";
+   stateTransitionOnAmmo[8]            = "Reload";
+   stateSequence[8]                    = "NoAmmo";
+   stateTransitionOnTriggerDown[8]     = "DryFire";
 
 };
 
@@ -530,75 +532,73 @@ datablock TurretImageData(AssaultMortarTurretBarrel)
 
    usesEnergy = true;
    useMountEnergy = true;
-   fireEnergy = 50.00;
-   minEnergy = 50.00;
+   fireEnergy = 77.00;
+   minEnergy = 77.00;
+   useCapacitor = true;
 
    // Turret parameters
-   activationMS      = 4000;
-   deactivateDelayMS = 1500;
-   thinkTimeMS       = 200;
-   degPerSecTheta    = 360;
-   degPerSecPhi      = 360;
-   attackRadius      = 75;
+   activationMS                        = 4000;
+   deactivateDelayMS                   = 1500;
+   thinkTimeMS                         = 200;
+   degPerSecTheta                      = 360;
+   degPerSecPhi                        = 360;
+   attackRadius                        = 75;
 
    // State transitions
-   stateName[0]                  = "Activate";
-   stateTransitionOnNotLoaded[0] = "Dead";
-   stateTransitionOnLoaded[0]    = "ActivateReady";
-   //stateSound[0]                 = AssaultTurretActivateSound;
+   stateName[0]                        = "Activate";
+   stateTransitionOnNotLoaded[0]       = "Dead";
+   stateTransitionOnLoaded[0]          = "ActivateReady";
 
-   stateName[1]                  = "ActivateReady";
-   stateSequence[1]              = "Activate";
-   stateSound[1]                 = AssaultTurretActivateSound;
-   stateTimeoutValue[1]          = 1;
-   stateTransitionOnTimeout[1]   = "Ready";
-   stateTransitionOnNotLoaded[1] = "Deactivate";
+   stateName[1]                        = "ActivateReady";
+   stateSequence[1]                    = "Activate";
+   stateSound[1]                       = AssaultTurretActivateSound;
+   stateTimeoutValue[1]                = 1.0;
+   stateTransitionOnTimeout[1]         = "Ready";
+   stateTransitionOnNotLoaded[1]       = "Deactivate";
 
-   stateName[2]                    = "Ready";
-   stateTransitionOnNotLoaded[2]   = "Deactivate";
-   stateTransitionOnNoAmmo[2]      = "NoAmmo";
-   stateTransitionOnTriggerDown[2] = "Fire";
-//   stateSound[2]                   = AssaultMortarIdleSound;
+   stateName[2]                        = "Ready";
+   stateTransitionOnNotLoaded[2]       = "Deactivate";
+   stateTransitionOnNoAmmo[2]          = "NoAmmo";
+   stateTransitionOnTriggerDown[2]     = "Fire";
 
-   stateName[3]                = "Fire";
-   stateTransitionOnTimeout[3] = "Reload";
-   stateTimeoutValue[3]        = 0.3;
-   stateFire[3]                = true;
-   stateRecoil[3]              = LightRecoil;
-   stateAllowImageChange[3]    = false;
-   stateSequence[3]            = "Fire";
-   stateSound[3]               = AssaultMortarFireSound;
-   stateScript[3]              = "onFire";
+   stateName[3]                        = "Fire";
+   stateSequence[3]                    = "Fire";
+   stateTransitionOnTimeout[3]         = "Reload";
+   stateTimeoutValue[3]                = 1.0;
+   stateFire[3]                        = true;
+   stateRecoil[3]                      = LightRecoil;
+   stateAllowImageChange[3]            = false;
+   stateSound[3]                       = AssaultMortarFireSound;
+   stateScript[3]                      = "onFire";
 
-   stateName[4]                 = "Reload";
-   stateTimeoutValue[4]         = 1.5;
-   stateAllowImageChange[4]     = false;
-   stateSequence[4]             = "Reload";
-   stateTransitionOnTimeout[4]  = "Ready";
-   stateTransitionOnNoAmmo[4]   = "NoAmmo";
-//   stateSound[4]                = AssaultMortarReloadSound;
-//   stateTransitionOnNotLoaded[4] = "Deactivate";
+   stateName[4]                        = "Reload";
+   stateSequence[4]                    = "Reload";
+   stateTimeoutValue[4]                = 1.0;
+   stateAllowImageChange[4]            = false;
+   stateTransitionOnTimeout[4]         = "Ready";
+   //stateTransitionOnNoAmmo[4]          = "NoAmmo";
+   stateWaitForTimeout[4]              = true;
 
-   stateName[5]                = "Deactivate";
-   stateDirection[5]           = false;
-   stateSequence[5]            = "Activate";
-   stateTimeoutValue[5]        = 1;
-   stateTransitionOnLoaded[5]  = "ActivateReady";
-   stateTransitionOnTimeout[5] = "Dead";
+   stateName[5]                        = "Deactivate";
+   stateDirection[5]                   = false;
+   stateSequence[5]                    = "Activate";
+   stateTimeoutValue[5]                = 1.0;
+   stateTransitionOnLoaded[5]          = "ActivateReady";
+   stateTransitionOnTimeout[5]         = "Dead";
 
-   stateName[6]               = "Dead";
-   stateTransitionOnLoaded[6] = "ActivateReady";
-   stateTransitionOnTriggerDown[6] = "DryFire";
+   stateName[6]                        = "Dead";
+   stateTransitionOnLoaded[6]          = "ActivateReady";
+   stateTransitionOnTriggerDown[6]     = "DryFire";
 
-   stateName[7]       = "DryFire";
-   stateSound[7]      = AssaultMortarDryFireSound;
-   stateTimeoutValue[7]        = 1.5;
-   stateTransitionOnTimeout[7] = "NoAmmo";
+   stateName[7]                        = "DryFire";
+   stateSound[7]                       = AssaultMortarDryFireSound;
+   stateTimeoutValue[7]                = 1.0;
+   stateTransitionOnTimeout[7]         = "NoAmmo";
 
-   stateName[8]                      = "NoAmmo";
-   stateTransitionOnAmmo[8]          = "Reload";
-   stateSequence[8]                  = "NoAmmo";
-   stateTransitionOnTriggerDown[8]   = "DryFire";
+   stateName[8]                        = "NoAmmo";
+   stateSequence[8]                    = "NoAmmo";
+   stateTransitionOnAmmo[8]            = "Reload";
+   stateTransitionOnTriggerDown[8]     = "DryFire";
 };
 
 datablock TurretImageData(AssaultTurretParam)
@@ -608,6 +608,9 @@ datablock TurretImageData(AssaultTurretParam)
 
    projectile = AssaultChaingunBullet;
    projectileType = TracerProjectile;
+
+   useCapacitor = true;
+   usesEnergy = true;
 
    // Turret parameters
    activationMS      = 1000;

@@ -821,27 +821,27 @@ function SiegeGame::sendDebriefing( %game, %client )
    if ( $teamScore[1] > 0 )
    {  
       %timeStr = %game.formatTime($teamScore[1], true);
-      messageClient( %client, 'MsgDebriefAddLine', "", '<tab:5>\t%1 captured the base in %2.', $TeamName[1],  %timeStr);
+      messageClient( %client, 'MsgDebriefAddLine', "", ' %1 captured the base in %2.', $TeamName[1],  %timeStr);
    }
    else
-      messageClient( %client, 'MsgDebriefAddLine', "", '<tab:5>\t%1 failed to capture the base.', $TeamName[1]);
+      messageClient( %client, 'MsgDebriefAddLine', "", ' %1 failed to capture the base.', $TeamName[1]);
 
    if ( $teamScore[2] > 0 )
    {  
       %timeStr = %game.formatTime($teamScore[2], true);
-      messageClient( %client, 'MsgDebriefAddLine', "", '<tab:5>\t%1 captured the base in %2.', $TeamName[2],  %timeStr);
+      messageClient( %client, 'MsgDebriefAddLine', "", ' %1 captured the base in %2.', $TeamName[2],  %timeStr);
    }
    else
-      messageClient( %client, 'MsgDebriefAddLine', "", '<tab:5>\t%1 failed to capture the base.', $TeamName[2]);
+      messageClient( %client, 'MsgDebriefAddLine', "", ' %1 failed to capture the base.', $TeamName[2]);
 
    // List out the team rosters:
-   messageClient( %client, 'MsgDebriefAddLine', "", '\n<tab:130><spush><color:00dc00><font:univers condensed:18>%1\t%2<spop>', $TeamName[1], $TeamName[2] );
+   messageClient( %client, 'MsgDebriefAddLine', "", '\n<spush><color:00dc00><font:univers condensed:18>%1<lmargin%%:50>%2<spop>', $TeamName[1], $TeamName[2] );
    %max = $TeamRank[1, count] > $TeamRank[2, count] ? $TeamRank[1, count] : $TeamRank[2, count];
    for ( %line = 0; %line < %max; %line++ )
    {
       %plyr1 = $TeamRank[1, %line] $= "" ? "" : $TeamRank[1, %line].name;
       %plyr2 = $TeamRank[2, %line] $= "" ? "" : $TeamRank[2, %line].name;
-      messageClient( %client, 'MsgDebriefAddLine', "", '<tab:5,135><clip:130>\t%1</clip>\t%2', %plyr1, %plyr2 );
+      messageClient( %client, 'MsgDebriefAddLine', "", '<lmargin:0><clip%%:50> %1</clip><lmargin%%:50><clip%%:50> %2</clip>', %plyr1, %plyr2 );
    }
 
    // Show observers:
@@ -854,11 +854,11 @@ function SiegeGame::sendDebriefing( %game, %client )
       {
          if ( !%header )
          {
-            messageClient( %client, 'MsgDebriefAddLine', "", '\n<spush><color:00dc00><font:univers condensed:18>OBSERVERS<spop>' );
+            messageClient( %client, 'MsgDebriefAddLine', "", '\n<lmargin:0><spush><color:00dc00><font:univers condensed:18>OBSERVERS<spop>' );
             %header = true;
          }
 
-         messageClient( %client, 'MsgDebriefAddLine', "", '<tab:5>\t%1', %cl.name );
+         messageClient( %client, 'MsgDebriefAddLine', "", ' %1', %cl.name );
       }
    }
 }

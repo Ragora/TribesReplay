@@ -769,9 +769,18 @@ function StaticShapeData::damageObject(%data, %targetObject, %sourceObject, %pos
 
    if(%sourceObject)
    {
-      %targetObject.lastDamagedBy = %sourceObject.client;
-      %targetObject.lastDamagedByTeam = %sourceObject.client.team;
-      %targetObject.damageTimeMS = GetSimTime();
+      if(%sourceObject.client)
+      {
+        %targetObject.lastDamagedBy = %sourceObject.client;
+        %targetObject.lastDamagedByTeam = %sourceObject.client.team;
+        %targetObject.damageTimeMS = GetSimTime();
+      }
+      else
+      {
+        %targetObject.lastDamagedBy = %sourceObject;
+        %targetObject.lastDamagedByTeam = %sourceObject.team;
+        %targetObject.damageTimeMS = GetSimTime();
+      }
    }
 
    // Scale damage type & include shield calculations...
@@ -786,23 +795,39 @@ function StaticShapeData::damageObject(%data, %targetObject, %sourceObject, %pos
     if (!$TeamDamage && !%targetObject.getDataBlock().deployedObject)
     {
        //see if the object is being shot by a friendly
-       %srcClient = %sourceObject.client;
-       if (isObject(%srcClient))
-       {
-          if (isTargetFriendly(%targetObject.getTarget() , %srcClient.getSensorGroup()))
-          {
-             %curDamage = %targetObject.getDamageLevel();
-             %availableDamage = %targetObject.getDataBlock().disabledLevel - %curDamage - 0.05;
-             if (%amount > %availableDamage)
-                %amount = %availableDamage;
-          }
-       }
+       if(%sourceObject.getDataBlock().catagory $= "Vehicles")
+          %attackerTeam = getVehicleAttackerTeam(%sourceObject);
+       else %attackerTeam = %sourceObject.team;
+      
+      if (isTargetFriendly(%targetObject.getTarget(), %attackerTeam))
+      {
+         %curDamage = %targetObject.getDamageLevel();
+         %availableDamage = %targetObject.getDataBlock().disabledLevel - %curDamage - 0.05;
+         if (%amount > %availableDamage)
+            %amount = %availableDamage;
+      }
     }
 
    // if there's still damage to apply
    if (%amount > 0)
       %targetObject.applyDamage(%amount);
 }
+
+// little special casing for the above function
+function getVehicleAttackerTeam(%vehicleId)
+{
+    %name = %vehicleId.getDataBlock().getName(); 
+    if(%name $= "BomberFlyer" || %name $= "AssaultVehicle")
+        %gunner = %vehicleId.getMountNodeObject(1);
+    else
+        %gunner = %vehicleId.getMountNodeObject(0);
+    
+    if(%gunner)
+        return %gunner.team;
+    
+    return %vehicleId.team;
+}
+
 
 function StaticShapeData::onDamage(%this,%obj)
 {

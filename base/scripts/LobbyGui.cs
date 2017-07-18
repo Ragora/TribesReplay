@@ -342,8 +342,6 @@ function togglePlayerMute(%client)
 function togglePlayerVoiceCom( %playerRep )
 {
    commandToServer( 'ListenTo', %playerRep.clientId, !%playerRep.voiceEnabled, true );
-   //if ( !%playerRep.isSmurf )
-      // update client pref
 }
 
 //------------------------------------------------------------------------------

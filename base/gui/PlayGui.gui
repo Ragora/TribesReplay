@@ -9,7 +9,7 @@ new GameTSCtrl(PlayGui) {
    visible = "1";
    setFirstResponder = "1";
    modal = "1";
-	hideCursor = "1";
+   hideCursor = "1";
    helpTag = "0";
    beaconBaseTextureName = "gui/beacon_base";
    beaconTargetTextureName = "gui/crosshairs";
@@ -199,20 +199,156 @@ new GameTSCtrl(PlayGui) {
       autoResize = "0";
       subRegion = "0 2 65 15";
    };
-   
-   
-   new HudBitmapCtrl(lagHudIndicator) {
-      profile = "GuiButtonProfile";
+
+   new ShellFieldCtrl(NetGraphHudFrame) {
+      profile = "GuiChatBackProfile";
       horizSizing = "left";
       vertSizing = "bottom";
-      position = "570 38";
-      extent = "35 32";
+      position = "266 8";
+      extent = "176 50";
+      minExtent = "8 8";
       visible = "0";
-      frameColor = "0 1 0 1";
-      opacity = "0.8";
-      bitmap = "gui/hud_disconnect.png";
+
+      new HudNetDisplay(NetGraphHud) {
+         profile = "HudScoreProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "1 1";
+         extent = "174 48";
+         minExtent = "8 8";
+         visible = "1";
+      };
    };
 
+   new GuiControl(NetBarHudFrame) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "290 0";
+      extent = "129 68";
+      minExtent = "8 8";
+      visible = "0";
+      hideCursor = "0";
+      bypassHideCursor = "0";
+      helpTag = "0";
+
+      new HudNetDisplay(NetBarHud) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "1 1";
+         extent = "174 48";
+         minExtent = "8 8";
+         visible = "1";
+         infoCallback = "1";
+         renderGraph = false;
+         historySize = 2;
+      };
+
+      new ShellFieldCtrl() {
+         profile = "ShellFieldProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "6 27";
+         extent = "120 18";
+         minExtent = "16 18";
+         visible = "1";
+         hideCursor = "0";
+         bypassHideCursor = "0";
+         helpTag = "0";
+
+         new HudBarBaseCtrl(NetBarHudSendBar) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "0 0";
+            extent = "120 18";
+            minExtent = "120 18";
+            visible = "1";
+            hideCursor = "0";
+            bypassHideCursor = "0";
+            helpTag = "0";
+            fillColor = "0.000000 0.800000 0.000000 1.000000";
+            frameColor = "0.000000 1.000000 0.000000 1.000000";
+            opacity = "0.6";
+            autoCenter = "0";
+            autoResize = "0";
+            flipVertical = "0";
+            flipHorizontal = "0";
+            subRegion = "2 2 116 15";
+            displayMounted = "0";
+            pulseRate = "500";
+            pulseThreshold = "0.3";
+            verticalFill = "0";
+         };
+      };
+      new ShellFieldCtrl() {
+         profile = "ShellFieldProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "6 46";
+         extent = "120 18";
+         minExtent = "16 18";
+         visible = "1";
+         hideCursor = "0";
+         bypassHideCursor = "0";
+         helpTag = "0";
+
+         new HudBarBaseCtrl(NetBarHudReceiveBar) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "0 0";
+            extent = "120 18";
+            minExtent = "120 18";
+            visible = "1";
+            hideCursor = "0";
+            bypassHideCursor = "0";
+            helpTag = "0";
+            fillColor = "0.000000 0.800000 0.000000 1.000000";
+            frameColor = "0.000000 1.000000 0.000000 1.000000";
+            opacity = "0.6";
+            autoCenter = "0";
+            autoResize = "0";
+            flipVertical = "0";
+            flipHorizontal = "0";
+            subRegion = "2 2 116 15";
+            displayMounted = "0";
+            pulseRate = "500";
+            pulseThreshold = "0.3";
+            verticalFill = "0";
+         };
+      };
+      new GuiTextCtrl(NetBarHudPingText) {
+         profile = "ShellTextProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "9 9";
+         extent = "36 22";
+         minExtent = "8 8";
+         visible = "1";
+         hideCursor = "0";
+         bypassHideCursor = "0";
+         helpTag = "0";
+         text = "0ms";
+         maxLength = "255";
+      };
+      new GuiTextCtrl(NetBarHudPacketLossText) {
+         profile = "ShellTextRightProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "76 9";
+         extent = "48 22";
+         minExtent = "8 8";
+         visible = "1";
+         hideCursor = "0";
+         bypassHideCursor = "0";
+         helpTag = "0";
+         text = "0%";
+         maxLength = "255";
+      };
+   };
+   
    new GuiControl(retCenterHud) {
       profile = "GuiDefaultProfile";
       horizSizing = "center";
@@ -405,13 +541,13 @@ new GameTSCtrl(PlayGui) {
       markerImageNames[2] = "small_diamond";    // assigned task
       markerImageNames[3] = "small_cross";      // client waypoint
       markerImageNames[4] = "small_circle";     // target
-	  
-	  missileMarker1 = "gui/RET_missile_marker";
-	  missileMarker2 = "gui/RET_missile_marker_red";
-	  missileFlash1 = "gui/RET_missile_horizflash_red";
-	  missileFlash2 = "gui/RET_missile_vertflash_red";
+     
+     missileMarker1 = "gui/RET_missile_marker";
+     missileMarker2 = "gui/RET_missile_marker_red";
+     missileFlash1 = "gui/RET_missile_horizflash_red";
+     missileFlash2 = "gui/RET_missile_vertflash_red";
 
-	  LOSMarkerUpdate = 250; // amount of time in ms that markers get LOS updates. Turn this down to get more updates or up to get less.
+     LOSMarkerUpdate = 250; // amount of time in ms that markers get LOS updates. Turn this down to get more updates or up to get less.
    };
 
    new GuiControl(dashboardHud) {

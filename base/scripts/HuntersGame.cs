@@ -84,10 +84,16 @@ function HuntersGame::initGameVars(%game)
 
    %game.teamMode = false;
 
-   %game.greedMode = $Host::HuntersGreedMode;
+   if (!isDemo() && !isDemoServer())
+      %game.greedMode = $Host::HuntersGreedMode;
+   else
+      %game.greedMode = false;
    %game.greedMinFlags = 8;   //min number of flags you must have before you can cap
 
-   %game.hoardMode = $Host::HuntersHoardMode;
+   if (!isDemo() && !isDemoServer())
+      %game.hoardMode = $Host::HuntersHoardMode;
+   else
+      %game.hoardMode = false;
    %game.HoardStartTime = 5;  //time left in the game at which hoard mode will start
    %game.HoardDuration = 3;   //duration of the hoard period
    %game.HoardEndTime = %game.HoardStartTime - %game.HoardDuration;
@@ -607,7 +613,7 @@ function HuntersGame::playerTouchFlag(%game, %player, %flag)
       if (!%game.teamMode && !%client.couldSetRecord)
       {
          %numFlags = %client.flagCount - 1;
-         if (%numFlags > 10 && %numFlags > $HuntersRecords::Count[$currentMission])
+         if (%numFlags > 10 && %numFlags > $Host::HuntersRecords::Count[$currentMission])
          {
             //see if we have at least 4 non-AI players
             %humanCount = 0;
@@ -941,7 +947,7 @@ function Nexus::onCollision(%data, %obj, %colObj)
       }
 
       //see if it's a record
-      if (%numToScore > 10 && %numToScore > $HuntersRecords::Count[$currentMission])
+      if (%numToScore > 10 && %numToScore > $Host::HuntersRecords::Count[$currentMission])
       {
          //see if we have at least 4 non-AI players
          %humanCount = 0;
@@ -957,15 +963,15 @@ function Nexus::onCollision(%data, %obj, %colObj)
 
          if (%humanCount >= Game.numHumansForRecord)
          {
-            $HuntersRecords::Count[$currentMission] = %numToScore;
-            $HuntersRecords::Name[$currentMission] = getTaggedString(%client.name);
+            $Host::HuntersRecords::Count[$currentMission] = %numToScore;
+            $Host::HuntersRecords::Name[$currentMission] = getTaggedString(%client.name);
 
             //send a message to everyone
             messageAllExcept(%client, -1, 'MsgHuntPlayerSetRecord', '\c2%1 set the record for this mission with a return of %2 flags!~wfx/misc/flag_return.wav', %client.name, %numToScore);
             messageClient(%client, 'MsgHuntYouSetRecord', '\c2You set the record for this mission with a return of %1 flags!~wfx/misc/flag_return.wav', %numToScore);
 
             //update the records file...
-            export( "$HuntersRecords::*", "prefs/HuntersRecords.cs", false );
+            export( "$Host::HuntersRecords::*", "prefs/HuntersRecords.cs", false );
 
             //once the record has been set, reset everyone's tag
             for (%i = 0; %i < %count; %i++)
@@ -1050,30 +1056,33 @@ function HuntersGame::sendGameVoteMenu( %game, %client, %key )
       // First send the common options:
       DefaultGame::sendGameVoteMenu( %game, %client, %key );
 
-      if(!%client.isAdmin)
+      if (!isDemo() && !isDemoServer())
       {
-         // Now send the Hunters-specific options:
-         if ( %game.greedMode )
-            messageClient( %client, 'MsgVoteItem', "", %key, 'VoteGreedMode', 'disable greed mode', 'Vote Disable GREED Mode' );
-         else
-            messageClient( %client, 'MsgVoteItem', "", %key, 'VoteGreedMode', 'enable greed mode', 'Vote Enable GREED Mode' );
+         if(!%client.isAdmin)
+         {
+            // Now send the Hunters-specific options:
+            if ( %game.greedMode )
+               messageClient( %client, 'MsgVoteItem', "", %key, 'VoteGreedMode', 'disable greed mode', 'Vote Disable GREED Mode' );
+            else
+               messageClient( %client, 'MsgVoteItem', "", %key, 'VoteGreedMode', 'enable greed mode', 'Vote Enable GREED Mode' );
 
-         if ( %game.HoardMode )
-            messageClient( %client, 'MsgVoteItem', "", %key, 'VoteHoardMode', 'disable hoard mode', 'Vote Disable HOARD Mode' );
+            if ( %game.HoardMode )
+               messageClient( %client, 'MsgVoteItem', "", %key, 'VoteHoardMode', 'disable hoard mode', 'Vote Disable HOARD Mode' );
+            else
+               messageClient( %client, 'MsgVoteItem', "", %key, 'VoteHoardMode', 'enable hoard mode', 'Vote Enable HOARD Mode' );
+         }
          else
-            messageClient( %client, 'MsgVoteItem', "", %key, 'VoteHoardMode', 'enable hoard mode', 'Vote Enable HOARD Mode' );
-      }
-      else
-      {
-         if ( %game.greedMode )
-            messageClient( %client, 'MsgVoteItem', "", %key, 'VoteGreedMode', 'disable greed mode', 'Disable GREED Mode' );
-         else
-            messageClient( %client, 'MsgVoteItem', "", %key, 'VoteGreedMode', 'enable greed mode', 'Enable GREED Mode' );
+         {
+            if ( %game.greedMode )
+               messageClient( %client, 'MsgVoteItem', "", %key, 'VoteGreedMode', 'disable greed mode', 'Disable GREED Mode' );
+            else
+               messageClient( %client, 'MsgVoteItem', "", %key, 'VoteGreedMode', 'enable greed mode', 'Enable GREED Mode' );
 
-         if ( %game.HoardMode )
-            messageClient( %client, 'MsgVoteItem', "", %key, 'VoteHoardMode', 'disable hoard mode', 'Disable HOARD Mode' );
-         else
-            messageClient( %client, 'MsgVoteItem', "", %key, 'VoteHoardMode', 'enable hoard mode', 'Enable HOARD Mode' );
+            if ( %game.HoardMode )
+               messageClient( %client, 'MsgVoteItem', "", %key, 'VoteHoardMode', 'disable hoard mode', 'Disable HOARD Mode' );
+            else
+               messageClient( %client, 'MsgVoteItem', "", %key, 'VoteHoardMode', 'enable hoard mode', 'Enable HOARD Mode' );
+         }
       }
    }
 }
@@ -1421,6 +1430,9 @@ function HuntersGame::dropFlag(%game, %player)
 
 function HuntersGame::enterMissionArea(%game, %playerData, %player)
 {
+   if(%player.getState() $= "Dead")
+      return;
+   
    %client = %player.client;
    %client.outOfBounds = false;
    cancel(%client.oobSched);
@@ -1431,6 +1443,9 @@ function HuntersGame::enterMissionArea(%game, %playerData, %player)
 
 function HuntersGame::leaveMissionArea(%game, %playerData, %player)
 {
+   if(%player.getState() $= "Dead")
+      return;
+   
    // strip flags and throw them back into the mission area
    %client = %player.client;
    %client.outOfBounds = true;   
@@ -1671,14 +1686,14 @@ function HuntersGame::sendDebriefing( %game, %client )
    if ( %game.highestFlagReturnName !$= "" )
       messageClient( %client, 'MsgDebriefResult', "", '<spush><color:3cb4b4><font:univers condensed:18>%1 had the highest return count with %2 flags!<spop>', %game.highestFlagReturnName, %game.highestFlagReturnCount );
 
-   if ( $HuntersRecords::Count[$currentMission] !$= "" && $HuntersRecords::Name[$currentMission] !$= "" )
-      messageClient( %client, 'MsgDebriefResult', "", '<spush><color:3cb4b4><font:univers condensed:18>%1 holds the record with a return count of %2 flags!<spop>', $HuntersRecords::Name[$currentMission], $HuntersRecords::Count[$currentMission] );
+   if ( $Host::HuntersRecords::Count[$currentMission] !$= "" && $Host::HuntersRecords::Name[$currentMission] !$= "" )
+      messageClient( %client, 'MsgDebriefResult', "", '<spush><color:3cb4b4><font:univers condensed:18>%1 holds the record with a return count of %2 flags!<spop>', $Host::HuntersRecords::Name[$currentMission], $Host::HuntersRecords::Count[$currentMission] );
 
    if ( %game.greedFlagName !$= "" )
       messageClient( %client, 'MsgDebriefResult', "", '<spush><color:3cb4b4><font:univers condensed:18>%1 gets the honorary greed award for dropping %2 flags!<spop>', %game.greedFlagName, %game.greedFlagCount );
 
    // Player scores:
-   messageClient( %client, 'MsgDebriefAddLine', "", '<tab:150,210><spush><color:00dc00><font:univers condensed:18>PLAYER\tSCORE\tKILLS<spop>' );
+   messageClient( %client, 'MsgDebriefAddLine', "", '<spush><color:00dc00><font:univers condensed:18>PLAYER<lmargin%%:60>SCORE<lmargin%%:80>KILLS<spop>' );
    %count = $TeamRank[0, count];
    for ( %i = 0; %i < %count; %i++ )
    {
@@ -1691,7 +1706,7 @@ function HuntersGame::sendDebriefing( %game, %client )
          %kills = 0;
       else
          %kills = %cl.kills;
-      messageClient( %client, 'MsgDebriefAddLine', "", '<tab:5,155,215><clip:150>\t%1</clip>\t%2\t%3', %cl.name, %score, %kills );
+      messageClient( %client, 'MsgDebriefAddLine', "", '<lmargin:0><clip%%:60> %1</clip><lmargin%%:60><clip%%:20> %2</clip><lmargin%%:80><clip%%:20> %3</clip>', %cl.name, %score, %kills );
    }
 
    // Show observers:
@@ -1704,12 +1719,12 @@ function HuntersGame::sendDebriefing( %game, %client )
       {
          if ( !%header )
          {
-            messageClient( %client, 'MsgDebriefAddLine', "", '\n<tab:150><spush><font:univers condensed:18><color:00dc00>OBSERVERS\tSCORE<spop>' );
+            messageClient( %client, 'MsgDebriefAddLine', "", '\n<lmargin:0><spush><font:univers condensed:18><color:00dc00>OBSERVERS<lmargin%%:60>SCORE<spop>' );
             %header = true;
          }
 
          %score = %cl.score $= "" ? 0 : %cl.score;
-         messageClient( %client, 'MsgDebriefAddLine', "", '<tab:5,155><clip:150>\t%1</clip>\t%2', %cl.name, %score );
+         messageClient( %client, 'MsgDebriefAddLine', "", '<lmargin:0><clip%%:60> %1</clip><lmargin%%:60><clip%%:40> %2</clip>', %cl.name, %score );
       }
    }
 }

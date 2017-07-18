@@ -246,5 +246,5 @@ function DatabaseQueryCancel(%id)
 
 function WONUpdateCertificateDone(%errCode, %errStr)
 {
-	IRCClient::relogin();
+	IRCClient::reconnect();
 }

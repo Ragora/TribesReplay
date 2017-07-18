@@ -85,6 +85,27 @@ new SimGroup(MissionGroup) {
 			cloudSpeed0 = "0.000050 0.000050";
 	};
 	new SimGroup(ObserverDropPoints) {
+		new Camera(ODP1) {
+			position = "211.873 -381.834 217.636";
+			rotation = "0.999673 -0.00146427 0.025526 6.5684";
+			scale = "1 1 1";
+			dataBlock = "Observer";
+			lockCount = "1";
+		};
+		new Camera(ODP2) {
+			position = "-28.7603 -76.9109 85.8217";
+			rotation = "0.527807 -0.0636426 0.846977 16.2049";
+			scale = "1 1 1";
+			dataBlock = "Observer";
+			lockCount = "1";
+		};
+		new Camera(ODP3) {
+			position = "-470.718 251.278 227.398";
+			rotation = "0.201232 -0.0969256 0.974736 52.5921";
+			scale = "1 1 1";
+			dataBlock = "Observer";
+			lockCount = "1";
+		};
 	};
 	new SimGroup(Environmental) {
 

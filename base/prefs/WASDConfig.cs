@@ -102,4 +102,5 @@ observerMap.bind(keyboard, "space", jump);
 observerMap.bind(keyboard, "e", moveup);
 observerMap.bind(keyboard, "c", movedown);
 observerMap.bind(mouse0, "button1", mouseJet);
-GlobalActionMap.bind(keyboard, "grave", toggleConsole);
+if (!isDemo())
+   GlobalActionMap.bind(keyboard, "grave", toggleConsole);

@@ -124,7 +124,7 @@ datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
    jetForce = 1750;      // Afterburner thrust (this is in addition to normal thrust)
    minJetEnergy = 28;     // Afterburner can't be used if below this threshhold.
    jetEnergyDrain = 2.8;       // Energy use of the afterburners (low number is less drain...can be fractional)                                                                                                                                                                                                                                                                                          // Auto stabilize speed
-   vertThrustMultiple = 2.5;
+   vertThrustMultiple = 3.0;
 
    // Rigid body
    mass = 150;        // Mass of the vehicle

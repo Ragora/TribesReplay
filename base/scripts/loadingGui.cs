@@ -34,7 +34,7 @@ function LoadingGui::onSleep(%this)
    }      
    %this.qLineCount = 0;
 
-   LOAD_MapPic.setBitmap( "gui/Loading.png" );
+   LOAD_MapPic.setBitmap( "gui/Loading" );
    LOAD_MapName.setText( "" );
    LOAD_MapText.setText( "" );
    LOAD_MissionType.setText( "" );
@@ -279,9 +279,12 @@ function handleLoadInfoMessage( %msgType, %msgString, %bitmapName, %mapName, %mi
       LobbyGui.objLine[%line] = "";
    LobbyGui.objLineCount = 0;
 
-   %loadBmp = "gui/load_" @ %bitmapName @ ".png";
+   if (!isDemo() && !isDemoServer())
+      %loadBmp = "gui/load_" @ %bitmapName @ ".png";
+   else
+      %loadBmp = "gui/load_" @ %bitmapName @ ".bm8";
    if ( !isFile( "textures/" @ %loadBmp ) )
-      %loadBmp = "gui/loading.png";
+      %loadBmp = "gui/loading";
    LOAD_MapPic.setBitmap( %loadBmp );
    LOAD_MapName.setText( %mapName );
    LOAD_MissionType.setText( %missionType );
@@ -338,5 +341,5 @@ function handleLoadRulesLineMessage( %msgType, %msgString, %line, %bulletStyle )
 //------------------------------------------------------------------------------
 function handleLoadInfoDoneMessage( %msgType, %msgString )
 {
-   // TODO - make this signal the game that it's okay to go to the Loading screen now.
+   LoadingGui.gotLoadInfo = true;
 }

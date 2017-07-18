@@ -13,6 +13,7 @@ $Login = false;
 $clientprefs = "prefs/clientPrefs.cs";
 $serverprefs = "prefs/serverPrefs.cs";
 $fromLauncher = false;
+$PureServer = true;
 
 //------------------------------------------------------------------------------
 function prepBuild()
@@ -168,10 +169,15 @@ else
 	   {
 	      setModPaths( $nextArg );
 	      $i += 2;
+         $PureServer = false;
 	   }
 	   else if($arg $= "-dedicated")
 	   {
 	      $LaunchMode = "DedicatedServer";
+	   }
+	   else if($arg $= "-nonpure")
+	   {
+         $PureServer = false;
 	   }
 	   else if($arg $= "-clientprefs" && $hasNextArg)
 	   {
@@ -193,6 +199,14 @@ else
 	      $mission = $nextArg;
 	      $missionType = $nextArg2;
 	   }
+	   else if($arg $= "-telnetParams" && $has2NextArgs)
+	   {
+	      $i += 3;
+	      $telnetPort = $nextArg;
+	      $telnetPassword = $nextArg2;
+	      $telnetListenPass = $nextArg3;
+         telnetSetParameters($telnetPort, $telnetPassword, $telnetListenPass);
+	   }
 	   else if($arg $= "-connect" && $hasNextArg)
 	   {
 	      $i++;
@@ -209,18 +223,21 @@ else
 	      $i++;
 	      $JournalFile = $nextArg;
 	      $JournalMode = "LoadJournal";
+         $PureServer = false;
 	   }
 	   else if($arg $= "-jsave" && $hasNextArg)
 	   {                     
 	      $i++;
 	      $JournalFile = $nextArg;
 	      $JournalMode = "SaveJournal";
+         $PureServer = false;
 	   }
 	   else if($arg $= "-jplay" && $hasNextArg)
 	   {
 	      $i++;
 	      $JournalFile = $nextArg;
 	      $journalMode = "PlayJournal";
+         $PureServer = false;
 	   }
 	   else if($arg $= "-navBuild" && $has2NextArgs)
 	   {
@@ -246,6 +263,7 @@ else
 	      $Login = true;
 	      $LoginName = $nextArg;
 	      $LoginPassword = $nextArg2;
+         $PureServer = false;
 	   }
 	   else if($arg $= "-show")
 	   {
@@ -271,6 +289,7 @@ else
 	      prepBuild();
 	      setLogMode(1);
 	      setEchoFileLoads(true);
+         $PureServer = false;
 	   }
 	   else if($arg $= "-quit")
 	   {
@@ -286,6 +305,13 @@ else
 	   else if ( $arg $= "-online" )
 	      $fromLauncher = true;
 	}
+
+   //see if we're launching a pure server
+   if ($LaunchMode $= "DedicatedServer" && $PureServer)
+   {
+      if (setPureServer(1))
+         $Con::prompt = "PURE%";
+   }
 
 	// load autoexec once for command-line overrides:
 	exec("autoexec.cs", true); 
@@ -312,6 +338,29 @@ exec("scripts/clientDefaults.cs", true);
 exec("scripts/serverDefaults.cs", true);
 exec($clientprefs, true, true);
 exec($serverprefs, true, true);
+
+//convert the team skin and name vars to tags...
+$index = 0;
+while ($Host::TeamSkin[$index] !$= "")
+{
+   $TeamSkin[$index] = addTaggedString($Host::TeamSkin[$index]);
+   $index++;
+}
+
+$index = 0;
+while ($Host::TeamName[$index] !$= "")
+{
+   $TeamName[$index] = addTaggedString($Host::TeamName[$index]);
+   $index++;
+}
+
+// initialize the hologram names:
+$index = 1;
+while ( $Host::holoName[$index] !$= "" )
+{
+   $holoName[$index] = $Host::holoName[$index];
+   $index++;
+}
 
 // load autoexec again to override video settings/window creation
 
@@ -505,14 +554,20 @@ function LoginMessageBoxButtonProcess()
 }
 
 //------------------------------------------------------------------------------
-
 function EditAccountDlg::onUpdate(%this)
 {
+   if ( strcmp( $LoginPassword, EA_OldPassword.getValue() ) != 0 )
+   {
+      LoginMessageBox( "UPDATE FAILED", "The password you entered is incorrect.", "OK" );
+      return;
+   }
+   
    if ( strcmp( $CreateAccountPassword, $CreateAccountConfirmPassword ) )
    {
       LoginMessageBox( "ERROR", "Passwords don't match.", "OK" );
       return;
    }
+   
    WONStartUpdateAccount( $CreateAccountPassword,
                     $CreateAccountEmail,
                     $CreateAccountSendInfo );
@@ -527,11 +582,12 @@ function EditAccountDlg::onDontUpdate(%this)
    schedule(0,0,LoginDone);
 }
 
+//------------------------------------------------------------------------------
 function StartupGui::checkLoginDone( %this, %editAcct, %emailCheck )
 {
    %result = WONLoginResult();
    %code = getField( %result, 1 );
-   %codeText = getField(%result, 2);
+   %codeText = getField( %result, 2 );
    %status = getField( %result, 0 );
    %errorString = getField( %result, 3);
 
@@ -550,8 +606,7 @@ function StartupGui::checkLoginDone( %this, %editAcct, %emailCheck )
             %msg = "Account Creation Failed - Invalid login name.  Login names may only contain letters, numbers and underlines, and must be from 3 to 16 characters in length.";
          case "WS_DBProxyServ_UserDoesNotExist":
             %msg = "Email Password Failed - No such login name.  Please check the login name and try again.";
-         case "WS_AuthServ_BadCDKey":
-         case "WS_DBProxyServ_InvalidCDKey":
+         case "WS_AuthServ_BadCDKey" or "WS_DBProxyServ_InvalidCDKey":
             %msg = "Account Creation Failed - Invalid CD Key.  Please check the CD key for errors.";
          case "WS_TimedOut":
             %msg = "Login Failed - Server timed out.  Your internet connection may be having problems or the servers may be temporarily unavailable.";
@@ -598,8 +653,10 @@ function StartupGui::checkLoginDone( %this, %editAcct, %emailCheck )
             else
                %msg = "Login Failed - Your internet connection may be having problems or the servers may be temporarily unavailable.  (Error code: " @ %codeText @ ")";
       }
+      
       Canvas.popDialog( LoginMessagePopupDlg );
-      if(StartupGui.updatingAccount)
+      
+      if ( StartupGui.updatingAccount )
          LoginMessageBox( "UPDATE FAILED", %msg, "OK", "schedule(0,0,LoginDone);" );
       else if ( %emailCheck )
          LoginMessageBox( "FETCH FAILED", %msg, "OK", "StartupGui::dumbFunction();" );
@@ -612,7 +669,7 @@ function StartupGui::checkLoginDone( %this, %editAcct, %emailCheck )
       if ( $pref::RememberPassword )
       {
          if ( StartupGui.updatingAccount )
-            EditAccountPasswordBox.savePassword();
+            EA_NewPassword.savePassword();
          else
             LoginPasswordBox.savePassword();
       }
@@ -980,6 +1037,7 @@ if(!$SkipLogin)
    WONInit();
 
 //------------------------------------------------------------------------------
+
 if ($LaunchMode $= "DedicatedServer" ||
     $LaunchMode $= "Console" ||
     $LaunchMode $= "NavBuild" ||
@@ -1606,146 +1664,211 @@ else
 
       // Edit Account dialog:
       new GuiControl(EditAccountDlg) {
-         profile = "GuiDefaultProfile";
-         horizSizing = "right";
-         vertSizing = "bottom";
-         position = "0 0";
-         extent = "640 480";
-         minExtent = "8 8";
-         visible = "1";
-         helpTag = "0";
-            open = "0";
+	      profile = "GuiDefaultProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = "0 0";
+	      extent = "640 480";
+	      minExtent = "8 8";
+	      visible = "1";
+	      hideCursor = "0";
+	      bypassHideCursor = "0";
+	      helpTag = "0";
+		      open = "0";
 
-         new ShellPaneCtrl() {
-            profile = "ShellDlgPaneProfile";
-            horizSizing = "center";
-            vertSizing = "center";
-            position = "70 105";
-            extent = "500 255";
-            minExtent = "48 92";
-            visible = "1";
-            helpTag = "0";
-            text = "ACCOUNT INFORMATION";
-            noTitleBar = "0";
+	      new ShellPaneCtrl() {
+		      profile = "ShellDlgPaneProfile";
+		      horizSizing = "center";
+		      vertSizing = "center";
+		      position = "94 116";
+		      extent = "452 284";
+		      minExtent = "48 92";
+		      visible = "1";
+		      hideCursor = "0";
+		      bypassHideCursor = "0";
+		      helpTag = "0";
+		      text = "ACCOUNT INFORMATION";
+		      maxLength = "255";
+		      noTitleBar = "0";
 
-            new ShellBitmapButton() {
-               profile = "ShellButtonProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "282 200";
-               extent = "128 38";
-               minExtent = "32 38";
-               visible = "1";
-               command = "EditAccountDlg.onUpdate();";
-               helpTag = "0";
-               text = "UPDATE";
-               simpleStyle = "0";
-            };
-            new GuiTextCtrl() {
-               profile = "ShellTextRightProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "126 51";
-               extent = "100 22";
-               minExtent = "8 8";
-               visible = "1";
-               helpTag = "0";
-               text = "Password:";
-            };
-            new GuiTextCtrl() {
-               profile = "ShellTextRightProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "126 81";
-               extent = "100 22";
-               minExtent = "8 8";
-               visible = "1";
-               helpTag = "0";
-               text = "Confirm Password:";
-            };
-            new GuiTextCtrl() {
-               profile = "ShellTextRightProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "37 125";
-               extent = "100 22";
-               minExtent = "8 8";
-               visible = "1";
-               helpTag = "0";
-               text = "Email:";
-            };
-            new GuiLoginPasswordCtrl(EditAccountPasswordBox) {
-               profile = "NewTextEditProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "222 43";
-               extent = "180 38";
-               minExtent = "32 38";
-               visible = "1";
-               variable = "$CreateAccountPassword";
-               helpTag = "0";
-               historySize = "0";
-               maxLength = "16";
-               password = "1";
-               glowOffset = "9 9";
-            };
-            new ShellTextEditCtrl() {
-               profile = "NewTextEditProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "222 73";
-               extent = "180 38";
-               minExtent = "32 38";
-               visible = "1";
-               variable = "$CreateAccountConfirmPassword";
-               helpTag = "0";
-               historySize = "0";
-               maxLength = "16";
-               password = "1";
-               glowOffset = "9 9";
-            };
-            new ShellTextEditCtrl() {
-               profile = "NewTextEditProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "133 115";
-               extent = "269 38";
-               minExtent = "32 38";
-               visible = "1";
-               variable = "$CreateAccountEmail";
-               helpTag = "0";
-               historySize = "0";
-               maxLength = "128";
-               password = "0";
-               glowOffset = "9 9";
-            };
-            new ShellToggleButton() {
-               profile = "ShellRadioProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "63 156";
-               extent = "366 30";
-               minExtent = "26 27";
-               visible = "1";
-               variable = "$CreateAccountSendInfo";
-               helpTag = "0";
-               text = "SEND ME INFORMATION ABOUT TRIBES 2 AND OTHER PRODUCTS";
-            };
-            new ShellBitmapButton() {
-               profile = "ShellButtonProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "72 200";
-               extent = "128 38";
-               minExtent = "32 38";
-               visible = "1";
-               command = "EditAccountDlg.onDontUpdate();";
-               accelerator = "escape";
-               helpTag = "0";
-               text = "DON\'T UPDATE";
-               simpleStyle = "0";
-            };
-         };
+		      new GuiTextCtrl() {
+			      profile = "ShellTextRightProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "106 38";
+			      extent = "100 22";
+			      minExtent = "8 8";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      helpTag = "0";
+			      text = "Old Password:";
+			      maxLength = "255";
+		      };
+		      new ShellTextEditCtrl(EA_OldPassword) {
+			      profile = "NewTextEditProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "202 30";
+			      extent = "180 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      helpTag = "0";
+			      maxLength = "16";
+			      historySize = "0";
+			      password = "1";
+			      tabComplete = "0";
+			      deniedSound = "InputDeniedSound";
+			      glowOffset = "9 9";
+		      };
+		      new GuiTextCtrl() {
+			      profile = "ShellTextRightProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "106 80";
+			      extent = "100 22";
+			      minExtent = "8 8";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      helpTag = "0";
+			      text = "New Password:";
+			      maxLength = "255";
+		      };
+		      new GuiTextCtrl() {
+			      profile = "ShellTextRightProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "66 110";
+			      extent = "140 22";
+			      minExtent = "8 8";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      helpTag = "0";
+			      text = "Confirm New Password:";
+			      maxLength = "255";
+		      };
+		      new GuiTextCtrl() {
+			      profile = "ShellTextRightProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "44 154";
+			      extent = "73 22";
+			      minExtent = "8 8";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      helpTag = "0";
+			      text = "Email:";
+			      maxLength = "255";
+		      };
+		      new GuiLoginPasswordCtrl(EA_NewPassword) {
+			      profile = "NewTextEditProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "202 72";
+			      extent = "180 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      variable = "$CreateAccountPassword";
+			      helpTag = "0";
+			      maxLength = "16";
+			      historySize = "0";
+			      password = "1";
+			      tabComplete = "0";
+			      deniedSound = "InputDeniedSound";
+			      glowOffset = "9 9";
+		      };
+		      new ShellTextEditCtrl() {
+			      profile = "NewTextEditProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "202 102";
+			      extent = "180 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      variable = "$CreateAccountConfirmPassword";
+			      helpTag = "0";
+			      maxLength = "16";
+			      historySize = "0";
+			      password = "1";
+			      tabComplete = "0";
+			      deniedSound = "InputDeniedSound";
+			      glowOffset = "9 9";
+		      };
+		      new ShellTextEditCtrl() {
+			      profile = "NewTextEditProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "113 144";
+			      extent = "269 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      variable = "$CreateAccountEmail";
+			      helpTag = "0";
+			      maxLength = "128";
+			      historySize = "0";
+			      password = "0";
+			      tabComplete = "0";
+			      deniedSound = "InputDeniedSound";
+			      glowOffset = "9 9";
+		      };
+		      new ShellToggleButton() {
+			      profile = "ShellRadioProfile";
+			      horizSizing = "center";
+			      vertSizing = "top";
+			      position = "43 190";
+			      extent = "366 30";
+			      minExtent = "26 27";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      variable = "$CreateAccountSendInfo";
+			      helpTag = "0";
+			      text = "SEND ME INFORMATION ABOUT TRIBES 2 AND OTHER PRODUCTS";
+			      maxLength = "255";
+		      };
+		      new ShellBitmapButton() {
+			      profile = "ShellButtonProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "65 229";
+			      extent = "128 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      command = "EditAccountDlg.onDontUpdate();";
+			      accelerator = "escape";
+			      helpTag = "0";
+			      text = "CANCEL";
+			      simpleStyle = "0";
+		      };
+		      new ShellBitmapButton() {
+			      profile = "ShellButtonProfile";
+			      horizSizing = "right";
+			      vertSizing = "top";
+			      position = "259 229";
+			      extent = "128 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      hideCursor = "0";
+			      bypassHideCursor = "0";
+			      command = "EditAccountDlg.onUpdate();";
+			      helpTag = "0";
+			      text = "UPDATE";
+			      simpleStyle = "0";
+		      };
+	      };
       };
 
       // Create Account dialog:

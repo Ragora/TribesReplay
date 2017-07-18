@@ -54,6 +54,10 @@ function escapeFromGame()
 
 function toggleEditor(%make)
 {
+   //editor should not be available in the demo version
+   if (isDemo())
+      return;
+
    if(%make)
    {
       if(Canvas.getContent() == Editor.getId())
@@ -997,6 +1001,9 @@ moveMap.bind( keyboard, "backspace", fnDeclineTask );
 moveMap.bind( keyboard, "shift c", fnTaskCompleted );
 moveMap.bind( keyboard, "shift x", fnResetTaskList );
 
+// misc:
+moveMap.bind( keyboard, "ctrl n", toggleNetDisplayHud );
+
 //------------------------------------------------------------------------------
 // VOTING FUNCTIONS:
 function voteYes( %val )
@@ -1025,6 +1032,7 @@ observerMap.bind( keyboard, b, movedown );
 observerMap.bind( keyboard, space, jump );
 observerMap.bind( mouse, button0, mouseFire );
 observerMap.bind( mouse, button1, mouseJet );
+
 
 ///////////////////////
 // Vehicle Keys
@@ -1126,6 +1134,7 @@ function clientCmdSetDefaultVehicleKeys(%inVehicle)
       passengerKeys.bindCmd( keyboard, escape, "", "escapeFromGame();" );
       passengerKeys.copyBind( moveMap, toggleHelpGui );
       passengerKeys.copyBind( moveMap, toggleScoreScreen );
+      passengerKeys.copyBind( moveMap, toggleNetDisplayHud );
 
       // Bind the weapon keys as well:
       passengerKeys.copyBind( moveMap, nextWeapon );

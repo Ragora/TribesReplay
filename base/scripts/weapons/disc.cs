@@ -186,6 +186,11 @@ datablock ExplosionData(DiscExplosion)
    camShakeAmp = "20.0 20.0 20.0";
    camShakeDuration = 0.5;
    camShakeRadius = 10.0;
+
+   sizes[0] = "1.0 1.0 1.0";
+   sizes[1] = "1.0 1.0 1.0";
+   times[0] = 0.0;
+   times[1] = 1.0;
 };
 
 //--------------------------------------------------------------------------

@@ -183,7 +183,7 @@ datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
    isShielded = true;
    energyPerDamagePoint = 125;
    maxEnergy = 600;
-   jetForce = 2000;
+   jetForce = 2800;
    minJetEnergy = 60;
    jetEnergyDrain = 2.75;
    rechargeRate = 1.0;

@@ -67,7 +67,7 @@ function addGreenVoiceLine(%client, %line)
 			profile = "GuiDefaultProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			bitmap = "gui/hud_chat_button_on.png";
+			bitmap = "gui/hud_chat_button_on";
 			position = "0 0";
 			extent = "15 15";
 			visible = true;
@@ -108,7 +108,7 @@ function addRedVoiceLine(%client, %line)
 			profile = "GuiDefaultProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			bitmap = "gui/hud_chat_button_off.png";
+			bitmap = "gui/hud_chat_button_off";
 			position = "0 0";
 			extent = "15 15";
 			visible = true;
@@ -232,7 +232,8 @@ function voiceCapStart()
          {
             case 0:   %level = "Codec .v12";
             case 1:   %level = "Codec .v24";
-            default:  %level = "Codec .v29";
+            case 2:   %level = "Codec .v29";
+            default:  %level = "Codec GSM";
          }
 
          addMessageHudLine("\c2System:\cr server has voice level capped at [\c1" @ %level @ "\cr].");
@@ -317,6 +318,8 @@ function handleVoiceEnableMessage( %msgType, %msgString, %enabled, %who )
    {
       $PlayerList[%who].voiceEnabled = %enabled;
       lobbyUpdatePlayer( %who );
+      if ( $PlayingOnline && !$PlayerList[%who].isSmurf && $PlayerList[%who].guid > 0 )
+         setPlayerVoiceMuted( $PlayerList[%who].guid, !%enabled );
    }
 }
 

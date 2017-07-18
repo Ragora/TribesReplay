@@ -88,7 +88,7 @@ new GuiControl(ServerInfoDlg) {
 			};
 			new ShellScrollCtrl(SI_ContentScroll) {
 				profile = "NewScrollCtrlProfile";
-				horizSizing = "right";
+				horizSizing = "width";
 				vertSizing = "bottom";
 				position = "0 100";
 				extent = "336 162";
@@ -105,20 +105,20 @@ new GuiControl(ServerInfoDlg) {
 
 				new GuiScrollContentCtrl() {
 					profile = "GuiDefaultProfile";
-					horizSizing = "right";
+					horizSizing = "width";
 					vertSizing = "bottom";
 					position = "7 7";
-					extent = "322 174";
+					extent = "306 174";
 					minExtent = "8 8";
 					visible = "1";
 					helpTag = "0";
 
 					new GuiMLTextCtrl(SI_ContentWindow) {
 						profile = "InfoWindowProfile";
-						horizSizing = "right";
+						horizSizing = "width";
 						vertSizing = "bottom";
 						position = "0 0";
-						extent = "271 52";
+						extent = "306 52";
 						minExtent = "24 52";
 						visible = "1";
 						helpTag = "0";

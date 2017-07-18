@@ -199,6 +199,24 @@ function toggleCursorControl()
 if ( $platform $= "linux" )
    GlobalActionMap.bindCmd(keyboard, "ctrl g", "", "toggleCursorControl();");
 
+function toggleNetDisplayHud(%val)
+{
+   if(%val)
+   {
+      if(NetGraphHudFrame.isVisible())
+      {
+         NetGraphHudFrame.setVisible(false);
+         NetBarHudFrame.setVisible(true);
+      }
+      else if(NetBarHudFrame.isVisible())
+      {
+         NetBarHudFrame.setVisible(false);
+      }
+      else
+         NetGraphHudFrame.setVisible(true);
+   }
+}
+
 function PlayGui::onWake(%this)
 {
    // Make sure the shell hum is off:
@@ -221,6 +239,9 @@ function PlayGui::onWake(%this)
    // hack city - these controls are floating around and need to be clamped
    schedule(0, 0, "refreshCenterTextCtrl");
    schedule(0, 0, "refreshBottomTextCtrl");
+   
+   // update the network graph prefs
+   NetGraphHud.getPrefs();
 }
 
 function refreshBottomTextCtrl()
@@ -311,7 +332,9 @@ function onConnectionToServerTimedOut()
 function onConnectionToServerLost( %msg )
 {
    DisconnectedCleanup();
-   MessageBoxOK( "DISCONNECT", "Your connection to the server was lost." NL %msg);
+   if ( %msg $= "" )
+      %msg = "Your connection to the server was lost.";
+   MessageBoxOK( "DISCONNECTED", %msg );
 }
 
 // Client voting functions:
@@ -347,9 +370,55 @@ function ClientCmdVoteSubmitted(%type)
 }
 // End client voting functions.
 
+//--------------------------------------------------------------------------
+// Player pref functions:
+function getPlayerPrefs( %player )
+{
+   %voiceMuted = false;
+   if ( $PlayingOnline )
+   {
+      if ( !%player.isSmurf )
+      {
+         %record = queryPlayerDatabase( %player.guid );
+         if ( %record !$= "" )
+         {
+            if ( firstWord( %record ) == 1 )
+            {
+               %player.chatMuted = true;
+               commandToServer( 'TogglePlayerMute', %player.clientId );
+            }
+            
+            %voiceMuted = getWord( %record, 1 ) == 1;   
+         }
+      }
+      else
+         %voiceMuted = true;  // For now, automatically mute smurfs
+   }
+   
+   commandToServer( 'ListenTo', %player.clientId, !%voiceMuted, false ); 
+}
+
+//--------------------------------------------------------------------------
+function handlePlayerMuted( %msgType, %msgString, %name, %client, %mute )
+{
+   if ( isObject( $PlayerList[%client] ) )
+   {
+      $PlayerList[%client].chatMuted = %mute;
+      if ( $PlayingOnline && !$PlayerList[%client].isSmurf && $PlayerList[%client].guid > 0 )
+         setPlayerTextMuted( $PlayerList[%client].guid, %mute );
+   }
+}
+
+//--------------------------------------------------------------------------
 function clientCmdEndBomberSight()
 {
    PlayGui.remove($bombSightHud);
+}
+
+function clientCmdRemoveReticle()
+{
+   reticleHud.setBitmap("");
+   reticleFrameHud.setVisible(false);
 }
 
 function clientCmdSetBeaconNames(%target, %marker, %vehicle)
@@ -469,6 +538,103 @@ function clientCmdToggleDashHud(%val)
    dashboardHud.setVisible(%val);
 }
 
+function addEnergyGauge( %vehType )
+{
+   switch$ (%vehType)
+   {
+      case "Assault" or "Bomber":
+      dashboardHud.nrgBar = new HudBitmapCtrl(vEnergyFrame) {
+         profile = "GuiDashBoxProfile";
+         horizSizing = "right";
+         vertSizing = "top";
+         position = "160 80";
+         extent = "118 19";
+         minExtent = "8 8";
+         visible = "1";
+         bitmap = "gui/hud_veh_new_dashpiece_5";
+         opacity = "0.8";
+   
+         new HudEnergy(vEnergyBar) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "top";
+            position = "0 0";
+            extent = "118 19";
+            minExtent = "8 8";
+            visible = "1";
+            fillColor = "0.353000 0.373000 0.933000 0.800000";
+            frameColor = "0.000000 1.000000 0.000000 1.000000";
+            autoCenter = "0";
+            autoResize = "0";
+            displayMounted = true;
+            bitmap = "gui/hud_veh_new_dashpiece_5";
+            verticalFill = false;
+            subRegion = "4 5 98 5";
+            pulseRate = "500";
+            pulseThreshold = "0.3";
+            //modColor = "1.000000 0.500000 0.000000 1.000000";
+         };
+      
+         new HudCapacitor(vCapBar) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "top";
+            position = "0 8";
+            extent = "118 8";
+            minExtent = "8 8";
+            visible = "1";
+            fillColor = "1.000 0.729 0.301 0.800000";
+            frameColor = "0.000000 1.000000 0.000000 1.000000";
+            autoCenter = "0";
+            autoResize = "0";
+            displayMounted = true;
+            bitmap = "gui/hud_veh_new_dashpiece_5";
+            verticalFill = false;
+            subRegion = "4 5 98 5";
+            pulseRate = "500";
+            pulseThreshold = "0.3";
+            //modColor = "1.000000 0.500000 0.000000 1.000000";
+         };
+      };
+      dashboardHud.add(dashboardHud.nrgBar);
+
+      default:
+      dashboardHud.nrgBar = new HudBitmapCtrl(vEnergyFrame) {
+         profile = "GuiDashBoxProfile";
+         horizSizing = "right";
+         vertSizing = "top";
+         position = "160 80";
+         extent = "118 19";
+         minExtent = "8 8";
+         visible = "1";
+         bitmap = "gui/hud_veh_new_dashpiece_5";
+         opacity = "0.8";
+   
+         new HudEnergy(vEnergyBar) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "top";
+            position = "0 0";
+            extent = "118 19";
+            minExtent = "8 8";
+            visible = "1";
+            fillColor = "0.353000 0.373000 0.933000 0.800000";
+            frameColor = "0.000000 1.000000 0.000000 1.000000";
+            autoCenter = "0";
+            autoResize = "0";
+            displayMounted = true;
+            bitmap = "gui/hud_veh_new_dashpiece_5";
+            verticalFill = false;
+            subRegion = "4 5 98 10";
+            pulseRate = "500";
+            pulseThreshold = "0.3";
+            //modColor = "1.000000 0.500000 0.000000 1.000000";
+         };
+      };
+      dashboardHud.add(dashboardHud.nrgBar);
+   }
+}
+
 function clientCmdShowVehicleGauges(%vehType, %node)
 {
    //if(!((%vehType $= "Bomber" || %vehType $= "Assault") && %node > 0))
@@ -483,7 +649,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
          extent = "176 108";
          minExtent = "8 8";
          visible = "1";
-         bitmap = "gui/hud_veh_new_dash.png";
+         bitmap = "gui/hud_veh_new_dash";
          opacity = "0.8";
       };
       dashboardHud.add(dashboardHud.diagram);
@@ -501,39 +667,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
       };
       dashboardHud.add(dashboardHud.vehDiagram);
 
-      dashboardHud.nrgBar = new HudBitmapCtrl(vEnergyFrame) {
-         profile = "GuiDashBoxProfile";
-         horizSizing = "right";
-         vertSizing = "top";
-         position = "160 80";
-         extent = "118 19";
-         minExtent = "8 8";
-         visible = "1";
-         bitmap = "gui/hud_veh_new_dashpiece_5.png";
-         opacity = "0.8";
-
-         new HudEnergy(vEnergyBar) {
-            profile = "GuiDefaultProfile";
-            horizSizing = "right";
-            vertSizing = "top";
-            position = "0 0";
-            extent = "118 19";
-            minExtent = "8 8";
-            visible = "1";
-            fillColor = "0.353000 0.373000 0.933000 0.800000";
-            frameColor = "0.000000 1.000000 0.000000 1.000000";
-            autoCenter = "0";
-            autoResize = "0";
-            displayMounted = true;
-            bitmap = "gui/hud_veh_new_dashpiece_5.png";
-            verticalFill = false;
-            subRegion = "4 5 98 10";
-            pulseRate = "500";
-            pulseThreshold = "0.3";
-            //modColor = "1.000000 0.500000 0.000000 1.000000";
-         };
-      };
-      dashboardHud.add(dashboardHud.nrgBar);
+      addEnergyGauge( %vehType );
 
       dashboardHud.dmgBar = new HudBitmapCtrl(vDamageFrame) {
          profile = "GuiDashBoxProfile";
@@ -543,7 +677,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
          extent = "118 19";
          minExtent = "8 8";
          visible = "1";
-         bitmap = "gui/hud_veh_new_dashpiece_4.png";
+         bitmap = "gui/hud_veh_new_dashpiece_4";
          opacity = "0.8";
 
          new HudDamage(vDamageBar) {
@@ -556,7 +690,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
             visible = "1";
             fillColor = "0.000000 1.0000 0.000000 0.800000";
             frameColor = "0.000000 1.000000 0.000000 0.000000";
-            bitmap = "gui/hud_veh_new_dashpiece_4.png";
+            bitmap = "gui/hud_veh_new_dashpiece_4";
             verticalFill = false;
             displayMounted = true;
             opacity = "0.8";
@@ -605,7 +739,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
 
    switch$ (%vehType) {
       case "Shrike" :
-         vOverheadHud.setBitmap("gui/hud_veh_icon_shrike.png");
+         vOverheadHud.setBitmap("gui/hud_veh_icon_shrike");
          // add altitude box for flying vehicles
          dashboardHud.altBox = new HudBitmapCtrl(vAltitudeBox) {
             profile = "GuiDashBoxProfile";
@@ -614,7 +748,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
             position = "371 56";
             extent = "68 22";
             minExtent = "8 8";
-            bitmap = "gui/hud_veh_new_dashpiece_1.png";
+            bitmap = "gui/hud_veh_new_dashpiece_1";
             visible = "1";
             opacity = "0.8";
 
@@ -658,7 +792,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                position = "0 0";
                extent = "82 40";
                minExtent = "8 8";
-               bitmap = "gui/hud_veh_new_dashpiece_2.png";
+               bitmap = "gui/hud_veh_new_dashpiece_2";
                visible = "1";
                opacity = "0.8";
 
@@ -669,7 +803,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   position = "28 6";
                   extent = "25 25";
                   minExtent = "8 8";
-                  bitmap = "gui/hud_blaster.png";
+                  bitmap = "gui/hud_blaster";
                   visible = "1";
                   opacity = "0.8";
                };
@@ -677,7 +811,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
          };
          dashboardHud.add(dashboardHud.weapon);
          // change to shrike reticle
-         reticleHud.setBitmap("gui/hud_ret_shrike.png");
+         reticleHud.setBitmap("gui/hud_ret_shrike");
          reticleFrameHud.setVisible(false);
 
       case "Bomber" :
@@ -701,7 +835,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "80 44";
                   minExtent = "8 8";
                   visible = "1";
-                  bitmap = "gui/hud_veh_new_hilite_left.png";
+                  bitmap = "gui/hud_veh_new_hilite_left";
                   opacity = "0.3";
                };
                new HudBitmapCtrl(vWeap2Hilite) {
@@ -712,7 +846,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "80 44";
                   minExtent = "8 8";
                   visible = "0";
-                  bitmap = "gui/hud_veh_new_hilite_right.png";
+                  bitmap = "gui/hud_veh_new_hilite_right";
                   opacity = "0.3";
                };
                new HudBitmapCtrl(vWeap3Hilite) {
@@ -723,7 +857,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "40 44";
                   minExtent = "8 8";
                   visible = "0";
-                  bitmap = "gui/hud_veh_new_hilite_middle.png";
+                  bitmap = "gui/hud_veh_new_hilite_middle";
                   opacity = "0.3";
                };
 
@@ -735,7 +869,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "200 40";
                   minExtent = "8 8";
                   visible = "1";
-                  bitmap = "gui/hud_veh_new_bombardier_dash.png";
+                  bitmap = "gui/hud_veh_new_bombardier_dash";
                   opacity = "1.0";
 
                   new HudBitmapCtrl(vWeaponOne) {
@@ -746,7 +880,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                      extent = "25 25";
                      minExtent = "8 8";
                      visible = "1";
-                     bitmap = "gui/hud_blaster.png";
+                     bitmap = "gui/hud_blaster";
                   };
 
                   new HudBitmapCtrl(vWeaponTwo) {
@@ -757,7 +891,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                      extent = "25 25";
                      minExtent = "8 8";
                      visible = "1";
-                     bitmap = "gui/hud_targetlaser.png";
+                     bitmap = "gui/hud_targetlaser";
                   };
 
                   new HudBitmapCtrl(vWeaponThree) {
@@ -768,7 +902,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                      extent = "25 25";
                      minExtent = "8 8";
                      visible = "1";
-                     bitmap = "gui/hud_veh_bomb.png";
+                     bitmap = "gui/hud_veh_bomb";
                   };
                };
             };
@@ -783,7 +917,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                minExtent = "8 8";
                visible = "1";
                flipVertical = true;
-               bitmap = "gui/hud_veh_new_dashpiece_5.png";
+               bitmap = "gui/hud_veh_new_dashpiece_5";
                opacity = "0.8";
 
                new HudEnergy(vEnergyBar) {
@@ -799,9 +933,29 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   autoCenter = "0";
                   autoResize = "0";
                   displayMounted = true;
-                  bitmap = "gui/hud_veh_new_dashpiece_5.png";
+                  bitmap = "gui/hud_veh_new_dashpiece_5";
                   verticalFill = false;
-                  subRegion = "4 5 98 10";
+                  subRegion = "4 5 98 5";
+                  pulseRate = "500";
+                  pulseThreshold = "0.3";
+                  //modColor = "1.000000 0.500000 0.000000 1.000000";
+               };
+               new HudCapacitor(vCapBar) {
+                  profile = "GuiDefaultProfile";
+                  horizSizing = "right";
+                  vertSizing = "top";
+                  position = "0 8";
+                  extent = "118 8";
+                  minExtent = "8 8";
+                  visible = "1";
+                  fillColor = "1.000 0.729 0.301 0.800000";
+                  frameColor = "0.000000 1.000000 0.000000 1.000000";
+                  autoCenter = "0";
+                  autoResize = "0";
+                  displayMounted = true;
+                  bitmap = "gui/hud_veh_new_dashpiece_5";
+                  verticalFill = false;
+                  subRegion = "4 5 98 5";
                   pulseRate = "500";
                   pulseThreshold = "0.3";
                   //modColor = "1.000000 0.500000 0.000000 1.000000";
@@ -818,7 +972,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                minExtent = "8 8";
                visible = "1";
                flipVertical = true;
-               bitmap = "gui/hud_veh_new_dashpiece_4.png";
+               bitmap = "gui/hud_veh_new_dashpiece_4";
                opacity = "0.8";
 
                new HudDamage(vDamageBar) {
@@ -831,7 +985,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   visible = "1";
                   fillColor = "0.000000 1.0000 0.000000 0.800000";
                   frameColor = "0.000000 1.000000 0.000000 0.000000";
-                  bitmap = "gui/hud_veh_new_dashpiece_4.png";
+                  bitmap = "gui/hud_veh_new_dashpiece_4";
                   verticalFill = false;
                   displayMounted = true;
                   opacity = "0.8";
@@ -843,13 +997,13 @@ function clientCmdShowVehicleGauges(%vehType, %node)
             };
             dashboardHud.add(dashboardHud.dmgBar);
             $numVWeapons = 3;
-            reticleHud.setBitmap("gui/hud_ret_shrike.png");
+            reticleHud.setBitmap("gui/hud_ret_shrike");
             reticleFrameHud.setVisible(false);
          }
          else if(%node == 0)
          {
             // pilot dashboard hud
-            vOverheadHud.setBitmap("gui/hud_veh_icon_bomber.png");
+            vOverheadHud.setBitmap("gui/hud_veh_icon_bomber");
             // add altitude box for flying vehicles
             dashboardHud.altBox = new HudBitmapCtrl(vAltitudeBox) {
                profile = "GuiDashBoxProfile";
@@ -858,7 +1012,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                position = "371 56";
                extent = "68 22";
                minExtent = "8 8";
-               bitmap = "gui/hud_veh_new_dashpiece_1.png";
+               bitmap = "gui/hud_veh_new_dashpiece_1";
                visible = "1";
                opacity = "0.8";
 
@@ -897,7 +1051,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                extent = "128 128";
                minExtent = "8 8";
                visible = "1";
-               bitmap = "gui/hud_veh_icon_bomber.png";
+               bitmap = "gui/hud_veh_icon_bomber";
                opacity = "1.0";
             };
             dashboardHud.add(dashboardHud.vehDiagram);
@@ -910,7 +1064,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                extent = "118 19";
                minExtent = "8 8";
                visible = "1";
-               bitmap = "gui/hud_veh_new_dashpiece_5.png";
+               bitmap = "gui/hud_veh_new_dashpiece_5";
                flipVertical = true;
                opacity = "0.8";
 
@@ -927,7 +1081,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   autoCenter = "0";
                   autoResize = "0";
                   displayMounted = true;
-                  bitmap = "gui/hud_veh_new_dashpiece_5.png";
+                  bitmap = "gui/hud_veh_new_dashpiece_5";
                   verticalFill = false;
                   subRegion = "4 5 98 10";
                   pulseRate = "500";
@@ -944,7 +1098,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                extent = "118 19";
                minExtent = "8 8";
                visible = "1";
-               bitmap = "gui/hud_veh_new_dashpiece_4.png";
+               bitmap = "gui/hud_veh_new_dashpiece_4";
                flipVertical = true;
                opacity = "0.8";
 
@@ -958,7 +1112,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   visible = "1";
                   fillColor = "0.000000 1.0000 0.000000 0.800000";
                   frameColor = "0.000000 1.000000 0.000000 0.000000";
-                  bitmap = "gui/hud_veh_new_dashpiece_4.png";
+                  bitmap = "gui/hud_veh_new_dashpiece_4";
                   verticalFill = false;
                   displayMounted = true;
                   opacity = "0.8";
@@ -989,7 +1143,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "10 10";
                   minExtent = "3 3";
                   visible = "0";
-                  bitmap = "gui/hud_veh_seatdot.png";
+                  bitmap = "gui/hud_veh_seatdot";
                };
                new GuiBitmapCtrl(vPassenger1Slot) {
                   profile = "GuiDashBoxProfile";
@@ -999,7 +1153,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "10 10";
                   minExtent = "3 3";
                   visible = "0";
-                  bitmap = "gui/hud_veh_seatdot.png";
+                  bitmap = "gui/hud_veh_seatdot";
                };
                new GuiBitmapCtrl(vPassenger2Slot) {
                   profile = "GuiDashBoxProfile";
@@ -1009,7 +1163,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "10 10";
                   minExtent = "3 3";
                   visible = "0";
-                  bitmap = "gui/hud_veh_seatdot.png";
+                  bitmap = "gui/hud_veh_seatdot";
                };
             };
             vOverheadHud.add(vOverheadHud.passengerHud);
@@ -1017,7 +1171,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
       case "HAPC" :
          if(%node == 0)
          {
-            vOverheadHud.setBitmap("gui/hud_veh_icon_hapc.png");
+            vOverheadHud.setBitmap("gui/hud_veh_icon_hapc");
             // add altitude box for flying vehicles
             dashboardHud.altBox = new HudBitmapCtrl(vAltitudeBox) {
                profile = "GuiDashBoxProfile";
@@ -1026,7 +1180,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                position = "371 56";
                extent = "68 22";
                minExtent = "8 8";
-               bitmap = "gui/hud_veh_new_dashpiece_1.png";
+               bitmap = "gui/hud_veh_new_dashpiece_1";
                visible = "1";
                opacity = "0.8";
 
@@ -1067,7 +1221,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                extent = "128 128";
                minExtent = "8 8";
                visible = "1";
-               bitmap = "gui/hud_veh_icon_hapc.png";
+               bitmap = "gui/hud_veh_icon_hapc";
                opacity = "1.0";
             };
             dashboardHud.add(dashboardHud.vehDiagram);
@@ -1080,7 +1234,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                extent = "118 19";
                minExtent = "8 8";
                visible = "1";
-               bitmap = "gui/hud_veh_new_dashpiece_5.png";
+               bitmap = "gui/hud_veh_new_dashpiece_5";
                flipVertical = true;
                opacity = "0.8";
 
@@ -1097,7 +1251,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   autoCenter = "0";
                   autoResize = "0";
                   displayMounted = true;
-                  bitmap = "gui/hud_veh_new_dashpiece_5.png";
+                  bitmap = "gui/hud_veh_new_dashpiece_5";
                   verticalFill = false;
                   subRegion = "4 5 98 10";
                   pulseRate = "500";
@@ -1114,7 +1268,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                extent = "118 19";
                minExtent = "8 8";
                visible = "1";
-               bitmap = "gui/hud_veh_new_dashpiece_4.png";
+               bitmap = "gui/hud_veh_new_dashpiece_4";
                flipVertical = true;
                opacity = "0.8";
 
@@ -1128,7 +1282,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   visible = "1";
                   fillColor = "0.000000 1.0000 0.000000 0.800000";
                   frameColor = "0.000000 1.000000 0.000000 0.000000";
-                  bitmap = "gui/hud_veh_new_dashpiece_4.png";
+                  bitmap = "gui/hud_veh_new_dashpiece_4";
                   verticalFill = false;
                   displayMounted = true;
                   opacity = "0.8";
@@ -1162,7 +1316,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                visible = "0";
                setFirstResponder = "0";
                modal = "1";
-               bitmap = "gui/hud_veh_seatdot.png";
+               bitmap = "gui/hud_veh_seatdot";
                wrap = "0";
             };
             new GuiBitmapCtrl(vPassenger1Slot) {
@@ -1175,7 +1329,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                visible = "0";
                setFirstResponder = "0";
                modal = "1";
-               bitmap = "gui/hud_veh_seatdot.png";
+               bitmap = "gui/hud_veh_seatdot";
                wrap = "0";
             };
             new GuiBitmapCtrl(vPassenger2Slot) {
@@ -1188,7 +1342,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                visible = "0";
                setFirstResponder = "0";
                modal = "1";
-               bitmap = "gui/hud_veh_seatdot.png";
+               bitmap = "gui/hud_veh_seatdot";
                wrap = "0";
             };
             new GuiBitmapCtrl(vPassenger3Slot) {
@@ -1201,7 +1355,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                visible = "0";
                setFirstResponder = "0";
                modal = "1";
-               bitmap = "gui/hud_veh_seatdot.png";
+               bitmap = "gui/hud_veh_seatdot";
                wrap = "0";
             };
             new GuiBitmapCtrl(vPassenger4Slot) {
@@ -1214,7 +1368,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                visible = "0";
                setFirstResponder = "0";
                modal = "1";
-               bitmap = "gui/hud_veh_seatdot.png";
+               bitmap = "gui/hud_veh_seatdot";
                wrap = "0";
             };
             new GuiBitmapCtrl(vPassenger5Slot) {
@@ -1227,7 +1381,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                visible = "0";
                setFirstResponder = "0";
                modal = "1";
-               bitmap = "gui/hud_veh_seatdot.png";
+               bitmap = "gui/hud_veh_seatdot";
                wrap = "0";
             };
          };
@@ -1254,7 +1408,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "80 44";
                   minExtent = "8 8";
                   visible = "1";
-                  bitmap = "gui/hud_veh_new_hilite_left.png";
+                  bitmap = "gui/hud_veh_new_hilite_left";
                   opacity = "0.4";
                };
                new HudBitmapCtrl(vWeap2Hilite) {
@@ -1265,7 +1419,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "80 44";
                   minExtent = "8 8";
                   visible = "0";
-                  bitmap = "gui/hud_veh_new_hilite_right.png";
+                  bitmap = "gui/hud_veh_new_hilite_right";
                   opacity = "0.4";
                };
 
@@ -1277,7 +1431,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "152 36";
                   minExtent = "8 8";
                   visible = "1";
-                  bitmap = "gui/hud_veh_new_tankgunner_dash.png";
+                  bitmap = "gui/hud_veh_new_tankgunner_dash";
                   opacity = "0.8";
 
                   new HudBitmapCtrl(vWeaponOne) {
@@ -1288,7 +1442,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                      extent = "25 25";
                      minExtent = "8 8";
                      visible = "1";
-                     bitmap = "gui/hud_chaingun.png";
+                     bitmap = "gui/hud_chaingun";
                   };
 
                   new HudBitmapCtrl(vWeaponTwo) {
@@ -1299,7 +1453,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                      extent = "25 25";
                      minExtent = "8 8";
                      visible = "1";
-                     bitmap = "gui/hud_mortor.png";
+                     bitmap = "gui/hud_mortor";
                   };
                };
             };
@@ -1314,7 +1468,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                minExtent = "8 8";
                visible = "1";
                flipVertical = true;
-               bitmap = "gui/hud_veh_new_dashpiece_5.png";
+               bitmap = "gui/hud_veh_new_dashpiece_5";
                opacity = "0.8";
 
                new HudEnergy(vEnergyBar) {
@@ -1330,9 +1484,29 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   autoCenter = "0";
                   autoResize = "0";
                   displayMounted = true;
-                  bitmap = "gui/hud_veh_new_dashpiece_5.png";
+                  bitmap = "gui/hud_veh_new_dashpiece_5";
                   verticalFill = false;
-                  subRegion = "4 5 98 10";
+                  subRegion = "4 5 98 5";
+                  pulseRate = "500";
+                  pulseThreshold = "0.3";
+                  //modColor = "1.000000 0.500000 0.000000 1.000000";
+               };
+               new HudCapacitor(vCapBar) {
+                  profile = "GuiDefaultProfile";
+                  horizSizing = "right";
+                  vertSizing = "top";
+                  position = "0 8";
+                  extent = "118 8";
+                  minExtent = "8 8";
+                  visible = "1";
+                  fillColor = "1.000 0.729 0.301 0.800000";
+                  frameColor = "0.000000 1.000000 0.000000 1.000000";
+                  autoCenter = "0";
+                  autoResize = "0";
+                  displayMounted = true;
+                  bitmap = "gui/hud_veh_new_dashpiece_5";
+                  verticalFill = false;
+                  subRegion = "4 5 98 5";
                   pulseRate = "500";
                   pulseThreshold = "0.3";
                   //modColor = "1.000000 0.500000 0.000000 1.000000";
@@ -1349,7 +1523,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                minExtent = "8 8";
                visible = "1";
                flipVertical = true;
-               bitmap = "gui/hud_veh_new_dashpiece_4.png";
+               bitmap = "gui/hud_veh_new_dashpiece_4";
                opacity = "0.8";
 
                new HudDamage(vDamageBar) {
@@ -1362,7 +1536,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   visible = "1";
                   fillColor = "0.000000 1.0000 0.000000 0.800000";
                   frameColor = "0.000000 1.000000 0.000000 0.000000";
-                  bitmap = "gui/hud_veh_new_dashpiece_4.png";
+                  bitmap = "gui/hud_veh_new_dashpiece_4";
                   verticalFill = false;
                   displayMounted = true;
                   opacity = "0.8";
@@ -1376,13 +1550,13 @@ function clientCmdShowVehicleGauges(%vehType, %node)
 
             $numVWeapons = 2;
             // add tank chaingun reticle
-            reticleHud.setBitmap("gui/hud_ret_tankchaingun.png");
+            reticleHud.setBitmap("gui/hud_ret_tankchaingun");
             reticleFrameHud.setVisible(false);
          }
          else
          {
             // node 0 == driver
-            vOverheadHud.setBitmap("gui/hud_veh_icon_assault.png");
+            vOverheadHud.setBitmap("gui/hud_veh_icon_assault");
             // passenger slot "dots"
             vOverheadHud.passengerHud = new GuiControl(vPassengerHud) {
                profile = "GuiDashBoxProfile";
@@ -1401,7 +1575,7 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "10 10";
                   minExtent = "3 3";
                   visible = "0";
-                  bitmap = "gui/hud_veh_seatdot.png";
+                  bitmap = "gui/hud_veh_seatdot";
                };
                new GuiBitmapCtrl(vPassenger1Slot) {
                   profile = "GuiDashBoxProfile";
@@ -1411,17 +1585,17 @@ function clientCmdShowVehicleGauges(%vehType, %node)
                   extent = "10 10";
                   minExtent = "3 3";
                   visible = "0";
-                  bitmap = "gui/hud_veh_seatdot.png";
+                  bitmap = "gui/hud_veh_seatdot";
                };
             };
             vOverheadHud.add(vOverheadHud.passengerHud);
          }
 
       case "Hoverbike" :
-         vOverheadHud.setBitmap("gui/hud_veh_icon_hoverbike.png");
+         vOverheadHud.setBitmap("gui/hud_veh_icon_hoverbike");
 
       case "MPB" :
-         vOverheadHud.setBitmap("gui/hud_veh_icon_mpb.png");
+         vOverheadHud.setBitmap("gui/hud_veh_icon_mpb");
 
    }
    if(%node == 0)
@@ -1519,6 +1693,7 @@ addMessageCallback( 'msgDeploySensorGrn', clientDeploySensorGrn );
 addMessageCallback( 'msgDeploySensorOff', clientDeploySensorOff );
 addMessageCallback( 'msgPackIconOff', clientPackIconOff );
 addMessageCallback( 'MsgForceObserver', HandleForceObserver );
+addMessageCallback( 'MsgPlayerMuted', handlePlayerMuted );
 
 function HandleForceObserver( %msgType, %msgString )
 {
@@ -1528,13 +1703,11 @@ function HandleForceObserver( %msgType, %msgString )
 function handleIveBeenBanned(%msgType, %msgString)
 {
    DisconnectedCleanup();
-   MessageBoxOk( "DISCONNECT", "You have been banned from this server.", "Disconnect();");
 }
 
 function handleIveBeenKicked(%msgType, %msgString)
 {
    DisconnectedCleanup();
-   MessageBoxOk( "DISCONNECT", "You have been kicked out of the game.", "Disconnect();");
 }
 
 function clientDeploySensorRed()
@@ -1774,34 +1947,6 @@ function ClientReceivedDataBlock(%index, %total)
    LoadingProgress.setValue( %pct );
    LoadingProgress.setValue( %pct );
    Canvas.repaint();
-}
-
-function GameConnection::setLagIcon(%conn, %state)
-{
-   if(%conn.getAddress() $= "Local")
-      return;
-
-   if (%state $= "true")
-      $showLagIcon = true;
-   else
-      $showLagIcon = false;
-
-   //if both icons are not visible, then don't do anything... (probably the F2 score or inv screen is up...)
-   if (!clockHud.isVisible() && !lagHudIndicator.isVisible())
-      return;
-
-   if (%state $= "true") 
-   {  
-      clockHud.setVisible(false);
-      lagHudIndicator.setVisible(true);
-   }
-   else
-   {
-      clockHud.setVisible(true);
-      lagHudIndicator.setVisible(false);
-   }
-
-   sensorHud.update();
 }
 
 function GameConnection::onTargetLocked( %con, %state )

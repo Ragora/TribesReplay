@@ -337,13 +337,19 @@ function clearGameTypes()
    %text = FilterEditGameType.getText();
    FilterEditGameType.clear();
    FilterEditGameType.add( "Any", 0 );
+   FilterEditGameType.add( "base", 1 );
+   FilterEditGameType.add( "variant", 2 );
    FilterEditGameType.setText( %text );
 }
 
 //------------------------------------------------------------------------------
 function addGameType( %type )
 {
-   FilterEditGameType.add( %type, 0 );
+   if ( FilterEditGameType.findText( %type ) == -1 )
+   {
+      %id = FilterEditGameType.size();
+      FilterEditGameType.add( %type, %id );
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -353,17 +359,33 @@ function clearMissionTypes()
    FilterEditMissionType.clear();
    FilterEditMissionType.add( "Any", 0 );
    FilterEditMissionType.setText( %text );
-
+   
    // Add all the mission types found on this machine:
    for ( %i = 0; %i < $HostTypeCount; %i++ )
-      FilterEditMissionType.add( $HostTypeDisplayName[%i], %i );
+      FilterEditMissionType.add( $HostTypeDisplayName[%i], %i + 1 );
 }
 
 //------------------------------------------------------------------------------
 function addMissionType(%type)
 {
    if ( %type !$= "" && FilterEditMissionType.findText( %type ) == -1 )
-      FilterEditMissionType.add( %type, 0 );
+   {
+      %id = FilterEditMissionType.size();
+      FilterEditMissionType.add( %type, %id );
+   }
+}
+
+//------------------------------------------------------------------------------
+function sortGameAndMissionTypeLists()
+{
+   FilterEditGameType.sort( true, 3 );
+   %idx = FilterEditGameType.findText( FilterEditGameType.getText() );
+   if ( %idx > -1 )
+      FilterEditGameType.setSelected( %idx );
+   FilterEditMissionType.sort( true, 1 );
+   %idx = FilterEditMissionType.findText( FilterEditMissionType.getText() );
+   if ( %idx > -1 )
+      FilterEditMissionType.setSelected( %idx );
 }
 
 //------------------------------------------------------------------------------

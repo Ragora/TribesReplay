@@ -383,7 +383,7 @@ function EditChatCommandDlg::onWake( %this )
       if ( isObject( $ChatTable[%i] ) )
          EditChatCommandList.add( $ChatTable[%i].name, %i );
    }
-   EditChatCommandList.sort();
+   EditChatCommandList.sort( true );
 
    // Select the current command:
    if ( isObject( $ChatTable[$ECI::command] ) )

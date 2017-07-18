@@ -1,26 +1,26 @@
-$teamSkin[0] = 'blank';
-$teamSkin[1] = 'base';
-$teamSkin[2] = 'baseb';
-$teamSkin[3] = 'swolf';
-$teamSkin[4] = 'dsword';
-$teamSkin[5] = 'beagle';
-$teamSkin[6] = 'cotp';
+$Host::teamSkin[0] = "blank";
+$Host::teamSkin[1] = "base";
+$Host::teamSkin[2] = "baseb";
+$Host::teamSkin[3] = "swolf";
+$Host::teamSkin[4] = "dsword";
+$Host::teamSkin[5] = "beagle";
+$Host::teamSkin[6] = "cotp";
 
-$teamName[0] = 'Unassigned';
-$teamName[1] = 'Storm';
-$teamName[2] = 'Inferno';
-$teamName[3] = 'Star Wolf';
-$teamName[4] = 'Diamond Sword';
-$teamName[5] = 'Blood Eagle';
-$teamName[6] = 'Phoenix';
+$Host::teamName[0] = "Unassigned";
+$Host::teamName[1] = "Storm";
+$Host::teamName[2] = "Inferno";
+$Host::teamName[3] = "Star Wolf";
+$Host::teamName[4] = "Diamond Sword";
+$Host::teamName[5] = "Blood Eagle";
+$Host::teamName[6] = "Phoenix";
 
-$holoName[0] = "";
-$holoName[1] = "Storm";
-$holoName[2] = "Inferno";
-$holoName[3] = "Starwolf";
-$holoName[4] = "DSword";
-$holoName[5] = "BloodEagle";
-$holoName[6] = "Harbinger";
+$Host::holoName[0] = "";
+$Host::holoName[1] = "Storm";
+$Host::holoName[2] = "Inferno";
+$Host::holoName[3] = "Starwolf";
+$Host::holoName[4] = "DSword";
+$Host::holoName[5] = "BloodEagle";
+$Host::holoName[6] = "Harbinger";
                   
 $Host::AdminList = "";       // all players that will be automatically an admin upon joining server
 $Host::SuperAdminList = "";  // all players that will be automatically a super admin upon joining server               
@@ -29,9 +29,13 @@ $Host::Port = 28000;
 $Host::GameName = "Tribes 2 Server";
 $Host::Password = "";
 $Host::AdminPassword = "";
+$Host::PureServer = 1;
 $Host::Dedicated = 0;
 $Host::MissionType = "CTF";
-$Host::Map = "Katabatic";
+if (!isDemo())
+   $Host::Map = "Katabatic";
+else
+   $Host::Map = "SlapDash";
 $Host::MaxPlayers = 64;
 $Host::TimeLimit = 30;
 $Host::BotCount = 2;
@@ -40,7 +44,7 @@ $Host::MinBotDifficulty = 0.5;
 $Host::MaxBotDifficulty = 0.75;
 $Host::Info = "This is a Tribes 2 Server.";
 $Host::NoSmurfs = 0;
-$Host::VoteTime = 20;               // amount of time before votes are calculated
+$Host::VoteTime = 30;               // amount of time before votes are calculated
 $Host::VotePassPercent = 60;        // percent needed to pass a vote
 $Host::KickBanTime = 300;           // specified in seconds
 $Host::BanTime = 1800;              // specified in seconds
@@ -56,7 +60,8 @@ $Host::TeamDamageOn = 0;
 $MasterServerAddress = "IP:198.74.40.152:28000";
 
 // 0: .v12 (1.2 kbits/sec), 1: .v24 (2.4 kbits/sec), 2: .v29 (2.9kbits/sec)
-$Audio::maxEncodingLevel = 2;
+// 3:  GSM (6.6 kbits/sec)
+$Audio::maxEncodingLevel = 3;
 $Audio::maxVoiceChannels = 2;
 
 $Host::MapPlayerLimits["Abominable", "CnH"] = "-1 32";

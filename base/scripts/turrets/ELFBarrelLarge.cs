@@ -74,6 +74,8 @@ datablock TurretImageData(ELFBarrelLarge)
    degPerSecPhi      = 960;
    attackRadius      = 75;
 
+   yawVariance          = 30.0; // these will smooth out the elf tracking code.
+   pitchVariance        = 30.0; // more or less just tolerances
    
    // State transiltions
    stateName[0]                        = "Activate";

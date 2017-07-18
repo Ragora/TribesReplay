@@ -180,11 +180,20 @@ function createVehicle(%client, %station, %blockName, %team , %pos, %rot, %angle
 //------------------------------------------------------------------------------
 function VehicleData::mountDriver(%data, %obj, %player)
 {
-   %player.startFade(1000, 0, true);
- 
-   %player.getDataBlock().schedule(1000,"onCollision",%player, %obj, 0);
-   %player.schedule(1500,"startFade",1000, 0, false);
+   if(isObject(%obj) && %obj.getDamageState() !$= "Destroyed")
+   {
+      %player.startFade(1000, 0, true);
+      schedule(1000, 0, "testVehicleForMount", %player, %obj);
+      %player.schedule(1500,"startFade",1000, 0, false);
+   }
 }
+
+function testVehicleForMount(%player, %obj)
+{
+   if(isObject(%obj) && %obj.getDamageState() !$= "Destroyed")
+      %player.getDataBlock().onCollision(%player, %obj, 0);
+}
+
 
 //------------------------------------------------------------------------------
 function VehicleData::checkIfPlayersMounted(%data, %obj)

@@ -146,6 +146,10 @@ function CTFGame::missionLoadDone(%game)
 
    // remove 
    MissionGroup.clearFlagWaypoints();
+
+   //reset some globals, just in case...
+	$dontScoreTimer[1] = false;
+	$dontScoreTimer[2] = false;
 }
 
 function CTFGame::playerTouchFlag(%game, %player, %flag)
@@ -212,6 +216,7 @@ function CTFGame::playerTouchEnemyFlag(%game, %player, %flag)
    }
 
    %flag.hide(true);
+   %flag.startFade(0, 0, false);         
    %flag.isHome = false;
    if(%flag.stand)
       %flag.stand.getDataBlock().onFlagTaken(%flag.stand);//animate, if exterior stand
@@ -675,7 +680,10 @@ function CTFGame::awardScoreFlagTouch(%game, %cl, %flag)
 		return;
 
 	$dontScoreTimer[%team] = true;
-	schedule(%game.TOUCH_DELAY_MS, 0, eval, "$dontScoreTimer["@%team@"] = false;");
+   //tinman - needed to remove all game calls to "eval" for the PURE server...
+   %game.schedule(%game.TOUCH_DELAY_MS, resetDontScoreTimer, %team);
+	//schedule(%game.TOUCH_DELAY_MS, 0, eval, "$dontScoreTimer["@%team@"] = false;");
+	//schedule(%game.TOUCH_DELAY_MS, 0, eval, "$dontScoreTimer["@%team@"] = false;");
    $TeamScore[%team] += %game.SCORE_PER_TEAM_FLAG_TOUCH;
    messageAll('MsgTeamScoreIs', "", %team, $TeamScore[%team]);
 
@@ -687,6 +695,11 @@ function CTFGame::awardScoreFlagTouch(%game, %cl, %flag)
    }
    %game.recalcScore(%cl);
    %game.checkScoreLimit(%team);
+}
+
+function CTFGame::resetDontScoreTimer(%game, %team)
+{
+   $dontScoreTimer[%team] = false;
 }
 
 function CTFGame::checkScoreLimit(%game, %team)
@@ -848,6 +861,9 @@ function CTFGame::vStationOnRepaired(%game, %obj, %objName)
 
 function CTFGame::enterMissionArea(%game, %playerData, %player)
 {
+   if(%player.getState() $= "Dead")
+      return;
+
    %player.client.outOfBounds = false; 
    messageClient(%player.client, 'EnterMissionArea', '\c1You are back in the mission area.');
    logEcho(%player.client.nameBase@" (pl "@%player@"/cl "@%player.client@") entered mission area");
@@ -862,6 +878,9 @@ function CTFGame::enterMissionArea(%game, %playerData, %player)
 
 function CTFGame::leaveMissionArea(%game, %playerData, %player)
 {
+   if(%player.getState() $= "Dead")
+      return;
+   
    // maybe we'll do this just in case
    %player.client.outOfBounds = true;
    // if the player is holding a flag, strip it and throw it back into the mission area
@@ -925,3 +944,61 @@ function CTFGame::applyConcussion(%game, %player)
    %game.dropFlag( %player );
 }
 
+function CTFGame::vehicleDestroyed(%game, %vehicle, %destroyer)
+{
+    //vehicle name
+    %data = %vehicle.getDataBlock();
+    //%vehicleType = getTaggedString(%data.targetNameTag) SPC getTaggedString(%data.targetTypeTag);
+    %vehicleType = getTaggedString(%data.targetTypeTag);
+    if(%vehicleType !$= "MPB")
+        %vehicleType = strlwr(%vehicleType);
+    %pref = (%vehicleType $= "Assault Tank") ? "an" : "a";
+    
+    %enemyTeam = ( %destroyer.team == 1 ) ? 2 : 1;
+    
+    //what destroyed this vehicle
+    if(%destroyer.client)
+    {
+        //it was a player, or his mine, satchel, whatever...
+        %destroyer = %destroyer.client;
+    }    
+    else if(%destroyer.getClassName() $= "Turret")
+    {
+        if(%destroyer.getControllingClient())
+        {
+            //manned turret
+            %destroyer = %destroyer.getControllingClient();
+        }
+        else 
+        {
+            %destroyerName = "A turret";
+        }
+    }    
+    else if(%destroyer.getDataBlock().catagory $= "Vehicles")
+    {
+        // Vehicle vs vehicle kill!
+        if(%name $= "BomberFlyer" || %name $= "AssaultVehicle")
+            %gunnerNode = 1;
+        else
+            %gunnerNode = 0;
+        
+        if(%destroyer.getMountNodeObject(%gunnerNode))
+            %destroyer = %destroyer.getMountNodeObject(gunnerNode).client;
+    }
+    else  // Is there anything else we care about?
+        return;
+
+    
+    if(%destroyerName $= "")
+        %destroyerName = %destroyer.name;
+        
+    if(%vehicle.team == %destroyer.team) // team kill  
+        messageAll( 'msgVehicleTeamDestroy', '\c0%1 TEAMKILLED %3 %2!', %destroyerName, %vehicleType, %pref);
+        
+    else // legit kill
+    {
+        messageTeamExcept(%destroyer, 'msgVehicleDestroy', '\c0%1 destroyed an enemy %2.', %destroyerName, %vehicleType);
+        messageTeam(%enemyTeam, 'msgVehicleDestroy', '\c0%1 destroyed your team\'s %2.', %destroyerName, %vehicleType);
+        messageClient(%destroyer, 'msgVehicleDestroy', '\c0You destroyed an enemy %1.', %vehicleType);
+    }
+}

@@ -33,10 +33,10 @@ $NotDeployableReason::NoInteriorFound           =  7;
 $NotDeployableReason::TurretTooClose            =  8;
 $NotDeployableReason::TurretSaturation          =  9;
 $NotDeployableReason::SurfaceTooNarrow          =  10;
-$NotDeployableReason::InventoryTooClose            =  11;
+$NotDeployableReason::InventoryTooClose         =  11;
 
-$MinDeployableDistance                       =   0.5;
-$MaxDeployableDistance                       =  4.0;  //meters from body
+$MinDeployableDistance                       =  2.5;
+$MaxDeployableDistance                       =  5.0;  //meters from body
 
 
 // --------------------------------------------
@@ -159,6 +159,12 @@ datablock ShapeBaseImageData(InventoryDeployableImage)
    isLarge = true;
    maxDepSlope = 30;
    deploySound = StationDeploySound;
+
+   flatMinDeployDis   = 1.0;
+   flatMaxDeployDis   = 5.0;
+
+   minDeployDis       = 2.5;
+   maxDeployDis       = 5.0;
 };
 
 datablock ItemData(InventoryDeployable)
@@ -241,6 +247,9 @@ datablock ShapeBaseImageData(MotionSensorDeployableImage)
    deploySound = MotionSensorDeploySound;
    emap = true;
    heatSignature = 1;
+
+   minDeployDis                       =  0.5;
+   maxDeployDis                       =  5.0;  //meters from body
 };
 
 datablock ItemData(MotionSensorDeployable)
@@ -323,6 +332,9 @@ datablock ShapeBaseImageData(PulseSensorDeployableImage)
    maxDepSlope = 40;
    emap = true;
    heatSignature = 0;
+
+   minDeployDis                       =  0.5;
+   maxDeployDis                       =  5.0;  //meters from body
 };
 
 datablock ItemData(PulseSensorDeployable)
@@ -373,6 +385,9 @@ datablock ShapeBaseImageData(TurretOutdoorDeployableImage)
 
    maxDepSlope = 40;
    deploySound = TurretDeploySound;
+
+   minDeployDis                       =  0.5;
+   maxDeployDis                       =  5.0;  //meters from body
 };
 
 datablock ItemData(TurretOutdoorDeployable)
@@ -417,6 +432,9 @@ datablock ShapeBaseImageData(TurretIndoorDeployableImage)
 
    maxDepSlope = 360;
    deploySound = TurretDeploySound;
+
+   minDeployDis                       =  0.5;
+   maxDeployDis                       =  5.0;  //meters from body
 };
 
 datablock ItemData(TurretIndoorDeployable)
@@ -521,7 +539,7 @@ function ShapeBaseImageData::testMaxDeployed(%item, %plyr)
 //-------------------------------------------------
 function ShapeBaseImageData::testNoSurfaceInRange(%item, %plyr)
 {
-   return ! Deployables::searchView(%plyr, $MaxDeployableDistance, $TypeMasks::TerrainObjectType | $TypeMasks::InteriorObjectType);
+   return ! Deployables::searchView(%plyr, $MaxDeployDistance, $TypeMasks::TerrainObjectType | $TypeMasks::InteriorObjectType);
 }
 
 //-------------------------------------------------
@@ -536,7 +554,7 @@ function ShapeBaseImageData::testSlopeTooGreat(%item)
 //-------------------------------------------------
 function ShapeBaseImageData::testSelfTooClose(%item, %plyr)
 {
-   InitContainerRadiusSearch(%item.surfacePt, $MinDeployableDistance, $TypeMasks::PlayerObjectType);
+   InitContainerRadiusSearch(%item.surfacePt, $MinDeployDistance, $TypeMasks::PlayerObjectType);
 
    return containerSearchNext() == %plyr; 
 }
@@ -544,12 +562,14 @@ function ShapeBaseImageData::testSelfTooClose(%item, %plyr)
 //-------------------------------------------------
 function ShapeBaseImageData::testObjectTooClose(%item)
 {
-   return !ContainerBoxEmpty (
+   InitContainerRadiusSearch( %item.surfacePt, $MinDeployDistance,
                $TypeMasks::VehicleObjectType     | $TypeMasks::MoveableObjectType   |
                $TypeMasks::StaticShapeObjectType | $TypeMasks::StaticTSObjectType   | 
                $TypeMasks::ForceFieldObjectType  | $TypeMasks::ItemObjectType       | 
-               $TypeMasks::PlayerObjectType      | $TypeMasks::TurretObjectType, 
-               %item.surfacePt, $MinDeployableDistance);
+               $TypeMasks::PlayerObjectType      | $TypeMasks::TurretObjectType);
+
+   %test = containerSearchNext();
+   return %test;
 }
 
 
@@ -741,9 +761,11 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
 {
    cancel(%plyr.deployCheckThread);
    %disqualified = $NotDeployableReason::None;  //default
+   $MaxDeployDistance = %item.maxDeployDis; 
+   $MinDeployDistance = %item.minDeployDis; 
    
    %surface = Deployables::searchView(%plyr,
-                                      $MaxDeployableDistance,
+                                      $MaxDeployDistance,
                                       ($TypeMasks::TerrainObjectType |
                                        $TypeMasks::InteriorObjectType));
    if (%surface)  
@@ -764,7 +786,7 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
       }
       else
       {
-         if (%surfacePt $= posFromRaycast(%searchResult))
+         if(checkPositions(%surfacePT, posFromRaycast(%searchResult)))
          {
             %item.surface = %surface;
             %item.surfacePt = %surfacePt;
@@ -776,33 +798,53 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
             %disqualified = $NotDeployableReason::ObjectTooClose;
          }
       }
+      if(!getTerrainAngle(%surfaceNrm) && %item.flatMaxDeployDis !$= "")
+      {
+         $MaxDeployDistance = %item.flatMaxDeployDis; 
+         $MinDeployDistance = %item.flatMinDeployDis; 
+      }
    }
 
-
    if (%item.testMaxDeployed(%plyr))
+   {
       %disqualified = $NotDeployableReason::MaxDeployed;
+   }
    else if (%item.testNoSurfaceInRange(%plyr))
+   {
       %disqualified = $NotDeployableReason::NoSurfaceFound;
+   }
    else if (%item.testNoTerrainFound(%surface))
+   {
       %disqualified = $NotDeployableReason::NoTerrainFound;
+   }
    else if (%item.testNoInteriorFound())
+   {
       %disqualified = $NotDeployableReason::NoInteriorFound;
+   }
    else if (%item.testSlopeTooGreat(%surface, %surfaceNrm))
+   {
       %disqualified = $NotDeployableReason::SlopeTooGreat;
+   }
    else if (%item.testSelfTooClose(%plyr, %surfacePt))
+   {
       %disqualified = $NotDeployableReason::SelfTooClose;
+   }
    else if (%item.testObjectTooClose(%surfacePt))
    {
       %disqualified = $NotDeployableReason::ObjectTooClose;   
    }
    else if (%item.testTurretTooClose(%plyr))
+   {
       %disqualified = $NotDeployableReason::TurretTooClose;
+   }
    else if (%item.testInventoryTooClose(%plyr))
    {
       %disqualified = $NotDeployableReason::InventoryTooClose;
    }
    else if (%item.testTurretSaturation())
+   {
       %disqualified = $NotDeployableReason::TurretSaturation;
+   }
    else if (%disqualified == $NotDeployableReason::None)
    {
       // Test that there are no objstructing objects that this object
@@ -810,10 +852,14 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
       //
       %rot = %item.getInitialRotation(%plyr);
       if(%item.deployed.className $= "DeployedTurret")
+      {
          %xform = %item.deployed.getDeployTransform(%item.surfacePt, %item.surfaceNrm);
+      }
       else
+      {
          %xform = %surfacePt SPC %rot;
-
+      }
+      
       if (!%item.deployed.checkDeployPos(%xform))
       {
          %disqualified = $NotDeployableReason::ObjectTooClose;
@@ -834,10 +880,24 @@ function ShapeBaseImageData::testInvalidDeployConditions(%item, %plyr, %slot)
       if (%plyr.client.deployPack == true)
          %item.attemptDeploy(%plyr, %slot, %disqualified);       
       else
-         %plyr.deployCheckThread = %item.schedule(50, "testInvalidDeployConditions", %plyr, %slot); //update checks every 50 milliseconds
+      {
+         %plyr.deployCheckThread = %item.schedule(25, "testInvalidDeployConditions", %plyr, %slot); //update checks every 50 milliseconds
+      }
    }
    else
        deactivateDeploySensor(%plyr);
+}
+
+function checkPositions(%pos1, %pos2)
+{
+   %passed = true;
+   if((mFloor(getWord(%pos1, 0)) - mFloor(getWord(%pos2,0))))
+      %passed = false;   
+   if((mFloor(getWord(%pos1, 1)) - mFloor(getWord(%pos2,1))))
+      %passed = false;   
+   if((mFloor(getWord(%pos1, 2)) - mFloor(getWord(%pos2,2))))
+      %passed = false;
+   return %passed;      
 }
 
 function ShapeBaseImageData::attemptDeploy(%item, %plyr, %slot, %disqualified)
@@ -1228,7 +1288,8 @@ function DeployedMotionSensor::onDestroyed(%this, %obj, %prevState)
 //--------------------------------------------------------------------------
 function PulseSensorDeployableImage::onActivate(%data, %obj, %slot)
 {
-   %data.testInvalidDeployConditions(%obj, %slot);
+   Parent::onActivate( %data, %obj, %slot );
+   //%data.testInvalidDeployConditions(%obj, %slot);
 }
 
 function DeployedPulseSensor::onDestroyed(%this, %obj, %prevState)

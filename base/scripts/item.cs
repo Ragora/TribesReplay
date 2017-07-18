@@ -295,8 +295,7 @@ datablock ItemData(Flag)
    shapefile = "flag.dts";
    mass = 55;
    elasticity = 0.2;
-   //friction = 0.6;
-   friction = 5.6;
+   friction = 0.6;
    pickupRadius = 3;
    pickUpName = "a flag";
    computeCRC = true;
@@ -382,8 +381,7 @@ datablock ItemData(HuntersFlag1)
    shapefile = "Huntersflag.dts";
    mass = 75;
    elasticity = 0.2;
-   //friction = 0.6;
-   friction = 5.6;
+   friction = 0.6;
    pickupRadius = 3;
    isInvincible = true;
    pickUpName = "a flag";
@@ -617,7 +615,7 @@ function Beacon::onUse(%data, %obj)
 {
    // look for 3 meters along player's viewpoint for interior or terrain
    %searchRange = 3.0;
-   %mask = $TypeMasks::TerrainObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::StaticShapeObjectType;
+   %mask = $TypeMasks::TerrainObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::StaticShapeObjectType | $TypeMasks::ForceFieldObjectType;
    // get the eye vector and eye transform of the player
    %eyeVec = %obj.getEyeVector();
    %eyeTrans = %obj.getEyeTransform();
@@ -641,7 +639,7 @@ function Beacon::onUse(%data, %obj)
    else
    {
       %searchObj = GetWord(%searchResult, 0);
-      if(%searchObj.getType() & $TypeMasks::StaticShapeObjectType)
+      if(%searchObj.getType() & ($TypeMasks::StaticShapeObjectType | $TypeMasks::ForceFieldObjectType) )
       {
          // if there's already a beacon where player is aiming, switch its type
          // otherwise, player can't deploy a beacon there

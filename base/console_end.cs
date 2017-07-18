@@ -37,11 +37,14 @@ exec("scripts/message.cs");
 //function to be called when the game exits
 function onExit()
 {
-   IRCClient::quit();
+   if ( !isDemo() && !isDemoServer() )
+      IRCClient::quit();
    
    echo("exporting pref::* to ClientPrefs.cs");
    export("$pref::*", "prefs/ClientPrefs.cs", False);
    BanList::Export("prefs/banlist.cs");
+   if ( $PlayingOnline )
+      savePlayerDatabase();
 }
 
 
@@ -80,6 +83,8 @@ exec("scripts/targetManager.cs");
 exec("scripts/gameCanvas.cs");
 exec("scripts/centerPrint.cs");
 exec("scripts/CreditsGui.cs");
+if (isDemo())
+   exec("scripts/DemoEndGui.cs");
 exec("scripts/ChatGui.cs");
 
 // see if the mission and type are valid
@@ -213,6 +218,7 @@ loadGui("GameGui");
 loadGui("ChooseFilterDlg");
 loadGui("ServerInfoDlg");
 loadGui("EnterIPDlg");
+loadGui("FindServerDlg");
 loadGui("AdvancedHostDlg");
 loadGui("NewWarriorDlg");
 loadGui("JoinChatDlg");
@@ -251,6 +257,8 @@ loadGui("SinglePlayerEscapeDlg");
 loadGui("LobbyGui");
 loadGui("DebriefGui");
 loadGui("CreditsGui");
+if (isDemo())
+   loadGui("DemoEndGui");
 loadGui("MoveThreadDlg");
 loadGui("NewMissionGui");
 loadGui("ChatDlg");
@@ -523,33 +531,56 @@ function abs(%val)
 
 function ServerConnectionAccepted()
 {
-	%info = GMJ_Browser.getServerInfoString();
-	%desc = "joined a" SPC getField(%info,4) @ " game (" @ getField(%info,3) @ ") on the \"" @ getField(%info,0) @ "\" server.";   
+   if ( !isDemo() && !isDemoServer() )
+   {
+	   %info = GMJ_Browser.getServerInfoString();
+	   %desc = "joined a" SPC getField(%info,4) @ " game (" @ getField(%info,3) @ ") on the \"" @ getField(%info,0) @ "\" server.";   
 
-	IRCClient::onJoinGame($JoinGameAddress,%desc);
+	   IRCClient::onJoinGame($JoinGameAddress,%desc);
 
-   if ( !$pref::Net::CheckEmail )
-      CancelEmailCheck();
+      if ( !$pref::Net::CheckEmail )
+         CancelEmailCheck();
 
-// 	if($pref::Net::DisconnectChat)
-//    		IRCClient::quit();
+   // 	if($pref::Net::DisconnectChat)
+   //    		IRCClient::quit();
+   }
 
-	Canvas.setContent("LoadingGui");
+   checkGotLoadInfo();
 }
 
 function LocalConnectionAccepted()
 {   
-	%desc = $pref::IRCClient::hostmsg;
+   if ( !isDemo() && !isDemoServer() )
+   {   
+	   %desc = $pref::IRCClient::hostmsg;
 
-	IRCClient::onJoinGame("", %desc);
+	   IRCClient::onJoinGame("", %desc);
 
-   if ( !$pref::Net::CheckEmail )
-      CancelEmailCheck();
+      if ( !$pref::Net::CheckEmail )
+         CancelEmailCheck();
 
-// 	if($pref::Net::DisconnectChat)
-//    		IRCClient::quit();  //this is screwed up right now ^^
+   // 	if($pref::Net::DisconnectChat)
+   //    		IRCClient::quit();  //this is screwed up right now ^^
+   }
 
-	Canvas.setContent("LoadingGui");
+   checkGotLoadInfo();
+}
+
+function checkGotLoadInfo()
+{
+   if ( LoadingGui.gotLoadInfo )
+      Canvas.setContent( LoadingGui );
+   else
+      LoadingGui.checkSchedule = schedule( 500, 0, checkGotLoadInfo );   
+}
+
+function cancelLoadInfoCheck()
+{
+   if ( LoadingGui.checkSchedule )
+   {
+      cancel( LoadingGui.checkSchedule );
+      LoadingGui.checkSchedule = "";
+   }
 }
 
 function DispatchLaunchMode()

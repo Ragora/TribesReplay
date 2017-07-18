@@ -280,9 +280,7 @@ datablock ShapeBaseImageData(ShockLanceImage)
    stateSound[4] = ShockLanceReloadSound;
 
    stateName[5] = "NoAmmo";
-   stateTransitionOnAmmo[5] = "Reload";
-   stateSequence[5] = "NoAmmo";
-   stateTransitionOnTriggerDown[5] = "DryFire";
+   stateTransitionOnAmmo[5] = "Ready";
 
    stateName[6]                  = "DryFire";
    stateSound[6]                 = ShockLanceDryFireSound;

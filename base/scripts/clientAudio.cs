@@ -93,14 +93,16 @@ function initAudio()
    // cap the codec levels
    if( $platform $= "linux" )
    {
-      $pref::Audio::encodingLevel = -1;
-      $pref::Audio::decodingMask = 0;
+      if( $pref::Audio::encodingLevel != 3)
+         $pref::Audio::encodingLevel = 3;
+      $pref::Audio::decodingMask &= 8;
    }
-
-   if( $pref::Audio::encodingLevel > 2)
-      $pref::Audio::encodingLevel = 2;
-
-   $pref::Audio::decodingMask &= 7;
+   else
+   {
+      if( $pref::Audio::encodingLevel > 2)
+         $pref::Audio::encodingLevel = 2;
+      $pref::Audio::decodingMask &= 7;
+   }
 }
 
 if($Audio::initialized)
@@ -429,3 +431,4 @@ new AudioProfile(ObjectiveCompleted)
    description = "AudioGui";
 	  preload = true;
 };
+

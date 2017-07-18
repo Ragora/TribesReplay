@@ -147,6 +147,10 @@ datablock ExplosionData(PlasmaBoltExplosion)
    particleRadius = 1.25;
    faceViewer = true;
 
+   sizes[0] = "1.0 1.0 1.0";
+   sizes[1] = "1.0 1.0 1.0";
+   times[0] = 0.0;
+   times[1] = 1.5;
 };
 
 

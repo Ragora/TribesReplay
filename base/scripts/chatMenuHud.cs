@@ -18,7 +18,7 @@ exec( "scripts/cannedChatItems.cs" );
 new SimSet( ChatMenuList );   // Store all of the chat menu maps here so that we can delete them later:
 function activateChatMenu( %filename )
 {
-   if ( isFile( %filename ) )
+   if ( isFile( %filename ) || isFile( %filename @ ".dso" ) )
    {
       // Clear the old chat menu:
       ChatMenuList.clear();
@@ -201,10 +201,8 @@ function serverCmdCannedChat( %client, %command, %fromAI )
       return;
    }
 
-   // Build the message string:
    %chatItem = $ChatTable[%cmdId];
-   //%wavFile = "voice/" @ %client.voice @ "/" @ %chatItem.audioFile @ ".wav";
-
+   
    //if there is text
    if (%chatItem.text !$= "" || !%chatItem.play3D)
    {
@@ -217,10 +215,10 @@ function serverCmdCannedChat( %client, %command, %fromAI )
    }
 
    //if no text, see if the audio is to be played in 3D...
-   else if (%chatItem.play3D)
+   else if ( %chatItem.play3D && %client.player )
       playTargetAudio(%client.target, addTaggedString(%chatItem.audioFile), AudioClosest3d, true);
 
-   if( %chatItem.animation !$= "" )
+   if ( %chatItem.animation !$= "" )
       serverCmdPlayAnim(%client, %chatItem.animation);
 
    // Let the AI respond to the canned chat messages (from humans only)

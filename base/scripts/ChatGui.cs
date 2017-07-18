@@ -245,25 +245,42 @@ function ChatGuiMessageVector::urlClickCallback(%this,%type,%url,%content)
          JoinGame(%content);
       case "warrior":
          LaunchBrowser(%url,"Warrior");
+	  default:
+		return;
    }
 }
 
 //------------------------------------------------------------------------------
 function ChatSendText()
 {
-   if ($IRCClient::people.getObject(0).flags & $PERSON_AWAY)
-      IRCClient::away("");
-   else
-   {
-      if ($IRCClient::awaytimeout)
-         cancel($IRCClient::awaytimeout);
-      $IRCClient::awaytimeout = schedule($AWAY_TIMEOUT,0,"ChatAway_Timeout");
-   }
-   if ($IRCClient::currentChannel.private)
-      IRCClient::send2(ChatMessageEntry.getValue(),$IRCClient::currentChannel.getName());
-   else
-      IRCClient::send2(ChatMessageEntry.getValue(),"");
-   ChatMessageEntry.setValue("");
+	TextCheck2(ChatMessageEntry.getValue(),ChatMessageEntry);
+	if(ChatMessageEntry.textCheck)
+	{
+         for(%x=0;%x<getField($strcheck2,0);%x++)
+         {
+            %msgStr = %msgStr @ getField($strcheck2,1+%x) @ " ";
+         }
+         MessageBoxOK("NOTICE","The Following Characters may not be used in T2 Chat text:\n" NL 
+                          %msgStr);
+		ChatMessageEntry.makeFirstResponder(1);
+	}
+	else
+	{
+
+	   if ($IRCClient::people.getObject(0).flags & $PERSON_AWAY)
+	      IRCClient::away("");
+	   else
+	   {
+	      if ($IRCClient::awaytimeout)
+	         cancel($IRCClient::awaytimeout);
+	      $IRCClient::awaytimeout = schedule($AWAY_TIMEOUT,0,"ChatAway_Timeout");
+	   }
+	   if ($IRCClient::currentChannel.private)
+	      IRCClient::send2(ChatMessageEntry.getValue(),$IRCClient::currentChannel.getName());
+	   else
+	      IRCClient::send2(ChatMessageEntry.getValue(),"");
+	   ChatMessageEntry.setValue("");
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -277,25 +294,25 @@ function ChatAway_Timeout()
 function ChatRoomMemberList::onAdd(%this)       
 {
    ChatRoomMemberList.addStyle($PERSON_OPERATOR,
-                               "sys_op_eye.png",         "",
+                               "sys_op_eye",         "",
                                "","","");
    ChatRoomMemberList.addStyle($PERSON_IGNORE,
-                               "",                       "mute_speaker.png",
+                               "",                       "mute_speaker",
                                "","","");
    ChatRoomMemberList.addStyle($PERSON_IGNORE | $PERSON_OPERATOR,
-                               "sys_op_eye.png",         "mute_speaker.png",
+                               "sys_op_eye",         "mute_speaker",
                                "","","");
    ChatRoomMemberList.addStyle($PERSON_AWAY,
                                "",                       "",
                                "128 128 128","","");
    ChatRoomMemberList.addStyle($PERSON_OPERATOR | $PERSON_AWAY,
-                               "sys_op_eye.png",         "",
+                               "sys_op_eye",         "",
                                "128 128 128","","");
    ChatRoomMemberList.addStyle($PERSON_IGNORE | $PERSON_AWAY,
-                               "",                       "mute_speaker.png",
+                               "",                       "mute_speaker",
                                "128 128 128","","");
    ChatRoomMemberList.addStyle($PERSON_IGNORE | $PERSON_OPERATOR | $PERSON_AWAY,
-                               "sys_op_eye.png",         "mute_speaker.png",
+                               "sys_op_eye",         "mute_speaker",
                                "128 128 128","","");
 }
 
@@ -332,7 +349,9 @@ function ChatRoomMemberList_refresh(%channel)
 
    if(%add)
    {
-      // get our gui list
+
+
+     // get our gui list
       for(%i = 0; %i < %list.rowCount(); %i++)
       {
          %list.guiValue[%i] = %list.getRowId(%i);
@@ -356,24 +375,25 @@ function ChatRoomMemberList_refresh(%channel)
    }
    else
    {
-      for(%i = 0; %i < %list.rowCount(); %i++)
-      {
-         %list.guiValue[%i] = %list.getRowId(%i);
-      }
+		for(%i = 0; %i < %list.rowCount(); %i++)
+		      {
+		         %list.guiValue[%i] = %list.getRowId(%i);
+		      }
 
-      for(%i = 0; %i < %channel.numMembers(); %i++)
-      {
-         %member = %channel.getMemberId(%i);
-         if(%member != %list.guiValue[%i])
-         {
-            //echo("List "@%i@": "@%list.guiValue[%i] SPC IRCClient::taggedNick(%list.guiValue[%i]));
-            //error(%list.getRowId(%i));
-            
-            %list.removeRow(%i);
-            break;
-         }
-      }
-      
+		      for(%i = 0; %i < %list.rowCount; %i++)
+		      {
+		         %member = %channel.getMemberId(%i);
+		         if(%member != %list.guiValue[%i])
+		         {
+		            //echo("List "@%i@": "@%list.guiValue[%i] SPC IRCClient::taggedNick(%list.guiValue[%i]));
+		            //error(%list.getRowId(%i));
+		            
+		            %list.removeRow(%i);
+                  %list.guiValue[%i] = "";
+                  
+		            break;
+		         }
+		}      
    }
 }
 
@@ -449,7 +469,6 @@ function ChatRoomMemberList::onRightMouseDown(%this,%column,%row,%mousePos)
          ChatMemberPopup.add("Mute",6);
 
 	  ChatMemberPopup.add( "--------------------",-1);
-//   	  ChatMemberPopup.add( "Instant Message", 9 );
    	  ChatMemberPopup.add( "TMail", 10 );
 	  ChatMemberPopup.add( "Add To Buddylist",11);
 
@@ -507,14 +526,13 @@ function ChatMemberPopup::onSelect(%this,%id,%text)
          IRCClient::ignore(ChatMemberPopup.member,!(ChatMemberPopup.member.flags & $PERSON_IGNORE));
 	  case 7: // go to webbrowser page
 		 LinkBrowser(%member,"warrior");
-	  case 9: // Instant Message
-		IRCClient::invite(ChatMemberPopup.member, %id);
 	  case 10: // TMail
 		 LinkEMail(%member);
 	  case 11: // Add To Buddylist
    		 MessageBoxYesNo("CONFIRM","Add " @ %member @ " to Buddy List?",
 					     "LinkAddBuddy(\"" @ %member @ "\",TWBText,\"addBuddy\");","");
-      default: // Invite
+      default: // Link
+//		 LinkBrowser(%member,"warrior");
          IRCClient::invite(ChatMemberPopup.member,%id);
    }
 }
@@ -523,13 +541,13 @@ function ChatMemberPopup::onSelect(%this,%id,%text)
 function ChannelBanList::onAdd(%this)
 {
    ChannelBanList.addStyle($PERSON_IGNORE,
-                           "",                        "mute_speaker.png",
+                           "",                        "mute_speaker",
                            "","","");
    ChannelBanList.addStyle($PERSON_AWAY,
                            "",                        "",
                            "128 128 128","","");
    ChannelBanList.addStyle($PERSON_IGNORE | $PERSON_AWAY,
-                           "",                        "mute_speaker.png",
+                           "",                        "mute_speaker",
                            "128 128 128","","");
 }
 
@@ -853,10 +871,8 @@ function IRCClient::notify(%event)
          }
          ChatTabView.removeTab($IRCClient::deletedChannel);
       case IDIRC_INVITED: //invited to join existing channel.
-         //MessageBoxOKCancel("Invite", "You have been invited to channel " @ IRCClient::displayChannel($IRCClient::invitechannel) @ " by " @ $IRCClient::inviteperson @ ".", "IRCClient::join($IRCClient::invitechannel);");
-         IRCClient::newMessage($IRCClient::CurrentChannel, "You have been invited to channel " @ $IRCClient::invitechannel @ " by " @ $IRCClient::inviteperson @ ".");
-	  case IDIRC_INSTANTMSG:
-		   messageBoxOK("TESTING","This is a test of the Instant Messaging System.  Sent By: " @ $IRCClient::inviteperson @ ".");
+         	//MessageBoxOKCancel("Invite", "You have been invited to channel " @ IRCClient::displayChannel($IRCClient::invitechannel) @ " by " @ $IRCClient::inviteperson @ ".", "IRCClient::join($IRCClient::invitechannel);");
+         	IRCClient::newMessage($IRCClient::CurrentChannel, "You have been invited to channel " @ $IRCClient::invitechannel @ " by " @ $IRCClient::inviteperson @ ".");
       case IDIRC_BAN_LIST:
          ChannelBannedList_refresh();
       case IDIRC_TOPIC:
@@ -1506,7 +1522,7 @@ function IRCClient::processLine(%line)
      if (!IRCClient::dispatch(%prefix,%command,%params))
      {
         //echo("IRCClient: " @ %command @ " not handled by dispatch!");
-        //echo("(cmd:) " @ %prefix @ " " @ %command @ " " @ %params);
+        echo("(cmd:) " @ %prefix @ " " @ %command @ " " @ %params);
      }
    }
 }
@@ -1548,8 +1564,6 @@ function IRCClient::dispatch(%prefix,%command,%params)
        IRCClient::onAction(%prefix,%params);
      case "INVITE":		
        IRCClient::onInvite(%prefix,%params);
-	 case "INSTANTMSG":
-		IRCClient::onInstantMsg(%prefix,%params);
      case "301":
        IRCClient::onAwayReply(%prefix,%params);
      case "305":
@@ -1578,10 +1592,8 @@ function IRCClient::dispatch(%prefix,%command,%params)
        IRCClient::onNoTopic(%prefix,%params);
      case "332":
        IRCClient::onTopic(%prefix,%params);
-
      case "341":
        IRCClient::onInviteReply(%prefix,%params);
-
      case "352":
        IRCClient::onWhoReply(%prefix,%params);
      case "353":
@@ -2535,25 +2547,6 @@ function IRCClient::onChannelInviteOnly(%prefix,%params)
    IRCClient::notify(IDIRC_INVITE_ONLY);
 }
 //------------------------------------------------------------------------------
-function IRCClient::onInstantMsg(%prefix,%params)
-{
-   %p = IRCClient::findPerson2(%prefix,true);
-   if (%p)
-   {
-      %params = nextToken(%params,channel,":");
-      %channel = %params;
-
-      // Only bother the user if they aren't ignoring this person
-      if (!(%person.flags & $PERSON_IGNORE))
-      {
-         // Set vars and notify the responder
-         $IRCClient::invitechannel = %channel;
-         $IRCClient::inviteperson = IRCClient::displayNick(%p);
-         IRCClient::notify(IDIRC_INSTANTMSG);
-      }
-   }
-}
-//------------------------------------------------------------------------------
 function IRCClient::onInvite(%prefix,%params)
 {
    // Find or create the person (should never be NULL)
@@ -2573,7 +2566,6 @@ function IRCClient::onInvite(%prefix,%params)
       }
    }
 }
-
 //------------------------------------------------------------------------------
 function IRCClient::onInviteReply(%prefix,%params)
 {

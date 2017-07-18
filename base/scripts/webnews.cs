@@ -24,22 +24,26 @@ function NewsGui::onWake(%this)
       NewsPrevBtn.setVisible( false );
       NewsNextBtn.setVisible( false );
 		NewsSubmitBtn.setVisible( false );
-		NewsMOTDText.setValue( "This is the fake Message of the Day just for people playing the demo." );
-		%this.addStaticArticle( "ALIENS INVADE CLEVELAND!", "Oh, never mind.\nIt just usually looks like that.\nMy bad." );
-		%this.addStaticArticle( "OMG! Tribes 2 is the Coolest!", "It's official, Tribes 2 is the coolest thing since ice cream." );
-		%this.addStaticArticle( "BigDevDawg Worship Service Rescheduled", "Please note that the weekly devotional service for the followers of the almighty DevDawg has been rescheduled to 9pm so that it no longer conflicts with \"That 70\'s Show\"." );
+		NewsMOTDText.setValue( "Welcome to the Tribes 2 Demo!" );
+		%this.addStaticArticle( "What's In The Demo?", "There are two training missions, and two multiplayer maps in this demo.\nIf you're new to the Tribes experience, you should consider trying out the training missions so you can become familiar with the basics of the game. Then, after you learn how to use your jets and weapons, jump into multiplayer on one of our Demo Servers to fight against other players like yourself." );
+		%this.addStaticArticle( "How Do I Change Settings?", "There is a LAUNCH button in the lower left of this screen. Click on it and choose the SETTINGS option. There you will find ways to modify your graphics, textures, network settings and more. \nMost of these settings will be configured automatically based on your hardware configs, so try the game with the default settings for a while and see how it plays. Then, optimize your settings accordingly thereafter." );
+//		%this.addStaticArticle( "Two Game Types", "Talk about CTF and Hunters" );
 	}
 	else
 	{
-   	Canvas.SetCursor(ArrowWaitCursor);
-   	%this.state = "status";
-   	%this.key = LaunchGui.key++;
-	   %this.caller = "GETNEWS";
-	   DatabaseQueryArray(0,0,"0" TAB "0",%this,%this.key);
-	   // Fetch the message of the day:
-	   NewsMOTDText.key = LaunchGui.key++;
-	   NewsMOTDText.state = "isvalid";
-	   DatabaseQuery(0,"",NewsMOTDText,NewsMOTDText.key);
+	   	Canvas.SetCursor(ArrowWaitCursor);
+   		%this.state = "status";
+	   	%this.key = LaunchGui.key++;
+	    %this.caller = "GETNEWS";
+	    DatabaseQueryArray(0,0,"0" TAB "0",%this,%this.key);
+	    // Fetch the message of the day:
+	    NewsMOTDText.key = LaunchGui.key++;
+	    NewsMOTDText.state = "isvalid";
+	    DatabaseQuery(0,"",NewsMOTDText,NewsMOTDText.key);
+		weblinksmenu.clear();
+		weblinksmenu.key = launchgui.key++;
+		weblinksmenu.state = "fetchWeblink";
+		DatabaseQueryArray(15,0,"WEBLINK",weblinksmenu,weblinksmenu.key);
 	}
    WebLinksMenu.setSelected( 0 );
    NewsPrevBtn.setActive( false );
@@ -487,13 +491,12 @@ function addWebLink( %name, %address )
 //-----------------------------------------------------------------------------
 function WebLinksMenu::onAdd( %this )
 {
-   for ( %i = 0; %i < $WebLinkCount; %i++ )
-      %this.add( $WebLink[%i, name], %i );
 }
 //-----------------------------------------------------------------------------
 function WebLinksMenu::launchWebBrowser( %this )
 {
    %address = $WebLink[WebLinksMenu.getSelected(), address];
+   error("SELECTED:" SPC WebLinksMenu.getSelected());
    if ( %address !$= "" )
    {
       if ( isFullScreen() )
