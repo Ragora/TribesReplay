@@ -9,7 +9,7 @@ $VERSION_STRING = "Dynamix IRC Chat 1.2.0";
 $ESCAPE_SEQ = "_-_";
 $IRCClient::serverList = GetIRCServerList(0);
 $IRCClient::serverCount = getRecordCount($IRCClient::serverList);
-$IRCClient::retries = -1;
+$IRCClient::retries = 0;
 if ($IRCClient::serverCount > 1)
    $IRCClient::serverIndex = getRandom($IRCClient::serverCount-1)-1;
 else
@@ -1112,30 +1112,31 @@ function IRCClient::connect()
    if (strcmp($IRCClient::state,IDIRC_CONNECTING_WAITING))
 	{
 		IRCClient::disconnect();
-      if($IRCClient::retries == -1 || $IRCClient::retries > 5)
-      {
-         $IRCClient::serverIndex++;
-			if ($IRCClient::serverIndex >= $IRCClient::serverCount)
-				$IRCClient::serverIndex = 0;
-			$IRCClient::serverAttempt++;
-         if ($IRCClient::serverCount == 0 || $IRCClient::serverAttempt > $IRCClient::serverCount)
-         {
+      $IRCClient::serverIndex++;
+		if ($IRCClient::serverIndex >= $IRCClient::serverCount)
+			$IRCClient::serverIndex = 0;
+		$IRCClient::serverAttempt++;
+		if ($IRCClient::serverAttempt > $IRCClient::serverCount)
+		{
+			$IRCClient::serverAttempt = 0;
+			$IRCClient::retries++;
+
+			if ($IRCClient::retries > 5)
+			{
             IRCClient::newMessage("","Unable to connect to IRC servers."); 
             IRCClient::notify(IDIRC_ERR_TIMEOUT);
             $IRCClient::state = IDIRC_DISCONNECTED;
-				$IRCClient::retries = -1;
+				$IRCClient::retries = 0;
             if($IRCClient::serverCount > 1)
                $IRCClient::serverIndex = getRandom($IRCClient::serverCount-1)-1;
             else
                $IRCClient::serverIndex = -1;
-				$IRCClient::serverAttempt = 0;
 
             return;
          }
-			else
-				$IRCClient::retries = 0;
-         $IRCClient::server = getField(getRecord($IRCClient::serverList, $IRCClient::serverIndex), 0);
-      }
+		}
+
+		$IRCClient::server = getField(getRecord($IRCClient::serverList, $IRCClient::serverIndex), 0);
 		IRCClient::newMessage("","Connecting to " @ $IRCClient::server);
 		$IRCClient::state = IDIRC_CONNECTING_SOCKET;
 		IRCClient::notify(IDIRC_CONNECTING_SOCKET);
@@ -1185,7 +1186,6 @@ function IRCTCP::onConnectFailed(%this)
    {
       IRCClient::newMessage("","Connection failed. The server did not respond."); 
 
-      $IRCClient::retries++;
    	IRCClient::connect();
    }
 }
@@ -1246,7 +1246,6 @@ function IRCClient::reconnect()
 
 	IRCClient::newMessage("","Attempting to reconnect.");
 
-   $IRCClient::retries++;
    IRCClient::connect();
 
    return true;
@@ -1613,7 +1612,8 @@ function IRCClient::onError(%prefix,%params)
 {
    IRCClient::newMessage($IRCClient::currentChannel,%params);
    IRCClient::notify(IDIRC_ERROR);
-   IRCClient::disconnect();
+	IRCClient::disconnect();
+   IRCClient::connect();
 }
 
 //------------------------------------------------------------------------------

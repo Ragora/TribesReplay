@@ -463,9 +463,9 @@ new GuiControlProfile ("ShellServerBrowserProfile")
    fontColorHL = "6 245 215";
    fontColorNA = "128 128 128";
    fontColorSEL = "25 68 56";
-   fontColors[4] = "20 227 93";     // Mod base color
-   fontColors[5] = "40 247 113";    // Mod rollover color
-   fontColors[6] = "5 80 30";       // Mod selected color
+   fontColors[4] = "20 197 93";     // Mod base color
+   fontColors[5] = "40 217 113";    // Mod rollover color
+   fontColors[6] = "5 60 30";       // Mod selected color
    fontColors[7] = "108 108 108";   // Differing build base color       
    fontColors[8] = "168 168 168";   // Differing build rollover color
    fontColors[9] = "58 58 58";      // Differing build selected color
