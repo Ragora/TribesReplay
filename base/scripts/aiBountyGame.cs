@@ -14,6 +14,9 @@ function BountyGame::onAIRespawn(%game, %client)
 		%client.addTask(AIBountyPatrolTask);
 		%client.bountyTask = %client.addTask(AIBountyEngageTask);
 	}
+
+   //set the inv flag
+   %client.spawnUseInv = true;
 }
 
 function BountyGame::AIInit(%game)
@@ -59,12 +62,14 @@ function AIBountyEngageTask::weight(%task, %client)
 	}
 
 	//see if anyone has fired on us recently...
+   %mustEngage = false;
    %losTimeout = 5000 + ($AIClientLOSTimeout * %client.getSkillLevel());
    if (AIClientIsAlive(%client.lastDamageClient, %losTimeout) && getSimTime() - %client.lastDamageTime < %losTimeout)
    {
 		//see if the attacker is either our target or, we are their target
 		if (%client.lastDamageClient == %client.objectiveTarget || %client.lastDamageClient.objectiveTarget == %client)
 		{
+         %mustEngage = true;
 			%currentTarget = %client.getEngageTarget();
 
 			//see if this is a new attacker
@@ -105,7 +110,40 @@ function AIBountyEngageTask::weight(%task, %client)
 
 	//now set the weight
 	if (%client.shouldEngage > 0)
-	   %task.setWeight($AIWeightReturnFire);
+   {
+      //if we've been fired upon...
+      if (%mustEngage)
+	      %task.setWeight($AIWeightReturnFire);
+
+      //see if we can allow the bot to use an inv station...
+      else if (%client.spawnUseInv)
+      {
+         //see if there's an available inv station
+         %result = AIFindClosestInventory(%client, false);
+         %closestInv = getWord(%result, 0);
+	      %closestDist = getWord(%result, 1);
+	      if (isObject(%closestInv))
+         {
+            if (isObject(%client.shouldEngage.player))
+            {
+               %dist = %client.getPathDistance(%client.shouldEngage.player.position);
+               if (%dist < 70 || %closestDist > 200)
+	               %task.setWeight($AIWeightReturnFire);
+               else
+	               %task.setWeight($AIBountyWeightShouldEngage);
+            }
+            else
+	            %task.setWeight($AIBountyWeightShouldEngage);
+         }
+         else
+         {
+            %client.spawnUseInv = false;
+	         %task.setWeight($AIWeightReturnFire);
+         }
+      }
+      else
+	      %task.setWeight($AIWeightReturnFire);
+   }
 	else
 	   %task.setWeight(0);
 }

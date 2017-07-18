@@ -133,6 +133,8 @@ datablock TurretData(TurretDeployedCamera) : TurretDamageProfile
    thetaMax = 180;
    //thetaNull = 90;
 
+	deployedObject = true;
+
    isShielded = false;
    energyPerDamagePoint = 40;
    maxEnergy = 30;

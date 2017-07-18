@@ -337,8 +337,8 @@ function SinglePlayerGame::onClientKilled(%game, %clVictim, %clKiller, %damageTy
 			if(%num == 1)
 				%textNum = "one life";
 			else %textNum = %num SPC "lives";
-			messageBoxOk("Restart", "You have" SPC %textNum SPC "remaining.", "canvas.cursorOff(); spawnSinglePlayer();");
-			canvas.cursorOn();
+			messageBoxOk("Restart", "You have" SPC %textNum SPC "remaining.", "CursorOff(); spawnSinglePlayer();");
+			//canvas.cursorOn();
 		}
 		else schedule(3000, $player.player, singlePlayerDead);
 	}
@@ -369,6 +369,11 @@ function singlePlayerGame::AIHasJoined()
 {
 	// Big deal...my missions are crawling with AI
 	// lets get rid of this mundane console spam
+}
+
+function SinglePlayerGame::updateKillScores()
+{
+   // Do nothing other than get rid of the console warning...
 }
 
 function singlePlayerGame::biodermAssume(%game, %client)
@@ -413,7 +418,7 @@ function trainingBiodermSpeaks(%client)
 function singlePlayerDead()
 {
 	missionFailed($player.miscMsg[trainingDeathLoss]);
-	canvas.cursorOn();
+	CursorOn();
 	AIMissionEnd();
 	$objectiveQ[$enemyTeam].clear();
 	cancel($player.distanceCheckSchedule);
@@ -468,6 +473,11 @@ function SinglePlayerGame::clientMissionDropReady(%game, %client)
 	AISystemEnabled(true);
 
    $player.setControlObject( $player.player );
+   $player.camera = new Camera() 
+   {
+      dataBlock = Observer;
+   };
+   
    startCurrentMission(%game);
 }
 
@@ -555,7 +565,7 @@ function singlePlayerGame::gameOver(%game)
 	deactivatepackage(Training6);
 	deactivatePackage(singlePlayerMissionAreaEnforce);
 
-	if($player.currentWaypoint)
+	if(isObject( $player.currentWaypoint ))
 		$player.currentWaypoint.delete();
 
 	if($player.OOB)
@@ -821,7 +831,7 @@ function missionComplete(%text)
 	$player.endMission = schedule(15000, game, forceFinish);
 	
 	messageBoxOk("Victory", %text, "forceFinish();");
-	canvas.cursorOn();
+	//canvas.cursorOn();
 
 	//AI stop
 	clearQueue();
@@ -840,9 +850,6 @@ function forceFinish()
 
 	//immediately disconnect - bringing us back to the main menu...
 	Disconnect();
-
-	//we need to get the singlePlayer dialog after leaving
-	canvas.schedule(1000, "pushDialog", singlePlayerDlg);
 }
 
 function missionFailed(%text)
@@ -862,6 +869,7 @@ function reloadMission()
 {
 	cancel($player.endMission);
 	Game.gameOver();
+   CursorOn();
 	loadMission($currentMission, singlePlayer);
 	debriefContinue();
 }
@@ -890,7 +898,7 @@ function firstPersonQuickPan()
 		toggleFirstPerson($player);
 		schedule(4000, $player.player, toggleFirstPerson, $player);
 	}
-	
+
 }
 
 
@@ -967,8 +975,8 @@ function singleplayerGame::pickTeamSpawn(%game, %client, %respawn)
 
 function SinglePlayerGame::createCustomKeymap(%game)
 {
-	new ActionMap(TrainingMap);
-	TrainingMap.bindCmd( keyboard, "escape", escapeFromGame );
+// 	new ActionMap(TrainingMap);
+// 	TrainingMap.bindCmd( keyboard, "escape", "escapeFromGame();", "" );
 }
 
 //=======================================================================================
@@ -983,9 +991,9 @@ function SinglePlayerEscapeDlg::onWake( %this )
 	$timeScale = 0;
 
 	if( OptionsDlg.isAwake())
-	{
+   {
 		Canvas.popDialog( OptionsDlg );
-	}
+   }
 }
 
 function SinglePlayerEscapeDlg::onSleep( %this )
@@ -1000,14 +1008,14 @@ function SinglePlayerEscapeDlg::leaveGame( %this )
    Canvas.popDialog( SinglePlayerEscapeDlg );
    if ( !%this.wasCursorOn )
       CursorOff();
-   MessageBoxYesNo( "LEAVE GAME", $player.miscMsg[LeaveGame], "forceFinish();", "$timeScale = 1;" );
+   MessageBoxYesNo( "LEAVE GAME", $player.miscMsg[LeaveGame], "forceFinish();", "CursorOff(); $timeScale = 1;" );
 }
 
 function SinglePlayerEscapeDlg::gotoSettings( %this )
 {
    Canvas.popDialog( SinglePlayerEscapeDlg );
-   if ( !%this.wasCursorOn )
-      CursorOff();
+   //if ( !%this.wasCursorOn )
+   //   CursorOff();
    Canvas.pushDialog( OptionsDlg );
 }
 
@@ -1018,10 +1026,8 @@ function SinglePlayerEscapeDlg::returnToGame( %this )
 	Canvas.popDialog( SinglePlayerEscapeDlg );
 	CursorOff();
 
-
-	//moveMap.bindCmd( keyboard, "escape", "", "escapeFromGame();" );
 	movemap.push();
-	trainingmap.push();
+	//trainingmap.push();
 }
 
 

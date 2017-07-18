@@ -269,7 +269,7 @@ function LaunchGui::onWake(%this)
    if ( !Canvas.isCursorOn() )
       CursorOn();
    $enableDirectInput = "0";
-   disableDirectInput();
+   deactivateDirectInput();
    Canvas.pushDialog(LaunchToolbarDlg);
    if ( !$FirstLaunch )
       LaunchTabView.viewLastTab();

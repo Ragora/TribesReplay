@@ -641,11 +641,11 @@ datablock SeekerProjectileData(ShoulderMissile)
 
    lifetimeMS          = 6000;
    muzzleVelocity      = 10.0;
-   maxVelocity         = 65.0;
+   maxVelocity         = 80.0;
    turningSpeed        = 90.0;
    acceleration        = 200.0;
 
-   proximityRadius     = 5;
+   proximityRadius     = 3;
 
    terrainAvoidanceSpeed         = 180;
    terrainScanAhead              = 25;

@@ -65,6 +65,8 @@ datablock TurretData(TurretDeployedFloorIndoor) : TurretDamageProfile
    heatSignature = 0.0;
    explosion = SmallTurretExplosion;
 
+	deployedObject = true;
+
    thetaMin = 5;
    thetaMax = 145;
    thetaNull = 90;

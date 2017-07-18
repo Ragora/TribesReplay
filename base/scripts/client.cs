@@ -212,7 +212,7 @@ function PlayGui::onWake(%this)
    }
 
    $enableDirectInput = "1";
-   enableDirectInput();
+   activateDirectInput();
    
    // chat hud dialog
    Canvas.pushDialog( MainChatHud );
@@ -246,7 +246,11 @@ function PlayGui::onSleep(%this)
    moveMap.pop();
    if ( isObject( passengerKeys ) )
       passengerKeys.pop();
-   flyingCameraMove.pop();
+   if ( isObject( observerBlockMap ) )
+      observerBlockMap.pop();
+   if ( isObject( observerMap ) )
+      observerMap.pop();
+   //flyingCameraMove.pop();
 
    CursorOn();
 }
@@ -349,16 +353,6 @@ function ClientCmdVoteSubmitted(%type)
       alxPlay(VoteForSound, 0, 0, 0);
 }
 // End client voting functions.
-
-function clientCmdSetVoiceCodec(%codec)
-{  
-   if (%codec $= ".v12" || %codec $= ".v24" || %codec $= ".v29")                  
-      $Audio::voiceCodec = %codec;   
-   else
-      $Audio::voiceCodec = "";   
-   echo("Got setVoiceCodec: " @ %codec);
-   alxCaptureInit();
-}   
 
 function clientCmdEndBomberSight()
 {
@@ -1769,9 +1763,15 @@ function sceneLightingComplete()
    }
 
    clientCmdResetHud();
-   %numChannels = $pref::Audio::microphoneEnabled ? $pref::audio::voiceChannels : 0;
-   commandToServer('SetVoiceChannels', %numChannels);
+   commandToServer('SetVoiceInfo', $pref::Audio::voiceChannels, $pref::Audio::decodingMask, $pref::Audio::encodingLevel);
    commandToServer('MissionStartPhase3Done', $MSeq);
+}
+
+function clientCmdSetVoiceInfo(%channels, %decodingMask, %encodingLevel)
+{
+   $Audio::serverChannels = %channels;
+   $Audio::serverDecodingMask = %decodingMask;
+   $Audio::serverEncodingLevel = %encodingLevel;
 }
 
 function ClientReceivedDataBlock(%index, %total)

@@ -1,83 +1,83 @@
-function createObserverMoveMap()
-{
-   if ( isObject( flyingCameraMove ) )
-      flyingCameraMove.delete();
-
-   new ActionMap( flyingCameraMove );
-   flyingCameraMove.bind( keyboard, s, moveleft );
-   flyingCameraMove.bind( keyboard, f, moveright );
-   flyingCameraMove.bind( keyboard, e, moveforward );
-   flyingCameraMove.bind( keyboard, d, movebackward );
-   flyingCameraMove.bind( keyboard, t, moveup );
-   flyingCameraMove.bind( keyboard, b, movedown );
-
-   // allow hud activation
-   flyingCameraMove.copyBind( moveMap, toggleScoreScreen );
-   flyingCameraMove.copyBind( moveMap, toggleCommanderMap );
-   flyingCameraMove.copyBind( moveMap, TeamMessageHud );
-   flyingCameraMove.copyBind( moveMap, toggleMessageHud );
-   flyingCameraMove.copyBind( moveMap, toggleInventoryHud );
-   flyingCameraMove.copyBind( moveMap, voteYes );
-   flyingCameraMove.copyBind( moveMap, voteNo );
-   flyingCameraMove.copyBind( moveMap, activateChatMenuHud );
-
-   // Bind the command assignment/response keys as well:
-   flyingCameraMove.copyBind( moveMap, toggleTaskListDlg );
-   flyingCameraMove.copyBind( moveMap, fnAcceptTask );
-   flyingCameraMove.copyBind( moveMap, fnDeclineTask );
-   flyingCameraMove.copyBind( moveMap, fnTaskCompleted );
-   flyingCameraMove.copyBind( moveMap, fnResetTaskList );
-
-   // misc
-   flyingCameraMove.copyBind( moveMap, voiceCapture );
-   
-   // inventory binds
-   flyingCameraMove.copyBind( moveMap, toggleInventoryHud );
-   flyingCameraMove.copyBind( moveMap, selectFavorite1 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite2 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite3 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite4 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite5 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite6 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite7 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite8 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite9 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite10 );
-
-   flyingCameraMove.copyBind( moveMap, selectFavorite11 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite12 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite13 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite14 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite15 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite16 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite17 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite18 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite19 );
-   flyingCameraMove.copyBind( moveMap, selectFavorite20 );
-
-   flyingCameraMove.copyBind( moveMap, quickPackEnergyPack );
-   flyingCameraMove.copyBind( moveMap, quickPackRepairPack );
-   flyingCameraMove.copyBind( moveMap, quickPackShieldPack );
-   flyingCameraMove.copyBind( moveMap, quickPackCloakPack );
-   flyingCameraMove.copyBind( moveMap, quickPackJammerPack );
-   flyingCameraMove.copyBind( moveMap, quickPackAmmoPack );
-   flyingCameraMove.copyBind( moveMap, quickPackSatchelCharge );
-   flyingCameraMove.copyBind( moveMap, quickPackDeployableStation );
-   flyingCameraMove.copyBind( moveMap, quickPackIndoorTurret );
-   flyingCameraMove.copyBind( moveMap, quickPackOutdoorTurret );
-   flyingCameraMove.copyBind( moveMap, quickPackMotionSensor );
-   flyingCameraMove.copyBind( moveMap, quickPackPulse  );
-
-   //preserve the fire, jump, and jet buttons
-   flyingCameraMove.copyBind( moveMap, mouseFire );
-   flyingCameraMove.copyBind( moveMap, mouseJet );
-   flyingCameraMove.copyBind( moveMap, jump );
-   flyingCameraMove.copyBind( moveMap, yaw );
-   flyingCameraMove.copyBind( moveMap, pitch );
-
-   flyingCameraMove.bindCmd( keyboard, escape, "", "escapeFromGame();" );
-}
-createObserverMoveMap();
+// function createObserverMoveMap()
+// {
+//    if ( isObject( flyingCameraMove ) )
+//       flyingCameraMove.delete();
+// 
+//    new ActionMap( flyingCameraMove );
+//    flyingCameraMove.bind( keyboard, s, moveleft );
+//    flyingCameraMove.bind( keyboard, f, moveright );
+//    flyingCameraMove.bind( keyboard, e, moveforward );
+//    flyingCameraMove.bind( keyboard, d, movebackward );
+//    flyingCameraMove.bind( keyboard, t, moveup );
+//    flyingCameraMove.bind( keyboard, b, movedown );
+// 
+//    // allow hud activation
+//    flyingCameraMove.copyBind( moveMap, toggleScoreScreen );
+//    flyingCameraMove.copyBind( moveMap, toggleCommanderMap );
+//    flyingCameraMove.copyBind( moveMap, TeamMessageHud );
+//    flyingCameraMove.copyBind( moveMap, toggleMessageHud );
+//    flyingCameraMove.copyBind( moveMap, toggleInventoryHud );
+//    flyingCameraMove.copyBind( moveMap, voteYes );
+//    flyingCameraMove.copyBind( moveMap, voteNo );
+//    flyingCameraMove.copyBind( moveMap, activateChatMenuHud );
+// 
+//    // Bind the command assignment/response keys as well:
+//    flyingCameraMove.copyBind( moveMap, toggleTaskListDlg );
+//    flyingCameraMove.copyBind( moveMap, fnAcceptTask );
+//    flyingCameraMove.copyBind( moveMap, fnDeclineTask );
+//    flyingCameraMove.copyBind( moveMap, fnTaskCompleted );
+//    flyingCameraMove.copyBind( moveMap, fnResetTaskList );
+// 
+//    // misc
+//    flyingCameraMove.copyBind( moveMap, voiceCapture );
+//    
+//    // inventory binds
+//    flyingCameraMove.copyBind( moveMap, toggleInventoryHud );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite1 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite2 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite3 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite4 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite5 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite6 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite7 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite8 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite9 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite10 );
+// 
+//    flyingCameraMove.copyBind( moveMap, selectFavorite11 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite12 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite13 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite14 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite15 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite16 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite17 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite18 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite19 );
+//    flyingCameraMove.copyBind( moveMap, selectFavorite20 );
+// 
+//    flyingCameraMove.copyBind( moveMap, quickPackEnergyPack );
+//    flyingCameraMove.copyBind( moveMap, quickPackRepairPack );
+//    flyingCameraMove.copyBind( moveMap, quickPackShieldPack );
+//    flyingCameraMove.copyBind( moveMap, quickPackCloakPack );
+//    flyingCameraMove.copyBind( moveMap, quickPackJammerPack );
+//    flyingCameraMove.copyBind( moveMap, quickPackAmmoPack );
+//    flyingCameraMove.copyBind( moveMap, quickPackSatchelCharge );
+//    flyingCameraMove.copyBind( moveMap, quickPackDeployableStation );
+//    flyingCameraMove.copyBind( moveMap, quickPackIndoorTurret );
+//    flyingCameraMove.copyBind( moveMap, quickPackOutdoorTurret );
+//    flyingCameraMove.copyBind( moveMap, quickPackMotionSensor );
+//    flyingCameraMove.copyBind( moveMap, quickPackPulse  );
+// 
+//    //preserve the fire, jump, and jet buttons
+//    flyingCameraMove.copyBind( moveMap, mouseFire );
+//    flyingCameraMove.copyBind( moveMap, mouseJet );
+//    flyingCameraMove.copyBind( moveMap, jump );
+//    flyingCameraMove.copyBind( moveMap, yaw );
+//    flyingCameraMove.copyBind( moveMap, pitch );
+// 
+//    flyingCameraMove.bindCmd( keyboard, escape, "", "escapeFromGame();" );
+// }
+// createObserverMoveMap();
 
 //--------------------------------------------------------------------------
 function GameConnection::sensorPing(%this, %ping)
@@ -652,6 +652,7 @@ function MessageHud::open(%this)
    MessageHud_Edit.extent = setWord(MessageHud_Edit.extent, 0, %ctrlExtent - %textExtent - (2 * %offset));
 
    %this.setVisible(true);
+   deactivateKeyboard();
    MessageHud_Edit.makeFirstResponder(true);
 }
 
@@ -677,6 +678,8 @@ function MessageHud::close(%this)
 
    Canvas.popDialog(%this);
    %this.setVisible(false);
+   if ( $enableDirectInput )
+      activateKeyboard();
    MessageHud_Edit.setValue("");
 }
 
@@ -716,7 +719,7 @@ function MainChatHud::onWake( %this )
 {
    // set the chat hud to the users pref
    %this.setChatHudLength( $Pref::ChatHudLength );
-} 
+}
 
 // chat hud sizes
 $outerChatLenY[1] = 72;
@@ -934,8 +937,12 @@ function updateActionMaps()
       moveMap.pop();
    if (isObject(passengerKeys))
       passengerKeys.pop();
-   if (isObject(flyingCameraMove))
-      flyingCameraMove.pop();
+   if ( isObject( observerBlockMap ) )
+      observerBlockMap.pop();
+   if ( isObject( observerMap ) )
+      observerMap.pop();
+   //if (isObject(flyingCameraMove))
+   //   flyingCameraMove.pop();
    if (isObject(ControlActionMap))
       ControlActionMap.pop();
 
@@ -953,7 +960,18 @@ function updateActionMaps()
          ControlActionMap.push();
 
       case "Observer":
-         flyingCameraMove.push();
+         moveMap.push();
+         if ( isObject( observerBlockMap ) )
+            observerBlockMap.delete();
+         // Create an action map just to block unwanted parts of the move map:
+         new ActionMap( observerBlockMap );
+         observerBlockMap.blockBind( moveMap, jump );
+         observerBlockMap.blockBind( moveMap, mouseJet );
+         observerBlockMap.blockBind( moveMap, toggleZoom );
+         observerBlockMap.blockBind( moveMap, setZoomFOV );
+         observerBlockMap.push();
+         observerMap.push();
+         //flyingCameraMove.push();
       
       case "PickTeam":
         // no mapping 
@@ -1237,18 +1255,32 @@ function clearHud(%msgType, %msgString, %tag, %a0)
    {
       for(%i = 0; %i < $Hud[%tag].numCol; %i++)
       {
-         $Hud[%tag].childGui.remove($Hud[%tag].data[%startingLine, %i]);
-         $Hud[%tag].data[%startingLine, %i] = "";      
-      }
-
-      //don't forget to resize
-      if (%tag $= 'scoreScreen')
-      {
-         %prevExtent = $Hud[%tag].childGui.extent;
-         $Hud[%tag].childGui.extent = firstWord(%prevExtent) SPC (getWord(%prevExtent, 1) - 24);
+         //remove and delete the hud line
+         %obj = $Hud[%tag].data[%startingLine, %i];
+         $Hud[%tag].childGui.remove(%obj);
+         $Hud[%tag].data[%startingLine, %i] = "";
+         %obj.delete();
       }
 
       %startingLine++;
+   }
+
+   //don't forget to adjust the size accordingly...
+   if (%tag $= 'scoreScreen')
+   {
+      %height = 0;
+      %guiCtrl = $Hud[%tag].childGui;
+
+      //set the new extent to be the position + extent of the last element...
+      %height = 0;
+      if (%guiCtrl.getCount() > 0)
+      {
+         %lastCtrl = %guiCtrl.getObject(%guiCtrl.getCount() - 1);
+         %height = getWord(%lastCtrl.position, 1) + getWord(%lastCtrl.extent, 1);
+      }
+
+      //now reset the extent
+      %guiCtrl.resize(getWord(%guiCtrl.position, 0), getWord(%guiCtrl.position, 1), getWord(%guiCtrl.extent, 0), %height);
    }
 }
 
@@ -1264,11 +1296,22 @@ function removeLineHud(%msgType, %msgString, %hudName, %lineNumber, %a0, %a1, %a
          $Hud[%tag].data[%lineNum, %i] = "";
       }
 
-   //don't forget to resize
+   //don't forget to adjust the size accordingly...
    if (%tag $= 'scoreScreen')
    {
-      %prevExtent = $Hud[%tag].childGui.extent;
-      $Hud[%tag].childGui.extent = firstWord(%prevExtent) SPC (getWord(%prevExtent, 1) - 24);
+      %height = 0;
+      %guiCtrl = $Hud[%tag].childGui;
+
+      //set the new extent to be the position + extent of the last element...
+      %height = 0;
+      if (%guiCtrl.getCount() > 0)
+      {
+         %lastCtrl = %guiCtrl.getObject(%guiCtrl.getCount() - 1);
+         %height = getWord(%lastCtrl.position, 1) + getWord(%lastCtrl.extent, 1);
+      }
+
+      //now reset the extent
+      %guiCtrl.resize(getWord(%guiCtrl.position, 0), getWord(%guiCtrl.position, 1), getWord(%guiCtrl.extent, 0), %height);
    }
 }
 
@@ -1287,6 +1330,24 @@ function setLineHud(%msgType, %msgString, %hudName, %lineNumber, %a0, %a1, %a2, 
 
    for(%i = 0; %i < $Hud[%tag].numCol; %i++)
       $Hud[%tag].data[%lineNum, %i].hudSetValue(detag(%a[%i]),detag(%a4));   
+
+   //don't forget to adjust the size accordingly...
+   if (%tag $= 'scoreScreen')
+   {
+      %height = 0;
+      %guiCtrl = $Hud[%tag].childGui;
+
+      //set the new extent to be the position + extent of the last element...
+      %height = 0;
+      if (%guiCtrl.getCount() > 0)
+      {
+         %lastCtrl = %guiCtrl.getObject(%guiCtrl.getCount() - 1);
+         %height = getWord(%lastCtrl.position, 1) + getWord(%lastCtrl.extent, 1);
+      }
+
+      //now reset the extent
+      %guiCtrl.resize(getWord(%guiCtrl.position, 0), getWord(%guiCtrl.position, 1), getWord(%guiCtrl.extent, 0), %height);
+   }
 }
 
 //------------------------------------------------------------------------------

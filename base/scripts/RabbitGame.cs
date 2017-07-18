@@ -386,8 +386,13 @@ function RabbitGame::MissionAreaDamage(%game, %player)
 {
    if(%player.getState() !$= "Dead") {                                   
       %player.setDamageFlash(0.1);
+		%damageRate = 0.05;
+		%pack = %player.getMountedImage($BackpackSlot);
+		if(%pack.getName() $= "RepairPackImage")
+			if(%player.getMountedImage($WeaponSlot).getName() $= "RepairGunImage")
+				%damageRate = 0.15;
       %prevHurt = %player.getDamageLevel();
-      %player.setDamageLevel(%prevHurt + 0.05);
+      %player.setDamageLevel(%prevHurt + %damageRate);
       // a little redundancy to see if the lastest damage killed the player
       if(%player.getState() $= "Dead")
          %game.onClientKilled(%player.client, 0, $DamageType::OutOfBounds);
@@ -552,6 +557,36 @@ function RabbitGame::updateScoreHud(%game, %client, %tag)
          else
             messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:20>%4\t<clip:200><a:gamelink\t%5>%1</a></clip><rmargin:280><just:right>%2<rmargin:375><just:right>%3', 
                   %col1Client.name, %col1ClientScore, %col1ClientTime, %col1Style, %col1Client );
+      }
+   }
+
+   // Tack on the list of observers:
+   %observerCount = 0;
+   for (%i = 0; %i < ClientGroup.getCount(); %i++)
+   {
+      %cl = ClientGroup.getObject(%i);
+      if (%cl.team == 0)
+         %observerCount++;
+   }
+
+   if (%observerCount > 0)
+   {
+	   messageClient( %client, 'SetLineHud', "", %tag, %index, "");
+      %index++;
+		messageClient(%client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush><font:Univers Condensed:22>\tOBSERVERS (%1)<rmargin:260><just:right>TIME<spop>', %observerCount);
+      %index++;
+      for (%i = 0; %i < ClientGroup.getCount(); %i++)
+      {
+         %cl = ClientGroup.getObject(%i);
+         //if this is an observer
+         if (%cl.team == 0)
+         {
+            %obsTime = getSimTime() - %cl.observerStartTime;
+            %obsTimeStr = %game.formatTime(%obsTime, false);
+		      messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:20, 310>\t<clip:150>%1</clip><rmargin:260><just:right>%2',
+		                     %cl.name, %obsTimeStr );
+            %index++;
+         }
       }
    }
 

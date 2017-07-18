@@ -31,17 +31,6 @@ new GuiControl(interiorPreviewGui) {
 		beaconLineWidth = "2.5";
 		beaconTextYOffset = "14";
 		showAlternateTarget = "0";
-
-		new GameOverlayCtrl() {
-			profile = "GuiDefaultProfile";
-			horizSizing = "right";
-			vertSizing = "bottom";
-			position = "0 0";
-			extent = "640 480";
-			minExtent = "8 8";
-			visible = "1";
-			helpTag = "0";
-		};
 	};
 	new GuiButtonCtrl() {
 		profile = "GuiButtonProfile";

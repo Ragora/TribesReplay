@@ -44,7 +44,7 @@ datablock AudioProfile(ShrikeBlasterDryFireSound)
 // VEHICLE CHARACTERISTICS
 //**************************************************************
 
-datablock FlyingVehicleData(ScoutFlyer) : AirVehicleDamageProfile
+datablock FlyingVehicleData(ScoutFlyer) : ShrikeDamageProfile
 {
    spawnOffset = "0 0 2";
 
@@ -66,6 +66,8 @@ datablock FlyingVehicleData(ScoutFlyer) : AirVehicleDamageProfile
    cameraOffset = 2.5;
    cameraLag = 0.9;
    explosion = VehicleExplosion;
+	explosionDamage = 0.5;
+	explosionRadius = 5.0;
 
    maxDamage = 1.40;
    destroyedLevel = 1.40;
@@ -77,12 +79,6 @@ datablock FlyingVehicleData(ScoutFlyer) : AirVehicleDamageProfile
    rotationalDrag = 900;        // Anguler Drag (dampens the drift after you stop moving the mouse...also tumble drag)
    rechargeRate = 0.8;
 
-   // Turbo Jet
-   jetForce = 2000;      // Afterburner thrust (this is in addition to normal thrust)
-   minJetEnergy = 28;     // Afterburner can't be used if below this threshhold.
-   vertThrustMultiple = 2.0;
-
-   jetEnergyDrain = 2.8;       // Energy use of the afterburners (low number is less drain...can be fractional)                                                                                                                                                                                                                                                                                          // Auto stabilize speed
    maxAutoSpeed = 15;       // Autostabilizer kicks in when less than this speed. (meters/second)
    autoAngularForce = 400;       // Angular stabilizer force (this force levels you out when autostabilizer kicks in)
    autoLinearForce = 300;        // Linear stabilzer force (this slows you down when autostabilizer kicks in)
@@ -99,17 +95,26 @@ datablock FlyingVehicleData(ScoutFlyer) : AirVehicleDamageProfile
    hoverHeight = 5;        // Height off the ground at rest
    createHoverHeight = 3;  // Height off the ground when created
 
+   // Turbo Jet
+   jetForce = 2000;      // Afterburner thrust (this is in addition to normal thrust)
+   minJetEnergy = 28;     // Afterburner can't be used if below this threshhold.
+   jetEnergyDrain = 2.8;       // Energy use of the afterburners (low number is less drain...can be fractional)                                                                                                                                                                                                                                                                                          // Auto stabilize speed
+   vertThrustMultiple = 2.0;
+
    // Rigid body
    mass = 150;        // Mass of the vehicle
    bodyFriction = 0;     // Don't mess with this.
    bodyRestitution = 0.5;   // When you hit the ground, how much you rebound. (between 0 and 1)
    minRollSpeed = 0;     // Don't mess with this.
-   minImpactSpeed = 8;      // If hit ground at speed above this then it's an impact. Meters/second
-   softImpactSpeed = 10;       // Sound hooks. This is the soft hit.
+   softImpactSpeed = 14;       // Sound hooks. This is the soft hit.
    hardImpactSpeed = 25;    // Sound hooks. This is the hard hit.
-   speedDamageScale = 0.04;
 
-   collDamageThresholdVel = 20.0;
+   // Ground Impact Damage (uses DamageType::Ground)
+   minImpactSpeed = 23;      // If hit ground at speed above this then it's an impact. Meters/second
+   speedDamageScale = 0.06;
+
+   // Object Impact Damage (uses DamageType::Impact)
+   collDamageThresholdVel = 23.0;
    collDamageMultiplier   = 0.02;
 
    //
@@ -126,10 +131,10 @@ datablock FlyingVehicleData(ScoutFlyer) : AirVehicleDamageProfile
    //wheelImpactSound = WheelImpactSound;
    
    //
-   softSplashSoundVelocity = 15.0; 
-   mediumSplashSoundVelocity = 30.0;   
-   hardSplashSoundVelocity = 60.0;   
-   exitSplashSoundVelocity = 20.0;
+   softSplashSoundVelocity = 10.0; 
+   mediumSplashSoundVelocity = 15.0;   
+   hardSplashSoundVelocity = 20.0;   
+   exitSplashSoundVelocity = 10.0;
    
    exitingWater      = VehicleExitWaterMediumSound;
    impactWaterEasy   = VehicleImpactWaterSoftSound;

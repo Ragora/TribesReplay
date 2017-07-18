@@ -123,7 +123,7 @@ function FlipFlop::objectiveInit(%data, %flipflop)
 function ClientCmdSetHudMode(%mode, %type, %node)
 {
 	parent::ClientCmdSetHudMode(%mode, %type, %node);
-	TrainingMap.push();
+	//TrainingMap.push();
 }
 
 
@@ -299,8 +299,10 @@ function FlipFlop::playerTouch(%data, %flipFlop, %player )
 
 function scoutFlyer::onRemove(%this, %obj)
 {
-	//error("scoutFlyer::onRemove("@ %obj@") called");
-	if(%obj == $Shrike) {
+	error("scoutFlyer::onRemove("@ %obj@") called");
+   if ( ! isObject( ServerConnection ) )
+	return;
+	if(%obj == $Shrike ) {
 		// we dont want the player to die hitting the ground
 		cancel(game.pilotingTips);
 		$player.player.invincible = true;  

@@ -6,6 +6,8 @@ $DeployThread = 3;
 $HumSound = 0;
 $ActivateSound = 1;
 $DeploySound = 2;
+$PlaySound = 3;
+
 //******************************************************************************
 //*   Power  -Audio- Data Blocks                                               *
 //******************************************************************************
@@ -157,6 +159,8 @@ function GameBase::setSelfPowered(%this)
    if(!%this.isPowered())
    {
       %this.selfPower = true;
+		if(%this.getDatablock().deployedObject)
+			%this.initDeploy = true;
       %this.getDataBlock().gainPower(%this);
    }
    else

@@ -21,7 +21,7 @@ datablock AudioProfile(HAPCFlyerThrustSound)
 // VEHICLE CHARACTERISTICS
 //**************************************************************
 
-datablock FlyingVehicleData(HAPCFlyer) : AirVehicleDamageProfile
+datablock FlyingVehicleData(HAPCFlyer) : HavocDamageProfile
 {
    spawnOffset = "0 0 6";
 
@@ -51,6 +51,8 @@ datablock FlyingVehicleData(HAPCFlyer) : AirVehicleDamageProfile
    cameraOffset = 2;
    cameraLag = 8.5;
    explosion = LargeAirVehicleExplosion;
+	explosionDamage = 0.5;
+	explosionRadius = 5.0;
 
    maxDamage = 3.50;
    destroyedLevel = 3.50;
@@ -82,7 +84,7 @@ datablock FlyingVehicleData(HAPCFlyer) : AirVehicleDamageProfile
    // Turbo Jet
    jetForce = 5000;
    minJetEnergy = 55;
-   jetEnergyDrain = 2.8;
+   jetEnergyDrain = 3.6;
    vertThrustMultiple = 2.0;
 
 
@@ -104,13 +106,16 @@ datablock FlyingVehicleData(HAPCFlyer) : AirVehicleDamageProfile
    bodyFriction = 0;
    bodyRestitution = 0.3;
    minRollSpeed = 0;
-   minImpactSpeed = 8;      // If hit ground at speed above this then it's an impact. Meters/second
-   softImpactSpeed = 10;       // Sound hooks. This is the soft hit.
-   hardImpactSpeed = 25;    // Sound hooks. This is the hard hit.
-   speedDamageScale = 0.03;
+   softImpactSpeed = 12;       // Sound hooks. This is the soft hit.
+   hardImpactSpeed = 15;    // Sound hooks. This is the hard hit.
 
-   collDamageThresholdVel = 20.0;
-   collDamageMultiplier   = 0.03;
+   // Ground Impact Damage (uses DamageType::Ground)
+   minImpactSpeed = 12;      // If hit ground at speed above this then it's an impact. Meters/second
+   speedDamageScale = 0.060;
+
+   // Object Impact Damage (uses DamageType::Impact)
+   collDamageThresholdVel = 12;
+   collDamageMultiplier   = 0.080;
 
    //
    minTrailSpeed = 15;
@@ -126,10 +131,10 @@ datablock FlyingVehicleData(HAPCFlyer) : AirVehicleDamageProfile
    //wheelImpactSound = WheelImpactSound;
 
    //
-   softSplashSoundVelocity = 15.0; 
-   mediumSplashSoundVelocity = 30.0;   
-   hardSplashSoundVelocity = 60.0;   
-   exitSplashSoundVelocity = 20.0;
+   softSplashSoundVelocity = 5.0; 
+   mediumSplashSoundVelocity = 8.0;   
+   hardSplashSoundVelocity = 12.0;   
+   exitSplashSoundVelocity = 8.0;
    
    exitingWater      = VehicleExitWaterHardSound;
    impactWaterEasy   = VehicleImpactWaterSoftSound;

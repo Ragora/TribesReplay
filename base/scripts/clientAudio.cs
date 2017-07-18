@@ -22,7 +22,6 @@ $AudioProviders[3, isHardware]         = false;
 $AudioProviders[3, enableEvironment]   = false;
 
 // defaults
-$Audio::voiceCodec = ".v12";
 $Audio::defaultDriver = "miles";
 $Audio::innerFalloffScale = "1.0";
 $Audio::dynamicMemorySize = (1 << 20);

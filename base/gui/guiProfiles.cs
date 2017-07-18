@@ -90,24 +90,10 @@ new GuiControlProfile ("GuiContentProfile")
    fillColor = "255 255 255";
 };
 
-new GuiControlProfile ("memberListProfile")
-{
-   fontType = "Univers Condensed";
-   fontSize = 12;
-   fontColor = "255 222 0";
-};
-
 new GuiControlProfile ("clockProfile")
 {
    fontType = "Univers Condensed";
    fontSize = 12;
-   fontColor = "0 255 0";
-};
-
-new GuiControlProfile ("browserListProfile")
-{
-   fontType = "Univers Condensed";
-   fontSize = 14;
    fontColor = "0 255 0";
 };
 
@@ -488,6 +474,20 @@ new GuiControlProfile ("ShellServerBrowserProfile")
    soundButtonOver = sButtonOver;
 	tab = true;
 	canKeyFocus = true;
+};
+
+new GuiControlProfile ("ShellBrowserListProfile")
+{
+   fontType = $ShellFont;
+   fontSize = 12;
+   fontColor = "20 220 20";
+   fontColorHL = "60 250 60";
+   fontColorNA = "128 128 128";
+   fontColorSEL = "0 60 0";
+   soundButtonDown = sButtonDown;
+   soundButtonOver = sButtonOver;
+   tab = true;
+   canKeyFocus = true;
 };
 
 new GuiControlProfile ("LobbyPlayerListProfile")

@@ -342,29 +342,47 @@ function AICouldUseItem(%client, %item)
 			return false;
 	}
 
-	//check ammo
-	%quantity = mFloor(%playerDataBlock.max[%type] * 0.7);
-	if (%player.getInventory(%type) < %quantity)
-	{
-		if (%type $= "ChainGunAmmo" && %player.getInventory("ChainGun") > 0)
-			return true;
-		if (%type $= "PlasmaAmmo" && %player.getInventory("Plasma") > 0)
-			return true;
-		if (%type $= "DiscAmmo" && %player.getInventory("Disc") > 0)
-			return true;
-		if (%type $= "GrenadeLauncher" && %player.getInventory("GrenadeLauncherAmmo") > 0)
-			return true;
-		if (%type $= "MortarAmmo" && %player.getInventory("Mortar") > 0)
-			return true;
+   //if the item is acutally, a corpse, check the corpse inventory...
+   if (%item.isCorpse)
+   {
+      %corpse = %item;
+      if (%corpse.getInventory("ChainGunAmmo") > 0 && %player.getInventory(%type) < %playerDataBlock.max[ChainGunAmmo])
+         return true;
+      if (%corpse.getInventory("PlasmaAmmo") > 0 && %player.getInventory(%type) < %playerDataBlock.max[PlasmaAmmo])
+         return true;
+      if (%corpse.getInventory("DiscAmmo") > 0 && %player.getInventory(%type) < %playerDataBlock.max[DiscAmmo])
+         return true;
+      if (%corpse.getInventory("GrenadeLauncher") > 0 && %player.getInventory(%type) < %playerDataBlock.max[GrenadeLauncher])
+         return true;
+      if (%corpse.getInventory("MortarAmmo") > 0 && %player.getInventory(%type) < %playerDataBlock.max[MortarAmmo] && %player.getInventory("Mortar") > 0)
+         return true;
+   }
+   else
+   {
+	   //check ammo
+	   %quantity = mFloor(%playerDataBlock.max[%type]);
+	   if (%player.getInventory(%type) < %quantity)
+	   {
+		   if (%type $= "ChainGunAmmo")
+			   return true;
+		   if (%type $= "PlasmaAmmo")
+			   return true;
+		   if (%type $= "DiscAmmo")
+			   return true;
+		   if (%type $= "GrenadeLauncher")
+			   return true;
+		   if (%type $= "MortarAmmo" && %player.getInventory("Mortar") > 0)
+			   return true;
 
-		//check mines and grenades as well
-		if (%type $= "Grenade" || %type $= "FlashGrenade" || %type $= "ConcussionGrenade")
-			return true;
-	}
+		   //check mines and grenades as well
+		   if (%type $= "Grenade" || %type $= "FlashGrenade" || %type $= "ConcussionGrenade")
+			   return true;
+	   }
 
-	//see if we can carry another weapon...
-	if (AICanPickupWeapon(%client, %type))
-		return true;
+	   //see if we can carry another weapon...
+	   if (AICanPickupWeapon(%client, %type))
+		   return true;
+   }
 
 	//guess we didn't find anything useful...  (should still check for mines and grenades)
    return false;
@@ -391,8 +409,9 @@ function AIEngageOutofAmmo(%client)
    %hasELF     = (%player.getInventory("ELFGun") > 0); 
    %hasMortar  = (%player.getInventory("Mortar") > 0); 
    %hasMissile = (%player.getInventory("MissileLauncher") > 0);
+   %hasLance   = (%player.getInventory("ShockLance") > 0);
    
-   if(%hasBlaster || %hasSniper || %hasElf)
+   if (%hasBlaster || %hasSniper || %hasElf || %hasLance)
       return false;
    else
    {
@@ -422,7 +441,7 @@ function AICanPickupWeapon(%client, %weapon)
 
 	//make sure the %weapon given is a weapon they can use for engagement
 	if (%weapon !$= "Blaster" && %weapon !$= "Plasma" && %weapon !$= "Chaingun" && %weapon !$= "Disc" &&
-							%weapon !$= "GrenadeLauncher" && %weapon !$= "SniperRifle" && %weapon !$= "ELFGun")
+			%weapon !$= "GrenadeLauncher" && %weapon !$= "SniperRifle" && %weapon !$= "ELFGun" && %weapon !$= "ShockLance")
 	{
 		return false;
 	}

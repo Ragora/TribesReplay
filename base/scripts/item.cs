@@ -333,6 +333,14 @@ function Flag::onAdd(%this, %obj)
    // make sure flags play "flapping" ambient thread
    Parent::onAdd(%this, %obj);
    %obj.playThread($AmbientThread, "ambient");
+
+   %blocker = new VehicleBlocker()
+   {
+      position = %obj.position;
+      rotation = %obj.rotation;
+      dimensions = "2 2 4";
+   };
+   MissionCleanup.add(%blocker);
 }
 
 function Flag::onCollision(%data,%obj,%col)

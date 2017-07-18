@@ -18,5 +18,8 @@ function DMGame::onAIRespawn(%game, %client)
 		%client.addtask(AIDetectMineTask);
 	   %client.addTask(AIPatrolTask);
 	}
+
+   //set the inv flag
+   %client.spawnUseInv = true;
 }
    

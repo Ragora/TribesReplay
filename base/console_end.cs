@@ -34,18 +34,6 @@ if ($CmdLineBotCount !$= "")
 
 exec("scripts/message.cs");
 
-function repaintCanvas()
-{
-	if ( isObject( Canvas ) )
-		Canvas.repaint();
-}
-
-function resetCanvas()
-{
-	if ( isObject( Canvas ) )
-		Canvas.reset();
-}
-
 //function to be called when the game exits
 function onExit()
 {
@@ -62,7 +50,6 @@ function onExit()
 exec("scripts/LaunchLanGui.cs");
 exec("scripts/GameGui.cs");
 exec("scripts/ChooseFilterDlg.cs");
-exec("scripts/ChatGui.cs");
 exec("scripts/TrainingGui.cs");
 exec("scripts/webstuff.cs");
 exec("scripts/webforums.cs");
@@ -93,6 +80,7 @@ exec("scripts/targetManager.cs");
 exec("scripts/gameCanvas.cs");
 exec("scripts/centerPrint.cs");
 exec("scripts/CreditsGui.cs");
+exec("scripts/ChatGui.cs");
 
 // see if the mission and type are valid
 // if they are they will be assigned into $Host::Map and $Host::MissionType
@@ -181,7 +169,6 @@ loadGui("CommonLoadDlg");
 loadGui("CommonSaveDlg");
 loadGui("FrameOverlayGui");
 loadGui("TribeAdminMemberDlg");
-loadGui("TribeAttribDlg");
 loadGui("TSShowGui");
 loadGui("TSShowLoadDlg");
 loadGui("TSShowMiscDlg");
@@ -231,6 +218,7 @@ loadGui("AdvancedHostDlg");
 loadGui("NewWarriorDlg");
 loadGui("JoinChatDlg");
 loadGui("ChannelKeyDlg");
+loadGui("ChatOptionsDlg");
 loadGui("ChannelOptionsDlg");
 loadGui("ChannelBanDlg");
 loadGui("FilterEditDlg");
@@ -576,8 +564,9 @@ function DispatchLaunchMode()
          else
             MessageBoxOK( "FILE NOT FOUND", "You do not have the interior test mission in your mission folder.\nTalk to Brad or Tom to get it.", "quit();" );
       case "Connect":
+         OnlineLogIn();
          setNetPort(0);
-         JoinSelectedGame();
+         JoinGame($JoinGameAddress);
       case "HostGame":
          $ServerName = $Host::GameName;
          $Host::MissionType = $MissionType;

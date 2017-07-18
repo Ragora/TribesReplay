@@ -28,8 +28,8 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 			profile = "ShellHorzTabFrameProfile";
 			horizSizing = "width";
 			vertSizing = "bottom";
-			position = "28 63";
-			extent = "564 270";
+			position = "22 54";
+			extent = "576 254";
 			minExtent = "26 254";
 			visible = "1";
 			helpTag = "0";
@@ -41,8 +41,8 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 			profile = "TabGroupProfile";
 			horizSizing = "width";
 			vertSizing = "bottom";
-			position = "38 34";
-			extent = "546 29";
+			position = "30 25";
+			extent = "560 29";
 			minExtent = "38 29";
 			visible = "1";
 			helpTag = "0";
@@ -55,8 +55,8 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 			profile = "ShellFieldProfile";
 			horizSizing = "width";
 			vertSizing = "height";
-			position = "39 71";
-			extent = "543 262";
+			position = "33 63";
+			extent = "554 270";
 			minExtent = "16 18";
 			visible = "1";
 			helpTag = "0";
@@ -66,7 +66,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 				horizSizing = "width";
 				vertSizing = "height";
 				position = "3 27";
-				extent = "537 231";
+				extent = "550 239";
 				minExtent = "16 18";
 				visible = "0";
 				helpTag = "0";
@@ -76,7 +76,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 					horizSizing = "width";
 					vertSizing = "height";
 					position = "237 20";
-					extent = "297 209";
+					extent = "310 217";
 					minExtent = "16 18";
 					visible = "1";
 					helpTag = "0";
@@ -86,7 +86,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 						horizSizing = "width";
 						vertSizing = "height";
 						position = "2 6";
-						extent = "293 201";
+						extent = "306 209";
 						minExtent = "24 52";
 						visible = "1";
 						helpTag = "0";
@@ -103,7 +103,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							horizSizing = "width";
 							vertSizing = "bottom";
 							position = "9 9";
-							extent = "275 183";
+							extent = "288 191";
 							minExtent = "8 8";
 							visible = "1";
 							helpTag = "0";
@@ -113,7 +113,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 								horizSizing = "width";
 								vertSizing = "height";
 								position = "0 0";
-								extent = "259 16";
+								extent = "272 16";
 								minExtent = "8 8";
 								visible = "1";
 								helpTag = "0";
@@ -129,7 +129,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 					horizSizing = "right";
 					vertSizing = "height";
 					position = "3 3";
-					extent = "234 226";
+					extent = "234 234";
 					minExtent = "16 18";
 					visible = "1";
 					helpTag = "0";
@@ -148,11 +148,11 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							wrap = "0";
 					};
 					new ShellFancyArrayScrollCtrl(ML1) {
-						profile = "clockProfile";
+						profile = "ShellServerBrowserProfile";
 						horizSizing = "width";
 						vertSizing = "height";
 						position = "-2 151";
-						extent = "237 77";
+						extent = "237 85";
 						minExtent = "24 52";
 						visible = "1";
 						helpTag = "0";
@@ -165,7 +165,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							horizSizing = "right";
 							vertSizing = "bottom";
 							position = "0 16";
-							extent = "237 61";
+							extent = "237 69";
 							minExtent = "8 52";
 							visible = "1";
 							helpTag = "0";
@@ -181,7 +181,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 								horizSizing = "right";
 								vertSizing = "bottom";
 								position = "4 7";
-								extent = "213 47";
+								extent = "213 55";
 								minExtent = "8 8";
 								visible = "1";
 								helpTag = "0";
@@ -199,11 +199,11 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							};
 						};
 						new ShellFancyTextList(MemberList) {
-							profile = "clockProfile";
+							profile = "ShellBrowserListProfile";
 							horizSizing = "width";
 							vertSizing = "height";
 							position = "0 0";
-							extent = "217 73";
+							extent = "217 81";
 							minExtent = "8 20";
 							visible = "1";
 							altCommand = "TribePane.RosterDblClick();";
@@ -223,6 +223,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							drawSeparators = "0";
 							headerSort = "1";
 							allowReposition = "1";
+							noSelect = "0";
 						};
 					};
 				};
@@ -302,7 +303,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 				horizSizing = "width";
 				vertSizing = "height";
 				position = "3 27";
-				extent = "537 231";
+				extent = "550 239";
 				minExtent = "16 18";
 				visible = "1";
 				helpTag = "0";
@@ -312,7 +313,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 					horizSizing = "width";
 					vertSizing = "height";
 					position = "237 20";
-					extent = "297 209";
+					extent = "310 217";
 					minExtent = "16 18";
 					visible = "1";
 					helpTag = "0";
@@ -322,7 +323,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 						horizSizing = "width";
 						vertSizing = "height";
 						position = "2 2";
-						extent = "293 205";
+						extent = "306 213";
 						minExtent = "24 52";
 						visible = "1";
 						helpTag = "0";
@@ -339,7 +340,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							horizSizing = "width";
 							vertSizing = "bottom";
 							position = "4 4";
-							extent = "269 197";
+							extent = "298 205";
 							minExtent = "8 8";
 							visible = "1";
 							helpTag = "0";
@@ -349,7 +350,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 								horizSizing = "width";
 								vertSizing = "bottom";
 								position = "0 0";
-								extent = "273 204";
+								extent = "286 16";
 								minExtent = "8 8";
 								visible = "1";
 								helpTag = "0";
@@ -365,7 +366,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 					horizSizing = "right";
 					vertSizing = "height";
 					position = "3 3";
-					extent = "234 226";
+					extent = "234 234";
 					minExtent = "16 18";
 					visible = "1";
 					helpTag = "0";
@@ -388,7 +389,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 						horizSizing = "width";
 						vertSizing = "height";
 						position = "-2 151";
-						extent = "237 75";
+						extent = "237 83";
 						minExtent = "24 52";
 						visible = "1";
 						helpTag = "0";
@@ -401,7 +402,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							horizSizing = "right";
 							vertSizing = "bottom";
 							position = "0 16";
-							extent = "237 59";
+							extent = "237 67";
 							minExtent = "8 52";
 							visible = "1";
 							helpTag = "0";
@@ -417,7 +418,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 								horizSizing = "right";
 								vertSizing = "bottom";
 								position = "4 7";
-								extent = "213 45";
+								extent = "213 53";
 								minExtent = "8 8";
 								visible = "1";
 								helpTag = "0";
@@ -427,7 +428,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 									horizSizing = "right";
 									vertSizing = "bottom";
 									position = "0 0";
-									extent = "8 47";
+									extent = "8 8";
 									minExtent = "8 8";
 									visible = "1";
 									helpTag = "0";
@@ -435,11 +436,11 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							};
 						};
 						new ShellFancyTextList(W_MemberList) {
-							profile = "clockProfile";
+							profile = "ShellBrowserListProfile";
 							horizSizing = "width";
 							vertSizing = "height";
 							position = "0 0";
-							extent = "217 71";
+							extent = "217 79";
 							minExtent = "8 20";
 							visible = "1";
 							altCommand = "PlayerPane.DblClick();";
@@ -458,6 +459,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 							drawSeparators = "0";
 							headerSort = "1";
 							allowReposition = "0";
+							noSelect = "0";
 						};
 					};
 				};
@@ -537,7 +539,7 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 				horizSizing = "width";
 				vertSizing = "bottom";
 				position = "7 5";
-				extent = "8 26";
+				extent = "155 26";
 				minExtent = "8 8";
 				visible = "1";
 				helpTag = "0";
@@ -546,27 +548,27 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 					name = "EAST";
 					OldText = "EAST";
 			};
-			new ShellBitmapButton(TWBClosePaneBtn) {
-				profile = "ShellButtonProfile";
-				horizSizing = "left";
-				vertSizing = "bottom";
-				position = "506 -3";
-				extent = "43 38";
-				minExtent = "32 38";
-				visible = "0";
-				command = "TWBTabView.closeCurrentPane();";
-				accelerator = "escape";
-				helpTag = "0";
-				text = "X";
-				simpleStyle = "0";
-			};
+		};
+		new ShellBitmapButton(TWBClosePaneBtn) {
+			profile = "ShellButtonProfile";
+			horizSizing = "left";
+			vertSizing = "bottom";
+			position = "552 60";
+			extent = "43 38";
+			minExtent = "32 38";
+			visible = "1";
+			command = "TWBTabView.closeCurrentPane();";
+			accelerator = "escape";
+			helpTag = "0";
+			text = "X";
+			simpleStyle = "0";
 		};
 		new ShellBitmapButton() {
 			profile = "ShellButtonProfile";
 			horizSizing = "left";
 			vertSizing = "top";
-			position = "303 330";
-			extent = "104 38";
+			position = "221 335";
+			extent = "128 38";
 			minExtent = "32 38";
 			visible = "1";
 			command = "CreateTribe();";
@@ -578,8 +580,8 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 			profile = "ShellButtonProfile";
 			horizSizing = "left";
 			vertSizing = "top";
-			position = "390 330";
-			extent = "102 38";
+			position = "341 335";
+			extent = "128 38";
 			minExtent = "32 38";
 			visible = "1";
 			command = "SearchTribes();";
@@ -591,8 +593,8 @@ new GuiChunkedBitmapCtrl(TribeAndWarriorBrowserGui) {
 			profile = "ShellButtonProfile";
 			horizSizing = "left";
 			vertSizing = "top";
-			position = "475 330";
-			extent = "114 38";
+			position = "461 335";
+			extent = "128 38";
 			minExtent = "32 38";
 			visible = "1";
 			command = "SearchWarriors();";

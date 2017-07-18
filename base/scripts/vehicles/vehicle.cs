@@ -200,6 +200,7 @@ function VehicleData::onLeaveLiquid(%data, %obj, %type)
 
 function VehicleData::onDestroyed(%data, %obj, %prevState)
 {
+	radiusVehicleExplosion(%data, %obj);
    if(%obj.turretObject)
       if(%obj.turretObject.getControllingClient())
          %obj.turretObject.getDataBlock().playerDismount(%obj.turretObject);
@@ -217,6 +218,79 @@ function VehicleData::onDestroyed(%data, %obj, %prevState)
       }
    }
    %obj.schedule(300, "delete");
+}
+
+function radiusVehicleExplosion(%data, %vehicle)
+{
+	// this is a modified version of RadiusExplosion() from projectiles.cs
+	%position = %vehicle.getPosition();
+   InitContainerRadiusSearch(%position, %data.explosionRadius, $TypeMasks::PlayerObjectType      |
+                                                 $TypeMasks::VehicleObjectType     |
+                                                 $TypeMasks::MoveableObjectType    |
+                                                 $TypeMasks::StaticShapeObjectType |
+                                                 $TypeMasks::ForceFieldObjectType  |
+                                                 $TypeMasks::TurretObjectType      |
+                                                 $TypeMasks::ItemObjectType);
+
+   %numTargets = 0;
+   while ((%targetObject = containerSearchNext()) != 0)
+   {
+		if(%targetObject == %vehicle)
+			continue;
+
+      %dist = containerSearchCurrRadDamageDist();
+
+      if (%dist > %data.explosionRadius)
+         continue;
+
+      if (%targetObject.isMounted())
+      {
+         %mount = %targetObject.getObjectMount();
+			if(%mount == %vehicle)
+				continue;
+
+         %found = -1;
+         for (%i = 0; %i < %mount.getDataBlock().numMountPoints; %i++)
+         {
+            if (%mount.getMountNodeObject(%i) == %targetObject)
+            {
+               %found = %i;
+               break;
+            }
+         }
+      
+         if (%found != -1)
+         {
+            if (%mount.getDataBlock().isProtectedMountPoint[%found] && (%mount != %vehicle))
+               continue;
+         }
+      }
+
+      %targets[%numTargets]     = %targetObject;
+      %targetDists[%numTargets] = %dist;
+      %numTargets++;
+   }
+
+   for (%i = 0; %i < %numTargets; %i++)
+   {
+      %targetObject = %targets[%i];
+      %dist = %targetDists[%i];
+
+      %coverage = calcExplosionCoverage(%position, %targetObject,
+                                        ($TypeMasks::InteriorObjectType |
+                                         $TypeMasks::TerrainObjectType |
+                                         $TypeMasks::ForceFieldObjectType));
+      if (%coverage == 0)
+         continue;
+
+      %amount = (1.0 - (%dist / %data.explosionRadius)) * %coverage * %data.explosionDamage;
+      %targetData = %targetObject.getDataBlock();
+
+      %momVec = "0 0 1";
+      
+      if(%amount > 0)
+         %targetData.damageObject(%targetObject, %sourceObject, %position, %amount, $DamageType::Explosion, %momVec);
+   }
 }
 
 function VehicleData::deleteAllMounted()
@@ -396,6 +470,10 @@ function MobileBaseVehicle::deleteAllMounted(%data, %obj)
    }
    if(isObject(%obj.shield))
       %obj.shield.delete();
+                            
+   %obj.teleporter.setThreadDir($ActivateThread, FALSE);
+   %obj.teleporter.playThread($ActivateThread,"activate");	
+   %obj.teleporter.playAudio($ActivateSound, StationTeleportDeacitvateSound);
 }
 
 //**************************************************************
@@ -576,6 +654,13 @@ function MobileBaseVehicle::playerMounted(%data, %obj, %player, %node)
       %obj.shield.open();  
       %obj.shield.schedule(1000,"delete"); 
       %obj.deploySchedule = "";
+      
+      %obj.teleporter.setThreadDir($ActivateThread, FALSE);
+      %obj.teleporter.playThread($ActivateThread,"activate");	
+      %obj.teleporter.playAudio($ActivateSound, StationTeleportDeacitvateSound);
+      %obj.fullyDeployed = 0;
+      
+      %obj.noEnemyControl = 0;
    }
    %obj.deployed = 0;
 }
@@ -634,7 +719,7 @@ function MobileBaseVehicle::vehicleDeploy(%data, %obj, %player)
                %obj.station.setSelfPowered();
                %obj.station.playThread($PowerThread,"Power");
                %obj.station.playAudio($HumSound,StationHumSound);
-
+               %obj.station.vehicle = %obj;
                %obj.turret = new turret() {
                   scale = "1 1 1";
                   dataBlock = "MobileTurretBase";
@@ -642,10 +727,13 @@ function MobileBaseVehicle::vehicleDeploy(%data, %obj, %player)
                   homingCount = "0";
                   team = %obj.team;
                };                
+               %obj.turret.setDamageLevel(%obj.getDamageLevel());
                %obj.mountObject(%obj.turret, 1);
                %obj.turret.setSelfPowered();
                %obj.turret.playThread($PowerThread,"Power");
                %obj.turret.mountImage(MissileBarrelLarge, 0 ,false);
+               
+               checkSpawnPos(%obj, 20);
             }
          }
          else
@@ -725,6 +813,8 @@ function MobileBaseVehicle::onEndSequence(%data, %obj, %thread)
       %obj.station.goingOut = true;  
       %obj.shield.setTransform(%obj.getSlotTransform(3));            
       %obj.shield.close();
+      %obj.isDeployed = true;
+      %obj.noEnemyControl = 1;
    }
       
    Parent::onEndSequence(%data, %obj, %thread);
@@ -735,7 +825,13 @@ function MobileInvStation::onEndSequence(%data, %obj, %thread)
    if(!%obj.goingOut)
       %obj.startFade(0,0,true);
    else
+   {
       %obj.notDeployed = 0;
+      %obj.vehicle.fullyDeployed = 1;
+      %obj.vehicle.teleporter.setThreadDir($ActivateThread, TRUE);
+      %obj.vehicle.teleporter.playThread($ActivateThread,"activate");	
+      %obj.vehicle.teleporter.playAudio($ActivateSound, StationTeleportAcitvateSound);
+   }
    Parent::onEndSequence(%data, %obj, %thread);
 }
 
@@ -800,10 +896,21 @@ function MobileBaseVehicle::checkDeploy(%data, %obj)
 function MobileBaseVehicle::checkTurretDistance(%data, %obj)
 {
    %pos = getWords(%obj.getTransform(), 0, 2);
-   InitContainerRadiusSearch(%pos, 150, $TypeMasks::TurretObjectType);
+   InitContainerRadiusSearch(%pos, 100, $TypeMasks::TurretObjectType | $TypeMasks::InteriorObjectType);
    while ((%objFound = ContainerSearchNext()) != 0)
-      if(%objFound.getDataBlock().ClassName $= "TurretBase")
-         return "Turret Base in area. Unable to deploy.";
+   {
+      if(%objFound.getType() & $TypeMasks::TurretObjectType)
+      {
+         if(%objFound.getDataBlock().ClassName $= "TurretBase")
+            return "Turret Base is in the area. Unable to deploy.";
+      }
+      else
+      {
+         %subStr = getSubStr(%objFound.interiorFile, 1, 4);
+         if(%subStr !$= "rock" && %subStr !$= "spir" && %subStr !$= "misc")
+            return "Building is in the area. Unable to deploy.";
+      }        
+   }
    return "";
 }
 
@@ -979,7 +1086,7 @@ function VehicleData::damageObject(%data, %targetObject, %sourceObject, %positio
 function VehicleData::onImpact(%data, %vehicleObject, %collidedObject, %vec, %vecLen)
 {
    if(%vecLen > %data.minImpactSpeed)
-      %data.damageObject(%vehicleObject, 0, VectorAdd(%vec, %vehicleObject.getPosition), 
+      %data.damageObject(%vehicleObject, 0, VectorAdd(%vec, %vehicleObject.getPosition()), 
                          %vecLen * %data.speedDamageScale, $DamageType::Ground);
 
    // associated "crash" sounds

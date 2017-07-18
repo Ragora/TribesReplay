@@ -19,8 +19,8 @@ new SimGroup(MissionGroup) {
 
 	new MissionArea(MissionArea) {
 		area = "-976 -928 1360 1424";
-		flightCeiling = "2000";
-		flightCeilingRange = "50";
+		flightCeiling = "400";
+		flightCeilingRange = "20";
 	};
 	new Sun() {
 		direction = "0.57735 0.57735 -0.57735";

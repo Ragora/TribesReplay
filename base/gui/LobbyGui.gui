@@ -171,6 +171,7 @@ new GuiChunkedBitmapCtrl(LobbyGui) {
 				drawSeparators = "0";
 				headerSort = "1";
 				allowReposition = "0";
+            noSelect = "1";
 			};
 		};
 		new GuiControl() {

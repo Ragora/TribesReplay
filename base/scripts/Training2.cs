@@ -125,8 +125,7 @@ function ClientCmdSetHudMode(%mode, %type, %node)
 	parent::ClientCmdSetHudMode(%mode, %type, %node);
 	
 	movemap.push();   // hopefully this works
-	TrainingMap.push();
-
+	//TrainingMap.push();
 }
 
 function AIEngageTask::assume(%task, %client)

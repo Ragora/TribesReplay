@@ -10,16 +10,6 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 	variable = "$ShellBackground";
 	helpTag = "0";
 	useVariable = "1";
-		eid = "979";
-		key = "93";
-		state = "done";
-		ebstat = "1";
-		initialized = "1";
-		refreshTarget = "1";
-		TextCheck = "0";
-		refreshFlag = "0";
-		forumCount = "-1";
-		bflag = "4";
 
 	new ShellPaneCtrl(ForumShell) {
 		profile = "ShellPaneProfile";
@@ -162,12 +152,6 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						drawSeparators = "0";
 						headerSort = "0";
 						allowReposition = "0";
-							updateCount = "0";
-							key = "71";
-							state = "replyPost";
-							lastId = "16480";
-							highestUpdate = "16480";
-							bflag = "1";
 					};
 				};
 				new ShellScrollCtrl() {
@@ -361,7 +345,6 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 						columns = "0";
 						fitParentWidth = "1";
 						clipColumnText = "0";
-							forum = "58";
 					};
 				};
 			};
@@ -441,14 +424,6 @@ new GuiChunkedBitmapCtrl(ForumsGui) {
 					drawSeparators = "0";
 					headerSort = "1";
 					allowReposition = "0";
-						key = "43";
-						state = "lines";
-						selId = "0";
-						count = "0";
-						refreshFlag = "0";
-						forum = "0";
-						autoSelect = "1";
-						FirstCount = "0";
 				};
 			};
 			new GuiTextCtrl() {

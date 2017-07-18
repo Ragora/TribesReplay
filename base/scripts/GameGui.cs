@@ -47,6 +47,13 @@ function GameGui::onSleep( %this )
    %ctrl = "GM_" @ %this.pane @ "Pane";
    if ( isObject( %ctrl ) )
       %ctrl.onDeactivate();
+      
+//   if( isObject( $dummySeq ) )
+//   {   
+//      $dummySeq.delete();
+//   }
+         
+	Canvas.popDialog(LaunchToolbarDlg);
 }
 
 //------------------------------------------------------------------------------
@@ -156,7 +163,7 @@ $BrowserColumnCount++;
 $BrowserColumnName[6] = "Rules Set";
 $BrowserColumnRange[6] = "25 300";
 $BrowserColumnCount++;
-$BrowserColumnName[7] = "# Players";
+$BrowserColumnName[7] = "# Players (Bots)";
 $BrowserColumnRange[7] = "25 150";
 $BrowserColumnCount++;
 $BrowserColumnName[8] = "CPU";
@@ -533,7 +540,8 @@ function JoinSelectedGame()
 
 	%info = GMJ_Browser.getServerInfoString();
 	%desc = "a" SPC getField(%info,4) @ "(" @ getField(%info,3) @ ") game on the \"" @ getField(%info,0) @ "\" server.  Click here to follow";   
-   IRCClient::onJoinGame($JoinGameAddress,%desc);
+
+	IRCClient::onJoinGame($JoinGameAddress,%desc);
 
 	JoinGame($JoinGameAddress);
 }
@@ -550,7 +558,6 @@ function JoinGame(%address)
 	%playerVoice = getField( %playerPref, 3 );
 	%playerVoicePitch = getField( %playerPref, 4 );
    connect( %address, $JoinGamePassword, %playerName, %playerRaceGender, %playerSkin, %playerVoice, %playerVoicePitch );
-   ServerConnection.setSimulatedNetParams(0.1, 10);
 }
 
 //------------------------------------------------------------------------------
@@ -574,19 +581,28 @@ function GM_HostPane::onActivate( %this )
    // Select the saved-off prefs:
    if ( $Host::MissionType !$= "" )
    {
-      %selId = GMH_MissionType.findText( $Host::MissionType );
-      if ( %selId != -1 )
+      // Find the last selected type:
+      for ( %type = 0; %type < $HostTypeCount; %type++ )
       {
-         GMH_MissionType.setSelected( %selId );
-         GMH_MissionType.onSelect( %selId, "" );
+         if ( $HostTypeName[%type] $= $Host::MissionType )
+            break;
+      }
+
+      if ( %type != $HostTypeCount )
+      {
+         GMH_MissionType.setSelected( %type );
+         GMH_MissionType.onSelect( %type, "" );
          if ( $Host::Map !$= "" )
          {
-            %index = GMH_MissionList.findTextIndex( $Host::Map );
-            if ( %index != -1 )
+            // Find the last selected mission:
+            for ( %index = 0; %index < $HostMissionCount[%type]; %index++ )
             {
-               %selId = GMH_MissionList.getRowId( %index );
-               GMH_MissionList.setSelectedById( %selId );
+               if ( $HostMissionFile[$HostMission[%type, %index]] $= $Host::Map )
+                  break;
             }
+
+            if ( %index != $HostMissionCount[%type] )
+               GMH_MissionList.setSelectedById( $HostMission[%type, %index] );
          }
       }
    }
@@ -609,7 +625,31 @@ function buildMissionTypePopup( %popup )
 {
    %popup.clear();
    for( %type = 0; %type < $HostTypeCount; %type++ )
-      %popup.add( $HostTypeName[%type], %type );
+      %popup.add( $HostTypeDisplayName[%type], %type );
+}
+
+//------------------------------------------------------------------------------
+function getMissionTypeDisplayNames()
+{
+   %file = new FileObject();
+   for ( %type = 0; %type < $HostTypeCount; %type++ )
+   {
+      $HostTypeDisplayName[%type] = $HostTypeName[%type];
+      if ( %file.openForRead( "scripts/" @ $HostTypeName[%type] @ "Game.cs" ) )
+      {
+         while ( !%file.isEOF() )
+         {
+            %line = %file.readLine();
+            if ( getSubStr( %line, 0, 17 ) $= "// DisplayName = " )
+            {
+               $HostTypeDisplayName[%type] = getSubStr( %line, 17, 1000 );
+               break;
+            }
+         }
+      }
+   }
+
+   %file.delete();
 }
 
 //------------------------------------------------------------------------------
@@ -679,6 +719,8 @@ function buildMissionList()
          $HostMissionCount[%i]++;
       }
    }
+
+   getMissionTypeDisplayNames();
    
    %fobject.delete();
 }
@@ -705,6 +747,8 @@ function validateMissionAndType(%misName, %misType)
    return true;
 }
 
+//------------------------------------------------------------------------------
+// This function returns the index of the next mission in the mission list.
 //------------------------------------------------------------------------------
 function getNextMission( %misName, %misType )
 {
@@ -749,7 +793,7 @@ function getNextMission( %misName, %misType )
       }
    }
    
-   return $HostMissionFile[$HostMission[%type, %i]];
+   return $HostMission[%type, %i];
 }
 
 //------------------------------------------------------------------------------
@@ -822,6 +866,8 @@ function StartHostedGame()
             "tryToLaunchDedicatedServer();" );
       return;
    }
+
+	IRCClient::onJoinGame("", "");
 
    MessagePopup( "STARTING SERVER", "Initializing..." );
    Canvas.repaint();
@@ -1173,8 +1219,19 @@ function GMW_PlayerModel::update( %this )
    }
    
 	%skin = getField( $pref::Player[$pref::Player::Current], 2 );
-
-   %this.setModel( %shape @ ".dts", %skin );
+   
+//   if( isObject( $dummySeq ) )
+//   {   
+//      $dummySeq.delete();
+//   }
+//   
+//   $dummySeq = new TSShapeConstructor()
+//   {
+//      baseShape = %shape @ ".dts";
+//      sequence0 = %shape @ "_forward.dsq dummyRun";
+//   };
+   
+   %this.setModel( %shape, %skin );
 }
 
 //------------------------------------------------------------------------------
@@ -1344,7 +1401,7 @@ function GMW_SkinPopup::onSelect( %this, %id, %text )
 	   $pref::Player[$pref::Player::Current] = setField( $pref::Player[$pref::Player::Current], 2, %text );
 
 	// Update the player model:
-	GMW_PlayerModel.update();
+   GMW_PlayerModel.update();
 }
 
 //------------------------------------------------------------------------------
@@ -1487,9 +1544,9 @@ function NW_NameEdit::checkValidPlayerName( %this )
    %name = %this.getValue();
    %test = strToPlayerName( %name );
    if ( %name !$= %test )
-	   %this.setValue( %name );
+	   %this.setValue( %test );
 
-	NW_DoneBtn.setActive( strlen( stripTrailingSpaces( %name ) ) > 2 );
+	NW_DoneBtn.setActive( strlen( stripTrailingSpaces( %test ) ) > 2 );
 }
 
 //------------------------------------------------------------------------------

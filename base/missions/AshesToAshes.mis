@@ -22,7 +22,7 @@ new SimGroup(MissionGroup) {
 
 	new MissionArea(MissionArea) {
 		area = "-472 -840 1152 1152";
-		flightCeiling = "2000";
+		flightCeiling = "350";
 		flightCeilingRange = "50";
 			locked = "true";
 	};

@@ -24,8 +24,9 @@ function FlipFlop::playerTouch(%data, %flipflop, %player)
 
 function Flipflop::objectiveInit(%data, %flipflop)
 {
-   %flipflop.teamBonusThread = "";
-   %flipflop.playerBonusThread = "";
+   %flipflop.tCapThread = "";
+   %flipflop.tHoldThread = "";
+   %flipflop.pCapThread = "";
    Parent::objectiveInit(%data, %flipflop);
 }
 
@@ -46,9 +47,7 @@ function CnHGame::initGameVars(%game)
 
 	%game.SCORE_PER_TURRET_KILL = 1; 
 	%game.SCORE_PER_FLIPFLOP_DEFEND = 1;
-	%game.SCORE_LIMIT_PER_TOWER = 1200; //default of 1500 points per tower required to win @ 1 pt per %game.TIME_REQ_TEAM_HOLD_BONUS milliseconds
-	// default of 1500 per switch if not defined in mission file specifically. 2 pts per sec per switch = 10 minute min & 20 minute max mission length
-	// not counting time spent waiting for first point(s).  Should be 15-30ish minute missions depending on turnovers
+	%game.SCORE_LIMIT_PER_TOWER = 1200; //default of 1200 points per tower required to win @ 1 pt per %game.TIME_REQ_TEAM_HOLD_BONUS milliseconds
 
 	%game.TIME_REQ_PLYR_CAP_BONUS =	12 * 1000;  //player must hold a switch 12 seconds to get a point for it.
 	%game.TIME_REQ_TEAM_CAP_BONUS = 12 * 1000;	//time after touching it takes for team to get a point
@@ -131,11 +130,14 @@ function CnHGame::gameOver(%game)
 	messageAll('MsgClearObjHud', "");
 	for(%i = 0; %i < ClientGroup.getCount(); %i ++)
 	{
-		%client = %group.getObject(%i);
+		%client = ClientGroup.getObject(%i);
 		%game.resetScore(%client);
 	}
 	for ( %team = 1; %team <= %game.numTeams; %team++ )
+	{
 		$TeamScore[%team] = 0;
+		messageAll('MsgCnHTeamCap', "", -1, -1, -1, %team, $TeamScore[%team], %game.getScoreLimit());
+	}
 }
 
 function CnHGame::stopScoreTimers(%game)
@@ -148,9 +150,9 @@ function CnHGame::stopScoreTimers(%game)
 	for(%i = 0; %i < %ffGroup.getCount(); %i++)
 	{
 		%curFF = %ffGroup.getObject(%i);
+		cancel(%curFF.tHoldThread);
 		cancel(%curFF.pCapThread);
 		cancel(%curFF.tCapThread);
-		cancel(%curFF.tHoldThread);
 	}
 }
 
@@ -309,7 +311,7 @@ function CnHGame::testPlayerFFDefend(%game, %victimID, %killerID)
    while(%objID != 0) 
    {
 	  %objType = %objID.getDataBlock().getName();
-	  echo("tFD  found " @ %objType @ " belonging to team " @ %objID.team);
+	  //echo("tFD  found " @ %objType @ " belonging to team " @ %objID.team);
 	  if ((%objType $= "FlipFlop") && (%objID.team == %killerID.team)) 
 	   	 return true;  //found a killer's team flipflop near the point of victim's death
 	  else
@@ -323,31 +325,42 @@ function CnHGame::awardScorePlayerFFDefend(%game, %cl, %this)
 	%cl.flipFlopDefends++;
 	//if (%game.SCORE_PER_FLIPFLOP_DEFEND != 0)
       //messageClient(%cl, $scoreFliDefMsg, 'You receive a %1 point bonus for defending the %2.', %game.SCORE_PER_FLIPFLOP_DEFEND, %game.cleanWord(%this.name));	
-    %game.recalcScore(%cl);
+	%game.recalcScore(%cl);
 }
 
 function CnHGame::awardScorePlayerFFCap(%game, %cl, %this)
 {
+	if(!($missionRunning))
+		return;
+
 	%cl.flipFlopsCapped++;
-    %game.recalcScore(%cl);
+	%game.recalcScore(%cl);
 } 
 
 function CnHGame::awardScoreTeamFFCap(%game, %team, %this)
 {
 	cancel(%this.tCapThread);
+
+	if(!($missionRunning))
+		return;
+
 	$TeamScore[%team] +=%game.SCORE_PER_TEAM_FLIPFLOP_CAP;
 	%sLimit = %game.getScoreLimit();
 	if (%game.SCORE_PER_TEAM_FLIPFLOP_CAP)
 		messageAll('MsgCnHTeamCap', "", -1, -1, -1, %team, $teamScore[%team], %sLimit);
    if (%game.SCORE_PER_TEAM_FLIPFLOP_HOLD != 0)
-		%this.tHoldThread = %game.schedule(%game.TIME_REQ_TEAM_HOLD_BONUS, "awardScoreTeamFFHold", %team, %this, true);
+		%this.tHoldThread = %game.schedule(%game.TIME_REQ_TEAM_HOLD_BONUS, "awardScoreTeamFFHold", %team, %this);
 	
 	%game.checkScoreLimit(%team);
 }
 
-function CnHGame::awardScoreTeamFFHold(%game, %team, %this, %msg)
+function CnHGame::awardScoreTeamFFHold(%game, %team, %this)
 {
 	cancel(%this.tHoldThread);
+
+	if(!($missionRunning))
+		return;
+
    $TeamScore[%team] +=%game.SCORE_PER_TEAM_FLIPFLOP_HOLD;
 	%sLimit = %game.getScoreLimit();
 	if (%game.SCORE_PER_TEAM_FLIPFLOP_HOLD)
@@ -360,7 +373,7 @@ function CnHGame::awardScoreTeamFFHold(%game, %team, %this, %msg)
 
 	%game.checkScoreLimit(%team);
 
-	%this.tHoldThread = %game.schedule(%game.TIME_REQ_TEAM_HOLD_BONUS, "awardScoreTeamFFHold", %team, %this, false);
+	%this.tHoldThread = %game.schedule(%game.TIME_REQ_TEAM_HOLD_BONUS, "awardScoreTeamFFHold", %team, %this);
 }
 
 function CnHGame::testValidRepair(%game, %obj)

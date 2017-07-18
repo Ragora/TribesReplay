@@ -49,7 +49,6 @@ function CreateServer(%mission, %missionType)
    exec("scripts/station.cs");
    exec("scripts/simGroup.cs");
    exec("scripts/trigger.cs");
-   exec("scripts/pathedObject.cs");
    exec("scripts/forceField.cs");
    exec("scripts/lightning.cs");
    exec("scripts/weather.cs");
@@ -78,7 +77,7 @@ function CreateServer(%mission, %missionType)
    $HostGamePlayerCount = 0;
    if ( $HostGameType !$= "SinglePlayer" )
       allowConnections(true);
-   new SimGroup (ServerGroup);
+   $ServerGroup = new SimGroup (ServerGroup);
    if(%mission $= "")
    {
       %mission = $HostMissionFile[$HostMission[0,0]];
@@ -117,13 +116,48 @@ function CreateServer(%mission, %missionType)
    loadMission(%mission, %missionType, true);
 }
 
+function findNextCycleMission()
+{
+   %numPlayers = ClientGroup.getCount();
+   %tempMission = $CurrentMission;
+   %failsafe = 0;
+   while (1)
+   {
+      %nextMissionIndex = getNextMission(%tempMission, $CurrentMissionType);
+      %nextPotentialMission = $HostMissionFile[%nextMissionIndex];
+
+      //just cycle to the next if we've gone all the way around...
+      if (%nextPotentialMission $= $CurrentMission || %failsafe >= 1000)
+      {
+         %nextMissionIndex = getNextMission($CurrentMission, $CurrentMissionType);
+         return $HostMissionName[%nextMissionIndex];
+      }
+
+      //get the player count limits for this mission
+      %limits = $Host::MapPlayerLimits[%nextPotentialMission, $CurrentMissionType];
+      if (%limits $= "")
+         return %nextPotentialMission;
+      else
+      {
+         %minPlayers = getWord(%limits, 0);
+         %maxPlayers = getWord(%limits, 1);
+
+         if ((%minPlayers < 0 || %numPlayers >= %minPlayers) && (%maxPlayers < 0 || %numPlayers <= %maxPlayers))
+            return %nextPotentialMission;
+      }
+
+      //since we didn't return the mission, we must not have an acceptable number of players - check the next
+      %tempMission = %nextPotentialMission;
+      %failsafe++;
+   }
+}
+
 function CycleMissions()
 {
    echo( "cycling mission. " @ ClientGroup.getCount() @ " clients in game." );
-   %nextMission = getNextMission($CurrentMission, $CurrentMissionType);
-   messageAll( 'MsgClient', 'Loading %1 (%2)...', %nextMission, $CurrentMissionType );
-   
-   loadMission(%nextMission, $CurrentMissionType);
+   %nextMission = findNextCycleMission();
+   messageAll( 'MsgClient', 'Loading %1 (%2)...', %nextMission, $MissionTypeDisplayName );
+   loadMission( %nextMission, $CurrentMissionType );
 }
 
 function DestroyServer()
@@ -131,8 +165,8 @@ function DestroyServer()
    $missionRunning = false;
    allowConnections(false);
    stopHeartbeat();
-   if(isObject(ServerGroup))
-      ServerGroup.delete();
+   if(isObject($ServerGroup))
+      $ServerGroup.delete();
 
    // delete all the connections:
    while(ClientGroup.getCount())
@@ -194,6 +228,8 @@ function DisconnectedCleanup()
       MusicPlayer.stop();
    clearTextureHolds();
    purgeResources();
+
+	IRCClient::onLeaveGame();
 }
 
 function kick(%client, %admin)
@@ -310,7 +346,7 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
 
    // Override the connect name if this server does not allow smurfs:
    %realName = getField( %authInfo, 0 );
-   if ( $Host::NoSmurfs )
+   if ( $PlayingOnline && $Host::NoSmurfs )
       %name = %realName;
 
    if ( strcmp( %name, %realName ) == 0 )
@@ -439,7 +475,6 @@ function GameConnection::onConnect( %client, %name, %raceGender, %skin, %voice, 
 
 //   commandToClient(%client, 'getManagerID', %client);
 
-   commandToClient(%client, 'setVoiceCodec', $Audio::voiceCodec);
    commandToClient(%client, 'setBeaconNames', "Target Beacon", "Marker Beacon", "Bomb Target");
 
    if ( $CurrentMissionType !$= "SinglePlayer" ) 
@@ -571,6 +606,8 @@ function loadMissionStage1(%missionName, %missionType, %firstMission)
       MissionCleanup.delete();
       Game.deactivatePackages();
       Game.delete();
+      $ServerGroup.delete();
+      $ServerGroup = new SimGroup(ServerGroup);
    }
    
    $CurrentMission = %missionName;
@@ -1109,9 +1146,33 @@ function serverCmdClientTeamChange( %client )
    }
 }
 
+function serverCanAddBot()
+{
+   //find out how many bots are already playing
+   %botCount = 0;
+   %numClients = ClientGroup.getCount();
+   for (%i = 0; %i < %numClients; %i++)
+   {
+      %cl = ClientGroup.getObject(%i);
+      if (%cl.isAIcontrolled())
+         %botCount++;
+   }
+
+   //add only if we have less bots than the bot count, and if there would still be room for a 
+   if ($HostGameBotCount > 0 && %botCount < $Host::botCount && %numClients < $Host::maxPlayers - 1)
+      return true;
+   else
+      return false;
+}
+
 function serverCmdAddBot( %client )
 {
-   aiConnectMultiple( 1, $Host::MinBotDifficulty, $Host::MaxBotDifficulty, -1 );
+   //only admins can add bots...
+   if (%client.isAdmin)
+   {
+      if (serverCanAddBot())
+         aiConnectMultiple( 1, $Host::MinBotDifficulty, $Host::MaxBotDifficulty, -1 );
+   }
 }
 
 function serverCmdClientJoinTeam( %client, %team )
@@ -1257,7 +1318,7 @@ function serverCmdGetTeamList( %client, %key )
 function serverCmdGetMissionTypes( %client, %key )
 {
    for ( %type = 0; %type < $HostTypeCount; %type++ )
-      messageClient( %client, 'MsgVoteItem', "", %key, %type, "", $HostTypeName[%type], true );
+      messageClient( %client, 'MsgVoteItem', "", %key, %type, "", $HostTypeDisplayName[%type], true );
 }
 
 function serverCmdGetMissionList( %client, %key, %type )
@@ -1267,16 +1328,17 @@ function serverCmdGetMissionList( %client, %key, %type )
 
    for ( %i = $HostMissionCount[%type] - 1; %i >= 0; %i-- )
    {
+      %idx = $HostMission[%type, %i];
+
       // If we have bots, don't change to a mission that doesn't support bots:
       if ( $HostGameBotCount > 0 )
       {
-         if( !$BotEnabled[$HostMission[%type,%i]] )
+         if( !$BotEnabled[%idx] )
             continue;
       }
 
-      %idx = $HostMission[%type, %i];
       messageClient( %client, 'MsgVoteItem', "", %key, 
-            $HostMissionFile[%idx], // actual filename, will be stored in $clVoteCmd 
+            %idx, // mission index, will be stored in $clVoteCmd 
             "", 
             $HostMissionName[%idx], 
             true );

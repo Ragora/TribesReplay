@@ -775,42 +775,6 @@ function SiegeGame::sendDebriefing( %game, %client )
    }
 }
 
-function SiegeGame::formatTime(%game, %tStr, %includeHundredths)
-{
-   %timeInSeconds = %tStr / 1000;
-   %mins = mFloor(%timeInSeconds / 60);
-   if(%mins < 1)
-      %timeString = "00:";
-   else if(%mins < 10)
-      %timeString = "0" @ %mins @ ":";
-   else
-      %timeString = %mins @ ":";
-
-   %timeInSeconds -= (%mins * 60);
-   %secs = mFloor(%timeInSeconds);
-   if(%secs < 1)
-      %timeString = %timeString @ "00";
-   else if(%secs < 10)
-      %timeString = %timeString @ "0" @ %secs;
-   else
-      %timeString = %timeString @ %secs;
-
-   if (%includeHundredths)
-   {
-      %timeString = %timeString @ ".";
-      %timeInSeconds -= %secs;
-      %hSecs = mFloor(%timeInSeconds * 100); // will be between 0 and 999
-      if(%hSecs < 1)
-         %timeString = %timeString @ "00";
-      else if(%hSecs < 10)
-         %timeString = %timeString @ "0" @ %hSecs;
-      else
-         %timeString = %timeString @ %hSecs;
-   }
-
-   return %timeString;
-}
-
 function SiegeGame::clientMissionDropReady(%game, %client)
 {
    messageClient(%client, 'MsgClientReady', "", %game.class);
@@ -1040,6 +1004,36 @@ function SiegeGame::updateScoreHud(%game, %client, %tag)
       }
 
       %index++;
+   }
+
+   // Tack on the list of observers:
+   %observerCount = 0;
+   for (%i = 0; %i < ClientGroup.getCount(); %i++)
+   {
+      %cl = ClientGroup.getObject(%i);
+      if (%cl.team == 0)
+         %observerCount++;
+   }
+
+   if (%observerCount > 0)
+   {
+	   messageClient( %client, 'SetLineHud', "", %tag, %index, "");
+      %index++;
+		messageClient(%client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush><font:Univers Condensed:22>\tOBSERVERS (%1)<rmargin:260><just:right>TIME<spop>', %observerCount);
+      %index++;
+      for (%i = 0; %i < ClientGroup.getCount(); %i++)
+      {
+         %cl = ClientGroup.getObject(%i);
+         //if this is an observer
+         if (%cl.team == 0)
+         {
+            %obsTime = getSimTime() - %cl.observerStartTime;
+            %obsTimeStr = %game.formatTime(%obsTime, false);
+		      messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:20, 310>\t<clip:150>%1</clip><rmargin:260><just:right>%2',
+		                     %cl.name, %obsTimeStr );
+            %index++;
+         }
+      }
    }
 
    //clear the rest of Hud so we don't get old lines hanging around...

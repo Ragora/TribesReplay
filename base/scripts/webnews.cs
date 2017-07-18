@@ -87,7 +87,7 @@ function NewsGui::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
 {
 	if(%key != %this.key)
     	return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
    	%this.maxDate = " ";
 	%this.minDate = " ";
 	if(getField(%status,0)==0)
@@ -151,7 +151,7 @@ function NewsGui::onDatabaseRow(%this, %row,%isLastRow,%key)
 {
    	if ( %key != %this.key )
     	return;
-	echo("RECV: " @ %row);
+//	echo("RECV: " @ %row);
 	%this.article[%this.articleCount] = %row;
 	%this.recordSet--;
 	if ( %this.articleCount == 0 )
@@ -228,7 +228,7 @@ function NewsPostDlg::onDatabaseQueryResult(%this, %status, %RowCount_Result, %k
 {
 	if(%key != %this.key)
 		return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -281,9 +281,7 @@ function NewsText::onURL(%this, %url)
          Canvas.pushDialog( NewsPostDlg );
 
       case "deletenews":
-	     NewsPostDlg.key = LaunchGui.key++;
-		 NewsPostDlg.state = "delete";
-         DatabaseQuery(3,getFields(%url,2), NewsPostDlg, NewsPostDlg.Key);
+		 MessageBoxYesNo("CONFIRM","Delete this Article?","NewsPostDlg.doNewsDelete(\"" @ getField(%url,2) TAB getField(%url,3) @ "\");","canvas.setCursor(DefaultCursor);");
 
       case "topiclink":
         %articleId = getField(%url,2);
@@ -294,6 +292,13 @@ function NewsText::onURL(%this, %url)
    }
 }
 //-----------------------------------------------------------------------------
+function NewsPostDlg::doNewsDelete(%this,%fields)
+{
+	%this.key = LaunchGui.key++;
+	%this.state = "delete";
+	DatabaseQuery(3,%fields, %this, %this.key);
+}
+//-----------------------------------------------------------------------------
 function NewsHeadlines::onSelect( %this, %id, %text )
 {
    NewsText.scrollToTag( %id );
@@ -302,7 +307,6 @@ function NewsHeadlines::onSelect( %this, %id, %text )
 function NewsGui::getPreviousNewsItems( %this )
 {
    // Fetch the next batch of newer news items:
-   error("FETCHING PREV NEWS ITEMS");
    if ( %this.set == 1 )
       return;
    canvas.SetCursor(ArrowWaitCursor);
@@ -316,7 +320,6 @@ function NewsGui::getPreviousNewsItems( %this )
 function NewsGui::getNextNewsItems( %this )
 {
    // Fetch the next batch of older news items:
-   error("FETCHING NEXT NEWS ITEMS");
    canvas.SetCursor(ArrowWaitCursor);
    NewsGui.key = LaunchGui.key++;
    %this.state = "status";
@@ -329,7 +332,7 @@ function NewsMOTDText::onDatabaseQueryResult(%this, %status, %RowCount_Result, %
 {
 	if(%key != %this.key)
     	return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
       	NewsEditMOTDBtn.setVisible( getField(%status,2));
@@ -366,7 +369,7 @@ function NewsEditMotdDlg::OnDatabaseQueryResult(%this, %status, %RowCount_Result
 {
 	if(%key != %this.key)
     	return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 		%this.state = "proceed";
 	else if (getSubStr(getField(%status,1),0,9) $= "ORA-04061")

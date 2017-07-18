@@ -62,7 +62,7 @@ new GuiControl(JoystickConfigDlg) {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "26 50";
+				position = "6 50";
 				extent = "60 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -73,8 +73,8 @@ new GuiControl(JoystickConfigDlg) {
 				profile = "ShellPopupProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "83 41";
-				extent = "140 36";
+				position = "63 41";
+				extent = "200 36";
 				minExtent = "49 36";
 				visible = "1";
 				helpTag = "0";

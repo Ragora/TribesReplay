@@ -264,25 +264,24 @@ function AIMissionEnd()
 		%client = ClientGroup.getObject(%i);
 		if (%client.isAIControlled())
 		{
-			//cancel the respawn thread
-			if (%client.respawnThread > 0)
-			{
-				cancel(%client.respawnThread);
-				%client.respawnThread = "";
-			}
+			//cancel the respawn thread and the objective thread...
+			cancel(%client.respawnThread);
+			cancel(%client.objectiveThread);
 
-			//cancel the objective reassessment thread
-			if (%client.objectiveThread > 0)
-			{
-				cancel(%client.objectiveThread);
-				%client.objectiveThread = "";
-			}
-
-			AIUnassignClient(%client);
+         //reset the clients tasks, variables, etc...
+	      AIUnassignClient(%client);
+         %client.stop();
 			%client.clearTasks();
-			%client.clearStep();
-			%client.defaultTasksAdded = false;
-			%client.missionCycleCleanup();
+         %client.clearStep();
+         %client.lastDamageClient = -1;
+         %client.lastDamageTurret = -1;
+         %client.setEngageTarget(-1);
+         %client.setTargetObject(-1);
+	      %client.pilotVehicle = false;
+         %client.defaultTasksAdded = false;
+
+	      //do the nav graph cleanup
+	      %client.missionCycleCleanup();
 		}
 	}
 
@@ -398,6 +397,15 @@ function AIVehicleMounted(%vehicle)
 	$AIVehicleSet.add(%vehicle);
 }
 
+function AICorpseAdded(%corpse)
+{
+   if (isObject(%corpse))
+   {
+      %corpse.isCorpse = true;
+	   $AIItemSet.add(%corpse);
+   }
+}
+
 //OTHER UTILITY FUNCTIONS
 
 function AIConnection::onAIDrop(%client)
@@ -439,6 +447,7 @@ function AIConnection::startMission(%client)
 
 	//sends a message so everyone know the bot is in the game...
 	Game.AIHasJoined(%client);
+   %client.matchStartReady = true;
 
 	//spawn the bot...
 	onAIRespawn(%client);
@@ -522,7 +531,7 @@ function AIReassessObjective(%client)
 {
    ProfilePatch1(patchForTimeTest, %client);
    // Game.AIChooseGameObjective(%client);
-   schedule(5000, %client, "AIReassessObjective", %client);
+   %client.objectiveThread = schedule(5000, %client, "AIReassessObjective", %client);
 }
 
 function onAIRespawn(%client)
@@ -552,7 +561,7 @@ function onAIRespawn(%client)
 	%client.respawnThread = "";
 
 	//timeslice the objective reassessment for the bots
-	if (%client.objectiveThread <= 0)
+	if (!isEventPending(%client.objectiveThread))
 	{
 		%curTime = getSimTime();
 		%remainder = %curTime % 5000;

@@ -17,12 +17,13 @@ function OptionsDlg::onWake( %this )
       CursorOn();
 
    $enableDirectInput = "1";
-   enableDirectInput();
+   activateDirectInput();
    
 	OP_VideoPane.setVisible( false ); 
 	OP_GraphicsPane.setVisible( false );
 	OP_TexturesPane.setVisible( false );
 	OP_SoundPane.setVisible( false );
+	OP_VoicePane.setVisible( false );
 	OP_ControlsPane.setVisible( false );
 	OP_NetworkPane.setVisible( false );
 	OP_GamePane.setVisible( false );
@@ -31,6 +32,7 @@ function OptionsDlg::onWake( %this )
 	OP_GraphicsTab.setValue( false );
 	OP_TexturesTab.setValue( false );
 	OP_SoundTab.setValue( false );
+	OP_VoiceTab.setValue( false );
 	OP_ControlsTab.setValue( false );
 	OP_NetworkTab.setValue( false );
 	OP_GameTab.setValue( false );
@@ -61,6 +63,8 @@ function OptionsDlg::onWake( %this )
    OP_TerrainSlider.setValue( $max_screenerror - $pref::Terrain::screenError );
    OP_ShapeSlider.setValue( ( $max_TSScreenError - $pref::TS::screenError ) / ( $max_TSScreenError - $min_TSScreenError ) );
    OP_ShadowSlider.setValue( $pref::Shadows );
+   OP_InteriorDetailSlider.setValue( $pref::Interior::detailAdjust );
+   OP_VisibleDistanceSlider.setValue( $pref::VisibleDistanceMod );
    OP_SkyDetailMenu.init();
    if ( !$pref::SkyOn )
       %selId = 5;
@@ -70,17 +74,22 @@ function OptionsDlg::onWake( %this )
       %selId = 1;
    OP_SkyDetailMenu.setSelected( %selId );
    OP_SkyDetailMenu.setText( OP_SkyDetailMenu.getTextById( %selId ) );
-   OP_VertexLightTgl.setValue( $pref::Interior::VertexLighting );
    OP_PlayerRenderMenu.init();
    %selId = $pref::Player::renderMyPlayer | ( $pref::Player::renderMyItems << 1 );
    OP_PlayerRenderMenu.setSelected( %selId );
-   OP_VisibleDistanceSlider.setValue( $pref::VisibleDistanceMod );
+   OP_VertexLightTgl.setValue( $pref::Interior::VertexLighting );
 
 	// Initialize the Textures Options controls:
-   OP_ShapeTexSlider.setValue( 5 - $pref::OpenGL::mipReduction );
-   OP_TerrainTexSlider.setValue( 6 - $pref::Terrain::texDetail );
-   OP_BuildingTexSlider.setValue( 5 - $pref::OpenGL::interiorMipReduction );
-   OP_SkyTexSlider.setValue( 5 - $pref::OpenGL::skyMipReduction );
+	OP_TerrainTexSlider.setValue( 6 - $pref::Terrain::texDetail );
+
+	// We're using the noDrawArraysAlpha variable here because we've already
+	// gone gold (hard to add a new profiling variable).  But the Voodoo2/3/3500
+	// cards that have the 256x256 texture limitation (in OpenGL) also have the
+	// noDrawArraysAlpha hack on...so that works out nice
+   %mipRange = $pref::OpenGL::noDrawArraysAlpha ? 4.0 : 5.0;
+	OP_ShapeTexSlider.setValue( (5 - $pref::OpenGL::mipReduction) / %mipRange );
+   OP_BuildingTexSlider.setValue( (5 - $pref::OpenGL::interiorMipReduction) / %mipRange );
+   OP_SkyTexSlider.setValue( (5 - $pref::OpenGL::skyMipReduction) / %mipRange );
 
 	// Initialize the Sound Options controls:
    // provider menu
@@ -102,32 +111,40 @@ function OptionsDlg::onWake( %this )
    OP_AudioSpeakerMenu.setSelected(%selId);
 	OP_AudioSpeakerMenu.onSelect(%selId, "");
 
+   OP_AudioFrequencyMenu.init();
+   OP_AudioBitRateMenu.init();
+   OP_AudioChannelsMenu.init();
+
    OP_MasterVolumeSlider.setValue( $pref::Audio::masterVolume );
    OP_EffectsVolumeSlider.setValue( $pref::Audio::effectsVolume );
    OP_VoiceBindVolumeSlider.setValue( $pref::Audio::radioVolume );
    OP_GuiVolumeSlider.setValue( $pref::Audio::guiVolume );
    OP_MusicTgl.onAction();
    OP_MusicVolumeSlider.setValue( $pref::Audio::musicVolume );
+
+	// Initialize the Voice Settings controls:
    OP_MicrophoneEnabledTgl.onAction();
    OP_MicrophoneVolumeSlider.setValue( $pref::Audio::voiceVolume );
    OP_InputBoostSlider.setValue( $pref::Audio::captureGainScale );
+   OP_VoiceListenMenu.init();
+   OP_VoiceSendMenu.init();
    updateInputBoost();
 
 	// Initialize the Control Options controls:
-	OP_RemapList.fillList();
+   OP_ControlGroupMenu.init();
+
    // JOYSTICK SUPPORT WILL BE RE-ENABLED IN THE PATCH
-   //if ( isJoystickDetected() )
-   if ( false )
+   if ( isJoystickDetected() )
    {      
+      OP_JoystickTgl.setValue( $pref::Input::JoystickEnabled );
       OP_JoystickTgl.setActive( true );
       OP_ConfigureJoystickBtn.setActive( $pref::Input::JoystickEnabled );
    }
    else
    {
-      OP_JoystickTgl.setVisible( false ); // PATCH
+      OP_JoystickTgl.setValue( false );
       OP_JoystickTgl.setActive( false );
       $pref::Input::JoystickEnabled = false;
-      OP_ConfigureJoystickBtn.setVisible( false ); // PATCH
       OP_ConfigureJoystickBtn.setActive( false );
    }
 
@@ -228,6 +245,9 @@ function OptionsDlg::deviceDependent( %this )
       OP_AnisotropyLabel_Disabled.setVisible( true );
       OP_AnisotropyLabel.setVisible( false );
    }
+
+	OP_EnvMapTgl.setValue($pref::environmentMaps);
+	OP_EnvMapTgl.setActive($pref::OpenGL::allowTexGen);
 }
 
 //------------------------------------------------------------------------------
@@ -238,13 +258,21 @@ function OptionsDlg::onSleep( %this )
       CursorOff();
 
    $enableDirectInput = "0";
-   disableDirectInput();
+   deactivateDirectInput();
    
 	OP_VideoDriverMenu.clear();
 	OP_ResMenu.clear();
 	OP_BPPMenu.clear();
    OP_AudioProviderMenu.clear();
    OP_AudioSpeakerMenu.clear();
+
+   if ( %this.resetAudio )
+   {
+      echo( "Resetting the audio driver..." );
+      audioSetDriver( "none" );
+      audioSetDriver( $pref::Audio::activeDriver );
+      %this.resetAudio = "";
+   }
 
    if ( isObject( ServerConnection ) && isTextureFlushRequired() )
       MessageBoxYesNo( "WARNING", "You have made changes that require Tribes 2 to flush the texture cache.  "  
@@ -261,13 +289,18 @@ function isTextureFlushRequired()
    if ( $pref::Interior::VertexLighting != OP_VertexLightTgl.getValue() )
       return( true );
 
-   if ( $pref::OpenGL::mipReduction != 5 - mFloor( OP_ShapeTexSlider.getValue() ) )
+	// We're using the noDrawArraysAlpha variable here because we've already
+	// gone gold (hard to add a new profiling variable).  But the Voodoo2/3/3500
+	// cards that have the 256x256 texture limitation (in OpenGL) also have the
+	// noDrawArraysAlpha hack on...so that works out nice
+   %mipRange = $pref::OpenGL::noDrawArraysAlpha ? 4 : 5;
+	if ( $pref::OpenGL::mipReduction != 5 - mFloor( OP_ShapeTexSlider.getValue() * %mipRange ) )
       return( true );
 
-   if ( $pref::OpenGL::interiorMipReduction != 5 - mFloor( OP_BuildingTexSlider.getValue() ) )
+   if ( $pref::OpenGL::interiorMipReduction != 5 - mFloor( OP_BuildingTexSlider.getValue() * %mipRange ) )
       return( true );
 
-   if ( $pref::OpenGL::skyMipReduction != 5 - mFloor( OP_SkyTexSlider.getValue() ) )
+   if ( $pref::OpenGL::skyMipReduction != 5 - mFloor( OP_SkyTexSlider.getValue() * %mipRange ) )
       return( true );
 
    if ( $AnisotropySupported && $pref::OpenGL::anisotropy != OP_AnisotropySlider.getValue() )
@@ -382,28 +415,34 @@ function OptionsDlg::saveSettings( %this )
 
    $pref::Terrain::texDetail = 6 - mFloor( OP_TerrainTexSlider.getValue() );
 
-   %temp = 5 - mFloor( OP_ShapeTexSlider.getValue() );
+   // We're using the noDrawArraysAlpha variable here because we've already
+	// gone gold (hard to add a new profiling variable).  But the Voodoo2/3/3500
+	// cards that have the 256x256 texture limitation (in OpenGL) also have the
+	// noDrawArraysAlpha hack on...so that works out nice
+   %mipRange = $pref::OpenGL::noDrawArraysAlpha ? 4 : 5;
+
+	%temp = 5 - mFloor( OP_ShapeTexSlider.getValue() * %mipRange );
    if ( $pref::OpenGL::mipReduction != %temp )
    {
-      $pref::OpenGL::mipReduction = %temp;
-      setOpenGLMipReduction( $pref::OpenGL::mipReduction );
-      %flushTextures = true;
+   	$pref::OpenGL::mipReduction = %temp;
+   	setOpenGLMipReduction( $pref::OpenGL::mipReduction );
+   	%flushTextures = true;
    }
 
-   %temp = 5 - mFloor( OP_BuildingTexSlider.getValue() );
+   %temp = 5 - mFloor( OP_BuildingTexSlider.getValue() * %mipRange );
    if ( $pref::OpenGL::interiorMipReduction != %temp )
    {
-      $pref::OpenGL::interiorMipReduction = %temp;
-      setOpenGLInteriorMipReduction( $pref::OpenGL::interiorMipReduction );
-      %flushTextures = true;
+   	$pref::OpenGL::interiorMipReduction = %temp;
+   	setOpenGLInteriorMipReduction( $pref::OpenGL::interiorMipReduction );
+   	%flushTextures = true;
    }
 
-   %temp = 5 - mFloor( OP_SkyTexSlider.getValue() );
+   %temp = 5 - mFloor( OP_SkyTexSlider.getValue() * %mipRange );
    if ( $pref::OpenGL::skyMipReduction != %temp )
    {
-      $pref::OpenGL::skyMipReduction = %temp;
-      setOpenGLSkyMipReduction( $pref::OpenGL::skyMipReduction ); 
-      %flushTextures = true;
+   	$pref::OpenGL::skyMipReduction = %temp;
+   	setOpenGLSkyMipReduction( $pref::OpenGL::skyMipReduction ); 
+   	%flushTextures = true;
    }
 
    if ( $TextureCompressionSupported && !$pref::OpenGL::disableARBTextureCompression )
@@ -463,6 +502,7 @@ function OptionsDlg::saveSettings( %this )
    $pref::TS::detailAdjust = $min_TSDetailAdjust + OP_ShapeSlider.getValue() * ( $max_TSDetailAdjust - $min_TSDetailAdjust );
    $pref::Shadows = OP_ShadowSlider.getValue();
    setShadowDetailLevel( $pref::Shadows );
+   $pref::Interior::detailAdjust = OP_InteriorDetailSlider.getValue();
    $pref::VisibleDistanceMod = OP_VisibleDistanceSlider.getValue();
 
    $pref::Audio::musicVolume = OP_MusicVolumeSlider.getValue();
@@ -478,6 +518,34 @@ function OptionsDlg::saveSettings( %this )
    $pref::Audio::captureGainScale = OP_InputBoostSlider.getValue();
    if ( !$missionRunning )
       MusicPlayer.stop();
+
+   if ( $pref::Audio::enableVoiceCapture )
+   {
+      %reinit = false;
+      %selId = OP_VoiceListenMenu.getSelected();
+      if ( $pref::Audio::decodingMask != %selId )
+      {
+         $pref::Audio::decodingMask = %selId;
+         %reinit = true;
+      }
+
+      %selId = OP_VoiceSendMenu.getSelected();
+      if ( $pref::Audio::encodingLevel != %selId )
+      {
+         $pref::Audio::encodingLevel = %selId;
+         %reinit = true;
+      }
+
+      if ( %reinit )
+      {
+         alxCaptureDestroy();
+         alxCaptureInit();
+
+         // If in a game, let the server know about the altered settings:
+         if ( isObject( ServerConnection ) )
+            commandToServer( 'SetVoiceInfo', $pref::Audio::voiceChannels, $pref::Audio::decodingMask, $pref::Audio::encodingLevel );
+      }
+   }
 
    $pref::Net::PacketRateToClient = mFloor( OP_PacketRateSlider.getValue() );
    $pref::Net::PacketSize = mFloor( OP_PacketSizeSlider.getValue() );
@@ -739,7 +807,7 @@ function OP_ApplyBtn::updateState( %this )
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// Graphics:
+// Graphics Settings:
 //
 function updateGammaCorrection()
 {
@@ -778,7 +846,7 @@ function OP_PlayerRenderMenu::init( %this )
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// Textures:
+// Texture Settings:
 //
 function OP_CompressMenu::init( %this )
 {
@@ -818,7 +886,7 @@ function OP_TexQualityMenu::onSelect( %this, %id, %text )
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// Audio:
+// Audio Settings:
 //
 function setAudioProvider(%idx)
 {
@@ -859,12 +927,92 @@ function OP_AudioResetProvider::onAction(%this)
    setAudioProvider($Audio::originalProvider);
    %this.setActive(false);
 }
-
 //------------------------------------------------------------------------------
 function OP_AudioSpeakerMenu::onSelect(%this, %id, %text)
 {
    alxContexti(ALC_SPEAKER, %id);
    $pref::Audio::speakerType = alxGetContextstr(ALC_SPEAKER_NAME, %id);
+}
+
+//------------------------------------------------------------------------------
+function OP_AudioFrequencyMenu::init( %this )
+{
+   %this.clear();
+   %this.add( "11 KHz", 0 );
+   %this.add( "22 KHz", 1 );
+   %this.add( "44 KHz", 2 );
+
+   switch ( $pref::Audio::frequency )
+   {
+      case 11025: %this.setSelected( 0 );
+      case 22050: %this.setSelected( 1 );
+      default:    %this.setSelected( 2 );
+   }
+}
+
+//------------------------------------------------------------------------------
+function OP_AudioFrequencyMenu::onSelect( %this, %id, %text )
+{
+   switch ( %id )
+   {
+      case 0:  %newVal = 11025;
+      case 1:  %newVal = 22050;
+      default: %newVal = 44100;
+   }
+
+   if ( $pref::Audio::frequency != %newVal )
+   {
+      $pref::Audio::frequency = %newVal;
+      OptionsDlg.resetAudio = true;
+   }
+}
+
+//------------------------------------------------------------------------------
+function OP_AudioBitRateMenu::init( %this )
+{
+   %this.clear();
+   %this.add( "8 bit", 0 );
+   %this.add( "16 bit", 1 );
+
+   if ( $pref::Audio::sampleBits == 8 )
+      %this.setSelected( 0 );
+   else
+      %this.setSelected( 1 );
+}
+
+//------------------------------------------------------------------------------
+function OP_AudioBitRateMenu::onSelect( %this, %id, %text )
+{
+   %newVal = %id == 0 ? 8 : 16;
+   if ( $pref::Audio::sampleBits != %newVal )
+   {
+      $pref::Audio::sampleBits = %newVal;
+      OptionsDlg.resetAudio = true;
+   }
+}
+
+//------------------------------------------------------------------------------
+function OP_AudioChannelsMenu::init( %this )
+{
+   %this.clear();
+   %this.add( "One", 0 );
+   %this.add( "Two", 1 );
+
+   if ( $pref::Audio::channels == 1 )
+      %this.setSelected( 0 );
+   else
+      %this.setSelected( 1 );
+}
+
+//------------------------------------------------------------------------------
+function OP_AudioChannelsMenu::onSelect( %this, %id, %text )
+{
+   %newVal = %id == 0 ? 1 : 2;
+   if ( $pref::Audio::channels != %newVal )
+   {
+      $pref::Audio::channels = %newVal;
+      OptionsDlg.resetAudio = true;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -903,7 +1051,11 @@ function updateMasterVolume()
    alxListenerf( AL_GAIN_LINEAR, %volume );
 }
 
+
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Voice Settings:
+//
 function OP_MicrophoneEnabledTgl::onAction( %this )
 {
    %on = %this.getValue();
@@ -915,6 +1067,20 @@ function OP_MicrophoneEnabledTgl::onAction( %this )
    OP_InputBoostLabel_Disabled.setVisible( !%on );
    OP_InputBoostSlider.setActive( %on );
    OP_InputBoostPercentTxt.setVisible( %on );
+   OP_VoiceListenLabel.setVisible( %on );
+   OP_VoiceListenLabel_Disabled.setVisible( !%on );
+   OP_VoiceListenMenu.setActive( %on );
+   OP_VoiceSendLabel.setVisible( %on );
+   OP_VoiceSendLabel_Disabled.setVisible( !%on );
+   OP_VoiceSendMenu.setActive( %on );
+
+   if(%on != alxIsEnabled("capture"))
+   {
+      if(%on)
+         alxCaptureInit();
+      else
+         alxCaptureDestroy();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -954,6 +1120,40 @@ function localCaptureStop( %method )
    {
       OP_RecordTestBtn.setActive(true);
       OP_RecordTestBtn.setValue("Test Record");
+   }
+}
+
+//------------------------------------------------------------------------------
+function OP_VoiceListenMenu::init( %this )
+{
+   %this.clear();
+   %this.add( "Low", 1 );
+   %this.add( "Medium", 3 );
+   %this.add( "High", 7 );
+
+   switch ( $pref::Audio::decodingMask )
+   {
+      case 3 or 7:
+         %this.setSelected( $pref::Audio::decodingMask );
+      default:
+         %this.setSelected( 1 );
+   }
+}
+
+//------------------------------------------------------------------------------
+function OP_VoiceSendMenu::init( %this )
+{
+   %this.clear();
+   %this.add( "Low", 0 );
+   %this.add( "Medium", 1 );
+   %this.add( "High", 2 );
+
+   switch ( $pref::Audio::encodingLevel )
+   {
+      case 1 or 2:
+         %this.setSelected( $pref::Audio::encodingLevel );
+      default:
+         %this.setSelected( 0 );
    }
 }
 
@@ -1310,6 +1510,20 @@ $RemapName[$RemapCount] = "Chat Page Down";
 $RemapCmd[$RemapCount] = "pageMessageHudDown";
 $RemapCount++;
 
+$ObsRemapCount = 0;
+$ObsRemapName[$ObsRemapCount] = "Move Up";
+$ObsRemapCmd[$ObsRemapCount] = "moveup";
+$ObsRemapCount++;
+$ObsRemapName[$ObsRemapCount] = "Move Down";
+$ObsRemapCmd[$ObsRemapCount] = "movedown";
+$ObsRemapCount++;
+$ObsRemapName[$ObsRemapCount] = "Toggle Observer Mode";
+$ObsRemapCmd[$ObsRemapCount] = "jump";
+$ObsRemapCount++;
+$ObsRemapName[$ObsRemapCount] = "Cycle Camera";
+$ObsRemapCmd[$ObsRemapCount] = "mouseJet";
+$ObsRemapCount++;
+
 //------------------------------------------------------------------------------
 function restoreDefaultMappings()
 {
@@ -1388,6 +1602,8 @@ function saveMapFile( %filename )
    }
 
    moveMap.save( %mapFile );
+   // Append the observer action map:
+   observerMap.save( %mapFile, true );
 
    // Write out the console toggle key:
    %fObject = new FileObject();
@@ -1423,32 +1639,39 @@ function getMapDisplayName( %device, %action )
 	}
 	else if ( strstr( %device, "joystick" ) != -1 )
 	{
-		// TODO - add POV support here...
-		// Substitute "joy" for "button" in the action string:
+		// Substitute "joystick" for "button" in the action string:
 		%pos = strstr( %action, "button" );
 		if ( %pos != -1 )
 		{
 			%mods = getSubStr( %action, 0, %pos );
 			%object = getSubStr( %action, %pos, 1000 );
 			%instance = getSubStr( %object, strlen( "button" ), 1000 );
-			return( %mods @ "joy" @ ( %instance + 1 ) );
+			return( %mods @ "joystick" @ ( %instance + 1 ) );
 		}
 		else
 	   { 
 	      %pos = strstr( %action, "pov" );
          if ( %pos != -1 )
          {
-            %mods = getSubStr( %action, 0, %pos );
-            %object = getSubStr( %action, %pos, 1000 );
-            MessageBoxOK( "WARNING", "Sorry, Joystick POVs are not yet supported." );
-            return( "" );
+            %wordCount = getWordCount( %action );
+            %mods = %wordCount > 1 ? getWords( %action, 0, %wordCount - 2 ) @ " " : "";
+            %object = getWord( %action, %wordCount - 1 );
+            switch$ ( %object )
+            {
+               case "upov":   %object = "POV1 up";
+               case "dpov":   %object = "POV1 down";
+               case "lpov":   %object = "POV1 left";
+               case "rpov":   %object = "POV1 right";
+               case "upov2":  %object = "POV2 up";
+               case "dpov2":  %object = "POV2 down";
+               case "lpov2":  %object = "POV2 left";
+               case "rpov2":  %object = "POV2 right";
+               default:       %object = "??";
+            }
+            return( %mods @ %object );
          }
          else
-         {
             error( "Unsupported Joystick input object passed to getDisplayMapName!" );
-            MessageBoxOK( "ERROR", "That type of input object is not supported." );
-            return( "" );
-         }
       }
 	}
 		
@@ -1458,7 +1681,20 @@ function getMapDisplayName( %device, %action )
 //------------------------------------------------------------------------------
 function buildFullMapString( %index )
 {
-	%temp = moveMap.getBinding( $RemapCmd[%index] );
+   switch$ ( OP_ControlsPane.group )
+   {
+      case "Observer":
+         %actionMap  = observerMap;
+         %name       = $ObsRemapName[%index];
+         %cmd        = $ObsRemapCmd[%index];
+
+      default:
+         %actionMap  = moveMap;
+         %name       = $RemapName[%index];
+         %cmd        = $RemapCmd[%index];
+   }
+
+	%temp = %actionMap.getBinding( %cmd );
    %device = getField( %temp, 0 );
    %object = getField( %temp, 1 );
    if ( %device !$= "" && %object !$= "" )
@@ -1466,15 +1702,39 @@ function buildFullMapString( %index )
    else
       %mapString = "";
 
-	return( $RemapName[%index] @ "\t" @ %mapString );
+	return( %name TAB %mapString );
+}
+
+//------------------------------------------------------------------------------
+function OP_ControlGroupMenu::init( %this )
+{
+   %selId = %this.getSelected();
+   %this.clear();
+   %this.add( "Main", 0 );
+   %this.add( "Observer", 1 );
+   %this.setSelected( %selId );
+   %this.onSelect( %selId, %this.getTextById( %selId ) );
+}
+
+//------------------------------------------------------------------------------
+function OP_ControlGroupMenu::onSelect( %this, %id, %text )
+{
+   OP_ControlsPane.group = %text;
+   OP_RemapList.fillList();
 }
 
 //------------------------------------------------------------------------------
 function OP_RemapList::fillList( %this )
 {
+   switch$ ( OP_ControlsPane.group )
+   {
+      case "Observer":  %count = $ObsRemapCount;
+      default:          %count = $RemapCount;
+   }
+
 	%this.clear();
-	for ( %i = 0; %i < $RemapCount; %i++ )
-		%this.addRow( %i, buildFullMapString( %i ) );
+   for ( %i = 0; %i < %count; %i++ )
+      %this.addRow( %i, buildFullMapString( %i ) );
 
    // Set the console key:
 	%bind = GlobalActionMap.getBinding( "toggleConsole" );
@@ -1484,7 +1744,16 @@ function OP_RemapList::fillList( %this )
 //------------------------------------------------------------------------------
 function OP_RemapList::onDeleteKey( %this, %rowId )
 {
-   clearMapping( %rowId );
+   switch$ ( OP_ControlsPane.group )
+   {
+      case "Observer":
+         %actionMap  = observerMap;
+         %cmd        = $ObsRemapCmd[%rowId];
+      default:
+         %actionMap  = moveMap;
+         %cmd        = $RemapCmd[%rowId];
+   }
+   clearMapping( %actionMap, %cmd );
    %this.setRowById( %rowId, buildFullMapString( %rowId ) );
 }
 
@@ -1492,7 +1761,13 @@ function OP_RemapList::onDeleteKey( %this, %rowId )
 function OP_RemapList::doRemap( %this )
 {
 	%selId = %this.getSelectedId();
-	RemapFrame.setTitle( "REMAP \"" @ $RemapName[%selId] @ "\"" );
+   switch$ ( OP_ControlsPane.group )
+   {
+      case "Observer":  %name = $ObsRemapName[%selId];
+      default:          %name = $RemapName[%selId];
+   }
+
+	RemapFrame.setTitle( "REMAP \"" @ %name @ "\"" );
    RemapInputCtrl.mode = "move";
 	RemapInputCtrl.index = %selId;
 	Canvas.pushDialog( RemapDlg );
@@ -1526,31 +1801,42 @@ function RemapDlg::onSleep( %this )
 //------------------------------------------------------------------------------
 function findRemapCmdIndex( %command )
 {
-	for ( %i = 0; %i < $RemapCount; %i++ )
-	{
-		if ( %command $= $RemapCmd[%i] )
-			return( %i );			
-	}
+   switch$ ( OP_ControlsPane.group )
+   {
+      case "Observer":
+         for ( %i = 0; %i < $ObsRemapCount; %i++ )
+         {
+            if ( %command $= $ObsRemapCmd[%i] )
+               return( %i );
+         }
+      default:
+	      for ( %i = 0; %i < $RemapCount; %i++ )
+	      {
+		      if ( %command $= $RemapCmd[%i] )
+			      return( %i );			
+	      }
+   }
 
 	return( -1 );	
 }
 
 //------------------------------------------------------------------------------
-function clearMapping( %index )
+function clearMapping( %actionMap, %cmd )
 {
-	%fullMapString = moveMap.getBinding( $RemapCmd[%index] );
+	%fullMapString = %actionMap.getBinding( %cmd );
 	%mapCount = getRecordCount( %fullMapString );
 	for ( %i = 0; %i < %mapCount; %i++ )
 	{
 		%temp = getRecord( %fullMapString, %i );
-		moveMap.unbind( getField( %temp, 0 ), getField( %temp, 1 ) );
+		%actionMap.unbind( getField( %temp, 0 ), getField( %temp, 1 ) );
 	}
 }
 
 //------------------------------------------------------------------------------
-function redoMapping( %device, %action, %oldIndex, %newIndex )
+function redoMapping( %actionMap, %device, %action, %cmd, %oldIndex, %newIndex )
 {
-	moveMap.bind( %device, %action, $RemapCmd[%newIndex] );
+	//%actionMap.bind( %device, %action, $RemapCmd[%newIndex] );
+	%actionMap.bind( %device, %action, %cmd );
 	OP_RemapList.setRowById( %oldIndex, buildFullMapString( %oldIndex ) );
 	OP_RemapList.setRowById( %newIndex, buildFullMapString( %newIndex ) );
 }
@@ -1570,7 +1856,7 @@ function RemapInputCtrl::onInputEvent( %this, %device, %action )
 	//error( "** onInputEvent called - device = " @ %device @ ", action = " @ %action @ " **" );
 	Canvas.popDialog( RemapDlg );
 
-	// Tested for the reserved keystrokes:
+	// Test for the reserved keystrokes:
 	if ( %device $= "keyboard" )
 	{
       // Cancel...
@@ -1581,33 +1867,7 @@ function RemapInputCtrl::onInputEvent( %this, %device, %action )
       }
 	}
 	
-   if ( %this.mode $= "move" )
-   {
-	   // First check to see if the given action is already mapped:
-	   %prevMap = moveMap.getCommand( %device, %action );
-      if ( %prevMap !$= $RemapCmd[%this.index] )
-      {
-	      if ( %prevMap $= "" )
-	      {
-		      moveMap.bind( %device, %action, $RemapCmd[%this.index] );
-		      OP_RemapList.setRowById( %this.index, buildFullMapString( %this.index ) );
-	      }
-	      else
-	      {
-            %mapName = getMapDisplayName( %device, %action );
-		      %prevMapIndex = findRemapCmdIndex( %prevMap );
-		      if ( %prevMapIndex == -1 )
-			      MessageBoxOK( "REMAP FAILED", "\"" @ %mapName @ "\" is already bound to a non-remappable command!" );
-		      else
-			      MessageBoxYesNo( "WARNING", 
-				      "\"" @ %mapName @ "\" is already bound to \"" 
-					      @ $RemapName[%prevMapIndex] @ "\"!\nDo you want to undo this mapping?", 
-				      "redoMapping(" @ %device @ ", \"" @ %action @ "\", " @ %prevMapIndex @ ", " @ %this.index @ ");", "" );
-		      return;
-	      }
-      }
-   }
-   else if ( %this.mode $= "consoleKey" )
+   if ( %this.mode $= "consoleKey" )
    {
       if ( %device !$= "keyboard" )
       {
@@ -1643,33 +1903,67 @@ function RemapInputCtrl::onInputEvent( %this, %device, %action )
       }
    }
    else
-      error( "The sky is falling, the sky is falling!" );
+   {
+      switch$ ( OP_ControlsPane.group )
+      {
+         case "Observer":
+            %actionMap = observerMap;
+            %cmd  = $ObsRemapCmd[%this.index];
+            %name = $ObsRemapName[%this.index];
+
+         default:
+            %actionMap = moveMap;
+            %cmd  = $RemapCmd[%this.index];
+            %name = $RemapName[%this.index];
+      }
+
+	   // First check to see if the given action is already mapped:
+	   %prevMap = %actionMap.getCommand( %device, %action );
+      if ( %prevMap !$= %cmd )
+      {
+	      if ( %prevMap $= "" )
+	      {
+            %actionMap.bind( %device, %action, %cmd );
+		      OP_RemapList.setRowById( %this.index, buildFullMapString( %this.index ) );
+	      }
+	      else
+	      {
+            %mapName = getMapDisplayName( %device, %action );
+		      %prevMapIndex = findRemapCmdIndex( %prevMap );
+		      if ( %prevMapIndex == -1 )
+			      MessageBoxOK( "REMAP FAILED", "\"" @ %mapName @ "\" is already bound to a non-remappable command!" );
+		      else
+            {
+               switch$ ( OP_ControlsPane.group )
+               {
+                  case "Observer":
+                     %prevCmdName = $ObsRemapName[%prevMapIndex];
+                  default:
+                     %prevCmdName = $RemapName[%prevMapIndex];
+               }
+
+			      MessageBoxYesNo( "WARNING", 
+				      "\"" @ %mapName @ "\" is already bound to \"" 
+					      @ %prevCmdName @ "\"!\nDo you want to undo this mapping?", 
+				      "redoMapping(" @ %actionMap @ ", " @ %device @ ", \"" @ %action @ "\", \"" @ %cmd @ "\", " @ %prevMapIndex @ ", " @ %this.index @ ");", "" );
+            }
+		      return;
+	      }
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
 function OP_JoystickTgl::onAction( %this )
 {
-   OP_ConfigureJoystickBtn.setActive( %this.getValue() );
-}
+   %on = %this.getValue();
+   if ( %on )
+      enableJoystick();
+   else
+      disableJoystick();
 
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-$RemapAxisCount = 0;
-$RemapAxisName[$RemapAxisCount] = "Look Up/Down";
-$RemapAxisCmd[$RemapAxisCount] = "pitch";
-$RemapAxisCount++;
-$RemapAxisName[$RemapAxisCount] = "Turn Left/Right";
-$RemapAxisCmd[$RemapAxisCount] = "yaw";
-$RemapAxisCount++;
-$RemapAxisName[$RemapAxisCount] = "Cycle Weapon";
-$RemapAxisCmd[$RemapAxisCount] = "cycleWeaponAxis";
-$RemapAxisCount++;
-$RemapAxisName[$RemapAxisCount] = "Move Forward/Backward";
-$RemapAxisCmd[$RemapAxisCount] = "joystickMoveY";
-$RemapAxisCount++;
-$RemapAxisName[$RemapAxisCount] = "Move Left/Right";
-$RemapAxisCmd[$RemapAxisCount] = "joystickMoveX";
-$RemapAxisCount++;
+   OP_ConfigureJoystickBtn.setActive( %on );
+}
 
 //------------------------------------------------------------------------------
 function MouseConfigDlg::onWake( %this )
@@ -1682,6 +1976,7 @@ function MouseConfigDlg::onWake( %this )
    MouseZActionMenu.add( "Nothing", 1 );
    MouseZActionMenu.add( "Cycle Weapon", 2 );
    MouseZActionMenu.add( "Next Weapon Only", 3 );
+//   MouseZActionMenu.add( "Cycle Zoom Level", 4 );
 
    %bind = moveMap.getCommand( "mouse", "zaxis" );
    %selId = 1;
@@ -1742,46 +2037,73 @@ function MouseYSlider::sync( %this )
 }
 
 //------------------------------------------------------------------------------
+// Joystick Config dialog:
+//------------------------------------------------------------------------------
+$JoyRemapCount = 0;
+$JoyRemapName[$JoyRemapCount] = "Look Up/Down";
+$JoyRemapCmd[$JoyRemapCount]  = "joyPitch";
+$JoyRemapCount++;
+$JoyRemapName[$JoyRemapCount] = "Turn Left/Right";
+$JoyRemapCmd[$JoyRemapCount]  = "joyYaw";
+$JoyRemapCount++;
+$JoyRemapName[$JoyRemapCount] = "Move Forward/Backward";
+$JoyRemapCmd[$JoyRemapCount]  = "joystickMoveY";
+$JoyRemapCount++;
+$JoyRemapName[$JoyRemapCount] = "Strafe Left/Right";
+$JoyRemapCmd[$JoyRemapCount]  = "joystickMoveX";
+$JoyRemapCount++;
+$JoyRemapName[$JoyRemapCount] = "Cycle Weapon";
+$JoyRemapCmd[$JoyRemapCount]  = "cycleWeaponAxis";
+$JoyRemapCount++;
+
 //------------------------------------------------------------------------------
 function JoystickConfigDlg::onWake( %this )
 {
    // Add all of the axis tabs:
    %temp = getJoystickAxes( 0 );
-   $joyAxisCount = getField( %temp , 0 );
+   %tryCount = getField( %temp, 0 );
+   $JoyAxisCount = 0;
 
-   for ( %i = 0; %i < $joyAxisCount; %i++ )
+   for ( %i = 0; %i < %tryCount; %i++ )
    {
       %type = getField( %temp, %i + 1 );
-      $JoyAxisTab[%i] = new ShellTabButton() {
-			profile = "ShellTabProfile";
-			horizSizing = "right";
-			vertSizing = "bottom";
-			position = "29" SPC ( 52 + ( %i * 30 ) );
-			extent = "100 38";
-			minExtent = "48 38";
-			visible = "1";
-			command = "JoystickConfigDlg.setPane(" @ %i @ ");";
-			helpTag = "0";
-			text = %type SPC "Axis";
-      };
-
       switch$ ( %type )
       {
-         case "X":   $JoyAxisTab[%i].type = "xaxis";
-         case "Y":   $JoyAxisTab[%i].type = "yaxis";
-         case "Z":   $JoyAxisTab[%i].type = "zaxis";
-         case "R":   $JoyAxisTab[%i].type = "rxaxis";
-         case "U":   $JoyAxisTab[%i].type = "ryaxis";
-         case "V":   $JoyAxisTab[%i].type = "rzaxis";
+         case "X": %tabName = "X Axis"; %tabType = "xaxis";
+         case "Y": %tabName = "Y Axis"; %tabType = "yaxis";
+         case "Z": %tabName = "Z Axis"; %tabType = "zaxis";
+         case "R": %tabName = "R Axis"; %tabType = "rxaxis";
+         case "U": %tabName = "U Axis"; %tabType = "ryaxis";
+         case "V": %tabName = "V Axis"; %tabType = "rzaxis";
+         case "S": %tabName = "Slider"; %tabType = "slider";
+         default:  %tabName = "";
       }
 
-      JoystickConfigFrame.add( $JoyAxisTab[%i] );
+      if ( %tabName !$= "" )
+      {
+         $JoyAxisTab[$JoyAxisCount] = new ShellTabButton() {
+			   profile = "ShellTabProfile";
+			   horizSizing = "right";
+			   vertSizing = "bottom";
+			   position = "29" SPC ( 52 + ( %i * 30 ) );
+			   extent = "100 38";
+			   minExtent = "48 38";
+			   visible = "1";
+			   command = "JoystickConfigDlg.setPane(" @ %i @ ");";
+			   helpTag = "0";
+			   text = %tabName;
+            type = %tabType;
+         };
+
+         $JoyAxisCount++;
+         JoystickConfigFrame.add( $JoyAxisTab[%i] );
+      }
    }
 
    // Fill the action menu:
    JoyAxisActionMenu.clear();
-   for ( %i = 0; %i < $RemapAxisCount; %i++ )
-      JoyAxisActionMenu.add( $RemapAxisName[%i], %i );
+   for ( %i = 0; %i < $JoyRemapCount; %i++ )
+      JoyAxisActionMenu.add( $JoyRemapName[%i], %i );
    JoyAxisActionMenu.add( "Nothing", 255 );
 
    // Select the first axis:
@@ -1793,7 +2115,7 @@ function JoystickConfigDlg::onSleep( %this )
 {
    // Save the current pane's settings:
    bindJoystickAxis( %this.pane, JoyAxisActionMenu.getSelected() );
-   for ( %i = 0; %i < $joyAxisCount; %i++ )
+   for ( %i = 0; %i < $JoyAxisCount; %i++ )
    {
       JoystickConfigFrame.remove( $JoyAxisTab[%i] );
       $JoyAxisTab[%i].delete();
@@ -1818,18 +2140,18 @@ function JoystickConfigDlg::setPane( %this, %pane )
    %bind = moveMap.getCommand( "joystick", %axisType );
    if ( %bind !$= "" )
    {
-      for ( %i = 0; %i < $RemapAxisCount; %i++ )
+      for ( %i = 0; %i < $JoyRemapCount; %i++ )
       {
-         if ( $RemapAxisCmd[%i] $= %bind )
+         if ( $JoyRemapCmd[%i] $= %bind )
          {
             JoyAxisActionMenu.setSelected( %i );
-            JoyAxisActionMenu.setText( $RemapAxisName[%i] );
+            JoyAxisActionMenu.setText( $JoyRemapName[%i] );
             JoyAxisActionMenu.onSelect( %i, "" );
             break;
          }
       }
 
-      if ( %i == $RemapAxisCount )
+      if ( %i == $JoyRemapCount )
       {
          JoyAxisActionMenu.setSelected( 255 );  // 255 is the code for "Nothing"
          JoyAxisActionMenu.onSelect( 255, "" );
@@ -1857,28 +2179,22 @@ function JoystickConfigDlg::setPane( %this, %pane )
 //------------------------------------------------------------------------------
 function JoyAxisActionMenu::onSelect( %this, %id, %text )
 {
-   if ( %id >= $RemapAxisCount )
-   {
-      JoyAxisSlider.setActive( false );
-      DeadZoneSlider.setActive( false );
-      InvertJoyAxisTgl.setActive( false );
-   }
-   else
-   {
-      JoyAxisSlider.setActive( true );
-      DeadZoneSlider.setActive( true );
-      InvertJoyAxisTgl.setActive( true );
-   }
+   %on = ( %id < $JoyRemapCount );
+   JoyAxisSlider.setActive( %on );
+   JoySensText.setVisible( %on );
+   DeadZoneSlider.setActive( %on );
+   DeadZoneText.setVisible( %on );
+   InvertJoyAxisTgl.setActive( %on );
 }
 
 //------------------------------------------------------------------------------
-function JoySensText::update()
+function JoySensText::update( %this )
 {
    %this.setValue( "(" @ getSubStr( JoyAxisSlider.getValue(), 0, 4 ) @ ")" );
 }
 
 //------------------------------------------------------------------------------
-function DeadZoneText::update()
+function DeadZoneText::update( %this )
 {
    %val = DeadZoneSlider.getValue();
    %percent = %val * 100;
@@ -1893,7 +2209,7 @@ function DeadZoneText::update()
 function bindJoystickAxis( %axisIndex, %cmdIndex )
 {
    %axis = $JoyAxisTab[%axisIndex].type;
-   if ( %cmdIndex > $RemapAxisCount )
+   if ( %cmdIndex > $JoyRemapCount )
    {
       // Make sure the axis is unbound:
       moveMap.unbind( "joystick", %axis );
@@ -1906,16 +2222,16 @@ function bindJoystickAxis( %axisIndex, %cmdIndex )
    {
       %deadZone = "-" @ %delta SPC %delta;
       if ( InvertJoyAxisTgl.getValue() )
- 		   moveMap.bind( "joystick", %axis, "SDI", %deadZone, %sens, $RemapAxisCmd[%cmdIndex] );
+ 		   moveMap.bind( "joystick", %axis, "SDI", %deadZone, %sens, $JoyRemapCmd[%cmdIndex] );
       else
- 		   moveMap.bind( "joystick", %axis, "SD", %deadZone, %sens, $RemapAxisCmd[%cmdIndex] );
+ 		   moveMap.bind( "joystick", %axis, "SD", %deadZone, %sens, $JoyRemapCmd[%cmdIndex] );
    }
  	else
    {
       if ( InvertJoyAxisTgl.getValue() )
- 		   moveMap.bind( "joystick", %axis, "SI", %sens, $RemapAxisCmd[%cmdIndex] );
+ 		   moveMap.bind( "joystick", %axis, "SI", %sens, $JoyRemapCmd[%cmdIndex] );
       else
- 		   moveMap.bind( "joystick", %axis, "S", %sens, $RemapAxisCmd[%cmdIndex] );
+ 		   moveMap.bind( "joystick", %axis, "S", %sens, $JoyRemapCmd[%cmdIndex] );
    }
 }
 
@@ -1923,6 +2239,31 @@ function bindJoystickAxis( %axisIndex, %cmdIndex )
 //------------------------------------------------------------------------------
 // Network Settings:
 //
+function OP_NetworkPane::applyPresets( %this, %which )
+{
+   switch$ ( %which )
+   {
+      case "modem1":
+         OP_PacketRateSlider.setValue( 10 );
+         OP_UpdateRateSlider.setValue( 32 );
+         OP_PacketSizeSlider.setValue( 200 );
+
+      case "modem2":
+         OP_PacketRateSlider.setValue( 12 );
+         OP_UpdateRateSlider.setValue( 32 );
+         OP_PacketSizeSlider.setValue( 240 );
+
+      case "lan":
+         OP_PacketRateSlider.setValue( 20 );
+         OP_UpdateRateSlider.setValue( 32 );
+         OP_PacketSizeSlider.setValue( 350 );
+
+      default:
+         error( "Invalid parameter passed to OP_NetworkPane::applyPresets!" );
+   }
+}
+
+//------------------------------------------------------------------------------
 function OP_MasterServerMenu::init( %this )
 {
    %this.clear();
@@ -1965,6 +2306,9 @@ function OP_RegionMenu::onSelect( %this, %id, %text )
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Game Settings:
+//
 function OP_LaunchScreenMenu::init( %this )
 {
    %this.clear();
@@ -1979,9 +2323,6 @@ function OP_LaunchScreenMenu::init( %this )
 //------------------------------------------------------------------------------
 function toggleImmersion()
 {
-   if( isImmersionEnabled() )
-      enableImmersion( $Pref::useImmersion = false );
-   else
-      enableImmersion( $Pref::useImmersion = true );   
+   MessageBoxOK( "Force Feedback", "This will take effect next time you start Tribes 2." );
 }
 

@@ -413,16 +413,18 @@ function SatchelChargeThrown::onDestroyed(%this, %object, %lastState)
 			%dmgRadius = 10;
 			%dmgMod = 0.3;
 			%expImpulse = 1000;
+			%dmgType = $DamageType::Explosion;
 		}
 		else
 		{
-			messageClient(%object.sourceObject.client, 'msgSatchelChargeDetonate', "\c2Satchel Charge Detonated!");
+			messageClient(%object.sourceObject.client, 'msgSatchelChargeDetonate', "\c2Satchel charge detonated!");
 			%dmgRadius = 20;
 			%dmgMod = 1.0;
 			%expImpulse = 2500;
+			%dmgType = $DamageType::SatchelCharge;
 		}
 
-	   RadiusExplosion(%object, %object.getPosition(), %dmgRadius, %dmgMod, %expImpulse, %object.sourceObject, $DamageType::SatchelCharge);
+	   RadiusExplosion(%object, %object.getPosition(), %dmgRadius, %dmgMod, %expImpulse, %object.sourceObject, %dmgType);
 
 		%object.schedule(500, "delete");
 	}

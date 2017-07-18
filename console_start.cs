@@ -97,6 +97,19 @@ function startAudio()
 }
 
 //------------------------------------------------------------------------------
+function repaintCanvas()
+{
+	if ( isObject( Canvas ) )
+		Canvas.repaint();
+}
+
+function resetCanvas()
+{
+	if ( isObject( Canvas ) )
+		Canvas.reset();
+}
+
+//------------------------------------------------------------------------------
 for($i = 1; $i < $Game::argc ; $i++)
 {
    $arg = $Game::argv[$i];
@@ -108,13 +121,20 @@ for($i = 1; $i < $Game::argc ; $i++)
    if (!stricmp(fileExt($arg), ".dif"))
    {
       $LaunchMode = "InteriorView";
+      //$SkipLogin = true;
       $TestObjectFileName = $arg;
       echo($TestObjectFileName);
    }
    else if(!stricmp(fileExt($arg), ".dif\""))
    {
       $LaunchMode = "InteriorView";
+      //$SkipLogin = true;
       $TestObjectFileName = getSubStr($arg,1, strlen($arg) - 2);
+   }
+   else if ( $arg $= "-mod" && $hasNextArg )
+   {
+      setModPaths( $nextArg );
+      $i += 2;
    }
    else if($arg $= "-dedicated")
    {
@@ -296,6 +316,8 @@ if($winConsoleEnabled)
 if( $Pref::useImmersion )
    enableImmersion( true );   
 
+$showImmersionDialog = $Pref::useImmersion && $ImmEnabled;
+
 switch( $pref::Shell::lastBackground )
 {
    case 0:
@@ -353,7 +375,20 @@ function EULADlg::onWake( %this )
          NL "Tribes 2." );
 
    %file = new FileObject();
-   if ( %file.openForRead( "Eula.txt" ) )
+   %fileOpenSuccess = false;
+   if (isT2UkBuild())
+   {
+      // Uk EULA
+      %fileOpenSuccess = %file.openForRead("UKEULA.TXT");
+   } 
+   else
+   {
+      // US+ EULA
+      %fileOpenSuccess = %file.openForRead("EULA.TXT");
+   }
+
+
+   if ( %fileOpenSuccess )
    {
       while ( !%file.isEOF() )
       {
@@ -392,6 +427,13 @@ function LoginProcess(%editAcct)
    LoginMessagePopup( "PLEASE WAIT", "Validating login..." );
    WONStartLogin( $LoginName, $LoginPassword, %editAcct );
    StartupGui.loginSchedule = StartupGui.schedule( 1000, checkLoginDone,%editAcct );
+}
+
+function PasswordProcess()
+{
+   LoginMessagePopup( "PLEASE WAIT", "Attempting to email you your login password..." );
+   WONStartEmailFetch($LoginName);
+   StartupGui.loginSchedule = StartupGui.schedule( 1000, checkLoginDone,false,true );
 }
 
 //------------------------------------------------------------------------------
@@ -443,7 +485,7 @@ function EditAccountDlg::onDontUpdate(%this)
    schedule(0,0,LoginDone);
 }
 
-function StartupGui::checkLoginDone( %this, %editAcct )
+function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
 {
    %result = WONLoginResult();
    %code = getField( %result, 1 );
@@ -462,9 +504,13 @@ function StartupGui::checkLoginDone( %this, %editAcct )
       switch$(%codeText)
       {
          case "WS_DBProxyServ_InvalidUserName":
-            %msg = "Account Creation Failed - Invalid login name.  Login names may only contain letters, numbers and underlines, and must be from 3 to 16 characters in length.";
+            if(%emailCheck)
+               %msg = "Email Password Failed - Invalid login name.  Please check the login name and try again.";
+            else
+               %msg = "Account Creation Failed - Invalid login name.  Login names may only contain letters, numbers and underlines, and must be from 3 to 16 characters in length.";
          case "WS_AuthServ_BadCDKey":
-            %msg = "Account Creation Failed - Bad CD Key.  Please check the CD key for errors.";
+         case "WS_DBProxyServ_InvalidCDKey":
+            %msg = "Account Creation Failed - Invalid CD Key.  Please check the CD key for errors.";
          case "WS_TimedOut":
             %msg = "Login Failed - Server timed out.  Your internet connection may be having problems or the servers may be temporarily unavailable.";
          case "WS_DBProxyServ_KeyInUse":
@@ -493,7 +539,12 @@ function StartupGui::checkLoginDone( %this, %editAcct )
             %msg = "Account Creation Failed - Your warrior name may not contain profanity.  Please choose another warrior name.";
          default:
             if(%code <= -2900 && %code >= -2999)
-               %msg = "Account Creation Failed - That warrior name is already in use.  Please choose another warrior name and try again.";
+            {				
+			   if(%code = -2902)
+					%msg = "Account Creation Failed - That CDKey is already in use." @ %code;
+			   else
+               		%msg = "Account Creation Failed - That warrior name is already in use.  Please choose another warrior name and try again. Code = " @ %code;
+            }
             else
                %msg = "Login Failed - Your internet connection may be having problems or the servers may be temporarily unavailable.  (Error code: " @ %codeText @ ")";
       }
@@ -522,6 +573,10 @@ function StartupGui::checkLoginDone( %this, %editAcct )
          $CreateAccountEmail = %codeText;
          $CreateAccountSendInfo = %code;
          Canvas.pushDialog(EditAccountDlg);
+      }
+      else if(%emailCheck)
+      {
+         Canvas.popDialog( LoginMessagePopupDlg );
       }
       else
       {
@@ -657,6 +712,7 @@ function CleanUpAndGo()
    Canvas.setContent( "" );
    Canvas.setCursor( "" );
    LoginMessagePopupDlg.delete();
+   LoginMessageBoxDlg.delete();
    ImmSplashDlg.delete();
    EULADlg.delete();
    if ( !$pref::SkipIntro )
@@ -667,7 +723,6 @@ function CleanUpAndGo()
    if ( !$SkipLogin )
    {
       EditAccountDlg.delete();
-      LoginMessageBoxDlg.delete();
       LoginDlg.delete();
       CreateAccountDlg.delete();
       CloseButtonProfile.delete();
@@ -745,6 +800,7 @@ function CreateAccountDlg::onSubmit()
 function hideImmSplashDlg()
 {
    Canvas.popDialog( ImmSplashDlg );
+   StartLoginProcess();
 }
 
 //------------------------------------------------------------------------------
@@ -764,10 +820,17 @@ function checkIntroDone()
 
 function StartLoginProcess()
 {
-   Canvas.setCursor( "DefaultCursor" );
    if ( !$pref::AcceptedEULA )
    {
       Canvas.pushDialog( EULADlg );
+      return;
+   }
+   
+   if ( $showImmersionDialog )
+   {
+      $showImmersionDialog = false;
+      Canvas.pushDialog( ImmSplashDlg );
+      schedule( 2500, 0, hideImmSplashDlg );
       return;
    }
    
@@ -809,15 +872,20 @@ if ($LaunchMode $= "DedicatedServer" ||
 {
    $Con::logBufferEnabled = false;
    if($Login)
+   {
+      $PlayingOnline = true;
       LoginProcess();
+   }
    else
    {
       if($SkipLogin)
       {
+         $PlayingOnline = false;
          exec("console_end.cs");
       }
       else
       {
+         $PlayingOnline = true;
          WONServerLogin();
          schedule(1000, 0, dedCheckLoginDone);
       }
@@ -1080,6 +1148,55 @@ else
       };
    };
 
+   // Message Box dialog:
+   new GuiControl(LoginMessageBoxDlg) {
+      profile = "DlgBackProfile";
+      horizSizing = "width";
+      vertSizing = "height";
+      position = "0 0";
+      extent = "640 480";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+
+      new ShellPaneCtrl(LoginMessageBoxFrame) {
+         profile = "ShellDlgPaneProfile";
+         horizSizing = "center";
+         vertSizing = "center";
+         position = "170 137";
+         extent = "300 206";
+         minExtent = "48 92";
+         visible = "1";
+         helpTag = "0";
+
+         new GuiMLTextCtrl(LoginMessageBoxText) {
+            profile = "ShellMediumTextProfile";
+            horizSizing = "center";
+            vertSizing = "bottom";
+            position = "32 39";
+            extent = "236 18";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            lineSpacing = "2";
+         };
+         new ShellBitmapButton(LoginMessageBoxButton) {
+            profile = "ShellButtonProfile";
+            horizSizing = "center";
+            vertSizing = "bottom";
+            position = "70 140";
+            extent = "120 38";
+            minExtent = "32 38";
+            visible = "1";
+            command = "LoginMessageBoxButtonProcess();";
+            accelerator = "return";
+            helpTag = "0";
+            text = "OK";
+            simpleStyle = "0";
+         };
+      };
+   };
+
    // Immersion splash dialog:
    new GuiControl (ImmSplashDlg) {
       profile = "GuiDefaultProfile";
@@ -1101,7 +1218,7 @@ else
          visible = "1";
          helpTag = "0";
 
-         new GuiBitmapCtrl() {
+         new GuiChunkedBitmapCtrl() {
             profile = "GuiDefaultProfile";
             horizSizing = "width";
             vertSizing = "height";
@@ -1110,7 +1227,7 @@ else
             minExtent = "8 8";
             visible = "1";
             helpTag = "0";
-            bitmap = "gui/ImmersionLogo.png";
+            bitmap = "gui/Immersion.jpg";
             wrap = "0";
          };
       };
@@ -1215,195 +1332,164 @@ else
       // (copied from LoginGui.gui, LoginMessageBoxDlg.gui and CreateAccountDlg.gui)
       // Login dialog:
       new GuiControl(LoginDlg) {
-         profile = "GuiDefaultProfile";
-         horizSizing = "right";
-         vertSizing = "bottom";
-         position = "0 0";
-         extent = "640 480";
-         minExtent = "8 8";
-         visible = "1";
-         helpTag = "0";
+	      profile = "GuiDefaultProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = "0 0";
+	      extent = "640 480";
+	      minExtent = "8 8";
+	      visible = "1";
+	      helpTag = "0";
 
-         new ShellPaneCtrl() {
-            profile = "ShellDlgPaneProfile";
-            horizSizing = "center";
-            vertSizing = "center";
-            position = "90 156";
-            extent = "460 167";
-            minExtent = "48 92";
-            visible = "1";
-            helpTag = "0";
-            text = "LOGIN";
-            noTitleBar = "0";
+	      new ShellPaneCtrl() {
+		      profile = "ShellDlgPaneProfile";
+		      horizSizing = "center";
+		      vertSizing = "center";
+		      position = "72 143";
+		      extent = "495 194";
+		      minExtent = "48 92";
+		      visible = "1";
+		      helpTag = "0";
+		      text = "LOGIN";
+		      maxLength = "255";
+		      noTitleBar = "0";
 
-            new GuiTextCtrl() {
-               profile = "ShellTextRightProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "30 47";
-               extent = "85 22";
-               minExtent = "8 8";
-               visible = "1";
-               helpTag = "0";
-               text = "Account Name:";
-            };
-            new ShellTextEditCtrl(LoginEditBox) {
-               profile = "NewTextEditProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "111 39";
-               extent = "180 38";
-               minExtent = "32 38";
-               visible = "1";
-               variable = "$LoginName";
-               altCommand = "LoginProcess();";
-               helpTag = "0";
-               historySize = "0";
-               maxLength = "16";
-               password = "0";
-               glowOffset = "9 9";
-            };
-            new GuiTextCtrl() {
-               profile = "ShellTextRightProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "30 77";
-               extent = "85 22";
-               minExtent = "8 8";
-               visible = "1";
-               helpTag = "0";
-               text = "Password:";
-            };
-            new GuiLoginPasswordCtrl(LoginPasswordBox) {
-               profile = "NewTextEditProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "111 68";
-               extent = "180 38";
-               minExtent = "32 38";
-               visible = "1";
-               variable = "$LoginPassword";
-               altCommand = "LoginProcess();";
-               helpTag = "0";
-               historySize = "0";
-               maxLength = "16";
-               password = "1";
-               glowOffset = "9 9";
-            };
-            new ShellToggleButton() {
-               profile = "ShellRadioProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "118 106";
-               extent = "160 27";
-               minExtent = "26 27";
-               visible = "1";
-               variable = "$pref::RememberPassword";
-               helpTag = "0";
-               text = "REMEMBER PASSWORD";
-            };
-            new ShellBitmapButton() {
-               profile = "ShellButtonProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "291 39";
-               extent = "144 38";
-               minExtent = "32 38";
-               visible = "1";
-               command = "LoginProcess(false);";
-               helpTag = "0";
-               text = "LOG IN";
-               simpleStyle = "0";
-            };
-            new ShellBitmapButton() {
-               profile = "ShellButtonProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "291 70";
-               extent = "144 38";
-               minExtent = "32 38";
-               visible = "1";
-               command = "CreateAccount();";
-               helpTag = "0";
-               text = "CREATE NEW ACCOUNT";
-               simpleStyle = "0";
-            };
-            new ShellBitmapButton() {
-               profile = "ShellButtonProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "290 102";
-               extent = "144 38";
-               minExtent = "32 38";
-               visible = "1";
-               command = "LoginProcess(true);";
-               helpTag = "0";
-               text = "EDIT ACCOUNT";
-               simpleStyle = "0";
-            };
-            new ShellBitmapButton(LaunchToolbarCloseButton) {
-               profile = "CloseButtonProfile";
-               horizSizing = "left";
-               vertSizing = "bottom";
-               position = "411 0";
-               extent = "33 26";
-               minExtent = "33 26";
-               visible = "1";
-               command = "quit();";
-               accelerator = "escape";
-               helpTag = "0";
-               simpleStyle = "1";
-            };
-         };
-      };
-
-      // Message Box dialog:
-      new GuiControl(LoginMessageBoxDlg) {
-         profile = "DlgBackProfile";
-         horizSizing = "width";
-         vertSizing = "height";
-         position = "0 0";
-         extent = "640 480";
-         minExtent = "8 8";
-         visible = "1";
-         helpTag = "0";
-
-         new ShellPaneCtrl(LoginMessageBoxFrame) {
-            profile = "ShellDlgPaneProfile";
-            horizSizing = "center";
-            vertSizing = "center";
-            position = "170 137";
-            extent = "300 206";
-            minExtent = "48 92";
-            visible = "1";
-            helpTag = "0";
-
-            new GuiMLTextCtrl(LoginMessageBoxText) {
-               profile = "ShellMediumTextProfile";
-               horizSizing = "center";
-               vertSizing = "bottom";
-               position = "32 39";
-               extent = "236 18";
-               minExtent = "8 8";
-               visible = "1";
-               helpTag = "0";
-               lineSpacing = "2";
-            };
-            new ShellBitmapButton(LoginMessageBoxButton) {
-               profile = "ShellButtonProfile";
-               horizSizing = "center";
-               vertSizing = "bottom";
-               position = "70 140";
-               extent = "120 38";
-               minExtent = "32 38";
-               visible = "1";
-               command = "LoginMessageBoxButtonProcess();";
-               accelerator = "return";
-               helpTag = "0";
-               text = "OK";
-               simpleStyle = "0";
-            };
-         };
+		      new GuiTextCtrl() {
+			      profile = "ShellTextRightProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "37 47";
+			      extent = "85 22";
+			      minExtent = "8 8";
+			      visible = "1";
+			      helpTag = "0";
+			      text = "Account Name:";
+			      maxLength = "255";
+		      };
+		      new ShellTextEditCtrl(LoginEditBox) {
+			      profile = "NewTextEditProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "118 39";
+			      extent = "180 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      variable = "$LoginName";
+			      altCommand = "LoginProcess();";
+			      helpTag = "0";
+			      maxLength = "16";
+			      historySize = "0";
+			      password = "0";
+			      glowOffset = "9 9";
+		      };
+		      new GuiTextCtrl() {
+			      profile = "ShellTextRightProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "37 77";
+			      extent = "85 22";
+			      minExtent = "8 8";
+			      visible = "1";
+			      helpTag = "0";
+			      text = "Password:";
+			      maxLength = "255";
+		      };
+		      new GuiLoginPasswordCtrl(LoginPasswordBox) {
+			      profile = "NewTextEditProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "118 69";
+			      extent = "180 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      variable = "$LoginPassword";
+			      altCommand = "LoginProcess();";
+			      helpTag = "0";
+			      maxLength = "16";
+			      historySize = "0";
+			      password = "1";
+			      glowOffset = "9 9";
+		      };
+		      new ShellBitmapButton() {
+			      profile = "ShellButtonProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "300 39";
+			      extent = "147 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      command = "LoginProcess(false);";
+			      helpTag = "0";
+			      text = "LOG IN";
+			      simpleStyle = "0";
+		      };
+		      new ShellBitmapButton() {
+			      profile = "ShellButtonProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "300 69";
+			      extent = "147 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      command = "CreateAccount();";
+			      helpTag = "0";
+			      text = "CREATE NEW ACCOUNT";
+			      simpleStyle = "0";
+		      };
+		      new ShellBitmapButton() {
+			      profile = "ShellButtonProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "300 99";
+			      extent = "147 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      command = "LoginProcess(true);";
+			      helpTag = "0";
+			      text = "EDIT ACCOUNT";
+			      simpleStyle = "0";
+		      };
+		      new ShellBitmapButton() {
+			      profile = "ShellButtonProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "300 129";
+			      extent = "147 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      command = "quit();";
+			      accelerator = "escape";
+			      helpTag = "0";
+			      text = "QUIT";
+			      simpleStyle = "0";
+		      };
+		      new ShellToggleButton() {
+			      profile = "ShellRadioProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "122 104";
+			      extent = "167 27";
+			      minExtent = "26 27";
+			      visible = "1";
+			      variable = "$pref::RememberPassword";
+			      helpTag = "0";
+			      text = "REMEMBER PASSWORD";
+			      maxLength = "255";
+		      };
+		      new ShellBitmapButton() {
+			      profile = "ShellButtonProfile";
+			      horizSizing = "right";
+			      vertSizing = "bottom";
+			      position = "118 129";
+			      extent = "180 38";
+			      minExtent = "32 38";
+			      visible = "1";
+			      command = "PasswordProcess(true);";
+			      helpTag = "0";
+			      text = "EMAIL ME MY PASSWORD";
+			      simpleStyle = "0";
+		      };
+	      };
       };
 
       // Edit Account dialog:
@@ -1871,13 +1957,19 @@ else
          $LoginName = $pref::LastLoginName;
    }
    
+   // Set the default cursor so it shows in all login modes
+   Canvas.setCursor( "DefaultCursor" );
+
+   // Check for software rendering and bail, if that's what it is...
+   if ( ($platform $= "Linux") &&
+        ((strstr($pref::Video::defaultsRenderer, "Indirect") != -1) ||
+         (strstr($pref::Video::defaultsRenderer, "Mesa X11") != -1))  ) {
+      LoginMessageBox( "ERROR", "Your 3D renderer (" @ $pref::Video::defaultsRenderer @ ") does not appear to be configured for hardware acceleration.", "OK", "quit();" );
+      return;
+   }
+
    // Finally, let's get it on:   
    Canvas.setContent( StartupGui );
-//    if ( $ImmEnabled )
-//    {
-//       Canvas.pushDialog( ImmSplashDlg );
-//       schedule( 2500, 0, hideImmSplashDlg );
-//    }
 
    if ( !$pref::SkipIntro )
    {

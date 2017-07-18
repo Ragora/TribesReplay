@@ -83,6 +83,12 @@ datablock ItemData(RepairPack)
    image = "RepairPackImage";
    pickUpName = "a repair pack";
 
+   lightOnlyStatic = true;
+   lightType = "PulsingLight";
+   lightColor = "1 0 0 1";
+   lightTime = 1200;
+   lightRadius = 4;
+
    computeCRC = true;
    emap = true;
 };

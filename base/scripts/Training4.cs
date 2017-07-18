@@ -65,7 +65,7 @@ function MP3Audio::play(%this)
 function ClientCmdSetHudMode(%mode, %type, %node)
 {
 	parent::ClientCmdSetHudMode(%mode, %type, %node);
-	TrainingMap.push();
+	//TrainingMap.push();
 }
 
 // get the ball rolling

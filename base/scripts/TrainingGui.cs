@@ -77,6 +77,8 @@ function TrainingGui::onWake( %this )
 function TrainingGui::onSleep( %this )
 {
 	%this.stopBriefing();
+
+	Canvas.popDialog(LaunchToolbarDlg);
 }
 
 //------------------------------------------------------------------------------

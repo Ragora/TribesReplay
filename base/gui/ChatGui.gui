@@ -215,6 +215,19 @@ new GuiChunkedBitmapCtrl(ChatGui) {
 			text = "CHANNEL OPTIONS";
 			simpleStyle = "0";
 		};
+		new ShellBitmapButton(ChatEditOptionsBtn) {
+			profile = "ShellButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "15 -5";
+			extent = "128 38";
+			minExtent = "32 38";
+			visible = "0";
+			command = "EditChatOptions();";
+			helpTag = "0";
+			text = "CHAT OPTIONS";
+			simpleStyle = "0";
+		};
 	};
 };
 //--- OBJECT WRITE END ---

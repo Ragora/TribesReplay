@@ -19,6 +19,8 @@ function LoadingGui::onWake(%this)
       $HudHandle['shellScreen'] = "";   
    }
    $HudHandle['loadingScreen'] = alxPlay(LoadingScreenSound, 0, 0, 0);
+
+	CloseMessagePopup();
 }
 
 //------------------------------------------------------------------------------

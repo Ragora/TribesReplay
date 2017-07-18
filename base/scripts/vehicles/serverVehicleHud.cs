@@ -121,6 +121,12 @@ function createVehicle(%client, %station, %blockName, %team , %pos, %rot, %angle
    %obj = %blockName.create(%team);   
    if(%obj)
    {
+      if ( %blockName $= "MobileBaseVehicle" )
+      {
+         %station.station.teleporter.MPB = %obj;
+         %obj.teleporter = %station.station.teleporter;
+      }
+
       %station.ready = false;
       %obj.team = %team;
       %obj.useCreateHeight(true);

@@ -126,6 +126,12 @@ function TeamHuntersGame::initGameVars(%game)
 
 	%game.flagMsgDelayMS = 3000;
 	%game.oobThrowFlagsDelayMS = 3000;
+
+   // targets for each of the flag types (except for base which is properly skinned already)
+   HuntersFlag1.target = -1;  // red
+   HuntersFlag2.target = allocTarget("", 'Blue', "", "", 0, "", "");
+   HuntersFlag4.target = allocTarget("", 'Yellow', "", "", 0, "", "");
+   HuntersFlag8.target = allocTarget("", 'Green', "", "", 0, "", "");
 }
 
 function TeamHuntersGame::allowsProtectedStatics(%game)
@@ -485,6 +491,7 @@ function TeamHuntersGame::CampingDamage(%game, %client, %firstWarning)
 
 function TeamHuntersGame::updateScoreHud(%game, %client, %tag)
 {
+	messageClient( %client, 'ClearHud', "", %tag, 0 );
    // Send header:
    messageClient( %client, 'SetScoreHudHeader', "", '<tab:15,315>\t%1<rmargin:260><just:right>%2<rmargin:560><just:left>\t%3<just:right>%4',
          $teamName[1], $teamScore[1], $teamName[2], $teamScore[2] );
@@ -574,12 +581,56 @@ function TeamHuntersGame::updateScoreHud(%game, %client, %tag)
       //else for observers, create an anchor around the player name so they can be observed
       else
       {
-		   messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush>%7\t<clip:150><a:gamelink\t%8>%1</a></clip><rmargin:200><just:right>%2<rmargin:260><just:right>%3<spop><rmargin:500><just:left>\t%8<clip:150><a:gamelink\t%9>%4</a></clip><just:right>%5<rmargin:560><just:right>%6', 
-		         %team1Client.name, %team1ClientScore, %team1ClientFlags, %team2Client.name, %team2ClientScore, %team2ClientFlags, %col1Style, %col2Style, %team1Client, %team2Client );
+         //this is lame, but we can only have up to %9 args
+         if (%team2Client == %team2ClientMostFlags)
+         {
+		      messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush>%7\t<clip:150><a:gamelink\t%8>%1</a></clip><rmargin:200><just:right>%2<rmargin:260><just:right>%3<spop><rmargin:500><just:left>\t<color:00dc00><clip:150><a:gamelink\t%9>%4</a></clip><just:right>%5<rmargin:560><just:right>%6', 
+		            %team1Client.name, %team1ClientScore, %team1ClientFlags, %team2Client.name, %team2ClientScore, %team2ClientFlags, %col1Style, %team1Client, %team2Client );
+         }
+         else if (%team2Client == %client)
+         {
+		      messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush>%7\t<clip:150><a:gamelink\t%8>%1</a></clip><rmargin:200><just:right>%2<rmargin:260><just:right>%3<spop><rmargin:500><just:left>\t<color:dcdcdc><clip:150><a:gamelink\t%9>%4</a></clip><just:right>%5<rmargin:560><just:right>%6', 
+		            %team1Client.name, %team1ClientScore, %team1ClientFlags, %team2Client.name, %team2ClientScore, %team2ClientFlags, %col1Style, %team1Client, %team2Client );
+         }
+         else
+         {
+		      messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush>%7\t<clip:150><a:gamelink\t%8>%1</a></clip><rmargin:200><just:right>%2<rmargin:260><just:right>%3<spop><rmargin:500><just:left>\t<clip:150><a:gamelink\t%9>%4</a></clip><just:right>%5<rmargin:560><just:right>%6', 
+		            %team1Client.name, %team1ClientScore, %team1ClientFlags, %team2Client.name, %team2ClientScore, %team2ClientFlags, %col1Style, %team1Client, %team2Client );
+         }
       }
 
 		%index++;
 	}
+
+   // Tack on the list of observers:
+   %observerCount = 0;
+   for (%i = 0; %i < ClientGroup.getCount(); %i++)
+   {
+      %cl = ClientGroup.getObject(%i);
+      if (%cl.team == 0)
+         %observerCount++;
+   }
+
+   if (%observerCount > 0)
+   {
+	   messageClient( %client, 'SetLineHud', "", %tag, %index, "");
+      %index++;
+		messageClient(%client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush><font:Univers Condensed:22>\tOBSERVERS (%1)<rmargin:260><just:right>TIME<spop>', %observerCount);
+      %index++;
+      for (%i = 0; %i < ClientGroup.getCount(); %i++)
+      {
+         %cl = ClientGroup.getObject(%i);
+         //if this is an observer
+         if (%cl.team == 0)
+         {
+            %obsTime = getSimTime() - %cl.observerStartTime;
+            %obsTimeStr = %game.formatTime(%obsTime, false);
+		      messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:20, 310>\t<clip:150>%1</clip><rmargin:260><just:right>%2',
+		                     %cl.name, %obsTimeStr );
+            %index++;
+         }
+      }
+   }
 
 	//clear the rest of Hud so we don't get old lines hanging around...
 	messageClient( %client, 'ClearHud', "", %tag, %index );

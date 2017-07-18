@@ -53,10 +53,14 @@ function LobbyGui::onWake( %this )
    moveMap.pop();
    if ( isObject( passengerkeys ) )
 	   passengerKeys.pop();
-   flyingCameraMove.pop();
+   if ( isObject( observerBlockMap ) )
+      observerBlockMap.pop();
+   if ( isObject( observerMap ) )
+      observerMap.pop();
+   //flyingCameraMove.pop();
 
    $enableDirectInput = "0";
-   disableDirectInput();
+   deactivateDirectInput();
 
    LobbyMessageVector.attach(HudMessageVector);
    LobbyMessageScroll.scrollToBottom();
@@ -382,7 +386,8 @@ function fillLobbyMissionMenu( %type, %typeName )
    LobbyVoteMenu.key++;
    LobbyVoteMenu.clear();
    LobbyVoteMenu.mode = "mission";
-   LobbyVoteMenu.missionType = %typeName;
+   LobbyVoteMenu.missionType = %type;
+   LobbyVoteMenu.typeName = %typeName;
    commandToServer( 'GetMissionList', LobbyVoteMenu.key, %type );
 }
 
@@ -547,18 +552,18 @@ function lobbyVote()
             startNewVote( "VoteChangeMission", 
                   "change the mission to", 
                   %text,                        // Mission display name 
-                  LobbyVoteMenu.missionType,    // Mission type display name 
-                  $clVoteCmd[%id],              // Mission file name                              
-                  LobbyVoteMenu.missionType );  // Mission type
+                  LobbyVoteMenu.typeName,       // Mission type display name 
+                  $clVoteCmd[%id],              // Mission id                              
+                  LobbyVoteMenu.missionType );  // Mission type id
          }
          else
          {
             startNewVote( "VoteTournamentMode", 
                   "change the server to",
                   %text,                        // Mission display name
-                  LobbyVoteMenu.missionType,    // Mission type display name
-                  $clVoteCmd[%id],              // Mission file name
-                  LobbyVoteMenu.missionType );  // Mission type
+                  LobbyVoteMenu.typeName,       // Mission type display name
+                  $clVoteCmd[%id],              // Mission id
+                  LobbyVoteMenu.missionType );  // Mission type id
             LobbyVoteMenu.tourneyChoose = 0;
          }
          LobbyVoteMenu.reset();

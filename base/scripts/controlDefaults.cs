@@ -180,23 +180,6 @@ moveMap.bind( keyboard, "pageUp", pageMessageHudUp );
 moveMap.bind( keyboard, "pageDown", pageMessageHudDown );
 
 //------------------------------------------------------------------------------
-// VOICE CAPTURE FUNCTIONS:
-function voiceCapStart()
-{
-   vcRecordingHud.setVisible(true);
-	voiceCommHud.setVisible(true);
-	resizeVoiceCommWindow();
-   alxCaptureStart();
-}
-
-function voiceCapStop()
-{
-   vcRecordingHud.setVisible(false);
-	if($numTalking < 1)
-		voiceCommHud.setVisible(false);
-   alxCaptureStop();
-}
-
 function voiceCapture( %val )
 {
    if ( %val )
@@ -1031,7 +1014,18 @@ moveMap.bind( keyboard, insert, voteYes );
 moveMap.bind( keyboard, delete, voteNo );
 
 ///////////////////////
-//Vehicle Keys
+// Observer Keys
+///////////////////////
+if ( isObject( observerMap ) )
+   observerMap.delete();
+new ActionMap( observerMap );
+observerMap.bind( keyboard, t, moveup );
+observerMap.bind( keyboard, b, movedown );
+observerMap.bind( keyboard, space, jump );
+observerMap.bind( mouse, button1, mouseJet );
+
+///////////////////////
+// Vehicle Keys
 ///////////////////////
 function clientCmdSetWeaponryVehicleKeys()
 {
@@ -1103,6 +1097,12 @@ function clientCmdSetDefaultVehicleKeys(%inVehicle)
       passengerKeys.copyBind( moveMap, jump );
       passengerKeys.copyBind( moveMap, setZoomFOV );
       passengerKeys.copyBind( moveMap, toggleZoom );
+
+      // Copy the joystick binds as well:
+      passengerKeys.copyBind( moveMap, joyPitch );
+      passengerKeys.copyBind( moveMap, joyYaw );
+      passengerKeys.copyBind( moveMap, joystickMoveX );
+      passengerKeys.copyBind( moveMap, joystickMoveY );
 
       // Bind the chat keys as well:
       passengerKeys.copyBind( moveMap, ToggleMessageHud );
@@ -1229,9 +1229,7 @@ function serverCmdSetVehicleWeapon(%client, %num)
          %turret.setImageTrigger(2, false);
          %turret.setImageTrigger(4, false);
       }                                   
-      
    }   
- 
 }
 
 function nextVehicleWeapon(%val)

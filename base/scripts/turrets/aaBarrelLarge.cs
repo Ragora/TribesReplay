@@ -164,7 +164,7 @@ datablock TurretImageData(AABarrelLarge)
    seekRadius   = 200;
    maxSeekAngle = 6;
    seekTime     = 1.0;
-   minSeekHeat  = 0.5; 
+   minSeekHeat  = 0.7; 
    useTargetAudio = false;
 
    // Turret parameters

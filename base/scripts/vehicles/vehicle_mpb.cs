@@ -72,7 +72,7 @@ datablock SensorData(MPBDeployedSensor) : VehiclePulseSensor
    jamRadius = 50;
 };
 
-datablock WheeledVehicleData(MobileBaseVehicle) : GroundVehicleDamageProfile
+datablock WheeledVehicleData(MobileBaseVehicle) : MPBDamageProfile
 {
    spawnOffset = "0 0 1.0";
 
@@ -98,9 +98,9 @@ datablock WheeledVehicleData(MobileBaseVehicle) : GroundVehicleDamageProfile
    cameraOffset = 6;
    cameraLag = 1.5;
    explosion = LargeGroundVehicleExplosion;
+   explosionDamage = 0.5;
+   explosionRadius = 5.0;
 
-   noEnemyControl = 1;   
-   
    maxSteeringAngle = 0.3;  // 20 deg.
 
    // Used to test if the station can deploy
@@ -111,9 +111,6 @@ datablock WheeledVehicleData(MobileBaseVehicle) : GroundVehicleDamageProfile
    stationPoints[5] = "2.3 -7.38703 -0.65";
    stationPoints[6] = "2.3 -11.8 -0.65";
 
-   collDamageThresholdVel = 10.0;
-   collDamageMultiplier   = 0.025;
-
    // Rigid Body
    mass = 2000;
    bodyFriction = 0.8;
@@ -123,10 +120,16 @@ datablock WheeledVehicleData(MobileBaseVehicle) : GroundVehicleDamageProfile
    gyroDamping = 0.3;
    stabilizerForce = 10;
    minDrag = 10;
-   minImpactSpeed = 5;
-   softImpactSpeed = 13;       // Play SoftImpact Sound
-   hardImpactSpeed = 20;      // Play HardImpact Sound
-   speedDamageScale = 0.06;
+   softImpactSpeed = 20;       // Play SoftImpact Sound
+   hardImpactSpeed = 25;      // Play HardImpact Sound
+
+   // Ground Impact Damage (uses DamageType::Ground)
+   minImpactSpeed = 25;
+   speedDamageScale = 0.220;
+
+   // Object Impact Damage (uses DamageType::Impact)
+   collDamageThresholdVel = 28;
+   collDamageMultiplier   = 0.040;
 
    // Engine
    engineTorque = 4.5 * 745;
@@ -171,10 +174,10 @@ datablock WheeledVehicleData(MobileBaseVehicle) : GroundVehicleDamageProfile
    wheelImpactSound = WheelImpactSound;
 
    //
-   softSplashSoundVelocity = 15.0; 
-   mediumSplashSoundVelocity = 30.0;   
-   hardSplashSoundVelocity = 60.0;   
-   exitSplashSoundVelocity = 20.0;
+   softSplashSoundVelocity = 5.0; 
+   mediumSplashSoundVelocity = 8.0;   
+   hardSplashSoundVelocity = 12.0;   
+   exitSplashSoundVelocity = 8.0;
    
    exitingWater      = VehicleExitWaterSoftSound;
    impactWaterEasy   = VehicleImpactWaterSoftSound;

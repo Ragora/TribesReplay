@@ -100,7 +100,7 @@ datablock AudioProfile(AssaultMortarIdleSound)
 // VEHICLE CHARACTERISTICS
 //**************************************************************
 
-datablock HoverVehicleData(AssaultVehicle) : GroundVehicleDamageProfile
+datablock HoverVehicleData(AssaultVehicle) : TankDamageProfile
 {
    spawnOffset = "0 0 4";
 
@@ -129,14 +129,13 @@ datablock HoverVehicleData(AssaultVehicle) : GroundVehicleDamageProfile
    cameraOffset = 3;
    cameraLag = 1.5;
    explosion = LargeGroundVehicleExplosion;
+   explosionDamage = 0.5;
+   explosionRadius = 5.0;
 
    maxSteeringAngle = 0.5;  // 20 deg.
 
    maxDamage = 3.15;
    destroyedLevel = 3.15;
-
-   collDamageThresholdVel = 20.0;
-   collDamageMultiplier   = 0.03;
 
    isShielded = true;
    rechargeRate = 1.0;
@@ -154,10 +153,16 @@ datablock HoverVehicleData(AssaultVehicle) : GroundVehicleDamageProfile
    gyroDamping = 0.3;
    stabilizerForce = 20;
    minDrag = 10;
-   minImpactSpeed = 5;
-   softImpactSpeed = 5;       // Play SoftImpact Sound
-   hardImpactSpeed = 15;      // Play HardImpact Sound
-   speedDamageScale = 0.06;
+   softImpactSpeed = 15;       // Play SoftImpact Sound
+   hardImpactSpeed = 18;      // Play HardImpact Sound
+
+   // Ground Impact Damage (uses DamageType::Ground)
+   minImpactSpeed = 17;
+   speedDamageScale = 0.060;
+
+   // Object Impact Damage (uses DamageType::Impact)
+   collDamageThresholdVel = 17;
+   collDamageMultiplier   = 0.070;
 
    dragForce            = 40 / 20;
    vertFactor           = 0.0;
@@ -201,10 +206,10 @@ datablock HoverVehicleData(AssaultVehicle) : GroundVehicleDamageProfile
    forwardJetEmitter = TankJetEmitter;
    
    //
-   softSplashSoundVelocity = 15.0; 
-   mediumSplashSoundVelocity = 30.0;   
-   hardSplashSoundVelocity = 60.0;   
-   exitSplashSoundVelocity = 20.0;
+   softSplashSoundVelocity = 5.0; 
+   mediumSplashSoundVelocity = 10.0;   
+   hardSplashSoundVelocity = 15.0;   
+   exitSplashSoundVelocity = 10.0;
    
    exitingWater      = VehicleExitWaterMediumSound;
    impactWaterEasy   = VehicleImpactWaterSoftSound;
@@ -346,7 +351,7 @@ datablock TurretImageData(AssaultPlasmaTurretBarrel)
    usesEnergy = true;
    useMountEnergy = true;
    fireEnergy = 3.75;
-   minEnergy = 3.75;
+   minEnergy = 20.0;
 
    // Turret parameters
    activationMS      = 4000;
@@ -398,9 +403,10 @@ datablock TurretImageData(AssaultPlasmaTurretBarrel)
    stateName[5]                = "Deactivate";
    stateSequence[5]            = "Activate";
    stateDirection[5]           = false;
-   stateTimeoutValue[5]        = 1;
-   stateTransitionOnLoaded[5]  = "ActivateReady";
-   stateTransitionOnTimeout[5] = "Dead";
+   stateTimeoutValue[5]        = 30;
+//   stateTransitionOnLoaded[5]  = "ActivateReady";
+//   stateTransitionOnTimeout[5] = "Dead";
+   stateTransitionOnTimeout[5] = "ActivateReady";
 
    stateName[6]               = "Dead";
    stateTransitionOnLoaded[6] = "ActivateReady";

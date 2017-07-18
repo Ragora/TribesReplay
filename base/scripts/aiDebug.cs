@@ -68,6 +68,16 @@ function aiCome(%from, %to)
 	%from.player.setTransform(%to.player.getTransform());
 }
 
+function findBotWithInv(%item)
+{
+   for (%i = 0; %i < ClientGroup.getCount(); %i++)
+   {
+      %cl = ClientGroup.getObject(%i);
+      if (isObject(%cl.player) && %cl.player.getInventory(%item))
+         echo(%cl @ ":" SPC getTaggedString(%cl.name) SPC "has item" SPC %item);
+   }
+}
+
 function listInv(%client)
 {
    %player = %client.player;
@@ -152,6 +162,21 @@ function listInv(%client)
    %count = %player.getInventory(ShockLance);
 	if (%count > 0)
 		echo("ShockLance: " @ %count);
+   %count = %player.getInventory(RepairPack);
+	if (%count > 0)
+		echo("RepairPack: " @ %count);
+   %count = %player.getInventory(EnergyPack);
+	if (%count > 0)
+		echo("EnergyPack: " @ %count);
+   %count = %player.getInventory(ShieldPack);
+	if (%count > 0)
+		echo("ShieldPack: " @ %count);
+   %count = %player.getInventory(CloakingPack);
+	if (%count > 0)
+		echo("CloakingPack: " @ %count);
+   %count = %player.getInventory(SensorJammerPack);
+	if (%count > 0)
+		echo("SensorJammerPack: " @ %count);
 }
 
 function createAIDebugDlg()

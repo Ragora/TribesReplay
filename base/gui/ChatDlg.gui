@@ -34,7 +34,19 @@ new GuiControl(MainChatHud) {
 		      position = "6 2";
 		      extent = "244 3";
 		      minExtent = "2 2";
-		      visible = "0";
+		      visible = "1";
+	      };
+         
+	      new GuiBitmapCtrl(passHash)
+	      {
+		      profile = "GuiDefaultProfile";
+	         horizSizing = "left";
+	         vertSizing = "bottom";
+	         position = "151 -1";
+	         extent = "5 10";
+	         minExtent = "1 1";
+	         visible = "1";
+		      bitmap = "gui/voteMeterPassBar.png";
 	      };
 	   };
       

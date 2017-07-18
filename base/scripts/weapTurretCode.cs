@@ -111,6 +111,7 @@ function TurretDeployedCamera::onAdd(%this, %obj)
 {
    Parent::onAdd(%this, %obj);   
    %obj.mountImage(DeployableCameraBarrel, 0, true);
+	%obj.setRechargeRate(%this.rechargeRate);
 }
 
 function TurretDeployedCamera::onDestroyed(%this, %obj, %prevState)
@@ -397,8 +398,9 @@ function MobileTurretBase::onDamage()
 function MobileTurretBase::damageObject(%this, %targetObject, %sourceObject, %position, %amount, %damageType)
 {
    //If vehicle turret is hit then apply damage to the vehicle
-   %vehicle = %damageObj.getObjectMount();
-   %vehicle.getDataBlock().damageObject(%vehicle, %sourceObject, %position, %amount, %damageType);
+   %vehicle = %targetObject.getObjectMount();
+   if(%vehicle)
+      %vehicle.getDataBlock().damageObject(%vehicle, %sourceObject, %position, %amount, %damageType);
 }
 
 function MobileTurretBase::onEndSequence(%data, %obj, %thread)

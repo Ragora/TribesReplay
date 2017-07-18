@@ -121,10 +121,6 @@ function startCurrentMission()
    $teammate1.player.invincible = true;
    resetWildcat();
 
-   $player.camera = new Camera() 
-   {
-      dataBlock = Observer;
-   };
 }
 
 //------------------------------------------------------------------------------
@@ -1002,7 +998,7 @@ function trainingIntroFlightEnd()
 function ClientCmdSetHudMode(%mode, %type, %node)
 {
    parent::ClientCmdSetHudMode(%mode, %type, %node);
-   TrainingMap.push();
+   //TrainingMap.push();
    getTrainingPacifistMap();
    if(game.trainingIntro)
       trainingPacifistMap.push();
@@ -1313,6 +1309,13 @@ function trainingPlayerHitGround()
 function serverCmdBuildClientTask(%client, %task, %team)
 {
 	// player shouldnt be able to use the voice commands to do anything
+}
+
+function SinglePlayerEscapeDlg::returnToGame( %this )
+{
+	parent::returnToGame( %this );
+	if(game.trainingIntro)
+		trainingPacifistMap.push();
 }
 
 //END TRAINING1 PACKAGE=======================================================================

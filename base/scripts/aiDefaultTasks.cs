@@ -27,6 +27,9 @@ $AIHuntersWeightPickupFlag		= 4425;
 $AIRabbitWeightDefault			= 4625;
 $AIRabbitWeightNeedInv			= 4325;
 
+//Bounty weights...
+$AIBountyWeightShouldEngage	= 4325;
+
 //-----------------------------------------------------------------------------
 //AIEngageTask is responsible for anything to do with engaging an enemy
 
@@ -292,7 +295,9 @@ function AIPickupItemTask::weight(%task, %client)
 		if (!%item.isHidden())
 		{
          %dist = %client.getPathDistance(%item.getWorldBoxCenter());
-			if ((%item.getDataBlock().getName() $= "RepairKit" || %item.getDataBlock().getName() $= "RepairPatch") && %damage > 0.3)
+			if (((%item.getDataBlock().getName() $= "RepairKit" || %item.getDataBlock().getName() $= "RepairPatch") ||
+                                                            (%item.isCorpse && %item.getInventory("RepairKit") > 0)) &&
+                                                            %player.getInventory("RepairKit") <= 0 && %damage > 0.3)
 			{
 				if (%dist > 0 && %dist < %closestHealthDist)
 				{
@@ -335,7 +340,7 @@ function AIPickupItemTask::weight(%task, %client)
 		if (%closestItem > 0 && %closetItemDist < %closestHealthDist - 25 && (%damage < 0.6 || %currentTarget <= 0) && %closestItemLOS)
 		{
 			%task.pickupItem = %closestItem;
-			if (AIEngageOutOfAmmo(%client))
+         if (AIEngageWeaponRating(%client) < 20)
 				%task.setWeight($AIWeightNeedItemBadly);
 			else if (%closestItemDist < 10 && %closestItemLOS)
 				%task.setWeight($AIWeightNeedItem);
@@ -363,7 +368,7 @@ function AIPickupItemTask::weight(%task, %client)
 	else if (%closestItem > 0)
 	{
 		%task.pickupItem = %closestItem;
-		if (AIEngageOutOfAmmo(%client))
+      if (AIEngageWeaponRating(%client) < 20)
 			%task.setWeight($AIWeightNeedItemBadly);
 		else if (%closestItemDist < 10 && %closestItemLOS)
 			%task.setWeight($AIWeightNeedItem);
@@ -420,6 +425,31 @@ function AIUseInventoryTask::weight(%task, %client)
 	%damage = %player.getDamagePercent();
 	%weaponry = AIEngageWeaponRating(%client);
 
+   //if there's an inv station, and we haven't used an inv station since we
+   //spawned, the bot should use an inv once regardless
+   if (%client.spawnUseInv)
+   {
+      //see if we're already heading there
+      if (%client.buyInvTime != %task.buyInvTime)
+      {
+	      //see if there's an inventory we can use
+         %result = AIFindClosestInventory(%client, false);
+         %closestInv = getWord(%result, 0);
+	      if (isObject(%closestInv))
+         {
+            %task.setWeight($AIWeightNeedItem);
+            return;
+         }
+         else
+            %client.spawnUseInv = false;
+      }
+      else
+      {
+         %task.setWeight($AIWeightNeedItem);
+         return;
+      }
+   }
+
 	//first, see if we need equipment or health
 	if (%damage < 0.3 && %weaponry >= 40)
 	{
@@ -456,15 +486,12 @@ function AIUseInventoryTask::weight(%task, %client)
 		%task.setWeight(0);
 		return;
 	}
-	//If they don't have LOS to the inv station, they should only use it if they need something badly
-   %mask = $TypeMasks::TerrainObjectType | $TypeMasks::InteriorObjectType;
-   %hasLOS = !containerRayCast(%client.player.getWorldBoxCenter(), %closestInv.getWorldBoxCenter(), %mask, 0);
 
 	//set the weight...
 	%task.closestInv = %closestInv;
 	if (%damage > 0.8 || AIEngageOutOfAmmo(%client))
 		%task.setWeight($AIWeightNeedItemBadly);
-	else if (%closestDist < 20 && %hasLOS && (AIEngageWeaponRating(%client) <= 30 || %damage > 0.4))
+	else if (%closestDist < 20 && (AIEngageWeaponRating(%client) <= 30 || %damage > 0.4))
 		%task.setWeight($AIWeightNeedItem);
 	else if (%hasLOS)
 		%task.setWeight($AIWeightFoundItem);
@@ -481,7 +508,7 @@ function AIUseInventoryTask::monitor(%task, %client)
 
 	%damage = %player.getDamagePercent();
 	%weaponry = AIEngageWeaponRating(%client);
-	if (%damage < 0.3 && %weaponry >= 40)
+	if (%damage < 0.3 && %weaponry >= 40 && !%client.spawnUseInv)
 	{
 		%task.buyInvTime = getSimTime();
 		return;
@@ -491,13 +518,21 @@ function AIUseInventoryTask::monitor(%task, %client)
 	%randNum = getRandom();
 	if (%randNum < 0.4)
 		%buySet = "LightEnergyDefault MediumEnergySet HeavyEnergySet";
-	else if (%randNum < 0.7)
+	else if (%randNum < 0.6)
 		%buySet = "LightShieldSet MediumShieldSet HeavyShieldSet"; 
-	else
+	else if (%randNum < 0.8)
 		%buySet = "LightEnergyELF MediumRepairSet HeavyAmmoSet";
+   else
+      %buySet = "LightEnergySniper MediumEnergySet HeavyEnergySet";
 
-	//reset the simTime if we're not still in progress
+	//process the inv buying state machine
    %result = AIBuyInventory(%client, "", %buySet, %task.buyInvTime);
+
+   //if we succeeded, reset the spawn flag
+   if (%result $= "Finished")
+      %client.spawnUseInv = false;
+
+   //if we succeeded or failed, reset the state machine...
 	if (%result !$= "InProgress")
 		%task.buyInvTime = getSimTime();
 

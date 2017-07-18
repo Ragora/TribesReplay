@@ -103,7 +103,7 @@ function setupObjHud(%gameType)
 				profile = "GuiTextObjGreenCenterProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "100 3";
+				position = "105 3";
 				extent = "50 16";
 				visible = "1";
 			};
@@ -111,7 +111,7 @@ function setupObjHud(%gameType)
 				profile = "GuiTextObjHudCenterProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "100 19";
+				position = "105 19";
 				extent = "50 16";
 				visible = "1";
 			};
@@ -782,17 +782,6 @@ function cnhAddTeam(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6)
 	objectiveHud.teamScore[%teamNum].setValue(%score@"/"@%sLimit);
 	objectiveHud.numHeld[%teamNum].setValue(%held);
 }
-
-//addMessageCallback('MsgFlipFlopInit', hudFlipFlopInit);
-
-//function hudFlipFlopInit(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6)
-//{
-//	%flipNum = detag(%a1); 
-//	%flipName = Game.cleanWord(detag(%a2));
-//	%status = detag(%a3);
-//	if(%flipName $= "")
-//		%flipname = "FlipFlop " @ %flipNum;
-//}	   
 
 addMessageCallback('MsgFlipFlopsHeld', hudFlipFlopsHeld);
 

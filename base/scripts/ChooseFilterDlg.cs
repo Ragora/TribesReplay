@@ -264,7 +264,7 @@ function clearMissionTypes()
 
    // Add all the mission types found on this machine:
    for ( %i = 0; %i < $HostTypeCount; %i++ )
-      FilterEditMissionType.add( $HostTypeName[%i], %i );
+      FilterEditMissionType.add( $HostTypeDisplayName[%i], %i );
 }
 
 //------------------------------------------------------------------------------

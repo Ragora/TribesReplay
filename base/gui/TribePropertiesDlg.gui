@@ -14,12 +14,13 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 		profile = "ShellDlgProfile";
 		horizSizing = "center";
 		vertSizing = "center";
-		position = "113 2";
+		position = "116 63";
 		extent = "408 354";
 		minExtent = "8 8";
 		visible = "1";
 		helpTag = "0";
 		text = "TRIBE PROPERTIES";
+		maxLength = "255";
 
 		new ShellFieldCtrl() {
 			profile = "ShellFieldProfile";
@@ -135,6 +136,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "ACTIONS";
+				maxLength = "255";
 			};
 			new ShellRadioButton() {
 				profile = "ShellRadioProfile";
@@ -146,6 +148,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Admin 3 [4]";
+				maxLength = "255";
 				groupNum = "7";
 			};
 			new GuiTextCtrl() {
@@ -158,6 +161,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Required Access Level";
+				maxLength = "255";
 			};
 			new ShellRadioButton() {
 				profile = "ShellRadioProfile";
@@ -169,6 +173,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Admin 2 [3]";
+				maxLength = "255";
 				groupNum = "7";
 			};
 			new ShellRadioButton() {
@@ -181,6 +186,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Admin 1 [2]";
+				maxLength = "255";
 				groupNum = "7";
 			};
 			new ShellRadioButton() {
@@ -193,6 +199,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Member [1]";
+				maxLength = "255";
 				groupNum = "7";
 			};
 			new ShellRadioButton() {
@@ -205,6 +212,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Public [0] ";
+				maxLength = "255";
 				groupNum = "7";
 			};
 			new ShellBitmapButton(TP_UpdateSecurityBtn) {
@@ -277,6 +285,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 					visible = "1";
 					helpTag = "0";
 					text = "DESCRIPTION";
+					maxLength = "255";
 				};
 				new ShellBitmapButton(TP_EditDescBtn) {
 					profile = "ShellButtonProfile";
@@ -336,12 +345,13 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 							horizSizing = "left";
 							vertSizing = "relative";
 							position = "0 0";
-							extent = "249 14";
+							extent = "249 28";
 							minExtent = "8 8";
 							visible = "1";
 							helpTag = "0";
 							lineSpacing = "2";
 							allowColorChars = "1";
+							maxChars = "-1";
 						};
 					};
 				};
@@ -376,6 +386,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 						visible = "1";
 						helpTag = "0";
 						text = "TRIBE TAG";
+						maxLength = "255";
 					};
 					new ShellRadioButton(TP_PrePendFlagBtn) {
 						profile = "ShellRadioProfile";
@@ -388,6 +399,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 						command = "TribePropertiesDlg.ToggleAppending();";
 						helpTag = "0";
 						text = "PREPEND TAG";
+						maxLength = "255";
 						groupNum = "8";
 					};
 					new ShellRadioButton(TP_AppendFlagBtn) {
@@ -401,6 +413,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 						command = "TribePropertiesDlg.ToggleAppending();";
 						helpTag = "0";
 						text = "APPEND TAG";
+						maxLength = "255";
 						groupNum = "8";
 					};
 				};
@@ -414,8 +427,8 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 					visible = "1";
 					command = "TribePropertiesDlg.RefreshTag();";
 					helpTag = "0";
-					historySize = "0";
 					maxLength = "9";
+					historySize = "0";
 					password = "0";
 					glowOffset = "9 9";
 				};
@@ -429,6 +442,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 					visible = "1";
 					helpTag = "0";
 					text = "CURRENT:";
+					maxLength = "255";
 				};
 				new GuiTextCtrl(TP_CurrentTag) {
 					profile = "GuiDefaultProfile";
@@ -440,6 +454,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 					visible = "1";
 					helpTag = "0";
 					text = "TAG";
+					maxLength = "255";
 				};
 				new GuiTextCtrl() {
 					profile = "ShellTextProfile";
@@ -451,6 +466,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 					visible = "1";
 					helpTag = "0";
 					text = "NEW TAG:";
+					maxLength = "255";
 				};
 				new GuiTextCtrl(TP_PreviewTag) {
 					profile = "GuiDefaultProfile";
@@ -462,6 +478,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 					visible = "1";
 					helpTag = "0";
 					text = "TAG";
+					maxLength = "255";
 				};
 				new GuiTextCtrl() {
 					profile = "ShellTextProfile";
@@ -473,6 +490,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 					visible = "1";
 					helpTag = "0";
 					text = "PREVIEW:";
+					maxLength = "255";
 				};
 				new ShellBitmapButton(TP_TribeTagBtn) {
 					profile = "ShellButtonProfile";
@@ -498,6 +516,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "DISBAND TRIBE";
+				maxLength = "255";
 			};
 			new GuiTextCtrl(TP_RecruitingLabel) {
 				profile = "ShellTextProfile";
@@ -509,6 +528,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "RECRUITING";
+				maxLength = "255";
 			};
 			new ShellRadioButton(TP_RecruitFlagBtn) {
 				profile = "ShellRadioProfile";
@@ -521,6 +541,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				command = "TribePropertiesDlg.ChangeRecruiting();";
 				helpTag = "0";
 				text = "YES";
+				maxLength = "255";
 				groupNum = "7";
 			};
 			new ShellRadioButton(TP_RecruitFlagNoBtn) {
@@ -534,6 +555,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				command = "TribePropertiesDlg.ChangeRecruiting();";
 				helpTag = "0";
 				text = "NO";
+				maxLength = "255";
 				groupNum = "7";
 			};
 		};
@@ -569,6 +591,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Current Tribe Graphic:";
+				maxLength = "255";
 			};
 			new ShellBitmapButton(TP_SubmitGraphicBtn) {
 				profile = "ShellButtonProfile";
@@ -592,11 +615,11 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				minExtent = "8 8";
 				visible = "1";
 				helpTag = "0";
-				bitmap = "texticons/twb_Lineup.jpg";
+				bitmap = "texticons/twb/twb_Laserrifle.jpg";
 				wrap = "0";
 			};
 			new ShellFancyArrayScrollCtrl(ML1) {
-				profile = "clockProfile";
+				profile = "ShellServerBrowserProfile";
 				horizSizing = "width";
 				vertSizing = "height";
 				position = "233 21";
@@ -638,8 +661,8 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 							profile = "GuiDefaultProfile";
 							horizSizing = "right";
 							vertSizing = "bottom";
-							position = "0 -195";
-							extent = "8 1307";
+							position = "0 0";
+							extent = "8 962";
 							minExtent = "8 8";
 							visible = "1";
 							helpTag = "0";
@@ -647,7 +670,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 					};
 				};
 				new ShellFancyTextList(TribeGraphicsList) {
-					profile = "clockProfile";
+					profile = "ShellBrowserListProfile";
 					horizSizing = "width";
 					vertSizing = "height";
 					position = "0 0";
@@ -671,7 +694,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 					drawSeparators = "0";
 					headerSort = "1";
 					allowReposition = "1";
-						CID = "0";
+					noSelect = "0";
 				};
 			};
 			new GuiTextCtrl() {
@@ -684,6 +707,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "-------------- Graphic Requirements --------------";
+				maxLength = "255";
 			};
 			new GuiTextCtrl() {
 				profile = "GuiTextProfile";
@@ -695,6 +719,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Max Dimensions:";
+				maxLength = "255";
 			};
 			new GuiTextCtrl() {
 				profile = "GuiTextProfile";
@@ -706,6 +731,7 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Max Size:";
+				maxLength = "255";
 			};
 			new GuiTextCtrl() {
 				profile = "GuiTextProfile";
@@ -717,39 +743,43 @@ new GuiChunkedBitmapCtrl(TribePropertiesDlg) {
 				visible = "1";
 				helpTag = "0";
 				text = "Format:";
+				maxLength = "255";
 			};
 			new GuiTextCtrl() {
 				profile = "BrowserFilterTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "131 203";
-				extent = "26 22";
+				extent = "20 22";
 				minExtent = "8 8";
 				visible = "1";
 				helpTag = "0";
 				text = "28k";
+				maxLength = "255";
 			};
 			new GuiTextCtrl() {
 				profile = "BrowserFilterTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "131 216";
-				extent = "36 22";
+				extent = "27 22";
 				minExtent = "8 8";
 				visible = "1";
 				helpTag = "0";
 				text = "JPEG";
+				maxLength = "255";
 			};
 			new GuiTextCtrl() {
 				profile = "BrowserFilterTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
 				position = "131 190";
-				extent = "93 22";
+				extent = "70 22";
 				minExtent = "8 8";
 				visible = "1";
 				helpTag = "0";
 				text = "228w x 150h";
+				maxLength = "255";
 			};
 		};
 	};

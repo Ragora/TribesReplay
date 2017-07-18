@@ -352,22 +352,18 @@ function BountyGame::buildListValidTargets(%game, %cl)
    for (%cIndex = 0; %cIndex < %numClients; %cIndex++)
    {
       %opponent = ClientGroup.getObject(%cIndex);
-      //echo ("Predator = " @ %cl @ "      PossPrey = " @ %opponent);
-      if (!%opponent.isNotInGame)   //hasn't dropped
-      {           
-         if (%opponent != %cl)  //don't add client himself to list
+      //make sure the target isn't yourself, or an observer
+      if (%opponent != %cl && %opponent.team > 0 && !%opponent.isNotInGame)
+      {
+         //make sure candidate for list has not already been killed by client
+         if (!%cl.eliminated[%opponent])
          {
-            if (%opponent.player)   //make sure candidate for list has a player
-            {              
-               if (!%cl.eliminated[%opponent]) //make sure candidate for list has not already been killed by client
-               {
-                  %cl.validList[%availTargets] = %opponent;
-                  %availTargets++;  
-               }
-            }
+            %cl.validList[%availTargets] = %opponent;
+            %availTargets++;  
          }
       }
    }
+
    //returns length of list (number of players eligible as targets to this client)
    %game.hudUpdateObjRem(%cl, %availTargets);
    if ((%availTargets <= %game.WARN_AT_NUM_OBJREM) && (%cl.hasHadTarget))
@@ -412,6 +408,7 @@ function BountyGame::gameOver(%game)
       %client = ClientGroup.getObject(%i);
       %game.resetScore(%client);
       cancel(%client.waypointSchedule);
+      cancel(%client.forceRespawnThread);
    }  
 }
 
@@ -436,6 +433,18 @@ function BountyGame::AIHasJoined(%game, %client)
    //messageAllExcept(%client, -1, 'MsgClientJoinTeam', '%1 has joined the fray.', %client.name, "", %client, 1);
 }
 
+function BountyGame::forceRespawn(%game, %client)
+{
+   //make sure the player hasn't already respawned
+   if (isObject(%client.player))
+      return;
+
+	commandToClient(%client, 'setHudMode', 'Standard');
+   Game.spawnPlayer( %client, true );
+   %client.camera.setFlyMode();
+   %client.setControlObject(%client.player);
+}
+
 function BountyGame::onClientKilled(%game, %clVictim, %clKiller, %damageType, %implement, %damageLoc)
 {
    DefaultGame::onClientKilled(%game, %clVictim, %clKiller, %damageType, %implement, %damageLoc);
@@ -446,6 +455,10 @@ function BountyGame::onClientKilled(%game, %clVictim, %clKiller, %damageType, %i
 
    // any time a person dies, the kill streak is reset
    %clVictim.killStreak = 0;
+
+   //force the player to respawn
+   if (!%clVictim.isAIControlled())
+      %clVictim.forceRespawnThread = %game.schedule(5000, forceRespawn, %clVictim);
 }
 
 function BountyGame::onClientLeaveGame(%game, %clientId)
@@ -476,7 +489,10 @@ function BountyGame::onClientLeaveGame(%game, %clientId)
 
 function BountyGame::onClientEnterObserverMode(%game, %clientId)
 {
-   // is this fair? go to observer mode and no one has you as a target any more
+   //cancel the respawn schedule
+   cancel(%clientId.forceRespawnThread);
+
+   //notify everyone else, and choose a new objective if required...
    %numClients = ClientGroup.getCount();
    for (%index = 0; %index < %numClients; %index++)
    {
@@ -815,7 +831,7 @@ function BountyGame::updateScoreHud(%game, %client, %tag)
       for (%cIndex = 0; %cIndex < ClientGroup.getCount(); %cIndex++)
       {
          %opponent = ClientGroup.getObject(%cIndex);
-         if (!%opponent.isNotInGame && %opponent != %cl && isObject(%opponent.player) && !%cl.eliminated[%opponent])
+         if (!%opponent.isNotInGame && %opponent.team > 0 && %opponent != %cl && !%cl.eliminated[%opponent])
             %clTargets++;
       }
 
@@ -837,6 +853,36 @@ function BountyGame::updateScoreHud(%game, %client, %tag)
       {
          messageClient( %client, 'SetLineHud', "", %tag, %index, '%5<tab:20,430>\t<clip:200><a:gamelink\t%6>%1</a></clip><rmargin:280><just:right>%2<rmargin:400><just:right>%3<rmargin:610><just:left>\t<color:FF0000>%4', 
                %cl.name, %clScore, %clTargets, %clKilled, %clStyle, %cl );
+      }
+   }
+
+   // Tack on the list of observers:
+   %observerCount = 0;
+   for (%i = 0; %i < ClientGroup.getCount(); %i++)
+   {
+      %cl = ClientGroup.getObject(%i);
+      if (%cl.team == 0)
+         %observerCount++;
+   }
+
+   if (%observerCount > 0)
+   {
+	   messageClient( %client, 'SetLineHud', "", %tag, %index, "");
+      %index++;
+		messageClient(%client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush><font:Univers Condensed:22>\tOBSERVERS (%1)<rmargin:260><just:right>TIME<spop>', %observerCount);
+      %index++;
+      for (%i = 0; %i < ClientGroup.getCount(); %i++)
+      {
+         %cl = ClientGroup.getObject(%i);
+         //if this is an observer
+         if (%cl.team == 0)
+         {
+            %obsTime = getSimTime() - %cl.observerStartTime;
+            %obsTimeStr = %game.formatTime(%obsTime, false);
+		      messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:20, 310>\t<clip:150>%1</clip><rmargin:260><just:right>%2',
+		                     %cl.name, %obsTimeStr );
+            %index++;
+         }
       }
    }
 

@@ -10,8 +10,11 @@ $ESCAPE_SEQ = "_-_";
 $IRCClient::serverList = GetIRCServerList(0);
 $IRCClient::serverCount = getRecordCount($IRCClient::serverList);
 $IRCClient::retries = -1;
-$IRCClient::serverIndex = -1;
-$IRCClient::serverport = 6667;
+if ($IRCClient::serverCount > 1)
+   $IRCClient::serverIndex = getRandom($IRCClient::serverCount-1)-1;
+else
+   $IRCClient::serverIndex = -1;
+$IRCClient::serverAttempt = 0;
 
 $AWAY_TIMEOUT = 5 * 60 * 1000;
 $VERSION_FLOOD_TIMEOUT = 5.0;
@@ -35,6 +38,12 @@ $CHANNEL_TOPIC_LIMITED = 128;
 $CHANNEL_HAS_KEY       = 256;
 $CHANNEL_NEW           = 512;
 
+// Default messages (if gui is left blank)
+$DefaultChatAwayMessage = "Don't be alarmed.  I'm going to step away from my computer.";
+$DefaultChatKickMessage = "Alright, you\'re outta here!";
+$DefaultChatBanMessage = "You, and three generations of your offspring, are banned from this channel.";
+
+
 //------------------------------------------------------------------------------
 function JoinChatDlg::onWake(%this)
 {
@@ -53,9 +62,17 @@ function JoinChatList::onSelect(%this,%id,%text)
 //------------------------------------------------------------------------------
 function JoinChatDlg::join(%this)
 {
-   IRCClient::join(IRCClient::channelName(JoinChatName.getValue()));
-	Canvas.popDialog(JoinChatDlg);
-   LaunchTabView.viewTab("CHAT",ChatGui,0);
+	if(trim(JoinChatName.getValue()) $= "")
+	{
+		messageBoxOK("ERROR", "Invalid Channel Name");
+		return;
+	}
+	else 
+	{
+		IRCClient::join(IRCClient::channelName(trim( JoinChatName.getValue()) ));
+		Canvas.popDialog(JoinChatDlg);
+		LaunchTabView.viewTab("CHAT", ChatGui, 0);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -95,6 +112,7 @@ function ChatGui::onWake(%this)
    ChatGui.awake = true;
    ChatTabView.setSelected($IRCClient::currentChannel);
 	ChatGuiScroll.scrollToBottom();
+   ChatMessageEntry.schedule(1, makeFirstResponder, true);
 }
 
 //------------------------------------------------------------------------------
@@ -105,7 +123,8 @@ function ChatGui::setKey(%this,%ignore)
 //------------------------------------------------------------------------------
 function ChatTabView::onAdd(%this)
 {
-   %this.addTab($IRCClient::channels.getObject(0),"STATUS");
+	if ($LaunchMode $= "Normal")
+   	%this.addTab($IRCClient::channels.getObject(0),"STATUS");
 }
 
 //------------------------------------------------------------------------------
@@ -114,6 +133,11 @@ function ChatTabView::onSelect(%this,%obj,%name)
 	ChatTabFrame.setAltColor(%obj.private);
 	%i = %obj.findMember($IRCClient::people.getObject(0));
 	ChatEditChannelBtn.setVisible(%obj.getFlags(%i) & $PERSON_OPERATOR);
+	
+	//is this the status window?  do we need the options button
+	%vis = (%name $= "STATUS" ? true : false);
+	ChatEditOptionsBtn.setVisible(%vis);
+	
 	ChatChannelTopic.setValue(%obj.topic);
    if (ChatGui.awake)
    {
@@ -282,13 +306,7 @@ function ChatRoomMemberList::onRightMouseDown(%this,%column,%row,%mousePos)
    // Open the action menu:
    ChatMemberPopup.member = %this.getRowId(%row);
 	ChatMemberPopup.position = %mousePos;
-	Canvas.pushDialog(ChatMemberActionDlg);
-	ChatMemberPopup.forceOnAction();
-}
-
-//------------------------------------------------------------------------------
-function ChatMemberActionDlg::onWake(%this)
-{
+	
 	ChatMemberPopup.clear();
 	%nick = IRCClient::displayNick(ChatMemberPopup.member);
 	%is = $IRCClient::currentChannel.findMember(ChatMemberPopup.member);
@@ -310,7 +328,7 @@ function ChatMemberActionDlg::onWake(%this)
 	}
 	else
 	{
-		if (strcmp(ChatMemberPopup.member.getName(),$IRCClient::currentChannel.getName()))
+		if (strcmp(ChatMemberPopup.member.displayName,$IRCClient::currentChannel.getName()))
 			ChatMemberPopup.add("Chat",2);
 	
 		if ($IRCClient::currentChannel.getFlags(%im) & $PERSON_OPERATOR)
@@ -338,6 +356,9 @@ function ChatMemberActionDlg::onWake(%this)
 				ChatMemberPopup.add("Invite to" SPC IRCClient::displayChannel(%c.getName()),%c);
    	}
 	}
+	
+	Canvas.pushDialog(ChatMemberActionDlg);
+	ChatMemberPopup.forceOnAction();
 }
 
 //------------------------------------------------------------------------------
@@ -360,7 +381,7 @@ function ChatMemberPopup::onSelect(%this,%id,%text)
 		case 1:	// Set Away
 			IRCClient::away($pref::IRCClient::awaymsg);
       case 2:	// Chat
-			%c = IRCClient::findChannel(ChatMemberPopup.member.getName(),true);
+			%c = IRCClient::findChannel(ChatMemberPopup.member.displayName,true);
 			ChatTabView.setSelected(%c);
       case 3:  // Admin
          IRCClient::setOperator(ChatMemberPopup.member);
@@ -543,6 +564,75 @@ function AcceptChannelOptions()
 			IRCClient::setKey(%c,false,"");
 }
 
+//========================================================================
+// chat options menu
+
+//------------------------------------------------------------------------------
+function EditChatOptions()
+{
+ 	$tempHighlightOn = $pref::IRCClient::HightlightOn;
+ 	ButtonChatHighlight.setValue($tempHighlightOn);
+
+	$tempHideLinks = $pref::IRCClient::hideLinks;
+	ButtonChatNameLinkToggle.setValue($tempHideLinks);
+
+	//for now
+	ButtonChatShowJoin.setVisible(false);
+	ButtonChatChannelHighlight.setVisible(false);
+
+	EditChatAwayMessage.setValue($pref::IRCClient::awaymsg);
+	EditChatKickMessage.setValue($pref::IRCClient::kickmsg);
+	EditChatBanMessage.setValue($pref::IRCClient::banmsg);
+
+	Canvas.pushDialog(ChatOptionsDlg);
+}
+
+//------------------------------------------------------------------------------
+function acceptChatOptions()
+{
+	//error("Accepting Chat Options....");
+	$pref::IRCClient::HighlightOn = $tempHighlightOn;
+
+	$pref::IRCClient::hideLinks = $tempHideLinks;
+
+	if($tempAwayMsg !$= "")
+		$pref::IRCClient::awaymsg = $tempAwayMsg;
+	else 
+		$pref::IRCClient::awaymsg = $DefaultChatAwayMessage;
+	
+	if($tempkickmsg !$= "")
+		$pref::IRCClient::kickmsg = $tempkickmsg;
+	else 
+		$pref::IRCClient::kickmsg = $DefaultChatKickMessage;
+	
+	if($tempbanmsg !$= "")
+		$pref::IRCClient::banmsg = $tempbanmsg;
+	else 
+		$pref::IRCClient::banmsg = $DefaultChatBanMessage;
+	
+	canvas.popDialog(ChatOptionsDlg);
+}
+
+//------------------------------------------------------------------------------
+function CancelChatOptions()
+{
+	canvas.popDialog(ChatOptionsDlg);
+}
+
+//------------------------------------------------------------------------------
+function ToggleChatHiglight()
+{
+	$tempHighlightOn = !$tempHighlightOn;
+	ButtonChatHighlight.setValue($tempHighlightOn);
+}
+
+//------------------------------------------------------------------------------
+function ToggleChatLinkedNicks()
+{
+	$tempHideLinks = !$tempHideLinks;
+	ButtonChatNameLinkToggle.setValue($tempHideLinks);
+}
+
 //------------------------------------------------------------------------------
 function IRCClient::init()
 {
@@ -553,8 +643,9 @@ function IRCClient::init()
 	$IRCClient::connectwait = 0;
    $IRCClient::room = "";
    $IRCClient::numCensorWords = 0;
+	$IRCClient::previousChannelCount = 0;
 
-   $IRCClient::people.add(new SimObject("IRCMe")
+   $IRCClient::people.add(new SimObject()
 							  {
 								 real = "";
 								 identity = "";								 
@@ -589,9 +680,6 @@ function IRCClient::notify(%event)
 			MessageBoxOK("No Response","Connection failed. The IRC server did not respond.","");
 		case IDIRC_ERR_DROPPED:
 			MessageBoxOK("Connection Dropped","You have been disconnected from IRC server " @ $IRCClient::server @ ".","");
-		case IDIRC_RECONNECT:
-		case IDIRC_ERR_RECONNECT:
-			MessageBoxOK("No Reconnect","Unable to reconnect to IRC server " @ $IRCClient::server @ ".","");
 		case IDIRC_ERR_BADCHALLENGE:
 		case IDIRC_ERR_BADCHALRESP_REPLY:
 		case IDIRC_CHANNEL_LIST:
@@ -710,7 +798,7 @@ function IRCClient::findPerson(%nick)
    for (%i = 0; %i < $IRCClient::people.getCount(); %i++)
    {
       %person = $IRCClient::people.getObject(%i);
-      if (%person.getName() $= %nick)
+      if (%person.displayName $= %nick)
 	     return %person;
    }
 }
@@ -745,7 +833,7 @@ function IRCClient::findPerson2(%prefix,%create)
 	  
 		if (%create)
 		{
-			%p = new SimObject(%nick)
+			%p = new SimObject()
 				{
 					real = "";
 					identity = "";
@@ -753,9 +841,9 @@ function IRCClient::findPerson2(%prefix,%create)
 					flags = 0;
 					ping = 0;
 					ref = 0;
+               displayName = %nick;
 				};
-			if (strlen(%ident))
-				IRCClient::setIdentity(%p,%ident);
+			IRCClient::setIdentity(%p,%ident);
 			$IRCClient::people.add(%p);
 
 			%c = IRCClient::findChannel(%nick);
@@ -769,9 +857,9 @@ function IRCClient::findPerson2(%prefix,%create)
 			}
 
 			// initiate WHO do determine username
-			if (!strlen(%ident) && %p != $IRCClient::people.getObject(1) &&
-				 getSubStr(%nick,strlen(%nick)-1,1) $= "^")
-				IRCClient::whois(%p);
+			//if (!strlen(%ident) && %p != $IRCClient::people.getObject(1) &&
+				 //getSubStr(%nick,strlen(%nick)-1,1) $= "^")
+				//IRCClient::whois(%p);
 
 			return %p;
 		}
@@ -817,42 +905,35 @@ function IRCClient::undoEscapes(%string)
 function IRCClient::setIdentity(%p,%ident)
 {
 	%p.identity = %ident;
-
-	if (getSubStr(%p.getName(),strlen(%p.getName())-1,1) $= "^")
-	{	
-		// identity is set and user is WON-authenticated
-		%i = strpos(%ident,"@");
-		while ((%j = strpos(%ident,"@",%i+1)) >= 0)
-			%i = %j;
-		%user = IRCToByte(getSubStr(%ident,0,%i));
-	
-		%delimeter = $ESCAPE_SEQ @ "00";
-		%delimlen = strlen(%delimeter);
-		%i = strpos(%user,%delimeter);
-		%name = getSubStr(%user,0,%i);
-		%user = getSubStr(%user,%i+%delimlen,
-								strlen(%user)-(%i+%delimlen));
-		%i = strpos(%user,%delimeter);
-		%tag = getSubStr(%user,0,%i);
-		%append = getSubStr(%user,%i+%delimlen,1);
-   	  
-		if (strlen(%tag))
-			if (%append)
-			{
-				%p.nick = %name @ %tag;
-				%p.tagged = "<tribe:0>" @ %name @ "</tribe><tribe:1>" @ %tag @ "</tribe>";
-			}
-			else
-			{
-				%p.nick = %tag @ %name;
-				%p.tagged = "<tribe:1>" @ %tag @ "</tribe><tribe:0>" @ %name @ "</tribe>";
-			}
-		else
-		{
+   %nick = %p.displayName;
+   if (strpos(%nick, "^") != -1)
+   {
+      %triple = IRCGetTriple(%nick);
+      %name = getField(%triple, 0);
+      %tag = getField(%triple, 1);
+      %append = getField(%triple, 2);
+      %p.untagged = %name;
+      if (%tag $= "")
+      {
 			%p.nick = %name;
 			%p.tagged = "<tribe:0>" @ %name @ "</tribe>";
-		}
-	}
+      }
+      else
+      	if(%append)
+      	{
+         	%p.nick = %name @ %tag;
+         	%p.tagged = "<tribe:0>" @ %name @ "</tribe><tribe:1>" @ %tag @ "</tribe>";
+      	}
+      	else
+      	{
+         	%p.nick = %tag @ %name;
+         	%p.tagged = "<tribe:1>" @ %tag @ "</tribe><tribe:0>" @ %name @ "</tribe>";
+      	}
+   }
+   else
+   {
+      %p.tagged = %nick;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -862,17 +943,22 @@ function IRCClient::displayNick(%person)
    if (strlen(%person.nick))
 		return %person.nick;   
    else
-      return %person.getName();
+      return %person.displayName;
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 function IRCClient::taggedNick(%person)
 {
+   //error("IRCClient::taggedNick( "@%person@" )");
    // identity is set and user is WON-authenticated
    if (strlen(%person.nick))
-		return %person.tagged;   
+		if($pref::IRCClient::hideLinks)
+			return %person.nick;
+		else
+			return %person.tagged;   
    else
-      return %person.getName();
+      return %person.displayName;
 }
 
 //------------------------------------------------------------------------------
@@ -881,7 +967,7 @@ function IRCClient::correctNick(%p)
 	for (%i = 1; %i < $IRCClient::channels.getCount(); %i++)
 	{
 		%c = $IRCClient::channels.getObject(%i);
-		if (%c.getName() $= %p.getName())
+		if (%c.getName() $= %p.displayName)
 		{
 			ChatTabView.setTabText(%c,IRCClient::displayNick(%p));
 			%c.topic = "Private chat with" SPC IRCClient::displayNick(%p);
@@ -906,7 +992,8 @@ function IRCClient::correctNick(%p)
 //------------------------------------------------------------------------------
 function IRCClient::findChannel(%name,%create)
 {
-   if (%name $= "")
+   //error("IRCClient::findChannel( "@%name@", "@%create@" )");
+   if(%name $= "")
       return $IRCClient::currentChannel;
 
    for (%i = 0; %i < $IRCClient::channels.getCount(); %i++)
@@ -941,7 +1028,7 @@ function IRCClient::findChannel(%name,%create)
       %c = new ChannelVector(%name)
 			   {
 				  topic = %topic;
-				  key = "";			      
+				  key = $IRCClient::key;			      
 				  flags = $CHANNEL_NEW;
 				  personLimit = 0;
 				  private = %private;
@@ -958,6 +1045,17 @@ function IRCClient::findChannel(%name,%create)
 
 			$IRCClient::nextChannel = %c;
 			IRCClient::notify(IDIRC_ADDCHANNEL);
+		}
+		else
+		{
+			%messages = %name @ "_messages";
+			if (isobject(%messages))
+			{
+				for (%i = 0; %i < %messages.getNumLines(); %i++)
+					%c.pushBackLine(%messages.getLineText(%i));
+
+				%messages.delete();
+			}
 		}
 
       return %c;   
@@ -1017,14 +1115,25 @@ function IRCClient::connect()
       if($IRCClient::retries == -1 || $IRCClient::retries > 5)
       {
          $IRCClient::serverIndex++;
-         $IRCClient::retries = 0;
-         if($IRCClient::serverIndex >= $IRCClient::serverCount)
+			if ($IRCClient::serverIndex >= $IRCClient::serverCount)
+				$IRCClient::serverIndex = 0;
+			$IRCClient::serverAttempt++;
+         if ($IRCClient::serverCount == 0 || $IRCClient::serverAttempt > $IRCClient::serverCount)
          {
             IRCClient::newMessage("","Unable to connect to IRC servers."); 
-            IRCClient::notify(IDIRC_ERR_RECONNECT);
+            IRCClient::notify(IDIRC_ERR_TIMEOUT);
             $IRCClient::state = IDIRC_DISCONNECTED;
+				$IRCClient::retries = -1;
+            if($IRCClient::serverCount > 1)
+               $IRCClient::serverIndex = getRandom($IRCClient::serverCount-1)-1;
+            else
+               $IRCClient::serverIndex = -1;
+				$IRCClient::serverAttempt = 0;
+
             return;
          }
+			else
+				$IRCClient::retries = 0;
          $IRCClient::server = getField(getRecord($IRCClient::serverList, $IRCClient::serverIndex), 0);
       }
 		IRCClient::newMessage("","Connecting to " @ $IRCClient::server);
@@ -1075,8 +1184,9 @@ function IRCTCP::onConnectFailed(%this)
    else
    {
       IRCClient::newMessage("","Connection failed. The server did not respond."); 
-      IRCClient::disconnect();
-      IRCClient::notify(IDIRC_ERR_TIMEOUT);
+
+      $IRCClient::retries++;
+   	IRCClient::connect();
    }
 }
 
@@ -1085,11 +1195,60 @@ function IRCClient::reconnect()
 {
    if (!$pref::IRCClient::autoreconnect)
       return (false);
+	
+	%i = 0;
+	while ($IRCClient::channels.getCount() > 1)
+	{
+		%c = $IRCClient::channels.getObject(1);
+
+		if (%c.private)
+		{
+			%c.delete();
+			$IRCClient::deletedChannel = %c;
+			if ($IRCClient::currentChannel == %c)
+				$IRCClient::nextChannel = $IRCClient::channels.getObject(0);
+			IRCClient::notify(IDIRC_DELCHANNEL);
+
+			continue;
+		}
+
+		$IRCClient::previousChannel[%i] = %c.getName();
+		$IRCClient::previousKey[%i] = %c.key;
+
+		%messages = $IRCClient::previousChannel[%i] @ "_messages";
+		if (isobject(%messages))
+			%messages.delete();
+		%m = new MessageVector(%messages);
+
+		for (%j = 0; %j < %c.getNumLines(); %j++)
+			%m.pushBackLine(%c.getLineText(%j));	
+
+   	$IRCClient::channels.remove(%c);
+		for (%j = 0; %j < %c.numMembers(); %j++)
+		{
+			%m = %c.getMemberId(%j);
+			%m.ref--;
+			if (%m.ref == 0)
+			{
+				$IRCClient::people.remove(%m);
+				%m.delete();
+			}
+		}
+		%c.delete();
+		$IRCClient::deletedChannel = %c;
+		if ($IRCClient::currentChannel == %c)
+			$IRCClient::nextChannel = $IRCClient::channels.getObject(0);
+		IRCClient::notify(IDIRC_DELCHANNEL);
+
+		%i++;
+	}
+	$IRCClient::previousChannelCount = %i;
+
+	IRCClient::newMessage("","Attempting to reconnect.");
 
    $IRCClient::retries++;
-   IRCClient::newMessage("","Try " @ $IRCClient::retries @ ".  Attempting to reconnect to " @ $IRCClient::server @ "."); 
-   IRCClient::notify(IDIRC_RECONNECT);
    IRCClient::connect();
+
    return true;
 }
 
@@ -1110,6 +1269,13 @@ function IRCClient::disconnect()
    $IRCClient::silentBanList = 0;
 
    IRCClient::reset();
+}
+
+//------------------------------------------------------------------------------
+function	IRCClient::relogin()
+{
+	IRCClient::newMessage("","IRCClient: Reauthentication starting");
+	IRCClient::send("CERT " @ WONLoginIRC());
 }
 
 //------------------------------------------------------------------------------
@@ -1163,8 +1329,8 @@ function IRCClient::processLine(%line)
 
 	  if (!IRCClient::dispatch(%prefix,%command,%params))
      {
-	     echo("IRCClient: " @ %command @ " not handled by dispatch!");
-        echo("(cmd:) " @ %prefix @ " " @ %command @ " " @ %params);
+	     //echo("IRCClient: " @ %command @ " not handled by dispatch!");
+        //echo("(cmd:) " @ %prefix @ " " @ %command @ " " @ %params);
      }
    }
 }
@@ -1368,10 +1534,14 @@ function IRCClient::onPrivMsg(%prefix,%params)
    if (getSubStr(%msg,0,1) $= ":")
       %msg = getSubStr(%msg,1,strlen(%msg)-1);
 
+	// should we highlight this message
+	if($pref::IRCClient::highlightOn)
+		%msg = IRCClient::nickHighLight(%msg);
+
    %nick = %ch;
    if (getSubStr(%ch,0,1) $= "@" || getSubStr(%ch,0,1) $= "+")
       %nick = getSubStr(%nick,1,strlen(%nick)-1);
-   if ( %nick $= %p.getName())
+   if ( %nick $= %p.displayName)
       nextToken(%prefix,ch," !");
    
    if (strcmp(getSubStr(%msg,0,1),"\x01"))
@@ -1401,19 +1571,14 @@ function IRCClient::onNick(%prefix,%params)
    
    if (%person)
    { 
-      if (!(%person.flags & $PERSON_IGNORE))
-         IRCClient::newMessage($IRCClient::currentChannel,%person.getName() @ " is now known as " @ %params @ ".");
+      %old = IRCClient::taggedNick(%person);
 
-      %channel = IRCClient::findChannel(%person.getName());
-      
-      if (%channel)
-	     %channel.setName(%params); 
+      %person.displayName = %params;
+		IRCClient::setIdentity(%person,%person.ident);
+		IRCClient::correctNick(%person);
 
-      %person.setName(%params);
-
-      // If this is me, re-set the console variable
-      if (%person == $IRCClient::people.getObject(0))
-         $IRCClient::NickName = %person.getName();
+		if (!(%person.flags & $PERSON_IGNORE))
+         IRCClient::newMessage($IRCClient::currentChannel,%old @ " is now known as " @ IRCClient::taggedNick(%person) @ ".");
    }
 }
 
@@ -1465,7 +1630,7 @@ function IRCClient::onMOTDEnd(%prefix, %params)
    // EXAMPLE :StLouis.MO.US.UnderNet.org 372 homer128 :- ==> Disclaimer/ Rules:
    if ($IRCClient::state $= IDIRC_CONNECTING_WAITING)
    {
-      IRCClient::newMessage("","Successfully connected to " @ $IRCClient::server @ ":" @ $IRCClient::serverport);
+      IRCClient::newMessage("","Successfully connected to " @ $IRCClient::server);
       $IRCClient::state = IDIRC_CONNECTED;
       IRCClient::notify(IDIRC_CONNECTED);
 
@@ -1759,7 +1924,7 @@ function IRCClient::onMode(%prefix,%params)
 					IRCClient::notify(IDIRC_SORT);
 
             // only display the message if my privilages are modified.
-            if (strcmp(%arg,$IRCClient::people.getObject(0).getName()))
+            if (strcmp(%arg,$IRCClient::people.getObject(0).displayName))
                break;
 
             nextToken(%prefix,arg,"!");
@@ -1782,7 +1947,7 @@ function IRCClient::onMode(%prefix,%params)
 					IRCClient::notify(IDIRC_SORT);
 
             // only display the message if my privilages are modified.
-            if (strcmp(%arg,$IRCClient::people.getObject(0).getName()))
+            if (strcmp(%arg,$IRCClient::people.getObject(0).displayName))
                break;
 
             nextToken(%prefix,arg,"!");
@@ -2015,7 +2180,7 @@ function IRCClient::onBanListEnd(%prefix,%params)
 //------------------------------------------------------------------------------
 function IRCClient::onBadNick(%prefix,%params)
 {
-   IRCClient::newMessage("","NOTICE: Nickname (" @ $IRCClient::people.getObject(0).getName() @ ") is already in use.");
+   IRCClient::newMessage("","NOTICE: Nickname (" @ $IRCClient::people.getObject(0).displayName @ ") is already in use.");
    IRCClient::notify(IDIRC_ERR_NICK_IN_USE);
 }
 
@@ -2056,11 +2221,14 @@ function IRCClient::onAway(%prefix,%params)
 
 //------------------------------------------------------------------------------
 function IRCClient::onAction(%prefix,%params)
-{  
+{
    %msg = nextToken(%params,ch," :");
    %c = IRCClient::findChannel(%ch,true);
+   
+   	%person = IRCClient::findPerson2(%prefix,true);
+	%name = IRCClient::taggedNick(%person);
 
-   IRCClient::newMessage(%c,%prefix @ " " @ %msg);
+   IRCClient::newMessage(%c, %name @ " " @ %msg);
 }
 
 //------------------------------------------------------------------------------
@@ -2254,20 +2422,35 @@ function IRCClient::onChalRespReply(%prefix,%params)
    %params = nextToken(%params,ident," ");
    %params = nextToken(%params,reply," ");
    %me = $IRCClient::people.getObject(0);
-	%me.setName(%nick);
+	%me.displayName = %nick;
 	IRCClient::setIdentity(%me,%ident @ "@localhost");
    if (WONLoginIRC(%reply) $= "OK")
    {
-      IRCClient::newMessage("","Successfully connected to " @ $IRCClient::server @ ":" @ $IRCClient::serverport);
-      $IRCClient::state = IDIRC_CONNECTED;
-      IRCClient::notify(IDIRC_CONNECTED);
+		if ($IRCClient::state !$= IDIRC_CONNECTED)
+		{
+      	IRCClient::newMessage("","Successfully connected to " @ $IRCClient::server);
+      	$IRCClient::state = IDIRC_CONNECTED;
+      	IRCClient::notify(IDIRC_CONNECTED);
 
-		if ($IRCClient::awaytimeout)
-			cancel($IRCClient::awaytimeout);
-	  	$IRCClient::awaytimeout = schedule($AWAY_TIMEOUT,0,"ChatAway_Timeout");
-	  	// auto join a room if requested
-      if (strlen($IRCClient::room))
-         IRCClient::send("JOIN " @ $IRCClient::room);
+			if ($IRCClient::awaytimeout)
+				cancel($IRCClient::awaytimeout);
+	  		$IRCClient::awaytimeout = schedule($AWAY_TIMEOUT,0,"ChatAway_Timeout");
+	  		// auto join a room if requested
+      	if (strlen($IRCClient::room))
+         	IRCClient::send("JOIN " @ $IRCClient::room);
+
+			if ($IRCClient::previousChannelCount > 0)
+			{
+				for (%i = 0; %i < $IRCClient::previousChannelCount; %i++)
+					IRCClient::join($IRCClient::previousChannel[%i] @ " " @ $IRCClient::previousKey[%i]);
+				$IRCClient::previousChannelCount = 0;
+			}
+		}
+		else
+		{
+			IRCClient::newMessage("","Successfully reauthenticated with " @ $IRCClient::server);
+			IRCClient::correctNick($IRCClient::people.getObject(0));
+		}
    }
    else
 	{
@@ -2345,7 +2528,7 @@ function IRCClient::sendAction(%message)
    {
       IRCClient::send("PRIVMSG " @ $IRCClient::currentChannel.getName() @ " :\x01ACTION " @ %message @  "\x01");
       %me = $IRCClient::people.getObject(0);
-      IRCClient::newMessage($IRCClient::currentChannel,%me.getName() @ " " @ %message);
+      IRCClient::newMessage($IRCClient::currentChannel,IRCClient::taggedNick(%me) @ " " @ %message);
    }
 }
 
@@ -2368,6 +2551,8 @@ function IRCClient::join(%params)
    }
    else
 	{
+		$IRCClient::key = %key;
+
       IRCClient::send("JOIN " @ %channel @ " " @ %key);
 		IRCClient::connecting();
 	}
@@ -2387,20 +2572,38 @@ function IRCClient::nick(%nick)
    if (($IRCClient::state $= IDIRC_CONNECTED || $IRCClient::state $= IDIRC_CONNECTING_IRC) &&
    	   strlen(nick))
    {
-      if (stricmp(%nick, $IRCClient::people.getObject(0).getName()))
+      if (stricmp(%nick, $IRCClient::people.getObject(0).displayName))
          IRCClient::send("NICK " @ %nick);
    }
    else
-   {
-	  $IRCClient::people.getObject(0).setName(%nick);
-      $IRCClient::NickName = %nick;
-   }
+	  $IRCClient::people.getObject(0).displayName = %nick;
 }
 
 //------------------------------------------------------------------------------
 function IRCClient::name(%name)
 {
    $IRCClient::people.getObject(0).real = %name;
+}
+
+//----------------------------------------------------------------------
+function IRCClient::nickHighLight(%message)
+{
+	//error("IRCClient::nickHighLight( "@%message@" )");
+	%nick = $IRCClient::people.getObject(0).untagged;
+	
+	//%nickLen = strLen(%nick);
+	// swap in for multiple nick options here
+	
+	%wordCount = getWordCount(%message);
+	for(%i = 0; %i < %wordCount; %i++)
+	{
+		%word = getWord(%message, %i);
+		if(%word $= %nick)
+		{
+			%message = "\c2" @ %message;
+		}
+	} 
+	return %message;
 }
 
 //------------------------------------------------------------------------------
@@ -2442,8 +2645,8 @@ function IRCClient::part(%params)
 					IRCClient::notify(IDIRC_DELCHANNEL);
 				}            
 
-			break;
-		}
+				break;
+			}
 }
 
 //------------------------------------------------------------------------------
@@ -2500,7 +2703,7 @@ function IRCClient::ping(%params)
 //------------------------------------------------------------------------------
 function IRCClient::setOperator(%p)
 {
-   IRCClient::send("MODE " @ $IRCClient::currentChannel.getName() @ " +o " @ %p.getName());
+   IRCClient::send("MODE " @ $IRCClient::currentChannel.getName() @ " +o " @ %p.displayName);
 }
 
 //------------------------------------------------------------------------------
@@ -2540,16 +2743,16 @@ function IRCClient::setSpectator(%nick)
 //------------------------------------------------------------------------------
 function IRCClient::kick(%p,%msg)
 {
-   IRCClient::send("KICK" SPC $IRCClient::currentChannel.getName() SPC %p.getName() @ " :" @ %msg);
+   IRCClient::send("KICK" SPC $IRCClient::currentChannel.getName() SPC %p.displayName @ " :" @ %msg);
 }
 
 //------------------------------------------------------------------------------
 function IRCClient::ban(%p,%add)
 {
 	if (%add)
-   	IRCClient::send("MODE " @ $IRCClient::currentChannel.getName() @ " +b " @ %p.getName());
+   	IRCClient::send("MODE " @ $IRCClient::currentChannel.getName() @ " +b " @ %p.displayName);
 	else
-		IRCClient::send("MODE " @ $IRCClient::currentChannel.getName() @ " -b " @ %p.getName());
+		IRCClient::send("MODE " @ $IRCClient::currentChannel.getName() @ " -b " @ %p.displayName);
 }
 
 //------------------------------------------------------------------------------
@@ -2581,21 +2784,21 @@ function IRCClient::ignore(%p,%tf)
 //------------------------------------------------------------------------------
 function IRCClient::invite(%p,%c)
 {
-	IRCClient::send("INVITE" SPC %p.getName() SPC %c.getName());
+	IRCClient::send("INVITE" SPC %p.displayName SPC %c.getName());
 }
 
 //------------------------------------------------------------------------------
 function IRCClient::who(%p)
 {
 	IRCClient::connecting();
-	IRCClient::send("WHO" SPC %p.getName());
+	IRCClient::send("WHO" SPC %p.displayName);
 }
 
 //------------------------------------------------------------------------------
 function IRCClient::whois(%p)
 {
 	IRCClient::connecting();
-	IRCClient::send("WHOIS" SPC %p.getName());
+	IRCClient::send("WHOIS" SPC %p.displayName);
 }
 
 //------------------------------------------------------------------------------
@@ -2680,7 +2883,10 @@ function IRCClient::onJoinServer(%mission,%server,%address,%mayprequire,%prequir
 //------------------------------------------------------------------------------
 function IRCClient::onJoinGame(%address,%desc)
 {
-	%msg = "launched into <t2server:" @ %address @ ">" @ %desc @ "</t2server>.";
+	if (%address $= "")
+		%msg = $pref::IRCClient::hostMsg;
+	else
+		%msg = "launched into <t2server:" @ %address @ ">" @ %desc @ "</t2server>.";
 	IRCClient::away(%msg);
 	for (%i = 1; %i < $IRCClient::channels.getCount(); %i++)
 	{
@@ -2690,5 +2896,14 @@ function IRCClient::onJoinGame(%address,%desc)
 	}
 }
 
-IRCClient::init();
-IRCClient::connect();
+//------------------------------------------------------------------------------
+function IRCClient::onLeaveGame()
+{
+	IRCClient::away("");
+}
+
+if ($LaunchMode $= "Normal")
+{
+	IRCClient::init();
+	IRCClient::connect();
+}

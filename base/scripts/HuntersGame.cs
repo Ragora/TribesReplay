@@ -145,7 +145,6 @@ function HuntersGame::missionLoadDone(%game)
       %client = ClientGroup.getObject(%i);
       %game.resetScore(%client);
       %client.flagCount = 1;
-      %client.trackClient = 0;
       %client.trackWaypoint = "";
       %client.playerTrackLine = -1;
    }
@@ -552,41 +551,6 @@ function HuntersGame::updateFlagHoarder(%game)
    else if (isObject(%game.hoarderWaypoint))
    {
       %game.hoarderWaypoint.delete();
-   }
-}
-
-function HuntersGame::updateTrackers(%game, %client)
-{
-   //update anyone who is tracking this player
-   %count = ClientGroup.getCount();
-   for (%i = 0; %i < %count; %i++)
-   {
-      %cl = ClientGroup.getObject(%i);
-      if (%cl.trackClient == %client)
-      {
-         //see if the tracker has a waypoint already
-         if (!isObject(%cl.trackWaypoint))
-         {
-            //create a waypoint at player's location...
-            %cl.trackWaypoint = new WayPoint()
-            {
-               position = %player.position;
-               rotation = "1 0 0 0";
-               scale = "1 1 1";
-               name = "Tracking" SPC getTaggedString(%client.name);
-               dataBlock = "WayPointMarker";
-               lockCount = "0";
-               homingCount = "0";
-               team = %client.team;
-            };
-
-            //add the waypoint to the cleanup group
-            MissionCleanup.add(%cl.trackWaypoint);
-         }
-
-         //set the position
-         %cl.trackWaypoint.setTransform(%player.getWorldBoxCenter() SPC "0 0 1 0");
-      }
    }
 }
 
@@ -1584,8 +1548,6 @@ function HuntersGame::updateScoreHud(%game, %client, %tag)
          %col1Style = "<color:00dc00>";
       else if ( %col1Client == %client )
          %col1Style = "<color:dcdcdc>";
-      else if ( %col1Client == %client.trackClient )
-         %col1Style = "<color:dcdc00>";
 
       //see if we have two columns
       if (%numColumns == 2)
@@ -1608,8 +1570,6 @@ function HuntersGame::updateScoreHud(%game, %client, %tag)
                %col2Style = "<color:00dc00>";
             else if ( %col2Client == %client )
                %col2Style = "<color:dcdcdc>";
-            else if ( %col2Client == %client.trackClient )
-               %col2Style = "<color:dcdc00>";
          }
       }
 
@@ -1628,13 +1588,64 @@ function HuntersGame::updateScoreHud(%game, %client, %tag)
       else
       {
          if ( %numColumns == 2 )
-            messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:10><spush>%7\t<clip:150><a:gamelink\t%8>%1</a></clip><rmargin:205><just:right>%2<rmargin:270><just:right>%3<spop><rmargin:505><lmargin:310><just:left>%8<clip:150><a:gamelink\t%9>%4</a></clip><rmargin:505><just:right>%5<rmargin:570><just:right>%6',
-                                 %col1Client.name, %col1ClientScore, %col1ClientFlags,
-                                 %col2Client.name, %col2ClientScore, %col2ClientFlags,
-                                 %col1Style, %col2Style, %col1Client, %col2Client);
+         {
+
+            //this is lame, but we can only have up to %9 args
+            if ( %col2Client == %maxFlagsClient )
+            {
+               messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:10><spush>%7\t<clip:150><a:gamelink\t%8>%1</a></clip><rmargin:205><just:right>%2<rmargin:270><just:right>%3<spop><rmargin:505><lmargin:310><just:left><color:00dc00><clip:150><a:gamelink\t%9>%4</a></clip><rmargin:505><just:right>%5<rmargin:570><just:right>%6',
+                                    %col1Client.name, %col1ClientScore, %col1ClientFlags,
+                                    %col2Client.name, %col2ClientScore, %col2ClientFlags,
+                                    %col1Style, %col1Client, %col2Client);
+            }
+            else if ( %col2Client == %client )
+            {
+               messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:10><spush>%7\t<clip:150><a:gamelink\t%8>%1</a></clip><rmargin:205><just:right>%2<rmargin:270><just:right>%3<spop><rmargin:505><lmargin:310><just:left><color:dcdcdc><clip:150><a:gamelink\t%9>%4</a></clip><rmargin:505><just:right>%5<rmargin:570><just:right>%6',
+                                    %col1Client.name, %col1ClientScore, %col1ClientFlags,
+                                    %col2Client.name, %col2ClientScore, %col2ClientFlags,
+                                    %col1Style, %col1Client, %col2Client);
+            }
+            else
+            {
+               messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:10><spush>%7\t<clip:150><a:gamelink\t%8>%1</a></clip><rmargin:205><just:right>%2<rmargin:270><just:right>%3<spop><rmargin:505><lmargin:310><just:left><clip:150><a:gamelink\t%9>%4</a></clip><rmargin:505><just:right>%5<rmargin:570><just:right>%6',
+                                    %col1Client.name, %col1ClientScore, %col1ClientFlags,
+                                    %col2Client.name, %col2ClientScore, %col2ClientFlags,
+                                    %col1Style, %col1Client, %col2Client);
+            }
+         }
          else
             messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:20>%4\t<clip:200><a:gamelink\t%5>%1</a></clip><rmargin:280><just:right>%2<rmargin:380><just:right>%3', 
                   %col1Client.name, %col1ClientScore, %col1ClientFlags, %col1Style, %col1Client );
+      }
+   }
+
+   // Tack on the list of observers:
+   %observerCount = 0;
+   for (%i = 0; %i < ClientGroup.getCount(); %i++)
+   {
+      %cl = ClientGroup.getObject(%i);
+      if (%cl.team == 0)
+         %observerCount++;
+   }
+
+   if (%observerCount > 0)
+   {
+	   messageClient( %client, 'SetLineHud', "", %tag, %index, "");
+      %index++;
+		messageClient(%client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush><font:Univers Condensed:22>\tOBSERVERS (%1)<rmargin:260><just:right>TIME<spop>', %observerCount);
+      %index++;
+      for (%i = 0; %i < ClientGroup.getCount(); %i++)
+      {
+         %cl = ClientGroup.getObject(%i);
+         //if this is an observer
+         if (%cl.team == 0)
+         {
+            %obsTime = getSimTime() - %cl.observerStartTime;
+            %obsTimeStr = %game.formatTime(%obsTime, false);
+		      messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:20, 310>\t<clip:150>%1</clip><rmargin:260><just:right>%2',
+		                     %cl.name, %obsTimeStr );
+            %index++;
+         }
       }
    }
 

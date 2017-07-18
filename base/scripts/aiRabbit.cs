@@ -15,6 +15,9 @@ function RabbitGame::onAIRespawn(%game, %client)
 	   %client.addTask(AITauntCorpseTask);
       %client.rabbitTask = %client.addTask(AIRabbitTask);
 	}
+
+   //set the inv flag
+   %client.spawnUseInv = true;
 }
 
 //---------------------------------------------------------------------------
@@ -68,6 +71,33 @@ function AIRabbitTask::weight(%task, %client)
 			%task.setWeight($AIRabbitWeightDefault);
 		else
 			%task.setWeight($AIRabbitWeightNeedInv);
+
+      //see if the spawnUseInv flag should be reset
+      if (%client.spawnUseInv)
+      {
+         if (!isObject($AIRabbitFlag.carrier))
+         {
+            //see if there are any bots closer to a dropped flag
+            %found = false;
+            for (%i = 0; %i < ClientGroup.getCount(); %i++)
+            {
+               %cl = ClientGroup.getObject(%i);
+               if (%cl != %client && %cl.isAIControlled() && isObject(%cl.player))
+               {
+                  %dist = VectorDist(%cl.player.position, $AIRabbitFlag.position);
+                  if (%dist < %distToFlag)
+                  {
+                     %found = true;
+                     break;
+                  }
+               }
+            }
+
+            //reset the spawnUseInv flag if we're the closest
+            if (!%found)
+               %client.spawnUsInv = false;
+         }
+      }
 	}
 }
 

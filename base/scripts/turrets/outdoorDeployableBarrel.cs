@@ -112,7 +112,7 @@ datablock TurretData(TurretDeployedOutdoor) : TurretDamageProfile
    className = DeployedTurret;
    shapeFile = "turret_outdoor_deploy.dts";
 
-   rechargeRate = 0.05;
+   rechargeRate = 0.15;
 
    mass = 5.0;
    maxDamage = 0.80;
@@ -120,6 +120,8 @@ datablock TurretData(TurretDeployedOutdoor) : TurretDamageProfile
    disabledLevel = 0.35;
    repairRate = 0;
    explosion = HandGrenadeExplosion;
+	
+	deployedObject = true;
 
    thetaMin = 0;
    thetaMax = 145;
@@ -130,7 +132,6 @@ datablock TurretData(TurretDeployedOutdoor) : TurretDamageProfile
    maxEnergy = 60;
    renderWhenDestroyed = false;
    barrel = DeployableOutdoorBarrel;
-   rechargeRate = 0.25;
    heatSignature = 0;
 
    canControl = true;

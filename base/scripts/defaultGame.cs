@@ -927,6 +927,9 @@ function DefaultGame::onClientKilled(%game, %clVictim, %clKiller, %damageType, %
    else
       aiReleaseHumanControl(%clVictim, %clVictim.controlAI);
 
+   //used to track corpses so the AI can get ammo, etc...
+   AICorpseAdded(%plVictim);
+
    //if the death was a suicide, prevent respawning for 5 seconds...
    %clVictim.lastDeathSuicide = false;
    if (%damageType == $DamageType::Suicide)
@@ -2305,6 +2308,9 @@ function DefaultGame::sendGamePlayerPopupMenu( %game, %client, %targetClient, %k
       %outrankTarget = !%targetClient.isSuperAdmin;
    else if ( %client.isAdmin )
       %outrankTarget = !%targetClient.isAdmin;
+      
+   if( ! %targetClient.matchStartReady )
+      return;   
 
    //mute options
    if ( !%isTargetSelf )
@@ -2509,14 +2515,28 @@ function DefaultGame::sendTimeLimitList( %game, %client, %key )
 
 //------------------------------------------------------------------------------
 // all global votes here
-function DefaultGame::voteChangeMission(%game, %admin, %missionDisplayName, %typeDisplayName, %mission, %missionType)
+function DefaultGame::voteChangeMission(%game, %admin, %missionDisplayName, %typeDisplayName, %missionId, %missionTypeId)
 {
+   %mission = $HostMissionFile[%missionId];
+   if ( %mission $= "" )
+   {
+      error( "Invalid mission index passed to DefaultGame::voteChangeMission!" );
+      return;
+   }
+
+   %missionType = $HostTypeName[%missionTypeId];
+   if ( %missionType $= "" )
+   {
+      error( "Invalid mission type id passed to DefaultGame::voteChangeMission!" );
+      return;
+   }
+
    if(%admin) 
    {
       messageAll('MsgAdminChangeMission', '\c2The Admin has changed the mission to %1 (%2).', %missionDisplayName, %typeDisplayName );   
       logEcho("mission changed to "@%missionDisplayName@"/"@%typeDisplayName@" (admin)");
       %game.gameOver();
-      loadMission(%mission, %missionType, false);   
+      loadMission( %mission, %missionType, false );   
    }
    else 
    {
@@ -2526,7 +2546,7 @@ function DefaultGame::voteChangeMission(%game, %admin, %missionDisplayName, %typ
          messageAll('MsgVotePassed', '\c2The mission was changed to %1 (%2) by vote.', %missionDisplayName, %typeDisplayName ); 
          logEcho("mission changed to "@%missionDisplayName@"/"@%typeDisplayName@" (vote)");
          %game.gameOver();
-         loadMission(%mission, %missionType, false);   
+         loadMission( %mission, %missionType, false );   
       }
       else
          messageAll('MsgVoteFailed', '\c2Change mission vote did not pass: %1 percent.', mFloor(%game.totalVotesFor/(ClientGroup.getCount() - $HostGameBotCount) * 100)); 
@@ -2586,8 +2606,22 @@ function DefaultGame::voteTeamDamage(%game, %admin)
 }
 
 //------------------------------------------------------------------------------
-function DefaultGame::voteTournamentMode( %game, %admin, %missionDisplayName, %typeDisplayName, %mission, %missionType )
+function DefaultGame::voteTournamentMode( %game, %admin, %missionDisplayName, %typeDisplayName, %missionId, %missionTypeId )
 {
+   %mission = $HostMissionFile[%missionId];
+   if ( %mission $= "" )
+   {
+      error( "Invalid mission index passed to DefaultGame::voteTournamentMode!" );
+      return;
+   }
+
+   %missionType = $HostTypeName[%missionTypeId];
+   if ( %missionType $= "" )
+   {
+      error( "Invalid mission type id passed to DefaultGame::voteTournamentMode!" );
+      return;
+   }
+
    %cause = "";
    if (%admin) 
    {
@@ -2904,9 +2938,6 @@ function DefaultGame::updateScoreHud(%game, %client, %tag)
 
          %index++;
       }
-
-      //clear the rest of Hud so we don't get old lines hanging around...
-      messageClient( %client, 'ClearHud', "", %tag, %index );
    }
    else
    {
@@ -2980,9 +3011,40 @@ function DefaultGame::updateScoreHud(%game, %client, %tag)
          }
       }
 
-      //clear the rest of Hud so we don't get old lines hanging around...
-      messageClient( %client, 'ClearHud', "", %tag, %index );
    }
+
+   // Tack on the list of observers:
+   %observerCount = 0;
+   for (%i = 0; %i < ClientGroup.getCount(); %i++)
+   {
+      %cl = ClientGroup.getObject(%i);
+      if (%cl.team == 0)
+         %observerCount++;
+   }
+
+   if (%observerCount > 0)
+   {
+	   messageClient( %client, 'SetLineHud', "", %tag, %index, "");
+      %index++;
+		messageClient(%client, 'SetLineHud', "", %tag, %index, '<tab:10, 310><spush><font:Univers Condensed:22>\tOBSERVERS (%1)<rmargin:260><just:right>TIME<spop>', %observerCount);
+      %index++;
+      for (%i = 0; %i < ClientGroup.getCount(); %i++)
+      {
+         %cl = ClientGroup.getObject(%i);
+         //if this is an observer
+         if (%cl.team == 0)
+         {
+            %obsTime = getSimTime() - %cl.observerStartTime;
+            %obsTimeStr = %game.formatTime(%obsTime, false);
+		      messageClient( %client, 'SetLineHud', "", %tag, %index, '<tab:20, 310>\t<clip:150>%1</clip><rmargin:260><just:right>%2',
+		                     %cl.name, %obsTimeStr );
+            %index++;
+         }
+      }
+   }
+
+   //clear the rest of Hud so we don't get old lines hanging around...
+   messageClient( %client, 'ClearHud', "", %tag, %index );
 }
 
 //------------------------------------------------------------------------------
@@ -3014,6 +3076,42 @@ function notifyMatchEnd(%time)
    else if (%seconds == 1)
       MessageAll('MsgMissionEnd', '\c2Match ends in 1 second.~wfx/misc/hunters_1.wav');
    UpdateClientTimes(%time);
+}
+
+function DefaultGame::formatTime(%game, %tStr, %includeHundredths)
+{
+   %timeInSeconds = %tStr / 1000;
+   %mins = mFloor(%timeInSeconds / 60);
+   if(%mins < 1)
+      %timeString = "00:";
+   else if(%mins < 10)
+      %timeString = "0" @ %mins @ ":";
+   else
+      %timeString = %mins @ ":";
+
+   %timeInSeconds -= (%mins * 60);
+   %secs = mFloor(%timeInSeconds);
+   if(%secs < 1)
+      %timeString = %timeString @ "00";
+   else if(%secs < 10)
+      %timeString = %timeString @ "0" @ %secs;
+   else
+      %timeString = %timeString @ %secs;
+
+   if (%includeHundredths)
+   {
+      %timeString = %timeString @ ".";
+      %timeInSeconds -= %secs;
+      %hSecs = mFloor(%timeInSeconds * 100); // will be between 0 and 999
+      if(%hSecs < 1)
+         %timeString = %timeString @ "00";
+      else if(%hSecs < 10)
+         %timeString = %timeString @ "0" @ %hSecs;
+      else
+         %timeString = %timeString @ %hSecs;
+   }
+
+   return %timeString;
 }
 
 //------------------------------------------------------------------------------

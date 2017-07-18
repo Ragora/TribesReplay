@@ -10,7 +10,11 @@ function DebriefGui::onWake( %this )
    moveMap.pop();
    if ( isObject( passengerKeys ) )
       passengerKeys.pop();
-   flyingCameraMove.pop();
+   if ( isObject( observerBlockMap ) )
+      observerBlockMap.pop();
+   if ( isObject( observerMap ) )
+      observerMap.pop();
+   //flyingCameraMove.pop();
 
    if ( isObject( debriefMap ) )
    {

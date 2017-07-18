@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------
+ //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 
 $InvincibleTime = 6;
@@ -949,11 +949,11 @@ datablock SplashData(PlayerSplash)
 
 datablock ParticleData(HumanArmorJetParticle)
 {
-   dragCoefficient      = 1.5;
+   dragCoefficient      = 0.0;
    gravityCoefficient   = 0;
    inheritedVelFactor   = 0.2;
    constantAcceleration = 0.0;
-   lifetimeMS           = 150;
+   lifetimeMS           = 50;
    lifetimeVarianceMS   = 0;
    textureName          = "particleTest";
    colors[0]     = "0.32 0.47 0.47 1.0";
@@ -1160,7 +1160,10 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
 
    rechargeRate = 0.256;
    jetForce = 26.2 * 90;
+   underwaterJetForce = 26.2 * 90 * 2.0;
+   underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  0.8;
+   underwaterJetEnergyDrain = 0.5;
    minJetEnergy = 1;
    maxJetHorizontalPercentage = 0.8;
 
@@ -1170,6 +1173,11 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    maxForwardSpeed = 14;
    maxBackwardSpeed = 13;
    maxSideSpeed = 13;
+
+   maxUnderwaterForwardSpeed = 8.4;
+   maxUnderwaterBackwardSpeed = 7.8;
+   maxUnderwaterSideSpeed = 7.8;
+
 
    jumpForce = 8.3 * 90;
    jumpEnergyDrain = 0;
@@ -1217,9 +1225,9 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    splashEmitter[0] = PlayerFoamDropletsEmitter;
    splashEmitter[1] = PlayerFoamEmitter;
    splashEmitter[2] = PlayerBubbleEmitter;
-   mediumSplashSoundVelocity = 25.0;   
-   hardSplashSoundVelocity = 35.0;   
-   exitSplashSoundVelocity = 12.0;
+   mediumSplashSoundVelocity = 10.0;   
+   hardSplashSoundVelocity = 20.0;   
+   exitSplashSoundVelocity = 5.0;
 
    // Controls over slope of runnable/jumpable surfaces
    runSurfaceAngle  = 70;
@@ -1238,8 +1246,8 @@ datablock PlayerData(LightMaleHumanArmor) : LightPlayerDamageProfile
    upResistFactor = 0.3;
    
    // heat inc'ers and dec'ers
-   heatDecayPerSec      = 1.0 / 6.0; // takes 6 seconds to clear heat sig.
-   heatIncreasePerSec   = 1.0 / 3.0; // takes 3 seconds of constant jet to get full heat sig.
+   heatDecayPerSec      = 1.0 / 3.0; // takes 3 seconds to clear heat sig.
+   heatIncreasePerSec   = 1.0 / 3.0; // takes 3.0 seconds of constant jet to get full heat sig.
 
    footstepSplashHeight = 0.35;
    //Footstep Sounds
@@ -1406,7 +1414,10 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
 
    rechargeRate = 0.256;
    jetForce = 24.6 * 130;
+   underwaterJetForce = 24.6 * 130 * 2.0;
+   underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  1.0;
+   underwaterJetEnergyDrain =  0.5;
    minJetEnergy = 1;
    maxJetHorizontalPercentage = 0.8;
 
@@ -1417,12 +1428,16 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    maxBackwardSpeed = 10;
    maxSideSpeed = 10;
 
+   maxUnderwaterForwardSpeed = 6.6;
+   maxUnderwaterBackwardSpeed = 6;
+   maxUnderwaterSideSpeed = 6;
+
    recoverDelay = 9;
    recoverRunForceScale = 1.2;
    
    // heat inc'ers and dec'ers
-   heatDecayPerSec      = 1.0 / 6.0; // takes 6 seconds to clear heat sig.
-   heatIncreasePerSec   = 1.0 / 3.0; // takes 3 seconds of constant jet to get full heat sig.
+   heatDecayPerSec      = 1.0 / 3.0; // takes 3 seconds to clear heat sig.
+   heatIncreasePerSec   = 1.0 / 3.0; // takes 3.0 seconds of constant jet to get full heat sig.
 
    jumpForce = 8.4 * 130;
    jumpEnergyDrain = 0;
@@ -1484,9 +1499,9 @@ datablock PlayerData(MediumMaleHumanArmor) : MediumPlayerDamageProfile
    splashEmitter[0] = PlayerFoamDropletsEmitter;
    splashEmitter[1] = PlayerFoamEmitter;
    splashEmitter[2] = PlayerBubbleEmitter;
-   mediumSplashSoundVelocity = 25.0;   
-   hardSplashSoundVelocity = 35.0;   
-   exitSplashSoundVelocity = 12.0;
+   mediumSplashSoundVelocity = 10.0;   
+   hardSplashSoundVelocity = 20.0;   
+   exitSplashSoundVelocity = 5.0;
 
    footstepSplashHeight = 0.35;
    //Footstep Sounds
@@ -1652,7 +1667,10 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
 
    rechargeRate = 0.256;
    jetForce = 21.4 * 180;
+   underwaterJetForce = 21.4 * 180 * 2.0;
+   underwaterVertJetFactor = 1.5;
    jetEnergyDrain =  1.1;
+   underwaterJetEnergyDrain =  0.55;
    minJetEnergy = 1;
    maxJetHorizontalPercentage = 0.8;
 
@@ -1663,6 +1681,10 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    maxBackwardSpeed = 5;
    maxSideSpeed = 5;
 
+   maxUnderwaterForwardSpeed = 3.9;
+   maxUnderwaterBackwardSpeed = 3;
+   maxUnderwaterSideSpeed = 3;
+
    recoverDelay = 9;
    recoverRunForceScale = 1.2;
 
@@ -1672,8 +1694,8 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    jumpDelay = 0;
    
    // heat inc'ers and dec'ers
-   heatDecayPerSec      = 1.0 / 6.0; // takes 6 seconds to clear heat sig.
-   heatIncreasePerSec   = 1.0 / 3.0; // takes 3 seconds of constant jet to get full heat sig.
+   heatDecayPerSec      = 1.0 / 3.0; // takes 3 seconds to clear heat sig.
+   heatIncreasePerSec   = 1.0 / 3.0; // takes 3.0 seconds of constant jet to get full heat sig.
 
    // Controls over slope of runnable/jumpable surfaces
    runSurfaceAngle  = 70;
@@ -1728,9 +1750,9 @@ datablock PlayerData(HeavyMaleHumanArmor) : HeavyPlayerDamageProfile
    splashEmitter[0] = PlayerFoamDropletsEmitter;
    splashEmitter[1] = PlayerFoamEmitter;
    splashEmitter[2] = PlayerBubbleEmitter;
-   mediumSplashSoundVelocity = 25.0;   
-   hardSplashSoundVelocity = 35.0;   
-   exitSplashSoundVelocity = 12.0;
+   mediumSplashSoundVelocity = 10.0;   
+   hardSplashSoundVelocity = 20.0;   
+   exitSplashSoundVelocity = 5.0;
 
    footstepSplashHeight = 0.35;
    //Footstep Sounds
@@ -2107,7 +2129,7 @@ function Armor::onCollision(%this,%obj,%col)
                return;
             }
          }
-         if(%col.getDataBlock().noEnemyControl && %obj.team != %col.team)
+         if(%col.noEnemyControl && %obj.team != %col.team)
             return;
             
          commandToClient(%obj.client,'SetDefaultVehicleKeys', true);
@@ -2455,7 +2477,17 @@ function Armor::damageObject(%data, %targetObject, %sourceObject, %position, %am
    else if(isObject(%sourceObject) && %sourceObject.getClassName() $= "Turret")
       %sourceTeam = getTargetSensorGroup(%sourceObject.getTarget());
    else
-      %sourceTeam = %sourceObject ? getTargetSensorGroup(%sourceObject.getTarget()) : -1;
+   {
+      if (%sourceObject && %sourceObject.getTarget() >= 0 )
+      {
+         %sourceTeam = getTargetSensorGroup(%sourceObject.getTarget());
+      }
+      else
+      {
+         %sourceTeam = -1;
+      }
+   }
+
    // if teamdamage is off, and both parties are on the same team
    // (but are not the same person), apply no damage
    if(!$teamDamage && (%targetClient != %sourceClient) && (%targetTeam == %sourceTeam))

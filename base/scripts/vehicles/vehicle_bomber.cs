@@ -101,7 +101,7 @@ datablock AudioProfile(BomberBombIdleSound)
 // VEHICLE CHARACTERISTICS
 //**************************************************************
 
-datablock FlyingVehicleData(BomberFlyer) : AirVehicleDamageProfile
+datablock FlyingVehicleData(BomberFlyer) : BomberDamageProfile
 {
    spawnOffset = "0 0 2";
 
@@ -129,6 +129,8 @@ datablock FlyingVehicleData(BomberFlyer) : AirVehicleDamageProfile
    cameraOffset = 5;
    cameraLag = 1.0;
    explosion = LargeAirVehicleExplosion;
+	explosionDamage = 0.5;
+	explosionRadius = 5.0;
 
    maxDamage = 2.80;     // Total health
    destroyedLevel = 2.80;   // Damage textures show up at this health level
@@ -139,12 +141,6 @@ datablock FlyingVehicleData(BomberFlyer) : AirVehicleDamageProfile
    minDrag = 60;           // Linear Drag (eventually slows you down when not thrusting...constant drag)
    rotationalDrag = 1800;        // Angular Drag (dampens the drift after you stop moving the mouse...also tumble drag)
    rechargeRate = 0.8;
-
-   // Turbo Jet
-   jetForce = 5000;      // Afterburner thrust (this is in addition to normal thrust)
-   minJetEnergy = 40.0;     // Afterburner can't be used if below this threshhold.
-   jetEnergyDrain = 2.0;       // Energy use of the afterburners (low number is less drain...can be fractional)
-   vertThrustMultiple = 2.0;
 
    // Auto stabilize speed
    maxAutoSpeed = 15;       // Autostabilizer kicks in when less than this speed. (meters/second)
@@ -162,6 +158,12 @@ datablock FlyingVehicleData(BomberFlyer) : AirVehicleDamageProfile
    rollForce = 8;                // Auto-roll (self-correction to right you after you roll/invert)
    hoverHeight = 5;        // Height off the ground at rest
    createHoverHeight = 3;  // Height off the ground when created
+
+   // Turbo Jet
+   jetForce = 3000;      // Afterburner thrust (this is in addition to normal thrust)
+   minJetEnergy = 40.0;     // Afterburner can't be used if below this threshhold.
+   jetEnergyDrain = 3.0;       // Energy use of the afterburners (low number is less drain...can be fractional)
+   vertThrustMultiple = 2.0;
 
    dustEmitter = LargeVehicleLiftoffDustEmitter;
    triggerDustHeight = 4.0;
@@ -181,13 +183,16 @@ datablock FlyingVehicleData(BomberFlyer) : AirVehicleDamageProfile
    bodyFriction = 0;     // Don't mess with this.
    bodyRestitution = 0.5;   // When you hit the ground, how much you rebound. (between 0 and 1)
    minRollSpeed = 0;     // Don't mess with this.
-   minImpactSpeed = 8;      // If hit ground at speed above this then it's an impact. Meters/second
-   softImpactSpeed = 10;       // Sound hooks. This is the soft hit.
+   softImpactSpeed = 20;       // Sound hooks. This is the soft hit.
    hardImpactSpeed = 25;    // Sound hooks. This is the hard hit.
-   speedDamageScale = 0.035;
 
-   collDamageThresholdVel = 20.0;
-   collDamageMultiplier   = 0.025;
+   // Ground Impact Damage (uses DamageType::Ground)
+   minImpactSpeed = 20;      // If hit ground at speed above this then it's an impact. Meters/second
+   speedDamageScale = 0.150;
+
+   // Object Impact Damage (uses DamageType::Impact)
+   collDamageThresholdVel = 25;
+   collDamageMultiplier   = 0.030;
 
    //
    minTrailSpeed = 15;      // The speed your contrail shows up at.
@@ -204,9 +209,9 @@ datablock FlyingVehicleData(BomberFlyer) : AirVehicleDamageProfile
 
    //
    softSplashSoundVelocity = 15.0; 
-   mediumSplashSoundVelocity = 30.0;   
-   hardSplashSoundVelocity = 60.0;   
-   exitSplashSoundVelocity = 20.0;
+   mediumSplashSoundVelocity = 20.0;   
+   hardSplashSoundVelocity = 30.0;   
+   exitSplashSoundVelocity = 10.0;
    
    exitingWater      = VehicleExitWaterHardSound;
    impactWaterEasy   = VehicleImpactWaterSoftSound;

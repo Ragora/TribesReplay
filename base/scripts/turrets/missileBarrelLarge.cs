@@ -60,15 +60,15 @@ datablock SeekerProjectileData(TurretMissile)
    puffEmitter         = MissilePuffEmitter;
 
    lifetimeMS          = 20000;
-   muzzleVelocity      = 65.0;
-   turningSpeed        = 40.0;
+   muzzleVelocity      = 80.0;
+   turningSpeed        = 90.0;
    
    proximityRadius     = 4;
 
-   terrainAvoidanceSpeed = 140;
-   terrainScanAhead      = 30;
-   terrainHeightFail     = 18;
-   terrainAvoidanceRadius = 60;
+   terrainAvoidanceSpeed = 180;
+   terrainScanAhead      = 25;
+   terrainHeightFail     = 12;
+   terrainAvoidanceRadius = 100;
 
    useFlechette = true;
    flechetteDelayMs = 550;
@@ -93,14 +93,14 @@ datablock TurretImageData(MissileBarrelLarge)
    isSeeker     = true;
    seekRadius   = 300;
    maxSeekAngle = 30;
-   seekTime     = 1.5;
+   seekTime     = 1.0;
    minSeekHeat  = 0.7;
    emap = true;
    minTargetingDistance = 40;
 
    // Turret parameters
-   activationMS      = 3000;
-   deactivateDelayMS = 2500;
+   activationMS      = 500;
+   deactivateDelayMS = 1000;
    thinkTimeMS       = 200;
    degPerSecTheta    = 580;
    degPerSecPhi      = 1080;

@@ -118,15 +118,14 @@ function EmailMessageDelete()
 //-----------------------------------------------------------------------------
 function DoEmailDelete(%qnx, %mid, %owner, %key, %row)
 {		
-	error("QNX: " @ %qnx TAB %mid TAB %row);
 	EM_ReplyBtn.setActive( false );
 	EM_ReplyToAllBtn.setActive( false );
 	EM_ForwardBtn.setActive( false );
 	EM_DeleteBtn.setActive( false );
 	EM_BlockBtn.setActive( false );
 
-	EmailMessageVector.deleteLine(EmailMessageVector.getLineIndexByTag(%mid));
 	EM_Browser.removeRowByIndex( %row );
+	EmailMessageVector.deleteLine(EmailMessageVector.getLineIndexByTag(%mid));
 
 	if(%qnx==6)
 		EmailGui.dumpCache();
@@ -300,7 +299,7 @@ function EmailGetTextDisplay(%text)
 	else
 		%curList = ",";
 
-  	while((%pos = strpos(%curList, ",", %strStart)) != -1 && %cl++ < 50)
+  	while((%pos = strpos(%curList, ",", %strStart)) != -1)
   	{  		
 		if(%strStart==0)
 				%to = trim(getLinkNameOnly(getSubStr(%curList, %strStart, %pos-%strStart)));
@@ -321,7 +320,7 @@ function EmailGetTextDisplay(%text)
 	else
 		%curList = ",";
 
-  	while((%pos = strpos(%curList, ",", %strStart)) != -1 && %ck++<50)
+  	while((%pos = strpos(%curList, ",", %strStart)) != -1)
   	{  				
 		if(%strStart==0)
 				%ccLine = getLinkNameOnly(getSubStr(%curList, %strStart, %pos-%strStart));
@@ -362,13 +361,13 @@ function CheckEmail(%calledFromSched)
 {	
 	if(EmailGui.checkingEmail)
 	{
-		echo("Check In Progress");
+//		echo("Check In Progress");
 		return;
 	}
 
 	if(EmailGui.checkSchedule && !%calledFromSched)
 	{
-		echo("Email Schedule " @ EmailGui.checkSchedule @ "Cancelled");
+//		echo("Email Schedule " @ EmailGui.checkSchedule @ "Cancelled");
 		cancel(EmailGui.checkSchedule); // cancel schedule
 	}
 	EmailGui.checkSchedule = "";
@@ -431,7 +430,7 @@ function EMailComposeDlg::onDatabaseQueryResult(%this, %status, %RowCount_Result
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %status TAB %RowCount_Result);
+//	echo("RECV: " @ %status TAB %RowCount_Result);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -460,6 +459,8 @@ function EmailComposeDlg::Cancel(%this)
 //-----------------------------------------------------------------------------
 function EmailComposeDlg::SendMail(%this)
 {
+	$EmailToAddress = Email_ToEdit.getValue();
+	$EmailSubject = EMail_Subject.getValue();
 	// NEED TO CHECK FOR DUPLICATES
 	if(trim($EmailToAddress) $= "")
 		MessageBoxOK("No Address","TO Address may not be left blank.  Please enter a player name to send this message to.");
@@ -476,7 +477,7 @@ function EMailBlockDlg::onDatabaseQueryResult(%this,%status,%ResultString,%key)
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %status TAB %ResultString);
+//	echo("RECV: " @ %status TAB %ResultString);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -506,7 +507,7 @@ function EMailBlockDlg::onDatabaseRow(%this,%row,%isLastRow,%key)
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %row TAB %isLastRow);
+//	echo("RECV: " @ %row TAB %isLastRow);
 	switch$(%this.state)
 	{
 		case "names":
@@ -595,7 +596,7 @@ function AddressDlg::onDatabaseQueryResult(%this,%status,%resultString,%key)
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %status TAB %resultString);
+//	echo("RECV: " @ %status TAB %resultString);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -663,7 +664,7 @@ function AddressDlg::onDatabaseRow(%this,%row,%isLastRow,%key)
 	if(%this.key != %key)
 		return;
 
-	echo("RECV : " @ %row);
+//	echo("RECV : " @ %row);
 	switch$(%this.state)
 	{
 		case "memberList":
@@ -913,7 +914,6 @@ function AddressDlg::onWake(%this)
 //-- EMailGui ----------------------------------------------------------------
 function EmailGui::onWake(%this)
 {
-	error("EMailGui.onWake" TAB %this.cacheFile);
 	// Make these buttons inactive until a message is selected:
 	EM_ReplyBtn.setActive( false );
 	EM_ReplyToAllBtn.setActive( false );
@@ -976,7 +976,7 @@ function EMailGui::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -988,6 +988,7 @@ function EMailGui::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
 					%this.messageCount = 0;
 					%this.message = "";
 					%this.state = "NewMail";
+					%this.getCache();
 				}
 				else
 				{
@@ -1000,7 +1001,7 @@ function EMailGui::onDatabaseQueryResult(%this, %status, %RowCount_Result, %key)
 						EmailGui.btnClicked = false;
 					}
 		   			%this.checkSchedule = schedule(1000 * 60 * 5, 0, CheckEmail, true);
-					echo("scheduling Email check " @ %this.checkSchedule @ " in 5 minutes");
+//					echo("scheduling Email check " @ %this.checkSchedule @ " in 5 minutes");
 				}
 			case "sendMail":
 				%this.state = "done";
@@ -1054,7 +1055,7 @@ function EMailGui::onDatabaseRow(%this, %row,%isLastRow,%key)
 	if(%this.key != %key)
 		return;
 
-	echo("RECV: " @ %row NL %isLastRow);
+//	echo("RECV: " @ %row NL %isLastRow);
 	switch$(%this.state)
 	{
 		case "DeletedMail":
@@ -1075,10 +1076,7 @@ function EMailGui::onDatabaseRow(%this, %row,%isLastRow,%key)
 			EmailMessageVector.pushBackLine(%this.message, getField(%this.message, 0));
 			if(%isLastRow)
 				%this.outputVector();
-		case "NewMail":
-			if(%this.messageCount++ == 1)
-				%this.getCache();
-			
+		case "NewMail":			
 			%this.checkingEmail = "";
 			%ID = getField(%row,0);
 			%senderQuad = getFields(%row,1,4);
@@ -1110,7 +1108,7 @@ function EMailGui::onDatabaseRow(%this, %row,%isLastRow,%key)
 				EmailGui.dumpCache();
 				EmailGui.loadCache();
 		   		%this.checkSchedule = schedule(1000 * 60 * 5, 0, CheckEmail, true);
-				echo("scheduling Email check " @ %this.checkSchedule @ " in 5 minutes");
+//				echo("scheduling Email check " @ %this.checkSchedule @ " in 5 minutes");
 			}
 	}
 }
@@ -1175,8 +1173,7 @@ function EmailGui::loadCache( %this )
    EM_Browser.clear();
    EMailMessageVector.clear();
    EMailInboxBodyText.setText("");
-	%fileName = $EmailCachePath @ "email0";
-	error("EMAIL CACHE" @ %fileName);
+   %fileName = $EmailCachePath @ "email0";
    %file = new FileObject();
    if ( %this.cacheFile $= "" )
    {
@@ -1220,17 +1217,6 @@ function EmailGui::dumpCache( %this )
 {
    %guid = getField( WONGetAuthInfo(), 3 );
    if ( %this.cacheFile $= "" ) %this.cacheFile = "email0";
-//   {
-//      %base = $EmailCachePath @ "email";
-//      %num = 0;
-//      %cacheFile = %base @ %num;
-//      while ( isFile( %cacheFile ) )
-//      {
-//         %num++;
-//         %cacheFile = %base @ %num;
-//      }
-//      %this.cacheFile = %cacheFile;
-//   }
    EmailMessageVector.dump( $EmailCachePath @ %this.cacheFile, %guid );
 }
 //-----------------------------------------------------------------------------

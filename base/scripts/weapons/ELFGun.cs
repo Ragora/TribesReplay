@@ -50,7 +50,49 @@ datablock AudioProfile(ELFHitTargetSound)
 };
 
 //--------------------------------------
-// Projectile
+// Sparks
+//--------------------------------------
+datablock ParticleData(ELFSparks)
+{
+   dragCoefficient      = 1;
+   gravityCoefficient   = 0.0;
+   inheritedVelFactor   = 0.2;
+   constantAcceleration = 0.0;
+   lifetimeMS           = 200;
+   lifetimeVarianceMS   = 0;
+   textureName          = "special/blueSpark";
+   colors[0]     = "0.8 0.8 1.0 1.0";
+   colors[1]     = "0.8 0.8 1.0 1.0";
+   colors[2]     = "0.8 0.8 1.0 0.0";
+   sizes[0]      = 0.35;
+   sizes[1]      = 0.15;
+   sizes[2]      = 0.0;
+   times[0]      = 0.0;
+   times[1]      = 0.5;
+   times[2]      = 1.0;
+
+};
+
+datablock ParticleEmitterData(ELFSparksEmitter)
+{
+   ejectionPeriodMS = 5;
+   periodVarianceMS = 0;
+   ejectionVelocity = 4;
+   velocityVariance = 2;
+   ejectionOffset   = 0.0;
+   thetaMin         = 0;
+   thetaMax         = 180;
+   phiReferenceVel  = 0;
+   phiVariance      = 360;
+   overrideAdvances = false;
+   orientParticles  = true;
+//   lifetimeMS       = 100;
+   particles = "ELFSparks";
+};
+
+
+//--------------------------------------
+// Projectile                    
 //--------------------------------------
 datablock ELFProjectileData(BasicELF)
 {
@@ -77,6 +119,7 @@ datablock ELFProjectileData(BasicELF)
    textures[1] = "special/ELFLightning";
    textures[2] = "special/BlueImpact";
 
+   emitter = ELFSparksEmitter;
 };
 
 //--------------------------------------

@@ -92,11 +92,25 @@ new GuiControl(OptionsDlg) {
 			maxLength = "255";
 				simpleStyle = "0";
 		};
-		new ShellTabButton(OP_ControlsTab) {
+		new ShellTabButton(OP_VoiceTab) {
 			profile = "ShellTabProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
 			position = "19 166";
+			extent = "108 38";
+			minExtent = "48 38";
+			visible = "1";
+			command = "OptionsDlg.setPane(Voice);";
+			helpTag = "0";
+			text = "VOICE";
+			maxLength = "255";
+				simpleStyle = "0";
+		};
+		new ShellTabButton(OP_ControlsTab) {
+			profile = "ShellTabProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "19 196";
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
@@ -110,7 +124,7 @@ new GuiControl(OptionsDlg) {
 			profile = "ShellTabProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			position = "19 196";
+			position = "19 226";
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
@@ -124,7 +138,7 @@ new GuiControl(OptionsDlg) {
 			profile = "ShellTabProfile";
 			horizSizing = "right";
 			vertSizing = "bottom";
-			position = "19 226";
+			position = "19 256";
 			extent = "108 38";
 			minExtent = "48 38";
 			visible = "1";
@@ -154,7 +168,7 @@ new GuiControl(OptionsDlg) {
 			position = "138 42";
 			extent = "437 316";
 			minExtent = "16 18";
-			visible = "1";
+			visible = "0";
 			helpTag = "0";
 
 			new GuiTextCtrl() {
@@ -416,10 +430,64 @@ new GuiControl(OptionsDlg) {
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
+				profile = "ShellTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "27 88";
+				extent = "72 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Interior Detail:";
+				maxLength = "255";
+			};
+			new ShellSliderCtrl(OP_InteriorDetailSlider) {
+				profile = "ShellSliderProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "37 103";
+				extent = "170 24";
+				minExtent = "12 24";
+				visible = "1";
+				variable = "value";
+				helpTag = "0";
+				range = "0.300000 1.000000";
+				ticks = "1000";
+				value = "1";
+				usePlusMinus = "1";
+			};
+			new GuiTextCtrl() {
+				profile = "ShellTextProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "231 88";
+				extent = "85 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Visible Distance:";
+				maxLength = "255";
+			};
+			new ShellSliderCtrl(OP_VisibleDistanceSlider) {
+				profile = "ShellSliderProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "241 103";
+				extent = "170 24";
+				minExtent = "12 24";
+				visible = "1";
+				variable = "value";
+				helpTag = "0";
+				range = "0.600000 1.000000";
+				ticks = "400";
+				value = "1";
+				usePlusMinus = "1";
+			};
+			new GuiTextCtrl() {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "79 100";
+				position = "79 137";
 				extent = "70 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -431,7 +499,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellPopupProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "146 91";
+				position = "146 128";
 				extent = "200 36";
 				minExtent = "49 36";
 				visible = "1";
@@ -448,7 +516,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "35 130";
+				position = "35 167";
 				extent = "114 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -460,7 +528,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellPopupProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "146 121";
+				position = "146 158";
 				extent = "200 36";
 				minExtent = "49 36";
 				visible = "1";
@@ -477,7 +545,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "31 165";
+				position = "31 196";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
@@ -490,7 +558,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "236 165";
+				position = "236 196";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
@@ -503,7 +571,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "31 195";
+				position = "31 226";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
@@ -516,7 +584,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "236 195";
+				position = "236 226";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
@@ -529,7 +597,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "31 225";
+				position = "31 256";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
@@ -542,7 +610,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "236 225";
+				position = "236 256";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
@@ -554,40 +622,13 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "31 255";
+				position = "133 286";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
 				helpTag = "0";
 				text = "VERTEX LIGHTING";
 				maxLength = "255";
-			};
-			new GuiTextCtrl() {
-				profile = "ShellTextProfile";
-				horizSizing = "right";
-				vertSizing = "bottom";
-				position = "231 262";
-				extent = "85 22";
-				minExtent = "8 8";
-				visible = "1";
-				helpTag = "0";
-				text = "Visible Distance:";
-				maxLength = "255";
-			};
-			new ShellSliderCtrl(OP_VisibleDistanceSlider) {
-				profile = "ShellSliderProfile";
-				horizSizing = "right";
-				vertSizing = "bottom";
-				position = "241 277";
-				extent = "170 24";
-				minExtent = "12 24";
-				visible = "1";
-				variable = "value";
-				helpTag = "0";
-				range = "0.600000 1.000000";
-				ticks = "400";
-				value = "1";
-				usePlusMinus = "1";
 			};
 		};
 		new ShellFieldCtrl(OP_TexturesPane) {
@@ -678,9 +719,9 @@ new GuiControl(OptionsDlg) {
 				visible = "1";
 				variable = "value";
 				helpTag = "0";
-				range = "0.000000 5.000000";
+				range = "0.000000 1.000000";
 				ticks = "6";
-				value = "4";
+				value = "1";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
@@ -705,9 +746,9 @@ new GuiControl(OptionsDlg) {
 				visible = "1";
 				variable = "value";
 				helpTag = "0";
-				range = "0.000000 5.000000";
+				range = "0.000000 1.000000";
 				ticks = "6";
-				value = "4";
+				value = "1";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl() {
@@ -732,9 +773,9 @@ new GuiControl(OptionsDlg) {
 				visible = "1";
 				variable = "value";
 				helpTag = "0";
-				range = "0.000000 5.000000";
+				range = "0.000000 1.000000";
 				ticks = "6";
-				value = "4";
+				value = "1";
 				usePlusMinus = "1";
 			};
 			new GuiTextCtrl(OP_CompressLabel) {
@@ -899,8 +940,8 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "252 43";
-				extent = "152 30";
+				position = "249 42";
+				extent = "160 30";
 				minExtent = "26 27";
 				visible = "1";
 				variable = "$pref::Audio::environmentEnabled";
@@ -912,7 +953,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "10 47";
+				position = "10 46";
 				extent = "72 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -924,7 +965,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellPopupProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "79 38";
+				position = "79 37";
 				extent = "169 36";
 				minExtent = "49 36";
 				visible = "1";
@@ -938,10 +979,97 @@ new GuiControl(OptionsDlg) {
 				noButtonStyle = "0";
 			};
 			new GuiTextCtrl() {
+				profile = "ShellTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "11 97";
+				extent = "72 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Frequency:";
+				maxLength = "255";
+			};
+			new ShellPopupMenu(OP_AudioFrequencyMenu) {
+				profile = "ShellPopupProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "80 88";
+				extent = "169 36";
+				minExtent = "49 36";
+				visible = "1";
+				helpTag = "0";
+				text = "Select Frequency";
+				maxLength = "255";
+				maxPopupHeight = "200";
+				buttonBitmap = "gui/shll_pulldown";
+				rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+				selectedBarBitmap = "gui/shll_pulldownbar_act";
+				noButtonStyle = "0";
+			};
+			new GuiTextCtrl() {
+				profile = "ShellTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "11 127";
+				extent = "72 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Bit Rate:";
+				maxLength = "255";
+			};
+			new ShellPopupMenu(OP_AudioBitRateMenu) {
+				profile = "ShellPopupProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "80 118";
+				extent = "100 36";
+				minExtent = "49 36";
+				visible = "1";
+				helpTag = "0";
+				text = "Select Bit Rate";
+				maxLength = "255";
+				maxPopupHeight = "200";
+				buttonBitmap = "gui/shll_pulldown";
+				rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+				selectedBarBitmap = "gui/shll_pulldownbar_act";
+				noButtonStyle = "0";
+			};
+			new GuiTextCtrl() {
+				profile = "ShellTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "221 127";
+				extent = "60 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Channels:";
+				maxLength = "255";
+			};
+			new ShellPopupMenu(OP_AudioChannelsMenu) {
+				profile = "ShellPopupProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "278 118";
+				extent = "100 36";
+				minExtent = "49 36";
+				visible = "1";
+				helpTag = "0";
+				text = "Select # Channels";
+				maxLength = "255";
+				maxPopupHeight = "200";
+				buttonBitmap = "gui/shll_pulldown";
+				rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+				selectedBarBitmap = "gui/shll_pulldownbar_act";
+				noButtonStyle = "0";
+			};
+			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "26 89";
+				position = "26 177";
 				extent = "79 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -953,7 +1081,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "36 104";
+				position = "36 192";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -969,7 +1097,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 89";
+				position = "231 177";
 				extent = "79 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -981,7 +1109,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 104";
+				position = "241 192";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -996,7 +1124,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "26 129";
+				position = "26 217";
 				extent = "60 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1008,7 +1136,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "36 144";
+				position = "36 232";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -1024,7 +1152,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 129";
+				position = "231 217";
 				extent = "97 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1036,7 +1164,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 144";
+				position = "241 232";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -1051,7 +1179,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "31 179";
+				position = "31 267";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
@@ -1064,7 +1192,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 169";
+				position = "231 257";
 				extent = "74 22";
 				minExtent = "8 8";
 				visible = "0";
@@ -1076,7 +1204,7 @@ new GuiControl(OptionsDlg) {
 				profile = "DisabledTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 169";
+				position = "231 257";
 				extent = "74 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1088,7 +1216,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 184";
+				position = "241 272";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -1100,15 +1228,26 @@ new GuiControl(OptionsDlg) {
 				value = "0.8";
 				usePlusMinus = "1";
 			};
+		};
+		new ShellFieldCtrl(OP_VoicePane) {
+			profile = "ShellFieldProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "138 42";
+			extent = "437 316";
+			minExtent = "16 18";
+			visible = "1";
+			helpTag = "0";
+
 			new ShellToggleButton(OP_MicrophoneEnabledTgl) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "31 231";
+				position = "31 13";
 				extent = "170 30";
 				minExtent = "26 27";
 				visible = "1";
-				variable = "$pref::Audio::microphoneEnabled";
+				variable = "$pref::Audio::enableVoiceCapture";
 				helpTag = "0";
 				text = "MICROPHONE ENABLED";
 				maxLength = "255";
@@ -1117,7 +1256,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "232 226";
+				position = "232 8";
 				extent = "173 38";
 				minExtent = "32 38";
 				visible = "1";
@@ -1130,7 +1269,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "28 261";
+				position = "28 43";
 				extent = "102 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1142,7 +1281,7 @@ new GuiControl(OptionsDlg) {
 				profile = "DisabledTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "28 261";
+				position = "28 43";
 				extent = "102 22";
 				minExtent = "8 8";
 				visible = "0";
@@ -1154,7 +1293,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "38 276";
+				position = "38 58";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -1169,7 +1308,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 261";
+				position = "231 43";
 				extent = "123 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1181,7 +1320,7 @@ new GuiControl(OptionsDlg) {
 				profile = "DisabledTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 261";
+				position = "231 43";
 				extent = "123 22";
 				minExtent = "8 8";
 				visible = "0";
@@ -1193,7 +1332,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextCenterProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "271 279";
+				position = "271 61";
 				extent = "110 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1205,7 +1344,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 276";
+				position = "241 58";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -1216,6 +1355,88 @@ new GuiControl(OptionsDlg) {
 				ticks = "5000";
 				value = "4.78947";
 				usePlusMinus = "1";
+			};
+			new GuiTextCtrl(OP_VoiceListenLabel) {
+				profile = "ShellTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "46 96";
+				extent = "140 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Voice Listen Quality:";
+				maxLength = "255";
+			};
+			new ShellPopupMenu(OP_VoiceListenMenu) {
+				profile = "ShellPopupProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "183 87";
+				extent = "169 36";
+				minExtent = "49 36";
+				visible = "1";
+				helpTag = "0";
+				text = "Select Quality";
+				maxLength = "255";
+				maxPopupHeight = "200";
+				buttonBitmap = "gui/shll_pulldown";
+				rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+				selectedBarBitmap = "gui/shll_pulldownbar_act";
+				noButtonStyle = "0";
+			};
+			new GuiTextCtrl(OP_VoiceSendLabel) {
+				profile = "ShellTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "46 126";
+				extent = "140 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Voice Send Quality:";
+				maxLength = "255";
+			};
+			new ShellPopupMenu(OP_VoiceSendMenu) {
+				profile = "ShellPopupProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "183 117";
+				extent = "169 36";
+				minExtent = "49 36";
+				visible = "1";
+				helpTag = "0";
+				text = "Select Quality";
+				maxLength = "255";
+				maxPopupHeight = "200";
+				buttonBitmap = "gui/shll_pulldown";
+				rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+				selectedBarBitmap = "gui/shll_pulldownbar_act";
+				noButtonStyle = "0";
+			};
+			new GuiTextCtrl(OP_VoiceListenLabel_Disabled) {
+				profile = "DisabledTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "46 96";
+				extent = "140 22";
+				minExtent = "8 8";
+				visible = "0";
+				helpTag = "0";
+				text = "Voice Listen Quality:";
+				maxLength = "255";
+			};
+			new GuiTextCtrl(OP_VoiceSendLabel_Disabled) {
+				profile = "DisabledTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "46 126";
+				extent = "140 22";
+				minExtent = "8 8";
+				visible = "0";
+				helpTag = "0";
+				text = "Voice Send Quality:";
+				maxLength = "255";
 			};
 		};
 		new ShellFieldCtrl(OP_ControlsPane) {
@@ -1232,8 +1453,8 @@ new GuiControl(OptionsDlg) {
 				profile = "NewScrollCtrlProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "2 2";
-				extent = "290 282";
+				position = "2 31";
+				extent = "290 253";
 				minExtent = "24 52";
 				visible = "1";
 				helpTag = "0";
@@ -1250,7 +1471,7 @@ new GuiControl(OptionsDlg) {
 					horizSizing = "right";
 					vertSizing = "bottom";
 					position = "4 6";
-					extent = "266 270";
+					extent = "266 241";
 					minExtent = "8 8";
 					visible = "1";
 					helpTag = "0";
@@ -1290,7 +1511,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "292 46";
+				position = "292 38";
 				extent = "140 38";
 				minExtent = "32 38";
 				visible = "1";
@@ -1303,7 +1524,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "292 84";
+				position = "292 68";
 				extent = "140 38";
 				minExtent = "32 38";
 				visible = "1";
@@ -1312,11 +1533,24 @@ new GuiControl(OptionsDlg) {
 				text = "SAVE AS";
 				simpleStyle = "0";
 			};
+			new ShellToggleButton(OP_MouseTgl) {
+				profile = "ShellRadioProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "296 116";
+				extent = "126 30";
+				minExtent = "26 27";
+				visible = "0";
+				variable = "pref::Input::MouseEnabled";
+				helpTag = "0";
+				text = "DINPUT MOUSE";
+				maxLength = "255";
+			};
 			new ShellBitmapButton(OP_ConfigureMouseBtn) {
 				profile = "ShellButtonProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "292 155";
+				position = "292 146";
 				extent = "140 38";
 				minExtent = "32 38";
 				visible = "1";
@@ -1325,31 +1559,30 @@ new GuiControl(OptionsDlg) {
 				text = "CONFIGURE MOUSE";
 				simpleStyle = "0";
 			};
-			new ShellBitmapButton(OP_ConfigureJoystickBtn) {
-				profile = "ShellButtonProfile";
-				horizSizing = "right";
-				vertSizing = "bottom";
-				position = "292 231";
-				extent = "140 38";
-				minExtent = "32 38";
-				visible = "0";
-				command = "Canvas.pushDialog(JoystickConfigDlg);";
-				helpTag = "0";
-				text = "CONFIGURE JOYSTICK";
-				simpleStyle = "0";
-			};
 			new ShellToggleButton(OP_JoystickTgl) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "296 197";
+				position = "296 194";
 				extent = "126 30";
 				minExtent = "26 27";
-				visible = "0";
-				variable = "pref::Input::JoystickEnabled";
+				visible = "1";
 				helpTag = "0";
 				text = "ENABLE JOYSTICK";
 				maxLength = "255";
+			};
+			new ShellBitmapButton(OP_ConfigureJoystickBtn) {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "292 224";
+				extent = "140 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "Canvas.pushDialog(JoystickConfigDlg);";
+				helpTag = "0";
+				text = "CONFIGURE JOYSTICK";
+				simpleStyle = "0";
 			};
 			new GuiTextCtrl() {
 				profile = "ShellTextRightProfile";
@@ -1386,6 +1619,35 @@ new GuiControl(OptionsDlg) {
 					text = "grave";
 				};
 			};
+			new GuiTextCtrl() {
+				profile = "ShellTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "22 9";
+				extent = "100 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Control Group:";
+				maxLength = "255";
+			};
+			new ShellPopupMenu(OP_ControlGroupMenu) {
+				profile = "ShellPopupProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "118 0";
+				extent = "180 36";
+				minExtent = "49 36";
+				visible = "1";
+				helpTag = "0";
+				text = "Select Control Group";
+				maxLength = "255";
+				maxPopupHeight = "200";
+				buttonBitmap = "gui/shll_pulldown";
+				rolloverBarBitmap = "gui/shll_pulldownbar_rol";
+				selectedBarBitmap = "gui/shll_pulldownbar_act";
+				noButtonStyle = "0";
+			};
 		};
 		new ShellFieldCtrl(OP_NetworkPane) {
 			profile = "ShellFieldProfile";
@@ -1398,10 +1660,61 @@ new GuiControl(OptionsDlg) {
 			helpTag = "0";
 
 			new GuiTextCtrl() {
+				profile = "ShellTextRightProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "9 16";
+				extent = "60 22";
+				minExtent = "8 8";
+				visible = "1";
+				helpTag = "0";
+				text = "Presets:";
+				maxLength = "255";
+			};
+			new ShellBitmapButton() {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "68 8";
+				extent = "110 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "OP_NetworkPane.applyPresets( \"modem1\" );";
+				helpTag = "0";
+				text = "28.8 MODEM";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton() {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "170 8";
+				extent = "110 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "OP_NetworkPane.applyPresets( \"modem2\" );";
+				helpTag = "0";
+				text = "56K MODEM";
+				simpleStyle = "0";
+			};
+			new ShellBitmapButton() {
+				profile = "ShellButtonProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "272 8";
+				extent = "110 38";
+				minExtent = "32 38";
+				visible = "1";
+				command = "OP_NetworkPane.applyPresets( \"lan\" );";
+				helpTag = "0";
+				text = "DSL/LAN";
+				simpleStyle = "0";
+			};
+			new GuiTextCtrl() {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "26 8";
+				position = "26 52";
 				extent = "65 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1413,7 +1726,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "36 23";
+				position = "36 67";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -1428,7 +1741,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "231 8";
+				position = "231 52";
 				extent = "62 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1440,7 +1753,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "241 23";
+				position = "241 67";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -1455,7 +1768,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "26 48";
+				position = "26 92";
 				extent = "99 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1467,7 +1780,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellSliderProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "36 63";
+				position = "36 107";
 				extent = "170 24";
 				minExtent = "12 24";
 				visible = "1";
@@ -1482,7 +1795,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "11 119";
+				position = "11 153";
 				extent = "200 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1494,7 +1807,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellPopupProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "208 110";
+				position = "208 144";
 				extent = "180 36";
 				minExtent = "49 36";
 				visible = "1";
@@ -1511,7 +1824,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellTextRightProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "67 157";
+				position = "67 191";
 				extent = "144 22";
 				minExtent = "8 8";
 				visible = "1";
@@ -1523,7 +1836,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellPopupProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "208 148";
+				position = "208 182";
 				extent = "180 36";
 				minExtent = "49 36";
 				visible = "1";
@@ -1540,7 +1853,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "123 208";
+				position = "123 233";
 				extent = "190 30";
 				minExtent = "26 27";
 				visible = "1";
@@ -1553,7 +1866,7 @@ new GuiControl(OptionsDlg) {
 				profile = "ShellRadioProfile";
 				horizSizing = "right";
 				vertSizing = "bottom";
-				position = "123 236";
+				position = "123 261";
 				extent = "190 30";
 				minExtent = "26 27";
 				visible = "1";

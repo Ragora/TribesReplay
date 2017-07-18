@@ -65,6 +65,8 @@ function ToggleConsole(%make)
          $ConsoleActive = false;
          if(!ConsoleDlg.mouseOn)
             CursorOff();
+         if ( $enableDirectInput )
+            activateKeyboard();
       }
       else
       {
@@ -73,6 +75,7 @@ function ToggleConsole(%make)
          $ConsoleActive = true;
          if(!ConsoleDlg.mouseOn)
             CursorOn();
+         deactivateKeyboard();
       }
    }
 }

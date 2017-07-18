@@ -303,7 +303,6 @@ function ShockLanceImage::onFire(%this, %obj, %slot)
                          $TypeMasks::ForceFieldObjectType |
                          $TypeMasks::StaticObjectType |
                          $TypeMasks::MoveableObjectType |
-                         $TypeMasks::PathedObjectType |
                          $TypeMasks::DamagableItemObjectType;
 
    // did I miss anything? players, vehicles, stations, gens, sensors, turrets
@@ -339,18 +338,17 @@ function ShockLanceImage::onFire(%this, %obj, %slot)
          if(%hitObj.getDataBlock().getClassName() $= "PlayerData")
          {
             // Now we see if we hit from behind...
-            %eyeVector = %hitobj.getEyeVector();
+            %forwardVec = %hitobj.getForwardVector();
+            %objDir2D   = getWord(%forwardVec, 0) @ " " @ getWord(%forwardVec,1) @ " " @ "0.0";
+            %objPos     = %hitObj.getPosition();
+            %dif        = VectorSub(%objPos, %muzzlePos);
+            %dif        = getWord(%dif, 0) @ " " @ getWord(%dif, 1) @ " 0";
+            %dif        = VectorNormalize(%dif);
+            %dot        = VectorDot(%dif, %objDir2D);
 
-            %eyeXForm  = %hitobj.getEyeTransform();
-            %eyePos    = getWord(%eyeXForm, 0) @ " " @ getWord(%eyeXForm, 1) @ " " @ getWord(%eyeXForm, 2);
-            %dif       = VectorSub(%eyePos, %muzzlePos);
-            %dif       = getWord(%dif, 0) @ " " @ getWord(%dif, 1) @ " 0";
-            %dif       = VectorNormalize(%dif);
-            %eyeVector = getWord(%eyeVector, 0) @ " " @ getWord(%eyeVector, 1) @ " 0";
-            %dot       = VectorDot(%dif, %eyeVector);
-                       
             // 120 Deg angle test...
-            if (%dot > mCos(1.05)) {
+            // 1.05 == 60 degrees in radians
+            if (%dot >= mCos(1.05)) {
                // Rear hit
                %damageMultiplier = 3.0;
             }
@@ -405,15 +403,31 @@ function ELFProjectileData::unzapTarget(%data, %projectile, %target, %targeter)
    }
 }
 
+function ELFProjectileData::targetDestroyedCancel(%data, %projectile, %target, %targeter)
+{
+   cancel(%projectile.ELFrecur);
+	%target.stopAudio($ELFZapSound);
+   %targeter.stopAudio($ELFFireSound);
+	%target.zapSound = false;
+	%targeter.zappingSound = false;
+	%projectile.delete();
+}
+
 function ELFProjectile::checkELFStatus(%this, %data, %target, %targeter)
 {
    if(isObject(%target))
    {
+		if(%target.getDamageState() $= "Destroyed")
+		{
+			%data.targetDestroyedCancel(%this, %target, %targeter);
+			return;
+		}
+			
       %enLevel = %target.getEnergyLevel();
       if(%enLevel < 1.0)
       {
          %dataBlock = %target.getDataBlock();
-         %dataBlock.damageObject(%target, %this.sourceObject, %target.getPosition(), %data.drainHealth, %data.directDamageType); 
+         %dataBlock.damageObject(%target, %this.sourceObject, %target.getPosition(), %data.drainHealth, %data.directDamageType);
          
       }
       else

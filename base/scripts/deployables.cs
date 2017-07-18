@@ -118,6 +118,8 @@ datablock StaticShapeData(DeployedStationInventory) : StaticShapeDamageProfile
    renderWhenDestroyed = false;
    doesRepair = true;
 
+	deployedObject = true;
+
    cmdCategory = "DSupport";
    cmdIcon = CMDStationIcon;
    cmdMiniIconName = "commander/MiniIcons/com_inventory_grey";
@@ -126,6 +128,7 @@ datablock StaticShapeData(DeployedStationInventory) : StaticShapeDamageProfile
 
    debrisShapeName = "debris_generic_small.dts";
    debris = DeployableDebris;
+   heatSignature = 0;
 };
 
 datablock ShapeBaseImageData(InventoryDeployableImage)
@@ -138,6 +141,7 @@ datablock ShapeBaseImageData(InventoryDeployableImage)
    mountPoint = 1;
    offset = "0 0 0";
    deployed = DeployedStationInventory;
+   heatSignature = 0;
 
    stateName[0] = "Idle";
    stateTransitionOnTriggerDown[0] = "Activate";
@@ -163,6 +167,7 @@ datablock ItemData(InventoryDeployable)
    rotate = false;
    image = "InventoryDeployableImage";
    pickUpName = "an inventory pack";
+   heatSignature = 0;
 
    computeCRC = true;
    emap = true;
@@ -194,6 +199,8 @@ datablock StaticShapeData(DeployedMotionSensor) : StaticShapeDamageProfile
    explosion = DeployablesExplosion;
    dynamicType = $TypeMasks::SensorObjectType;
 
+	deployedObject = true;
+
    cmdCategory = "DSupport";
    cmdIcon = CMDSensorIcon;
    cmdMiniIconName = "commander/MiniIcons/com_deploymotionsensor";
@@ -206,6 +213,7 @@ datablock StaticShapeData(DeployedMotionSensor) : StaticShapeDamageProfile
 
    debrisShapeName = "debris_generic_small.dts";
    debris = DeployableDebris;
+   heatSignature = 0;
 };
 
 datablock ShapeBaseImageData(MotionSensorDeployableImage)
@@ -226,6 +234,7 @@ datablock ShapeBaseImageData(MotionSensorDeployableImage)
    maxDepSlope = 360;
    deploySound = MotionSensorDeploySound;
    emap = true;
+   heatSignature = 1;
 };
 
 datablock ItemData(MotionSensorDeployable)
@@ -243,6 +252,7 @@ datablock ItemData(MotionSensorDeployable)
 
    computeCRC = true;
    emap = true;
+   heatSignature = 0;
 
    //maxSensors = 3;
    maxSensors = 2;
@@ -271,6 +281,8 @@ datablock StaticShapeData(DeployedPulseSensor) : StaticShapeDamageProfile
    explosion = DeployablesExplosion;
    dynamicType = $TypeMasks::SensorObjectType;
 
+	deployedObject = true;
+
    cmdCategory = "DSupport";
    cmdIcon = CMDSensorIcon;
    cmdMiniIconName = "commander/MiniIcons/com_deploypulsesensor";
@@ -283,6 +295,7 @@ datablock StaticShapeData(DeployedPulseSensor) : StaticShapeDamageProfile
 
    debrisShapeName = "debris_generic_small.dts";
    debris = DeployableDebris;
+   heatSignature = 0;
 };
 
 datablock ShapeBaseImageData(PulseSensorDeployableImage)
@@ -303,6 +316,7 @@ datablock ShapeBaseImageData(PulseSensorDeployableImage)
 
    maxDepSlope = 40;
    emap = true;
+   heatSignature = 0;
 };
 
 datablock ItemData(PulseSensorDeployable)
@@ -366,7 +380,7 @@ datablock ItemData(TurretOutdoorDeployable)
    pickupRadius = 1;
    rotate = false;
    image = "TurretOutdoorDeployableImage";
-   pickUpName = "an outdoor turret pack";
+   pickUpName = "a landspike turret pack";
 
    computeCRC = true;
    emap = true;
@@ -410,7 +424,7 @@ datablock ItemData(TurretIndoorDeployable)
    pickupRadius = 1;
    rotate = false;
    image = "TurretIndoorDeployableImage";
-   pickUpName = "an indoor turret pack";
+   pickUpName = "a spider clamp turret pack";
 
    computeCRC = true;
    emap = true;
@@ -889,6 +903,10 @@ function ShapeBaseImageData::onDeploy(%item, %plyr, %slot)
       %deplObj.setDeployRotation(%item.surfacePt, %item.surfaceNrm);
    else
       %deplObj.setTransform(%item.surfacePt SPC %rot);
+
+	// set the recharge rate right away
+	if(%deplObj.getDatablock().rechargeRate)
+		%deplObj.setRechargeRate(%deplObj.getDatablock().rechargeRate);
    
    // set team, owner, and handle
    %deplObj.team = %plyr.client.Team;

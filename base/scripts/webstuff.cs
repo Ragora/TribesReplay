@@ -162,6 +162,15 @@ function HandleDatabaseProxyResponse(%prefix, %params)
 
 function DatabaseQueryi(%astr, %args, %proxyObject, %key)
 {
+	if ($IRCClient::state !$= IDIRC_CONNECTED)
+	{
+		IRCClient::connect();
+		if (%proxyObject !$= "")
+			%proxyObject.onDatabaseQueryResult("1\tORA-04061", "", %key);
+
+		return;
+	}
+
    // maxRows will be empty
    $NextDatabaseQueryId++;
    %id = $NextDatabaseQueryId;
@@ -175,8 +184,6 @@ function DatabaseQueryi(%astr, %args, %proxyObject, %key)
    %args = strreplace(%args, "\\", "\\\\");
    %args = strreplace(%args, "\n", "\\n");
 
-   echo("Called DBQueryi - astr: " @ %astr @ " args: " @ %args);
-   
    %len = strlen(%args);
    %i = 0;
    while(%i+400 < %len)
@@ -201,5 +208,5 @@ function DatabaseQueryArray(%ordinal, %maxRows, %args, %proxyObject, %key)
 
 function WONUpdateCertificateDone(%errCode, %errStr)
 {
-   echo("Got cert back from WON: " @ %errCode @ " = " @ %errStr);
+	IRCClient::relogin();
 }

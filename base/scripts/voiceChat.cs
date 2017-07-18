@@ -218,12 +218,74 @@ function serverCmdListenToNone(%client)
 }   
 
 //------------------------------------------------------------------------------
-function serverCmdSetVoiceChannels(%client, %number)
+// Client bind functions:
+//------------------------------------------------------------------------------
+function voiceCapStart()
+{
+   $voiceCaptureStarted = true;
+
+   // client can send voice? (dont bother recording.. server will reject it anyway)
+   if(($Audio::serverChannels == 0) || ($Audio::serverEncodingLevel < $pref::Audio::encodingLevel))
+   {
+      if($Audio::serverChannels == 0)
+         addMessageHudLine("\c2System:\cr server has disabled voice communication.");
+      else
+      {
+         switch($Audio::serverEncodingLevel)
+         {
+            case 0:   %level = "Low";
+            case 1:   %level = "Medium";
+            default:  %level = "High";
+         }
+
+         addMessageHudLine("\c2System:\cr server has voice level capped at [\c1" @ %level @ "\cr].");
+      }
+
+      $voiceCaptureStarted = false;
+      return;
+   }
+
+   vcRecordingHud.setVisible(true);
+	voiceCommHud.setVisible(true);
+	resizeVoiceCommWindow();
+   alxCaptureStart();
+}
+
+function voiceCapStop()
+{
+   if(!$voiceCaptureStarted)
+      return;
+
+   vcRecordingHud.setVisible(false);
+	if($numTalking < 1)
+		voiceCommHud.setVisible(false);
+   alxCaptureStop();
+}
+
+//------------------------------------------------------------------------------
+function serverCmdSetVoiceInfo(%client, %channels, %decodingMask, %encodingLevel)
 {
    %wasEnabled = %client.listenEnabled();
-   %client.setVoiceChannels(%number);
 
-   if ( %wasEnabled != ( %number > 0 ) )
+   // server has voice comm turned off?
+   if($Audio::maxVoiceChannels == 0)
+      %decodingMask = 0;
+   else
+      %decodingMask &= (1 << ($Audio::maxEncodingLevel + 1)) - 1;
+
+   if($Audio::maxEncodingLevel < %encodingLevel)
+      %encodingLevel = $Audio::maxEncodingLevel;
+
+   if($Audio::maxVoiceChannels < %channels)
+      %channels = $Audio::maxVoiceChannels; 
+
+   %client.setVoiceChannels(%channels);
+   %client.setVoiceDecodingMask(%decodingMask);
+   %client.setVoiceEncodingLevel(%encodingLevel);
+
+   commandToClient(%client, 'SetVoiceInfo', %channels, %decodingMask, %encodingLevel);
+
+   if ( %wasEnabled != ( %channels > 0 ) )
       updateCanListenState( %client );
 }
 

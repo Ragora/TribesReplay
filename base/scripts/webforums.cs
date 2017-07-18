@@ -67,32 +67,6 @@ if(!isObject(ForumsMessageVector))
    new MessageVector(ForumsMessageVector);
 }
 //-----------------------------------------------------------------------------
-function ForumsGui::CheesyGradient(%this,%sender,%text,%startColor,%endColor)
-{
-
-   %gText = "<spush><color:"@%startColor@">";
-   if(%endColor > %startColor)
-   {
-      %interval = %endColor - %startColor;
-      for(%x=0;%x<strLen(%text);%x++)
-      {
-          %gText = %gText @ getSubStr(%text,%x,1) @ "<color:" @ %startColor+(%interval*%x) @ ">";
-      }
-   }
-   else
-   {
-       %interval = %startColor - %endColor; 
-      for(%x=0;%x<strLen(%text);%x++)
-      {
-          %gText = %gText @ getSubStr(%text,%x,1) @ "<color:" @ %startColor-(%interval*%x) @ ">";
-      }
-   }
-   error("CG:"@ %startColor TAB %endColor TAB %interval);   
-
-   %gText = %gText @ "<spop>";          
-   error("CHEESY:" @ %gText);
-}
-//-----------------------------------------------------------------------------
 function DateStrCompare(%date1,%date2)
 {   
    %d1 = getSubStr(%date1,0,2);
@@ -283,7 +257,7 @@ function ForumsMessageAddRow(%text)
          if(ForumsMessageList.getRowId(%i) == %parentId)
          {
             %parentRow = ForumsMessageList.getRowText(%i);
-            echo("Found parent");
+//            echo("Found parent");
             break;
          }
       }
@@ -365,6 +339,7 @@ function ForumsOpenThread(%tid)
 //-----------------------------------------------------------------------------
 function ForumsPost()
 {
+   $ForumsSubject = FP_SubjectEdit.getValue();
    if ( trim($ForumsSubject) $= "" )
    {
       MessageBoxOK( "POST FAILED", "Your post cannot be accepted without text in the Subject line.",
@@ -469,9 +444,18 @@ function ForumsReply()
 //-----------------------------------------------------------------------------
 function GetQuotedText()
 {
-   ForumsBodyText.setValue("<spush><color:FFCCAA>\"" @ trim(ForumsText.getText()) @ "\"<spop>\n\n");
-   ForumsBodyText.MakeFirstResponder(1);
-   ForumsBodyText.setCursorPosition(3600);
+   if(ForumsComposeDlg.parentPost == 0)
+   {
+       ForumsBodyText.setValue("<spush><color:FFCCAA>ALL YOUR BASE ARE BELONG TO US<spop>\n\n");
+       ForumsBodyText.MakeFirstResponder(1);
+       ForumsBodyText.setCursorPosition(3600);
+   }
+   else
+   {
+      ForumsBodyText.setValue("<spush><color:FFCCAA>\"" @ trim(ForumsText.getText()) @ "\"<spop>\n\n");
+       ForumsBodyText.MakeFirstResponder(1);
+      ForumsBodyText.setCursorPosition(3600);
+   }
 //   ForumsBodyText.setCursorPosition(strLen(ForumsBodyTExt.getText())+5);
 }
 //-----------------------------------------------------------------------------
@@ -504,7 +488,7 @@ function GetTopicsList()
 	ForumsTopicsList.clear();
    canvas.SetCursor(ArrowWaitCursor);
    ForumsTopicsList.clearList();
-	DatabaseQueryArray(8,200,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key);
+	DatabaseQueryArray(8,80,ForumsComposeDlg.forum,ForumsGui,ForumsGui.key);
 	ForumsTopicsList.refreshFlag = 0;
 }
 //-----------------------------------------------------------------------------
@@ -589,7 +573,7 @@ function ForumsGui::onDatabaseQueryResult(%this,%status,%resultString,%key)
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %status TAB %resultString);
+//	echo("RECV: " @ %status TAB %resultString);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -716,7 +700,7 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %row);
+//	echo("RECV: " @ %row);
 	%forumTID = getField(ForumsList.getRowTextbyId(ForumsList.getSelectedID()),2);
 	switch$(%this.state)
 	{
@@ -749,7 +733,6 @@ function ForumsGui::onDatabaseRow(%this,%row,%isLastRow,%key)
  				ForumShell.setTitle("FORUMS: " @ getField(ForumsList.getRowTextbyID(ForumsList.getSelectedID()),0));
 				ForumsTopicsList.updateReadStatus();
       			%this.refreshFlag = false;
-               error("TID: " @ ForumsMessageVector.tid);
  				if ( ForumsGui.LaunchTopic !$= "" )
  				{
  					ForumsTopicsList.selectTopic( ForumsGui.LaunchTopic );
@@ -927,7 +910,7 @@ function TopicsPopupDlg::onWake( %this )
 //-----------------------------------------------------------------------------
 function TopicsPopupMenu::onSelect( %this, %id, %text )
 {
-   echo("TPM RECV: " @ %id TAB %text);
+//   echo("TPM RECV: " @ %id TAB %text);
    switch( %id )
    {
       case 0: //	0 Reset Cache              
@@ -1122,7 +1105,6 @@ function ForumsMessageList::loadCache( %this, %forumTID)
    ForumsMessageVector.clear();
    ForumsMessageList.clear();
    ForumsMessageVector.tid = %forumTID;
-   error("BFLAG: " @ ForumsGui.bflag TAB %forumTID);
  	switch( ForumsGui.bflag )
  	{
  		case 0: 
@@ -1225,11 +1207,10 @@ function ForumsMessageList::loadCache( %this, %forumTID)
 	    	  					FO_EditBtn.visible = true;
 						}
 			   		}
-//                	error( "** ADDING MESSAGE FROM CACHE - " @ %text @ " **" );
                    if(%this.allRead && DateStrCompare(%this.lastDate,%date))
                        %text = setRecord( %text, 0, "1" );
                        
-                	echo( "** ADDING MESSAGE FROM CACHE - " @ %postId @ " **" );
+//                	echo( "** ADDING MESSAGE FROM CACHE - " @ %postId @ " **" );
                 	ForumsMessageVector.pushBackLine( %text, %postId );
                }
             }
@@ -1319,7 +1300,7 @@ function ForumsMessagelist::onDatabaseQueryResult(%this,%status,%resultString,%k
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %status TAB %resultString);
+//	echo("RECV: " @ %status TAB %resultString);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)

@@ -31,7 +31,7 @@ datablock AudioProfile(ScoutThrustSound)
 // VEHICLE CHARACTERISTICS
 //**************************************************************
 
-datablock HoverVehicleData(ScoutVehicle) : GravCycleDamageProfile
+datablock HoverVehicleData(ScoutVehicle) : WildcatDamageProfile
 {
    spawnOffset = "0 0 1";
 
@@ -54,6 +54,8 @@ datablock HoverVehicleData(ScoutVehicle) : GravCycleDamageProfile
    numMountPoints = 1;
    isProtectedMountPoint[0] = true;
    explosion = VehicleExplosion;
+	explosionDamage = 0.5;
+	explosionRadius = 5.0;
 
    lightOnly = 1;
 
@@ -67,17 +69,20 @@ datablock HoverVehicleData(ScoutVehicle) : GravCycleDamageProfile
    minJetEnergy = 15;
    jetEnergyDrain = 1.3;
 
-   collDamageThresholdVel = 20.0;
-   collDamageMultiplier   = 0.01;
-
    // Rigid Body
    mass = 400;
    bodyFriction = 0.1;
    bodyRestitution = 0.5;  
-   minImpactSpeed = 10;
-   softImpactSpeed = 10;       // Play SoftImpact Sound
-   hardImpactSpeed = 25;      // Play HardImpact Sound
-   speedDamageScale = 0.008;
+   softImpactSpeed = 20;       // Play SoftImpact Sound
+   hardImpactSpeed = 28;      // Play HardImpact Sound
+
+   // Ground Impact Damage (uses DamageType::Ground)
+   minImpactSpeed = 29;
+   speedDamageScale = 0.010;
+
+   // Object Impact Damage (uses DamageType::Impact)
+   collDamageThresholdVel = 23;
+   collDamageMultiplier   = 0.040;
 
    dragForce            = 25 / 45.0;
    vertFactor           = 0.0;
@@ -119,10 +124,10 @@ datablock HoverVehicleData(ScoutVehicle) : GravCycleDamageProfile
    wheelImpactSound = WheelImpactSound;
 
    //
-   softSplashSoundVelocity = 20.0; 
-   mediumSplashSoundVelocity = 50.0;   
-   hardSplashSoundVelocity = 100.0;   
-   exitSplashSoundVelocity = 20.0;
+   softSplashSoundVelocity = 10.0; 
+   mediumSplashSoundVelocity = 20.0;   
+   hardSplashSoundVelocity = 30.0;   
+   exitSplashSoundVelocity = 10.0;
    
    exitingWater      = VehicleExitWaterSoftSound;
    impactWaterEasy   = VehicleImpactWaterSoftSound;

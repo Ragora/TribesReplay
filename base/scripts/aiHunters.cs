@@ -25,6 +25,9 @@ function HuntersGame::onAIRespawn(%game, %client)
 	   %client.addTask(AIPatrolTask);
       %client.huntersTask = %client.addTask(AIHuntersTask);
 	}
+
+   //set the inv flag
+   %client.spawnUseInv = true;
 }
 
 //---------------------------------------------------------------------------

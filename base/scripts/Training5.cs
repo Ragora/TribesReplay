@@ -68,7 +68,7 @@ function toggleScoreScreen(%val)
 function ClientCmdSetHudMode(%mode, %type, %node)
 {
 	parent::ClientCmdSetHudMode(%mode, %type, %node);
-	TrainingMap.push();
+	//TrainingMap.push();
 }
 
 // get the ball rolling
@@ -187,42 +187,71 @@ function objectiveDistanceChecks()
 	schedule(5000, game, objectiveDistanceChecks);
 }
 
-// cant blow up the gens except with the satchel charge
+//======================================================================================
+// Objective Generators
+//======================================================================================
 function GeneratorLarge::damageObject(%data, %targetObject, %sourceObject, %position, %amount, %damageType)
 {
-	//error("Generator::damageObject called.  DamageType = "@%damageType);
-	if( %targetObject == game.targetObject1 || %targetObject == game.targetObject2 && !game.detonationSequenceStarted){
-		if(%damageType && %damageType != $DamageType::SatchelCharge && %damageType != $DamageType::Explosion) {
-			if(!game.tooSoonMsg) {
-				game.tooSoonMsg = true;
-				schedule(15000, game, eval, "game.tooSoonMsg = false;");
-				messageClient($player, 0, $player.miscMsg[genAttackNoSatchel]);
-				// and a little bonus for easy players
-				if($pref::trainingDifficulty == 1 &&
-				$player.player.getMountedImage($backPackSlot).getName() !$= "SatchelChargeImage" && !game.satchelWaypointSet) {
+	if(%targetObject == game.targetObject1 || %targetObject == game.targetObject2)
+		%message = training5ObjectiveGenDamaged(%targetObject, %damageType);
+	else
+		Parent::damageObject(%data, %targetObject, %sourceObject, %position, %amount, %damageType); 
 
-					%waypoint = new WayPoint() {
-						position = nameToId(SatchelChargePack).position;
-						rotation = "1 0 0 0";
-						scale = "1 1 1";
-						dataBlock = "WayPointMarker";
-						lockCount = "0";
-						homingCount = "0";
-						name = "Satchel Charge";
-						team = 1;
-							locked = "true";
-					};
-					$player.satchelWaypoint = %waypoint;
-					game.satchelWaypointSet = true;
-				}
-			}
-			error("undestroyed gen failed damage type = "@ %damageType);
-			return;
-		}
-		else %targetObject.applyDamage(%targetObject.getDataBlock().maxDamage);
-	}
-	Parent::damageObject(%data, %targetObject, %sourceObject, %position, %amount, %damageType);
+	if(%message)
+		training5messageDamageFailed();
 }
+
+function training5ObjectiveGenDamaged(%targetObject, %damageType)
+{
+//error("training5ObjectiveGenDamaged("@%targetObject@", "@%damageType@")");
+	
+	if(game.genDestroyed[%targetObject])
+		return false;
+
+	if(%damageType != $DamageType::SatchelCharge)
+	{
+		return true;
+	}
+	
+	game.objectiveDestroyed = true;
+	%targetObject.applyDamage(%targetObject.getDataBlock().maxDamage);
+	return false;
+} 
+
+function training5messageDamageFailed()
+{
+	if(!game.tooSoonMsg && !game.objectiveDestroyed) {
+		game.tooSoonMsg = true;
+		schedule(15000, game, eval, "game.tooSoonMsg = false;");
+		messageClient($player, 0, $player.miscMsg[genAttackNoSatchel]);
+
+		training5easySatchelWaypoint();
+	}
+}
+
+function training5easySatchelWaypoint()
+{
+	if($pref::trainingDifficulty == 1 &&
+	$player.player.getMountedImage($backPackSlot).getName() !$= "SatchelChargeImage" && !game.satchelWaypointSet) {
+
+		%waypoint = new WayPoint() {
+			position = nameToId(SatchelChargePack).position;
+			rotation = "1 0 0 0";
+			scale = "1 1 1";
+			dataBlock = "WayPointMarker";
+			lockCount = "0";
+			homingCount = "0";
+			name = "Satchel Charge";
+			team = 1;
+				locked = "true";
+		};
+		$player.satchelWaypoint = %waypoint;
+		game.satchelWaypointSet = true;
+	}
+}
+
+//======================================================================================
+
 
 function AIEngageTask::assume(%task, %client)
 {
@@ -270,6 +299,14 @@ function singlePlayerGame::onAIKilled(%game, %clVictim, %clAttacker, %damageType
 	if( %teamCount < %maintNum )
 		DefaultGame::onAIKilled(%game, %clVictim, %clAttacker, %damageType, %implement);
 
+}
+
+function singleplayerGame::pickTeamSpawn(%game, %client, %respawn)
+{
+	if(%client.useSpawnSphere)
+		DefaultGame::pickTeamSpawn(%game, %client.team);
+	else
+		parent::pickTeamSpawn(%game, %client, %respawn); 
 }
 
 function SinglePlayerGame::equip(%game, %player, %set)

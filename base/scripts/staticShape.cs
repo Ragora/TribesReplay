@@ -11,7 +11,18 @@ function StaticShapeData::onGainPowerEnabled(%data, %obj)
 	   %obj.schedule(750, "playThread", $PowerThread, "Power");
 	else
 	   %obj.playThread($PowerThread,"Power");
-   %obj.setRechargeRate(%data.rechargeRate);
+	// deployable objects get their recharge rate set right away -- don't set it again unless
+	// the object has just been re-enabled
+	if(%obj.initDeploy)
+	 	%obj.initDeploy = false;
+	else
+	{
+		if(%obj.getRechargeRate() <= 0)
+		{
+			%oldERate = %obj.getRechargeRate();
+		   %obj.setRechargeRate(%oldERate + %data.rechargeRate);
+		}
+	}
    if(%data.humSound !$= "")
       %obj.playAudio($HumSound, %data.humSound);
    %obj.setPoweredState(true);

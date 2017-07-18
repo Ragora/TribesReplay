@@ -17,13 +17,12 @@ function joystickMoveY(%val)
    $mvBackwardAction = ( %val > 0.0 );
 }
 
-function joystickYaw(%val)
+function joyYaw(%val)
 {
-   // Let the mapping system do all the scaling/inversion...
-   $mvYaw += %val;
+   $mvYaw += getMouseAdjustAmount( %val );
 }
 
-function joystickPitch(%val)
+function joyPitch(%val)
 {
-   $mvPitch += %val;
+   $mvPitch += getMouseAdjustAmount( %val );
 }

@@ -79,6 +79,18 @@ function ExecuteSearch(%id)
 	DatabaseQueryArray(BrowserSearchPane.query,0,trim($BrowserSearchField) TAB 0 TAB 100 TAB 0, BrowserSearchPane, BrowserSearchPane.key);
 }
 //-----------------------------------------------------------------------------
+function getTribeMember(%tribeName)
+{
+	%bResult = false;
+	%CRec = wonGetAuthInfo();
+	for(%tribeNo = 0;%tribeNo < getField(getRecord(%CRec,1),0); %tribeNo++)
+	{
+		if(strupr(%tribeName) $= strupr(getField(getRecord(%CRec,2+%tribeNo),0)))
+			%bResult = true;
+	}	
+	return %bResult;
+}
+//-----------------------------------------------------------------------------
 function CreateTribe()
 {
    $CreateTribeName = "";
@@ -172,10 +184,8 @@ function EditDescriptionApply()
 {
    %desc = EditDescriptionText.getValue();
    TProfileHdr.Desc = %desc;
-   error("ETYPE: " @ TWBText.editType);
    if(TWBText.editType $= "tribe")
    {
-   	  	error("TRIBENAME: " @ TProfileHdr.tribename);
 		TribePane.key = LaunchGui.key++;
 		TribePane.state = "editTribeDesc";
         canvas.SetCursor(ArrowWaitCursor);
@@ -183,7 +193,6 @@ function EditDescriptionApply()
    }
    else
    {
-   	  error("PLAYERNAME: " @ TProfileHdr.playername);
 	  TWBText.key = LaunchGui.key++;
       TWBText.state = "editWarriorDesc";
       canvas.SetCursor(ArrowWaitCursor);
@@ -250,6 +259,7 @@ function GetProfileHdr(%type, %line)
 		W_History.setVisible(1);
 		W_Tribes.setVisible(1);
 		%isMe = getField(getRecord(wonGetAuthInfo(),0),0)$=twbTitle.name;
+		TProfileHdr.isMe = %isMe;
 		if(%isMe)
 		{
 			W_BuddyList.setText("BUDDYLIST");
@@ -344,17 +354,6 @@ function LinkEditWarrior()
 //-----------------------------------------------------------------------------
 function LinkEditWarriorDesc(%player, %handler)
 {
-//	  if(%handler.editType $= "tribe")
-//      if(trim(%player) !$= "")
-//      {
-//         %handler.tribe = %player;
-//         %handler.editType = "tribe";
-//      }
-//      else
-//  	  {
-//      	TWBText.editType = "warrior";
-// 	  }
- 
       Canvas.pushDialog(BrowserEditInfoDlg);
       EditDescriptionText.setValue(TProfileHdr.Desc);
 }
@@ -382,10 +381,8 @@ function LinkEditMember(%player, %tribe, %pv, %title,%owner)
 		  // Get callers rank in members tribe
 		  for(%i=0;%i<getfield(getRecord(%ai,1),0);%i++)
 		  {
-			error("TRIBE:"TAB getField(getRecord(%ai,2+%i),0) TAB %tribe);
 			if( getField(getRecord(%ai,2+%i),0) == %tribe || (getField(getRecord(%ai,2+%i),3)==1401 && getField(getRecord(%ai,2+%i),4)>1))
 			{
-				error("TRIBE MATCH FOUND" TAB getField(getREcord(%ai,2+%i),4));
 				%callerPv = getField(getRecord(%ai,2+%i),4);
 				break;
 			}
@@ -400,7 +397,6 @@ function LinkEditMember(%player, %tribe, %pv, %title,%owner)
 
 		  if(getField(getRecord(%ai,0),0) $= getField(twbTitle.getValue(),0)) //if the caller is the member to be edited
 		  {
-			  error("CALLER IS MEMBER" TAB %rnk TAB %pv TAB %callerPv);
 		      switch( %pv )
 		      {
 			      case 0:
@@ -427,7 +423,6 @@ function LinkEditMember(%player, %tribe, %pv, %title,%owner)
 		  }
 		  else
 		  {
-			  error("CALLER IS NOT MEMBER" TAB %rnk TAB %pv TAB %callerPv);
 			  switch( %rnk )
 			  {
 				case 1:
@@ -600,24 +595,20 @@ function TAM_OnAction(%caller)
   TribeAdminMemberDlg.vPerm = %caller;
 }
 //-----------------------------------------------------------------------------
-function updateNewTagPreview()
-{
-   %ntag = TAD_NewTag.getValue();   
-   %playerName = GetField(GetRecord(WonGetAuthInfo(),0),0);
-   if ( $NewTagAppend )
-      TAD_PreviewTag.setValue( %playerName @ %ntag);
-   else
-      TAD_PreviewTag.setValue(%ntag @ %playerName);
-}
-//-----------------------------------------------------------------------------
 function updateTribeTagPreview()
 {
    %warrior = getField( WONGetAuthInfo(), 0 );
+
+   // Validate the tribe tag:
    %tag = CT_TagText.getValue();
+   %realTag = StripMLControlChars( %tag );
+   if ( %tag !$= %realTag )
+      CT_TagText.setValue( %realTag );
+
    if ( $CreateTribeAppend )
-      CT_PreviewText.setValue( %warrior @ %tag );
+      CT_PreviewText.setValue( %warrior @ %realTag );
    else
-      CT_PreviewText.setValue( %tag @ %warrior );
+      CT_PreviewText.setValue( %realTag @ %warrior );
 }
 
 //-- TribeAndWarriorBrowserGui -----------------------------------------------
@@ -638,7 +629,6 @@ function TribeAndWarriorBrowserGui::onWake(%this)
       %warrior = getField( %info, 0 );
       TWBTabView.view( %warrior, "Warrior" );
 	  w_profile.setValue(1);
-	  w_tribes.setValue(1);
 
       // Add tabs for the player's tribal pages:
       %tribeCount = getField( getRecord( %info, 1 ), 0 ); //%cert
@@ -681,8 +671,8 @@ function TribeAndWarriorBrowserGui::onSleep(%this)
 //==--  CreateTribeDlg -------------------------------------------------------
 function CreateTribeDlg::onWake( %this )
 {
-	rbAppendTab.setValue(1);
-//   updateTribeTagPreview();
+	//rbAppendTab.setValue(1);
+   updateTribeTagPreview();
 }
 //-----------------------------------------------------------------------------
 function CreateTribeDlg::CreateTribe(%this)
@@ -705,7 +695,7 @@ function CreateTribeDlg::onDatabaseQueryResult(%this,%status,%resultString,%key)
 {
 	if ( %this.key != %key )
 		return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -737,7 +727,7 @@ function CreateTribeDlg::onDatabaseRow(%this,%row,%isLastRow,%key)
 {
 	if( %this.key != %key )
 		return;
-	echo("RECV: " @ %row);
+//	echo("RECV: " @ %row);
 }
 //==--  TribeAdminMemberDlg ---------------------------------------------------
 function TribeAdminMemberDlg::onWake(%this)
@@ -749,7 +739,7 @@ function TribeAdminMemberDlg::onDatabaseQueryResult( %this, %status, %resultStri
 {
     if ( %this.key != %key )
     	return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -773,7 +763,7 @@ function TribeAdminMemberDlg::onDatabaseRow(%this,%row,%isLastRow,%key)
 {
     if ( %this.key != %key )
     	return;
-	echo("RECV: " @ %row);
+//	echo("RECV: " @ %row);
 }
 //-----------------------------------------------------------------------------
 function TribeAdminMemberDlg::connectionTerminated( %this, %key )
@@ -800,7 +790,7 @@ function BrowserSearchPane::onDatabaseQueryResult(%this, %status, %resultStatus,
 {
    if(%key != %this.key)
       return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -846,18 +836,16 @@ function BrowserSearchPane::onDatabaseRow(%this, %row, %isLastRow, %key)
 {
    if(%key != %this.key)
       return;
-	echo("RECV: " @ %row);
+//	echo("RECV: " @ %row);
 	switch$(%this.state)
 	{
 		case "tribe":
 	     	%line = getTribeName(getFields(%row, 1),0) TAB getField(%row, 2);
-			error("TLine: " @ %line);
 		 	BrowserSearchMatchList.addRow(%this.rowNum++, %line);
 			if(%isLastRow)
 				%this.state = "done";
 		case "warrior":
 	     	%line = getFields(%row,1);
-			error("WLine: " @ %line);
 		 	BrowserSearchMatchList.addRow(%this.rowNum++, %line);
 			if(%isLastRow)
 				%this.state = "done";
@@ -1059,13 +1047,14 @@ function TWBText::onDatabaseQueryResult(%this,%status,%resultString,%key)
 {
 	if(%this.key != %key)
 		return;
-	echo("TWB RECV: " @ %status);
+//	echo("TWB RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
 		{
 			case "editWarriorDesc":
 				%this.state = "done";
+				WP_WarriorDescription.setText(EditDescriptionText.getValue());
 				Canvas.popDialog(BrowserEditInfoDlg);
 				messageBoxOK("COMPLETE","Warrior Description Changed","W_profile.setValue(1);");
 				WarriorPropertiesDlg.pendingChanges="";
@@ -1090,23 +1079,12 @@ function TWBText::onDatabaseRow(%this,%row,%isLastRow, %key)
 {
 	if(!%this.key == %key)
 		return;
-	echo("RECV: " @ %row);
+//	echo("RECV: " @ %row);
 }
 //-----------------------------------------------------------------------------
 function TWBText::connectionTerminated( %this, %key )
 {
    TWBTabView.refresh();
-}
-//==-- TribeAttribDlg --------------------------------------------------------
-function TribeAttribDlg::onWake(%this)
-{
-  TribeAttribDlg.tribeName = %tribeName;
-  $CurrentTribeTag = %TribeTag;
-  $NewTagAppend = %appending;
-  $NewTribeTag = "";
-  $NewTagPreview = "";
-  Canvas.RePaint();
-  updateNewTagPreview();
 }
 //-----------------------------------------------------------------------------
 //==-- TribePane --------------------------------------------------------------
@@ -1155,7 +1133,7 @@ function TribePane::onDatabaseQueryResult(%this, %status, %resultString , %key)
 {
   if ( %this.key != %key )
     	return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -1192,8 +1170,9 @@ function TribePane::onDatabaseQueryResult(%this, %status, %resultString , %key)
 				%this.state = "done";
 		  		GetProfileHdr(0,getFields(%status,2));
 			 	TWBText.Clear();
+				%isMember = getTribeMember(TProfileHdr.TribeName);
 		        %Tdesc = "<lmargin:10><just:left><Font:Univers Condensed:18><color:ADFFFA>Recruiting: <font:Univers Condensed:18>" @ 
-	              	     (TProfileHdr.recruiting ? "YES     <a:requestlink\t" @ TProfileHdr.tribename @ ">Request Invite</a>" : "NO");
+	              	     (TProfileHdr.recruiting ? (%isMember ? "YES" : "YES     <a:requestlink\t" @ TProfileHdr.tribename @ ">Request Invite</a>") : "NO");
 	            %Tdesc = %Tdesc @ "<Font:Univers Condensed:18>" NL "<color:82BEB9><lmargin:30><Font:Univers:18>";
 				TWBText.setText(%TDesc);
 				TProfileHdr.Desc = %resultString;
@@ -1279,7 +1258,7 @@ function TribePane::onDatabaseRow(%this, %row, %isLastRow, %key)
 {
   if ( %this.key != %key )
     	return;
-	echo("RECV: " @ %row);
+//	echo("RECV: " @ %row);
 	switch$(%this.state)
 	{
 		case "tribeRoster":
@@ -1467,7 +1446,7 @@ function PlayerPane::onDatabaseQueryResult(%this,%status,%resultString,%key)
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %status);
+//	echo("RECV: " @ %status);
 	if(getField(%status,0)==0)
 	{
 		switch$(%this.state)
@@ -1481,26 +1460,16 @@ function PlayerPane::onDatabaseQueryResult(%this,%status,%resultString,%key)
 						PlayerPix.setBitmap(TProfileHdr.playerGfx);
 					else
 						PlayerPix.setBitmap($PlayerGfx);
-// 					if(%isCaller)
-// 					{
-// 						%newText = "<Font:Arial Bold:14><color:ADFFFA>OPTIONS:<lmargin:20><Font:Arial:14>\n\n";
-// 						%newText = %newText @ "<a:editwarrior" TAB TWBTitle.name @ ">Edit Warrior Name</a>\n";
-// 						%newText = %newText @ "<a:editdescription" TAB TWBTitle.name TAB "" @ ">Edit Description</a>\n";
-// 					}
-					%profileText = "<lmargin:10><just:left>" @ %newText @ "\n<lmargin:10><just:left><Font:Univers Condensed:18><color:ADFFFA>PLAYER PROFILE:\n\n<lmargin:20><Font:Univers:18>";
-					%profileText = %profileText @ "Registered:" SPC "<color:FFAA00>" @ TProfileHdr.registered @ "<color:ADFFFA>\n";
-					%profileText = %profileText @ "Online:" SPC (TProfileHdr.onLine ? "<color:33FF33>YES":"<color:FF3333>NO") @ "<color:ADFFFA>\n";
+					%profileText = "<just:left><lmargin:10><color:ADFFFA><Font:Univers Condensed:10> \n<Font:Univers Condensed:18>";
+					%profileText = %profileText @ "Registered:<color:FFAA00>" SPC TProfileHdr.registered @ "<color:ADFFFA>\n";
+					%profileText = %profileText @ "Online:        " SPC (TProfileHdr.onLine ? "<color:33FF33>YES":"<color:FF3333>NO") @ "<color:ADFFFA>\n";
 
 					if(trim(TProfileHdr.playerURL) !$= "")
-						%profileText = %profileText @ "WebSite:" SPC "<spush><color:CCAA33><a:wwwlink\t" @ TProfileHdr.playerURL @ ">"@TProfileHdr.playerURL@"</a><spop>\n";
+						%profileText = %profileText @ "WebSite:     " SPC "<spush><color:CCAA33><a:wwwlink\t" @ TProfileHdr.playerURL @ ">"@TProfileHdr.playerURL@"</a><spop>\n\n";
 					else
-						%profileText = %profileText @ "WebSite:" SPC "<spush><color:CCAA33><a:wwwlink\twww.tribes2.com>TRIBES 2 BABY!</a><spop>\n";
+						%profileText = %profileText @ "WebSite:     " SPC "<spush><color:CCAA33><a:wwwlink\twww.tribes2.com>www.tribes2.com</a><spop>\n\n";
 
-//					W_Text.setText(W_Text.getText() @ "Preferred Armor:" SPC "<color:FFAA00>SCOUT<color:ADFFFA>\n");
-//					W_Text.setText(W_Text.getText() @ "Preferred Weapon:" SPC "<color:FFAA00>SNIPER RIFLE<color:ADFFFA>\n");
-//					W_Text.setText(W_Text.getText() @ "Preferred Game:" SPC "<color:FFAA00>CTF<color:ADFFFA>\n");
-//					W_Text.setText(W_Text.getText() @ "Preferred Role:" SPC "<color:FFAA00>DEFENSE<color:ADFFFA><Font:Arial Bold:14>\n");
-					%profileText = %profileText @  "<color:82BEB9><lmargin:30><Font:Univers:18>";
+					%profileText = %profileText @  "<color:82BEB9><Font:Univers:18><just:left><lmargin:20>";
 					W_Text.setText(%profileText @ %resultString);
 					TProfileHdr.Desc = %resultString;
 					if( w_memberlist.rowCount() ==0 )
@@ -1598,12 +1567,15 @@ function PlayerPane::onDatabaseQueryResult(%this,%status,%resultString,%key)
 				MessageBoxOK("CONFIRMED",getField(%status,1));
 			case "changePlayerName":
 				%this.state = "done";
-				echo("wus:"@WonUpdateCertificate());
+//				echo("wus:"@WonUpdateCertificate());
 				TProfileHdr.playername = NewNameEdit.getValue();
 				wp_currentname.setText(NewNameEdit.getValue());
 				twbTabView.setTabText(twbTabView.getSelectedId(),NewNameEdit.getValue());
 				w_profile.setValue(1);
 				MessageBoxOK("CONFIRMED","Warrior name has been changed." NL "This will require you to close and restart the game to ensure proper function","WarriorPropertiesDlg.onWake();");
+			case "clearWarriorDescription":
+				%this.state = "done";
+				MessageBoxOK("CONFIRMED","Warrior Description Cleared");
 		}
 	}
 	else if (getSubStr(getField(%status,1),0,9) $= "ORA-04061")
@@ -1623,7 +1595,7 @@ function PlayerPane::onDatabaseRow(%this,%row,%isLastRow,%key)
 {
 	if(%this.key != %key)
 		return;
-	echo("RECV: " @ %row);
+//	echo("RECV: " @ %row);
 	switch$(%this.state)
 	{
 		case "warriorHistory":
@@ -1803,7 +1775,7 @@ function W_MemberList::onRightMouseDown( %this, %column, %row, %mousePos )
 }
 function w_MemberList::onAdd(%this)
 {
-	W_MemberList.addStyle( 1, "Univers Condensed", 12 , "150 150 150", "100 100 000", "000 000 100" );
+	W_MemberList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
 }
 //==--------------------------------------------------------------------------
 function WarriorPopupDlg::onWake( %this )
@@ -1946,7 +1918,7 @@ function MemberList::onRightMouseDown( %this, %column, %row, %mousePos )
 }
 function Memberlist::onAdd(%this)
 {
-    MemberList.addStyle( 1, "Univers Condensed", 12 , "150 150 150", "100 100 000", "000 000 100" );
+    MemberList.addStyle( 1, "Univers", 12 , "150 150 150", "200 200 200", "60 60 60" );
 }
 //-----------------------------------------------------------------------------
 function TribeMemberPopupDlg::onWake( %this )
@@ -2137,7 +2109,7 @@ function TribePropertiesDlg::ClearDescription(%this)
 	TP_TribeDescription.setText("");
 	TProfileHdr.Desc = "";
 	TWBText.editType = "tribe";
-    canvas.SetCursor(ArrowWaitCursor);
+   canvas.SetCursor(ArrowWaitCursor);
 	DatabaseQuery(15,TProfileHdr.tribename TAB getRecordCount(%desc) TAB %desc,TribePane,TribePane.key);
 }
 //-----------------------------------------------------------------------------
@@ -2150,12 +2122,18 @@ function TribePropertiesDlg::UpdateDescription(%this)
 function TribePropertiesDlg::RefreshTag(%this)
 {
    %this.pendingChanges = "YES";
+   %playerName = GetField( WonGetAuthInfo(), 0 );
+
+   // Validate the tribe tag:
    %ntag = TP_NewTag.getValue();   
-   %playerName = GetField(GetRecord(WonGetAuthInfo(),0),0);
+   %realTag = StripMLControlChars( %ntag );
+   if ( %ntag !$= %realTag )
+      TP_NewTag.setValue( %realTag );
+
    if ( TP_PrePendFlagBtn.getValue()==0 )
-      TP_PreviewTag.setValue( %playerName @ %ntag);
+      TP_PreviewTag.setValue( %playerName @ %realTag );
    else
-      TP_PreviewTag.setValue(%ntag @ %playerName);
+      TP_PreviewTag.setValue( %realTag @ %playerName );
 }
 //-----------------------------------------------------------------------------
 function TribePropertiesDlg::LoadGfxPane(%this)
@@ -2209,6 +2187,7 @@ function WarriorPropertiesDlg::onWake(%this)
 	UrlEdit.setValue(TProfileHdr.playerURL);
 	WP_CurrentName.setValue(TProfileHdr.playername);
 	NewNameEdit.setValue("");
+	WP_WarriorDescription.setText(TProfileHdr.Desc);
 	%this.LoadGfxPane();
 }
 //-----------------------------------------------------------------------------
@@ -2220,6 +2199,8 @@ function WarriorPropertiesDlg::Close(%this)
 	else
 	{
 		Canvas.popDialog(%this);
+		w_GraphicsControl.setVisible(0);
+		W_ProfilePane.setVisible(1);
 		W_Profile.setValue(1);
 	}
 }
@@ -2233,27 +2214,31 @@ function WarriorPropertiesDlg::EditDescription(%this)
 //-----------------------------------------------------------------------------
 function WarriorPropertiesDlg::ClearDescription(%this)
 {
-	MessageBoxYesNo("CONFIRM","Clear your Players Description?","doClearDescription();","");
+	MessageBoxYesNo("CONFIRM","Clear your Players Description?","WarriorPropertiesDlg.doClearDescription();","");
 }
 //-----------------------------------------------------------------------------
 function WarriorPropertiesDlg::doClearDescription(%this)
 {
 	PlayerPane.key = LaunchGui.key++;
-	TProfileHdr.Desc = "no description";
+	PlayerPane.state = "clearWarriorDescription";
+	TProfileHdr.Desc = "NONE";
 	TWBText.editType = "warrior";
     canvas.SetCursor(ArrowWaitCursor);
 	%this.pendingChanges = "";
-	DatabaseQuery(17,TProfileHdr.Playername TAB getRecordCount(%desc) TAB %desc,PlayerPane,PlayerPane.key);
+	EditDescriptionText.setText("No Description On File");
+	WP_WarriorDescription.setText(EditDescriptionText.getText());
+	DatabaseQuery(17,TProfileHdr.Desc,PlayerPane,PlayerPane.key);
 }
 //-----------------------------------------------------------------------------
 function WarriorPropertiesDlg::LoadGfxPane(%this)
 {
 	PlayerGraphic.setBitmap(PlayerPix.bitmap);
 	%ctrl = WarriorGraphicsList;
+	%width = getSubStr(%ctrl.getExtent(),0,3)-4;
 	%fileSpec = "*.jpg";
 	%ctrl.clearColumns();
 	%ctrl.clear();
-	%ctrl.addColumn( 0, "FILENAME", 100, 0, 140 );
+	%ctrl.addColumn( 0, "FILENAME",%width, 0, 200 );
 	%id = -1;
 	%rowId = "";
 	for ( %file = findFirstFile( %fileSpec ); %file !$= ""; %file = findNextFile( %fileSpec ) )
