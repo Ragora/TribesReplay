@@ -190,7 +190,7 @@ datablock LinearFlareProjectileData(IndoorTurretBolt)
    kickBackStrength  = 0.0;
 
    dryVelocity       = 120.0;
-   wetVelocity       = 100.0;
+   wetVelocity       = 40.0;
    velInheritFactor  = 0.5;
    fizzleTimeMS      = 2000;
    lifetimeMS        = 3000;

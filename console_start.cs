@@ -504,10 +504,9 @@ function StartupGui::checkLoginDone( %this, %editAcct,%emailCheck )
       switch$(%codeText)
       {
          case "WS_DBProxyServ_InvalidUserName":
-            if(%emailCheck)
-               %msg = "Email Password Failed - Invalid login name.  Please check the login name and try again.";
-            else
-               %msg = "Account Creation Failed - Invalid login name.  Login names may only contain letters, numbers and underlines, and must be from 3 to 16 characters in length.";
+            %msg = "Account Creation Failed - Invalid login name.  Login names may only contain letters, numbers and underlines, and must be from 3 to 16 characters in length.";
+         case "WS_DBProxyServ_UserDoesNotExist":
+            %msg = "Email Password Failed - No such login name.  Please check the login name and try again.";
          case "WS_AuthServ_BadCDKey":
          case "WS_DBProxyServ_InvalidCDKey":
             %msg = "Account Creation Failed - Invalid CD Key.  Please check the CD key for errors.";

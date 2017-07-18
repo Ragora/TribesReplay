@@ -1520,7 +1520,10 @@ $ObsRemapCount++;
 $ObsRemapName[$ObsRemapCount] = "Toggle Observer Mode";
 $ObsRemapCmd[$ObsRemapCount] = "jump";
 $ObsRemapCount++;
-$ObsRemapName[$ObsRemapCount] = "Cycle Camera";
+$ObsRemapName[$ObsRemapCount] = "Spawn/Previous";
+$ObsRemapCmd[$ObsRemapCount] = "mouseFire";
+$ObsRemapCount++;
+$ObsRemapName[$ObsRemapCount] = "Cycle Camera/Next";
 $ObsRemapCmd[$ObsRemapCount] = "mouseJet";
 $ObsRemapCount++;
 
@@ -2208,6 +2211,7 @@ function DeadZoneText::update( %this )
 //------------------------------------------------------------------------------
 function bindJoystickAxis( %axisIndex, %cmdIndex )
 {
+   %cmd = $JoyRemapCmd[%cmdIndex];
    %axis = $JoyAxisTab[%axisIndex].type;
    if ( %cmdIndex > $JoyRemapCount )
    {
@@ -2222,16 +2226,16 @@ function bindJoystickAxis( %axisIndex, %cmdIndex )
    {
       %deadZone = "-" @ %delta SPC %delta;
       if ( InvertJoyAxisTgl.getValue() )
- 		   moveMap.bind( "joystick", %axis, "SDI", %deadZone, %sens, $JoyRemapCmd[%cmdIndex] );
+ 		   moveMap.bind( "joystick", %axis, "SDI", %deadZone, %sens, %cmd );
       else
- 		   moveMap.bind( "joystick", %axis, "SD", %deadZone, %sens, $JoyRemapCmd[%cmdIndex] );
+ 		   moveMap.bind( "joystick", %axis, "SD", %deadZone, %sens, %cmd );
    }
  	else
    {
       if ( InvertJoyAxisTgl.getValue() )
- 		   moveMap.bind( "joystick", %axis, "SI", %sens, $JoyRemapCmd[%cmdIndex] );
+ 		   moveMap.bind( "joystick", %axis, "SI", %sens, %cmd );
       else
- 		   moveMap.bind( "joystick", %axis, "S", %sens, $JoyRemapCmd[%cmdIndex] );
+ 		   moveMap.bind( "joystick", %axis, "S", %sens, %cmd );
    }
 }
 
@@ -2323,6 +2327,6 @@ function OP_LaunchScreenMenu::init( %this )
 //------------------------------------------------------------------------------
 function toggleImmersion()
 {
-   MessageBoxOK( "Force Feedback", "This will take effect next time you start Tribes 2." );
+   MessageBoxOK( "Force Feedback", "This will take effect the next time you start Tribes 2." );
 }
 

@@ -40,7 +40,7 @@ datablock TracerProjectileData(FusionBolt)
    explosion           = PlasmaBoltExplosion;
 
    dryVelocity       = 60.0;
-   wetVelocity       = -1;
+   wetVelocity       = 40.0;
    velInheritFactor  = 1.0;
    fizzleTimeMS      = 4000;
    lifetimeMS        = 6000;

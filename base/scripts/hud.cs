@@ -966,12 +966,15 @@ function updateActionMaps()
          // Create an action map just to block unwanted parts of the move map:
          new ActionMap( observerBlockMap );
          observerBlockMap.blockBind( moveMap, jump );
+         observerBlockMap.blockBind( moveMap, mouseFire );
          observerBlockMap.blockBind( moveMap, mouseJet );
          observerBlockMap.blockBind( moveMap, toggleZoom );
          observerBlockMap.blockBind( moveMap, setZoomFOV );
          observerBlockMap.push();
          observerMap.push();
-         //flyingCameraMove.push();
+         // Make sure that "Spawn" is bound:
+         if ( observerMap.getBinding( mouseFire ) $= "" )
+            observerMap.copyBind( moveMap, mouseFire );
       
       case "PickTeam":
         // no mapping 

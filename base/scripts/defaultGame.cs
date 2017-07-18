@@ -1477,6 +1477,10 @@ function DefaultGame::clientMissionDropReady(%game, %client)
       %client.setControlObject( %client.camera );   
    }
    
+   //make sure the objective HUD indicates your team on top and in green...
+   if (%client.team > 0)
+      messageClient(%client, 'MsgCheckTeamLines', "", %client.team);
+
    // were ready to go.
    %client.matchStartReady = true;
    echo("Client" SPC %client SPC "is ready.");

@@ -865,7 +865,7 @@ function serverSetClientTeamState( %client )
             }
             else  // let this player join the team he was on last game
             {
-               if(Game.numTeams > 1 && $LastGameTeamCount > 1)
+               if(Game.numTeams > 1)
                {   
                   Game.clientJoinTeam( %client, %client.lastTeam, false );
                }

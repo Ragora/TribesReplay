@@ -1022,6 +1022,7 @@ new ActionMap( observerMap );
 observerMap.bind( keyboard, t, moveup );
 observerMap.bind( keyboard, b, movedown );
 observerMap.bind( keyboard, space, jump );
+observerMap.bind( mouse, button0, mouseFire );
 observerMap.bind( mouse, button1, mouseJet );
 
 ///////////////////////
